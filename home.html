@@ -1,344 +1,777 @@
 <!DOCTYPE html>
-
 <html lang="ja">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="robots"
-    content="noindex, nofollow, noarchive, nosnippet"
-  >
-
-  <meta
-    http-equiv="Content-Security-Policy"
-    content="
-      default-src 'self';
-      script-src 'self' 'unsafe-inline';
-      style-src 'self' 'unsafe-inline';
-      connect-src https://dotjp-login.taka-souda516.workers.dev;
-      base-uri 'none'
-    "
-  >
-
-  <title>
-    ホーム
-  </title>
-
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-
-      min-height: 100%;
-
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        "Noto Sans JP",
-        "Yu Gothic",
-        sans-serif;
-
-      background: #f6f7f9;
-
-      color: #202124;
-    }
-
-    header {
-      height: 68px;
-
-      padding:
-        0 30px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      background: #ffffff;
-
-      border-bottom:
-        1px solid #e5e7eb;
-    }
-
-    .site-name {
-      font-size: 20px;
-
-      font-weight: 700;
-    }
-
-    .account {
-      display: flex;
-      align-items: center;
-
-      gap: 18px;
-    }
-
-    .user {
-      text-align: right;
-    }
-
-    .name {
-      font-size: 13px;
-
-      font-weight: 600;
-    }
-
-    .email {
-      margin-top: 2px;
-
-      color: #777;
-
-      font-size: 11px;
-    }
-
-    button {
-      padding:
-        9px 15px;
-
-      border:
-        1px solid #dadce0;
-
-      border-radius: 7px;
-
-      background: #ffffff;
-
-      cursor: pointer;
-    }
-
-    main {
-      max-width: 1050px;
-
-      margin:
-        0 auto;
-
-      padding:
-        60px 30px;
-    }
-
-    .card {
-      background: #ffffff;
-
-      border:
-        1px solid #e5e7eb;
-
-      border-radius: 15px;
-
-      padding: 38px;
-    }
-
-    h1 {
-      margin-top: 0;
-    }
-
-    .status {
-      color: #666;
-
-      line-height: 1.8;
-    }
-
-  </style>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <title>dotjp portal</title>
+  <link rel="stylesheet" href="./portal.css">
 </head>
-
-
 <body>
+  <div id="loading" class="loading-screen">
+    認証情報を確認しています…
+  </div>
 
-  <header>
+  <div id="app" class="app-shell" hidden>
+    <div id="canvasHolder" class="canvas-holder">
+      <main id="canvasFrame" class="canvas-frame">
 
-    <div class="site-name">
-      dotjp portal
-    </div>
-
-
-    <div class="account">
-
-      <div class="user">
-
-        <div
-          class="name"
-          id="name"
+        <!-- タスク開始 -->
+        <section
+          class="screen screen-task-start"
+          data-screen="task-start"
         >
-          確認中...
-        </div>
+          <div class="start-panel">
+            <h1>
+              ログイン完了！
+            </h1>
+
+            <p>
+              これからやるタスクを選択
+            </p>
+
+            <button
+              class="cyan-action"
+              type="button"
+              data-action="start-task"
+            >
+              スタート
+            </button>
+          </div>
+        </section>
+
+
+        <!-- ホーム -->
+        <section
+          class="screen screen-home"
+          data-screen="home"
+        >
+          <div
+            class="user-name"
+            data-user-name
+          >
+            ＜名前＞
+          </div>
+
+          <div class="home-summary">
+
+            <div class="summary-cell">
+              <div class="summary-title">
+                未完了タスク一覧
+              </div>
+
+              <div
+                class="summary-value"
+                id="unfinishedTasks"
+              ></div>
+            </div>
+
+            <div class="summary-cell">
+              <div class="summary-title">
+                終わったタスク
+              </div>
+
+              <div
+                class="summary-value"
+                id="finishedTasks"
+              ></div>
+            </div>
+
+            <div class="summary-cell">
+              <div class="summary-title">
+                タスク時間
+              </div>
+
+              <div
+                class="summary-value timer-value"
+                id="taskTimer"
+              ></div>
+            </div>
+
+          </div>
+
+
+          <button
+            class="task-end-button"
+            type="button"
+            data-route="task-end"
+          >
+            <span>タスク</span>
+            <span>終了</span>
+          </button>
+
+
+          <section class="department-panel">
+
+            <h2>
+              部署関連
+            </h2>
+
+            <div class="region-switch">
+
+              <button
+                type="button"
+                class="region-button"
+                data-region="kanto"
+              >
+                関東
+              </button>
+
+              <button
+                type="button"
+                class="region-button"
+                data-region="kansai"
+              >
+                関西
+              </button>
+
+            </div>
+
+
+            <div class="department-grid">
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-placeholder="コンス"
+              >
+                コンス
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-placeholder="マーケティング"
+              >
+                マーケティング
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-placeholder="人事局"
+              >
+                人事局
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-placeholder="プログラム"
+              >
+                プログラム
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-placeholder="クライアント"
+              >
+                クライアント
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-placeholder="事務局"
+              >
+                事務局
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-placeholder="MTG出欠登録"
+              >
+                MTG出欠登録
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-route="post"
+              >
+                〒依頼出しPOST
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-route="schedule"
+              >
+                スケジュール登録
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu"
+                data-placeholder="HPへの要望"
+              >
+                HPへの要望
+              </button>
+
+              <button
+                type="button"
+                class="blue-menu schedule-button"
+                data-placeholder="予定確認"
+              >
+                予定確認
+              </button>
+
+            </div>
+          </section>
+
+
+          <section class="links-panel">
+
+            <h2>
+              リンク集
+            </h2>
+
+            <div class="links-grid">
+
+              <a
+                class="green-menu"
+                href="https://docs.google.com/spreadsheets/d/1isxF8Tmc6FnSVq0IhrcoHMxO6CbnBqD4mrqGBsEWiJg/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                経営管理シート
+              </a>
+
+              <a
+                class="green-menu"
+                href="https://docs.google.com/spreadsheets/d/1Tgw7UTuS1HPIt1_vaRi8em5atPb1QQW_sokdY9AH7DE/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                経費発生報告
+              </a>
+
+              <a
+                class="green-menu form-link"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSc-vCSYxRdcyz-F6B5-RIBOOZODO-FHwI-qwj06nYSF77EOkQ/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                説明会申込フォーム
+              </a>
+
+              <div class="green-menu green-placeholder">
+                空き
+              </div>
+
+            </div>
+          </section>
+
+        </section>
+
+
+        <!-- 〒依頼出しPOST -->
+        <section
+          class="screen screen-post"
+          data-screen="post"
+        >
+
+          <div
+            class="user-name"
+            data-user-name
+          >
+            ＜名前＞
+          </div>
+
+
+          <div class="post-machine">
+
+            <div class="post-input-box">
+
+              <div class="post-choice">
+
+                <label
+                  class="file-choice-button"
+                  for="postFile"
+                >
+                  ファイルを選択
+                </label>
+
+                <input
+                  id="postFile"
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.webp,.pdf"
+                  hidden
+                >
+
+                <div class="post-choice-description">
+                  ファイルから<br>
+                  自動読み込み
+                </div>
+
+              </div>
+
+
+              <div class="post-divider"></div>
+
+
+              <div class="post-choice">
+
+                <button
+                  class="file-choice-button"
+                  type="button"
+                  data-route="post-manual"
+                >
+                  手入力
+                </button>
+
+                <div class="post-choice-description">
+                  手動で入力
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="post-machine-title">
+              <span>依頼出し</span>
+              <strong>〒</strong>
+              <span>POST</span>
+            </div>
+
+
+            <div class="post-machine-leg"></div>
+
+          </div>
+        </section>
+
+
+        <!-- 手動入力 -->
+        <section
+          class="screen screen-postcard"
+          data-screen="post-manual"
+        >
+
+          <div
+            class="user-name"
+            data-user-name
+          >
+            ＜名前＞
+          </div>
+
+
+          <div class="postcard-card postcard-edit">
+
+            <img
+              class="postcard-source"
+              src="./assets/hagaki_kansei.png"
+              alt=""
+              onload="this.parentElement.classList.add('has-postcard-image')"
+              onerror="this.hidden=true; this.parentElement.classList.add('postcard-fallback')"
+            >
+
+
+            <div
+              class="postcard-fallback-art"
+              aria-hidden="true"
+            >
+
+              <div class="fallback-stamp">
+                85
+              </div>
+
+              <div class="fallback-caption">
+                郵便はがき
+              </div>
+
+              <div class="fallback-postcode">
+                D o t&nbsp; j p C P
+              </div>
+
+              <div class="fallback-bottom-boxes">
+                □□□□□□□
+              </div>
+
+            </div>
+
+
+            <div class="postcard-form-row row-requester">
+
+              <label for="requester">
+                依頼元：
+              </label>
+
+              <input
+                id="requester"
+                type="text"
+                autocomplete="off"
+              >
+
+            </div>
+
+
+            <div class="postcard-form-row row-destination">
+
+              <label for="destination">
+                宛先：
+              </label>
+
+              <input
+                id="destination"
+                type="text"
+                autocomplete="off"
+              >
+
+            </div>
+
+
+            <div class="postcard-form-row row-deadline">
+
+              <label for="deadline">
+                期限：
+              </label>
+
+              <input
+                id="deadline"
+                type="text"
+                autocomplete="off"
+              >
+
+            </div>
+
+
+            <div class="postcard-form-row row-content">
+
+              <label for="content">
+                内容：
+              </label>
+
+              <textarea id="content"></textarea>
+
+            </div>
+
+
+            <button
+              class="postcard-confirm"
+              type="button"
+              data-action="confirm-post"
+            >
+              確認
+            </button>
+
+          </div>
+        </section>
+
+
+        <!-- POST 最終確認 -->
+        <section
+          class="screen screen-postcard"
+          data-screen="post-confirm"
+        >
+
+          <div
+            class="user-name"
+            data-user-name
+          >
+            ＜名前＞
+          </div>
+
+
+          <div class="postcard-card postcard-confirm-view">
+
+            <img
+              class="postcard-source"
+              src="./assets/hagaki_kansei.png"
+              alt=""
+              onload="this.parentElement.classList.add('has-postcard-image')"
+              onerror="this.hidden=true; this.parentElement.classList.add('postcard-fallback')"
+            >
+
+
+            <div
+              class="postcard-fallback-art"
+              aria-hidden="true"
+            >
+
+              <div class="fallback-stamp">
+                85
+              </div>
+
+              <div class="fallback-caption">
+                郵便はがき
+              </div>
+
+              <div class="fallback-postcode">
+                D o t&nbsp; j p C P
+              </div>
+
+              <div class="fallback-bottom-boxes">
+                □□□□□□□
+              </div>
+
+            </div>
+
+
+            <div class="postcard-display-row row-requester">
+              <strong>依頼元：</strong>
+              <span data-post-value="requester"></span>
+            </div>
+
+
+            <div class="postcard-display-row row-destination">
+              <strong>宛先：</strong>
+              <span data-post-value="destination"></span>
+            </div>
+
+
+            <div class="postcard-display-row row-deadline">
+              <strong>期限：</strong>
+              <span data-post-value="deadline"></span>
+            </div>
+
+
+            <div class="postcard-display-row row-content">
+              <strong>内容：</strong>
+              <span data-post-value="content"></span>
+            </div>
+
+
+            <button
+              class="postcard-confirm"
+              type="button"
+              data-action="send-post"
+            >
+              送る
+            </button>
+
+          </div>
+        </section>
+
+
+        <!-- スケジュール登録 -->
+        <section
+          class="screen screen-schedule"
+          data-screen="schedule"
+        >
+
+          <div
+            class="user-name"
+            data-user-name
+          >
+            ＜名前＞
+          </div>
+
+
+          <div class="schedule-body">
+
+            <div class="calendar-list">
+
+              <h2>
+                Googleカレンダー
+              </h2>
+
+
+              <button
+                class="google-account-row selected"
+                type="button"
+                id="googleAccountRow"
+              >
+
+                <span class="calendar-radio"></span>
+
+                <span data-user-email>
+                  user@dot-jp.or.jp
+                </span>
+
+              </button>
+
+
+              <h2>
+                Appleカレンダー
+              </h2>
+
+              <h2>
+                Outlookカレンダー
+              </h2>
+
+            </div>
+
+
+            <div class="available-times">
+
+              <h2>
+                今週空いている時間
+              </h2>
+
+              <div id="availableTimeContent"></div>
+
+            </div>
+
+          </div>
+
+
+          <button
+            class="back-button"
+            type="button"
+            data-route="home"
+          >
+            ←戻る
+          </button>
+
+        </section>
+
+
+        <!-- タスク終了 -->
+        <section
+          class="screen screen-task-end"
+          data-screen="task-end"
+        >
+
+          <div class="task-end-panel">
+
+            <h1>
+              お疲れ様でした！<br>
+              この<span id="elapsedTaskText">○時間○分</span>の進捗を教えて下さい！
+            </h1>
+
+
+            <div class="progress-columns">
+
+              <div class="progress-group">
+
+                <h2>
+                  🎓 学生向けアプローチ
+                </h2>
+
+                <label>
+                  ・声掛け数：
+                  <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    data-progress="student_voice"
+                  >件
+                </label>
+
+                <label>
+                  ・架電数：
+                  <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    data-progress="student_call"
+                  >件
+                </label>
+
+                <label>
+                  ・通電数：
+                  <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    data-progress="student_connected"
+                  >件
+                </label>
+
+                <label>
+                  ・獲得数：
+                  <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    data-progress="student_won"
+                  >件
+                </label>
+
+              </div>
+
+
+              <div class="progress-group">
+
+                <h2>
+                  🏢 企業向けアプローチ
+                </h2>
+
+                <label>
+                  ・リストアップ数：
+                  <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    data-progress="company_list"
+                  >社
+                </label>
+
+                <label>
+                  ・架電数：
+                  <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    data-progress="company_call"
+                  >件
+                </label>
+
+                <label>
+                  ・お問い合わせメール数：
+                  <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    data-progress="company_mail"
+                  >件
+                </label>
+
+                <label>
+                  ・獲得数：
+                  <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    data-progress="company_won"
+                  >社
+                </label>
+
+              </div>
+
+            </div>
+
+
+            <textarea
+              id="reflection"
+              class="wide-task-input"
+              placeholder="振り返り（任意）"
+            ></textarea>
+
+
+            <textarea
+              id="tomorrowGoal"
+              class="wide-task-input"
+              placeholder="明日の目標（任意）"
+            ></textarea>
+
+
+            <button
+              class="cyan-action task-submit"
+              type="button"
+              data-action="finish-task"
+            >
+              送信
+            </button>
+
+          </div>
+        </section>
 
 
         <div
-          class="email"
-          id="email"
+          id="toast"
+          class="toast"
+          role="status"
+          aria-live="polite"
         ></div>
 
-      </div>
-
-
-      <button
-        id="logout"
-        type="button"
-      >
-        ログアウト
-      </button>
-
+      </main>
     </div>
+  </div>
 
-  </header>
-
-
-  <main>
-
-    <section class="card">
-
-      <h1>
-        ログイン成功
-      </h1>
-
-
-      <p class="status">
-        Google認証と2段階認証が完了しています。
-        <br>
-        ここを今後、本来のポータル画面に置き換えていきます。
-      </p>
-
-    </section>
-
-  </main>
-
-
-  <script>
-
-    const WORKER =
-      "https://dotjp-login.taka-souda516.workers.dev";
-
-
-    const token =
-      sessionStorage.getItem(
-        "dotjp_access_token"
-      );
-
-
-    /*
-      認証トークンが無ければ
-      ログイン画面へ
-    */
-
-    if (!token) {
-
-      location.replace(
-        "./"
-      );
-
-    } else {
-
-      verifySession();
-
-    }
-
-
-
-    async function verifySession() {
-
-      try {
-
-        const response =
-          await fetch(
-            `${WORKER}/api/session`,
-            {
-              headers: {
-                Authorization:
-                  `Bearer ${token}`
-              }
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (
-          !response.ok
-          ||
-          !data.ok
-        ) {
-
-          throw new Error(
-            "unauthorized"
-          );
-
-        }
-
-
-        document
-          .getElementById(
-            "name"
-          )
-          .textContent =
-            data.user.name;
-
-
-        document
-          .getElementById(
-            "email"
-          )
-          .textContent =
-            data.user.email;
-
-
-      } catch {
-
-        sessionStorage.removeItem(
-          "dotjp_access_token"
-        );
-
-
-        location.replace(
-          "./"
-        );
-
-      }
-
-    }
-
-
-
-    document
-      .getElementById(
-        "logout"
-      )
-      .addEventListener(
-        "click",
-        () => {
-
-          sessionStorage.removeItem(
-            "dotjp_access_token"
-          );
-
-
-          sessionStorage.removeItem(
-            "dotjp_2fa_ticket"
-          );
-
-
-          location.replace(
-            "./"
-          );
-
-        }
-      );
-
-  </script>
-
+  <script src="./portal.js"></script>
 </body>
-
 </html>
