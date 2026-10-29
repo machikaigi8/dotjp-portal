@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="robots"
+    content="noindex, nofollow, noarchive, nosnippet"
+  >
+
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline';
+      style-src 'self' 'unsafe-inline';
+      connect-src https://dotjp-login.taka-souda516.workers.dev;
+      base-uri 'none'
+    "
+  >
+
+  <title>
+    ホーム
+  </title>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+
+      min-height: 100%;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans JP",
+        "Yu Gothic",
+        sans-serif;
+
+      background: #f6f7f9;
+
+      color: #202124;
+    }
+
+    header {
+      height: 68px;
+
+      padding:
+        0 30px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      background: #ffffff;
+
+      border-bottom:
+        1px solid #e5e7eb;
+    }
+
+    .site-name {
+      font-size: 20px;
+
+      font-weight: 700;
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+
+      gap: 18px;
+    }
+
+    .user {
+      text-align: right;
+    }
+
+    .name {
+      font-size: 13px;
+
+      font-weight: 600;
+    }
+
+    .email {
+      margin-top: 2px;
+
+      color: #777;
+
+      font-size: 11px;
+    }
+
+    button {
+      padding:
+        9px 15px;
+
+      border:
+        1px solid #dadce0;
+
+      border-radius: 7px;
+
+      background: #ffffff;
+
+      cursor: pointer;
+    }
+
+    main {
+      max-width: 1050px;
+
+      margin:
+        0 auto;
+
+      padding:
+        60px 30px;
+    }
+
+    .card {
+      background: #ffffff;
+
+      border:
+        1px solid #e5e7eb;
+
+      border-radius: 15px;
+
+      padding: 38px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .status {
+      color: #666;
+
+      line-height: 1.8;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <header>
+
+    <div class="site-name">
+      dotjp portal
+    </div>
+
+
+    <div class="account">
+
+      <div class="user">
+
+        <div
+          class="name"
+          id="name"
+        >
+          確認中...
+        </div>
+
+
+        <div
+          class="email"
+          id="email"
+        ></div>
+
+      </div>
+
+
+      <button
+        id="logout"
+        type="button"
+      >
+        ログアウト
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <section class="card">
+
+      <h1>
+        ログイン成功
+      </h1>
+
+
+      <p class="status">
+        Google認証と2段階認証が完了しています。
+        <br>
+        ここを今後、本来のポータル画面に置き換えていきます。
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    const WORKER =
+      "https://dotjp-login.taka-souda516.workers.dev";
+
+
+    const token =
+      sessionStorage.getItem(
+        "dotjp_access_token"
+      );
+
+
+    /*
+      認証トークンが無ければ
+      ログイン画面へ
+    */
+
+    if (!token) {
+
+      location.replace(
+        "./"
+      );
+
+    } else {
+
+      verifySession();
+
+    }
+
+
+
+    async function verifySession() {
+
+      try {
+
+        const response =
+          await fetch(
+            `${WORKER}/api/session`,
+            {
+              headers: {
+                Authorization:
+                  `Bearer ${token}`
+              }
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          !response.ok
+          ||
+          !data.ok
+        ) {
+
+          throw new Error(
+            "unauthorized"
+          );
+
+        }
+
+
+        document
+          .getElementById(
+            "name"
+          )
+          .textContent =
+            data.user.name;
+
+
+        document
+          .getElementById(
+            "email"
+          )
+          .textContent =
+            data.user.email;
+
+
+      } catch {
+
+        sessionStorage.removeItem(
+          "dotjp_access_token"
+        );
+
+
+        location.replace(
+          "./"
+        );
+
+      }
+
+    }
+
+
+
+    document
+      .getElementById(
+        "logout"
+      )
+      .addEventListener(
+        "click",
+        () => {
+
+          sessionStorage.removeItem(
+            "dotjp_access_token"
+          );
+
+
+          sessionStorage.removeItem(
+            "dotjp_2fa_ticket"
+          );
+
+
+          location.replace(
+            "./"
+          );
+
+        }
+      );
+
+  </script>
+
+</body>
+
+</html>
