@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <!-- 検索結果に掲載しない -->
+  <meta
+    name="robots"
+    content="noindex, nofollow, noarchive, nosnippet"
+  >
+
+  <title>ログイン</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+
+      background: #f6f7f9;
+
+      color: #202124;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans JP",
+        "Hiragino Kaku Gothic ProN",
+        "Yu Gothic",
+        sans-serif;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 440px;
+
+      padding: 48px 42px;
+
+      background: #ffffff;
+
+      border: 1px solid #e1e4e8;
+      border-radius: 18px;
+
+      text-align: center;
+
+      box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .description {
+      margin: 0 0 34px;
+
+      color: #666666;
+
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .google-button {
+      width: 100%;
+      height: 54px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 12px;
+
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+
+      background: #ffffff;
+
+      color: #3c4043;
+
+      font-size: 16px;
+      font-weight: 500;
+
+      text-decoration: none;
+
+      transition:
+        background-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .google-button:hover {
+      background: #f8f9fa;
+
+      box-shadow:
+        0 1px 3px rgba(60, 64, 67, 0.2);
+    }
+
+    .google-g {
+      font-family: Arial, sans-serif;
+
+      font-size: 22px;
+      font-weight: 700;
+
+      color: #4285f4;
+    }
+
+    .domain-note {
+      margin: 24px 0 0;
+
+      color: #777777;
+
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .domain-note strong {
+      color: #444444;
+    }
+
+    .security-note {
+      margin-top: 30px;
+      padding-top: 20px;
+
+      border-top: 1px solid #eeeeee;
+
+      color: #999999;
+
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 16px;
+
+        background: #ffffff;
+      }
+
+      .login-box {
+        padding: 36px 22px;
+
+        border: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <main class="login-box">
+
+    <h1>
+      ログイン
+    </h1>
+
+    <p class="description">
+      Googleアカウントを使用して<br>
+      ログインしてください。
+    </p>
+
+    <a
+      class="google-button"
+      href="https://dotjp-login.taka-souda516.workers.dev/auth/google"
+    >
+      <span class="google-g">G</span>
+
+      <span>
+        Googleでログイン
+      </span>
+    </a>
+
+    <p class="domain-note">
+      <strong>@dot-jp.or.jp</strong>
+      のGoogleアカウントのみ<br>
+      ログインできます。
+    </p>
+
+    <div class="security-note">
+      Google認証後、2段階認証を行います。
+    </div>
+
+  </main>
+
+</body>
+
+</html>
