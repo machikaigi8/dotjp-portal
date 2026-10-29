@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="robots"
+    content="noindex, nofollow, noarchive, nosnippet"
+  >
+
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+      style-src 'self' 'unsafe-inline';
+      connect-src https://dotjp-login.taka-souda516.workers.dev;
+      img-src 'self' data:;
+      base-uri 'none';
+      form-action 'self'
+    "
+  >
+
+  <title>
+    2段階認証
+  </title>
+
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+    integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+
+      min-height: 100%;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans JP",
+        "Yu Gothic",
+        sans-serif;
+
+      background: #f6f7f9;
+
+      color: #202124;
+    }
+
+    body {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 500px;
+
+      background: #ffffff;
+
+      border:
+        1px solid #e1e4e8;
+
+      border-radius: 18px;
+
+      padding: 42px;
+
+      box-shadow:
+        0 4px 20px
+        rgba(0, 0, 0, .04);
+    }
+
+    h1 {
+      margin:
+        0 0 12px;
+
+      font-size: 27px;
+
+      text-align: center;
+    }
+
+    .lead {
+      margin:
+        0 0 28px;
+
+      color: #666;
+
+      font-size: 14px;
+
+      line-height: 1.8;
+
+      text-align: center;
+    }
+
+    .setup {
+      display: none;
+
+      padding: 22px;
+
+      margin-bottom: 24px;
+
+      background: #f8f9fa;
+
+      border-radius: 12px;
+    }
+
+    #qrcode {
+      width: 220px;
+
+      min-height: 220px;
+
+      margin:
+        0 auto 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #ffffff;
+
+      padding: 10px;
+
+      border-radius: 10px;
+    }
+
+    .secret-label {
+      margin:
+        0 0 8px;
+
+      color: #666;
+
+      font-size: 12px;
+    }
+
+    .secret-row {
+      display: flex;
+
+      gap: 8px;
+    }
+
+    .secret {
+      flex: 1;
+
+      min-width: 0;
+
+      padding:
+        11px 12px;
+
+      border:
+        1px solid #dadce0;
+
+      border-radius: 8px;
+
+      background: #ffffff;
+
+      font-family:
+        Consolas,
+        monospace;
+
+      font-size: 13px;
+
+      word-break: break-all;
+    }
+
+    .copy-button {
+      border:
+        1px solid #dadce0;
+
+      border-radius: 8px;
+
+      background: #ffffff;
+
+      padding:
+        0 14px;
+
+      cursor: pointer;
+    }
+
+    .note {
+      margin:
+        12px 0 0;
+
+      color: #777;
+
+      font-size: 12px;
+
+      line-height: 1.7;
+    }
+
+    label {
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-size: 13px;
+
+      font-weight: 600;
+    }
+
+    .code-input {
+      width: 100%;
+
+      height: 56px;
+
+      border:
+        1px solid #cfd3d7;
+
+      border-radius: 9px;
+
+      padding:
+        0 16px;
+
+      font-size: 24px;
+
+      letter-spacing: .35em;
+
+      text-align: center;
+
+      outline: none;
+    }
+
+    .code-input:focus {
+      border-color:
+        #1a73e8;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(26, 115, 232, .12);
+    }
+
+    .verify-button {
+      width: 100%;
+
+      height: 50px;
+
+      margin-top: 16px;
+
+      border: none;
+
+      border-radius: 8px;
+
+      background: #1a73e8;
+
+      color: #ffffff;
+
+      font-size: 15px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+    }
+
+    .verify-button:disabled {
+      opacity: .55;
+
+      cursor: default;
+    }
+
+    .message {
+      min-height: 24px;
+
+      margin-top: 16px;
+
+      color: #c5221f;
+
+      font-size: 13px;
+
+      line-height: 1.6;
+
+      text-align: center;
+    }
+
+    .back {
+      display: block;
+
+      margin-top: 20px;
+
+      text-align: center;
+
+      color: #666;
+
+      font-size: 13px;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <main class="card">
+
+    <h1 id="title">
+      2段階認証
+    </h1>
+
+    <p
+      class="lead"
+      id="lead"
+    >
+      認証情報を確認しています。
+    </p>
+
+
+    <section
+      class="setup"
+      id="setup"
+    >
+
+      <div id="qrcode"></div>
+
+
+      <p class="secret-label">
+        QRコードを読み取れない場合は、
+        2FAS Authにこの秘密鍵を手動で登録してください。
+      </p>
+
+
+      <div class="secret-row">
+
+        <div
+          class="secret"
+          id="secret"
+        ></div>
+
+
+        <button
+          class="copy-button"
+          id="copyButton"
+          type="button"
+        >
+          コピー
+        </button>
+
+      </div>
+
+
+      <p class="note">
+        QRコードまたは秘密鍵を2FAS Authへ登録したあと、
+        アプリに表示された6桁コードを下に入力してください。
+      </p>
+
+    </section>
+
+
+    <form
+      id="form"
+      hidden
+    >
+
+      <label for="code">
+        2FAS Auth の6桁コード
+      </label>
+
+
+      <input
+        id="code"
+        class="code-input"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        placeholder="000000"
+        required
+      >
+
+
+      <button
+        class="verify-button"
+        id="verifyButton"
+        type="submit"
+      >
+        認証する
+      </button>
+
+    </form>
+
+
+    <div
+      class="message"
+      id="message"
+    ></div>
+
+
+    <a
+      class="back"
+      href="./"
+    >
+      ログイン画面へ戻る
+    </a>
+
+  </main>
+
+
+  <script>
+
+    const WORKER =
+      "https://dotjp-login.taka-souda516.workers.dev";
+
+
+    const title =
+      document.getElementById(
+        "title"
+      );
+
+
+    const lead =
+      document.getElementById(
+        "lead"
+      );
+
+
+    const setup =
+      document.getElementById(
+        "setup"
+      );
+
+
+    const secretBox =
+      document.getElementById(
+        "secret"
+      );
+
+
+    const copyButton =
+      document.getElementById(
+        "copyButton"
+      );
+
+
+    const form =
+      document.getElementById(
+        "form"
+      );
+
+
+    const codeInput =
+      document.getElementById(
+        "code"
+      );
+
+
+    const verifyButton =
+      document.getElementById(
+        "verifyButton"
+      );
+
+
+    const message =
+      document.getElementById(
+        "message"
+      );
+
+
+    let ticket = null;
+
+
+
+    function getTicket() {
+
+      const hash =
+        new URLSearchParams(
+          location.hash.slice(1)
+        );
+
+
+      const fromHash =
+        hash.get(
+          "ticket"
+        );
+
+
+      if (
+        fromHash
+      ) {
+
+        sessionStorage.setItem(
+          "dotjp_2fa_ticket",
+          fromHash
+        );
+
+
+        /*
+          URLからチケットを消す
+        */
+
+        history.replaceState(
+          null,
+          "",
+          location.pathname
+          +
+          location.search
+        );
+
+
+        return fromHash;
+
+      }
+
+
+      return sessionStorage.getItem(
+        "dotjp_2fa_ticket"
+      );
+
+    }
+
+
+
+    async function initialize() {
+
+      ticket =
+        getTicket();
+
+
+      if (!ticket) {
+
+        showFatal(
+          "認証情報がありません。もう一度Googleログインからやり直してください。"
+        );
+
+        return;
+
+      }
+
+
+      try {
+
+        const response =
+          await fetch(
+            `${WORKER}/api/2fa/setup`,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify({
+                  ticket
+                })
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          !response.ok
+          ||
+          !data.ok
+        ) {
+
+          if (
+            data.error ===
+            "invalid_ticket"
+          ) {
+
+            sessionStorage.removeItem(
+              "dotjp_2fa_ticket"
+            );
+
+
+            showFatal(
+              "認証の有効期限が切れました。もう一度Googleログインからやり直してください。"
+            );
+
+            return;
+
+          }
+
+
+          throw new Error(
+            data.error
+            ||
+            "setup_failed"
+          );
+
+        }
+
+
+        /*
+          既に2FAS登録済み
+        */
+
+        if (
+          data.enabled
+        ) {
+
+          title.textContent =
+            "2段階認証";
+
+
+          lead.textContent =
+            "2FAS Authに表示されている6桁コードを入力してください。";
+
+
+        } else {
+
+          /*
+            初回登録
+          */
+
+          title.textContent =
+            "2FAS Authを設定";
+
+
+          lead.textContent =
+            "初回のみ、下のQRコードを2FAS Authで読み取ってください。";
+
+
+          setup.style.display =
+            "block";
+
+
+          secretBox.textContent =
+            data.secret;
+
+
+          const qrBox =
+            document.getElementById(
+              "qrcode"
+            );
+
+
+          qrBox.innerHTML =
+            "";
+
+
+          new QRCode(
+            qrBox,
+            {
+              text:
+                data.otpauth_uri,
+
+              width:
+                200,
+
+              height:
+                200,
+
+              colorDark:
+                "#000000",
+
+              colorLight:
+                "#ffffff",
+
+              correctLevel:
+                QRCode.CorrectLevel.M
+            }
+          );
+
+        }
+
+
+        form.hidden =
+          false;
+
+
+        codeInput.focus();
+
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+
+        showFatal(
+          "2段階認証の準備に失敗しました。もう一度ログインしてください。"
+        );
+
+      }
+
+    }
+
+
+
+    form.addEventListener(
+      "submit",
+
+      async event => {
+
+        event.preventDefault();
+
+
+        const code =
+          codeInput.value
+            .replace(
+              /\D/g,
+              ""
+            );
+
+
+        if (
+          code.length !== 6
+        ) {
+
+          message.textContent =
+            "6桁の認証コードを入力してください.";
+
+          return;
+
+        }
+
+
+        verifyButton.disabled =
+          true;
+
+
+        message.textContent =
+          "確認しています…";
+
+
+        try {
+
+          const response =
+            await fetch(
+              `${WORKER}/api/2fa/verify`,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body:
+                  JSON.stringify({
+                    ticket,
+                    code
+                  })
+              }
+            );
+
+
+          const data =
+            await response.json();
+
+
+          if (
+            !response.ok
+            ||
+            !data.ok
+          ) {
+
+            if (
+              data.error ===
+              "wrong_code"
+            ) {
+
+              message.textContent =
+                "認証コードが違います。2FAS Authの最新コードを確認してください。";
+
+
+              codeInput.select();
+
+              return;
+
+            }
+
+
+            if (
+              data.error ===
+              "invalid_ticket"
+            ) {
+
+              sessionStorage.removeItem(
+                "dotjp_2fa_ticket"
+              );
+
+
+              message.textContent =
+                "認証の有効期限が切れました。ログイン画面からやり直してください。";
+
+              return;
+
+            }
+
+
+            message.textContent =
+              "認証できませんでした。もう一度お試しください。";
+
+            return;
+
+          }
+
+
+          /*
+            Google + 2FA認証済みトークン
+          */
+
+          sessionStorage.removeItem(
+            "dotjp_2fa_ticket"
+          );
+
+
+          sessionStorage.setItem(
+            "dotjp_access_token",
+            data.token
+          );
+
+
+          location.replace(
+            data.redirect
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            error
+          );
+
+
+          message.textContent =
+            "通信エラーが発生しました。";
+
+
+        } finally {
+
+          verifyButton.disabled =
+            false;
+
+        }
+
+      }
+    );
+
+
+
+    codeInput.addEventListener(
+      "input",
+      () => {
+
+        codeInput.value =
+          codeInput.value
+            .replace(
+              /\D/g,
+              ""
+            )
+            .slice(
+              0,
+              6
+            );
+
+      }
+    );
+
+
+
+    copyButton.addEventListener(
+      "click",
+
+      async () => {
+
+        try {
+
+          await navigator.clipboard.writeText(
+            secretBox.textContent
+          );
+
+
+          copyButton.textContent =
+            "コピー済み";
+
+
+          setTimeout(
+            () => {
+
+              copyButton.textContent =
+                "コピー";
+
+            },
+            1500
+          );
+
+
+        } catch {
+
+          message.textContent =
+            "コピーできませんでした。秘密鍵を手動で選択してください。";
+
+        }
+
+      }
+    );
+
+
+
+    function showFatal(text) {
+
+      lead.textContent =
+        text;
+
+
+      setup.style.display =
+        "none";
+
+
+      form.hidden =
+        true;
+
+
+      message.textContent =
+        "";
+
+    }
+
+
+
+    initialize();
+
+  </script>
+
+</body>
+
+</html>
