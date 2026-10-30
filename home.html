@@ -884,6 +884,328 @@ button.file-choice-button {
   }
 }
 
+
+/* ===== 週次タスク管理 / 7日間タスク時間グラフ ===== */
+
+.task-picker-panel {
+  padding: 44px 70px 34px;
+  text-align: left;
+}
+
+.task-picker-panel h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 48px;
+}
+
+.start-subtitle {
+  margin-top: 26px;
+  text-align: center;
+  font-size: 34px;
+  font-weight: 500;
+}
+
+.start-week-label {
+  margin-top: 7px;
+  text-align: center;
+  color: #555;
+  font-size: 20px;
+}
+
+.start-task-board {
+  margin-top: 20px;
+  height: 178px;
+  border: 3px solid var(--navy);
+  background: #fff;
+}
+
+.start-task-board-head {
+  height: 54px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--navy);
+  font-size: 29px;
+  font-weight: 600;
+}
+
+.start-task-list {
+  height: 118px;
+  padding: 9px 12px;
+  overflow-y: auto;
+}
+
+.start-task-empty {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #777;
+  font-size: 23px;
+}
+
+.start-task-item {
+  width: 100%;
+  min-height: 46px;
+  margin-bottom: 6px;
+  padding: 6px 12px;
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 12px;
+  align-items: center;
+  border: 2px solid #c8c8df;
+  background: #fff;
+  color: #000;
+  text-align: left;
+  cursor: pointer;
+}
+
+.start-task-item:hover {
+  background: #f5f6ff;
+}
+
+.start-task-item.is-selected {
+  border: 4px solid var(--blue);
+  background: #eef0ff;
+}
+
+.task-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 86px;
+  height: 32px;
+  padding: 0 9px;
+  border-radius: 16px;
+  background: #ececff;
+  color: var(--navy);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.task-type-badge.type-mtg {
+  background: #e8f8ff;
+  color: #00698f;
+}
+
+.task-type-badge.type-other {
+  background: #f0f0f0;
+  color: #444;
+}
+
+.start-task-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.preset-task-board {
+  margin-top: 14px;
+  height: 216px;
+  border: 3px solid #b9c5ff;
+  background: #fff;
+}
+
+.preset-task-board-title {
+  height: 45px;
+  padding: 8px 16px;
+  border-bottom: 2px solid #b9c5ff;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.preset-task-grid {
+  height: 165px;
+  padding: 9px 12px;
+  display: grid;
+  grid-template-columns: 1.45fr .65fr 1.4fr;
+  gap: 12px;
+}
+
+.preset-task-group {
+  min-width: 0;
+}
+
+.preset-task-group h3 {
+  margin: 0 0 7px;
+  color: var(--navy);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.preset-task-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.preset-task-button {
+  min-height: 34px;
+  padding: 5px 10px;
+  border: 2px solid #c8c8df;
+  background: #fff;
+  color: #111;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.preset-task-button:hover {
+  background: #f5f6ff;
+}
+
+.preset-task-button.is-selected {
+  border-color: var(--blue);
+  background: #eef0ff;
+  color: var(--navy);
+}
+
+.selected-task-line {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 21px;
+}
+
+.start-panel .start-task-button {
+  position: absolute;
+  left: 495px;
+  top: 625px;
+  width: 210px;
+  height: 62px;
+  font-size: 34px;
+}
+
+.start-task-button:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
+.summary-week-label {
+  margin-top: -1px;
+  color: #666;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.task-summary-list {
+  height: 137px;
+  padding-top: 4px;
+  overflow-y: auto;
+  white-space: normal;
+}
+
+.summary-task-row {
+  min-height: 30px;
+  margin-bottom: 3px;
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 5px;
+  align-items: center;
+  font-size: 16px;
+}
+
+.summary-task-row .task-type-badge {
+  min-width: 64px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.summary-task-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-task-row.is-active .summary-task-title::after {
+  content: "  実行中";
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.summary-empty {
+  padding-top: 14px;
+  color: #888;
+  font-size: 17px;
+}
+
+.task-chart-cell {
+  padding-right: 6px;
+}
+
+.task-chart-period {
+  position: absolute;
+  right: 8px;
+  top: 10px;
+  color: #666;
+  font-size: 12px;
+}
+
+.task-time-chart {
+  position: absolute;
+  left: 7px;
+  right: 6px;
+  bottom: 7px;
+  height: 145px;
+}
+
+.task-chart-total {
+  height: 22px;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+  padding-right: 3px;
+}
+
+.task-chart-bars {
+  height: 121px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  align-items: end;
+}
+
+.task-chart-column {
+  height: 121px;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 94px 27px;
+  align-items: end;
+}
+
+.task-chart-track {
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  border-bottom: 1px solid #aaa;
+}
+
+.task-chart-bar {
+  width: 21px;
+  min-height: 0;
+  background: var(--blue);
+  transition: height .2s ease;
+}
+
+.task-chart-label {
+  padding-top: 4px;
+  overflow: hidden;
+  color: #555;
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 </style>
 </head>
 <body>
@@ -894,10 +1216,28 @@ button.file-choice-button {
       <main id="canvasFrame" class="canvas-frame">
 
         <section class="screen screen-task-start" data-screen="task-start">
-          <div class="start-panel">
+          <div class="start-panel task-picker-panel">
             <h1>ログイン完了！</h1>
-            <p>これからやるタスクを選択</p>
-            <button class="cyan-action" type="button" data-action="start-task">スタート</button>
+            <div class="start-subtitle">これからやるタスクを選択</div>
+            <div class="start-week-label" id="startWeekLabel"></div>
+
+            <div class="start-task-board">
+              <div class="start-task-board-head">
+                <span>今週の未完了タスク</span>
+              </div>
+              <div id="startTaskList" class="start-task-list"></div>
+            </div>
+
+            <div class="preset-task-board">
+              <div class="preset-task-board-title">タスク一覧から選択</div>
+              <div id="presetTaskList" class="preset-task-grid"></div>
+            </div>
+
+            <div class="selected-task-line">
+              選択中：<strong id="selectedTaskName">未選択</strong>
+            </div>
+
+            <button class="cyan-action start-task-button" type="button" data-action="start-task" disabled>スタート</button>
           </div>
         </section>
 
@@ -907,15 +1247,18 @@ button.file-choice-button {
           <div class="home-summary">
             <div class="summary-cell">
               <div class="summary-title">未完了タスク一覧</div>
-              <div class="summary-value" id="unfinishedTasks"></div>
+              <div class="summary-week-label" id="unfinishedWeekLabel"></div>
+              <div class="summary-value task-summary-list" id="unfinishedTasks"></div>
             </div>
             <div class="summary-cell">
               <div class="summary-title">終わったタスク</div>
-              <div class="summary-value" id="finishedTasks"></div>
+              <div class="summary-week-label" id="finishedWeekLabel"></div>
+              <div class="summary-value task-summary-list" id="finishedTasks"></div>
             </div>
-            <div class="summary-cell">
+            <div class="summary-cell task-chart-cell">
               <div class="summary-title">タスク時間</div>
-              <div class="summary-value timer-value" id="taskTimer"></div>
+              <div class="task-chart-period">直近7日</div>
+              <div id="taskTimeChart" class="task-time-chart"></div>
             </div>
           </div>
 
@@ -1148,1170 +1491,621 @@ button.file-choice-button {
   </div>
 
   <script>
-const WORKER =
-  "https://dotjp-login.taka-souda516.workers.dev";
-
+const WORKER = "https://dotjp-login.taka-souda516.workers.dev";
 
 const state = {
   user: null,
-
-  region:
-    sessionStorage.getItem(
-      "dotjp_region"
-    ) || "kanto",
-
+  region: sessionStorage.getItem("dotjp_region") || "kanto",
   currentScreen: null,
-
-  timerId: null
+  timerId: null,
+  selectedTaskId: null
 };
 
+const screenNames = new Set([
+  "task-start",
+  "home",
+  "post",
+  "post-manual",
+  "post-confirm",
+  "schedule",
+  "task-end"
+]);
 
-const screenNames =
-  new Set([
-    "task-start",
-    "home",
-    "post",
-    "post-manual",
-    "post-confirm",
-    "schedule",
-    "task-end"
-  ]);
+const taskTypeLabels = {
+  department: "部署",
+  mtg: "MTG",
+  other: "その他"
+};
 
+const presetTaskCatalog = {
+  department: [
+    "コンス",
+    "マーケティング",
+    "人事局",
+    "プログラム",
+    "クライアント",
+    "事務局"
+  ],
+  mtg: [
+    "MTG"
+  ],
+  other: [
+    "〒依頼出しPOST",
+    "スケジュール登録",
+    "予定確認",
+    "HPへの要望"
+  ]
+};
 
-document.addEventListener(
-  "DOMContentLoaded",
-  init
-);
-
+document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
-
   fitCanvas();
-
-  window.addEventListener(
-    "resize",
-    fitCanvas
-  );
-
-
-  window.addEventListener(
-    "hashchange",
-    routeFromHash
-  );
-
-
+  window.addEventListener("resize", fitCanvas);
+  window.addEventListener("hashchange", routeFromHash);
   wireActions();
 
-
-  const token =
-    sessionStorage.getItem(
-      "dotjp_access_token"
-    );
-
-
+  const token = sessionStorage.getItem("dotjp_access_token");
   if (!token) {
-
-    location.replace(
-      "./"
-    );
-
+    location.replace("./");
     return;
-
   }
-
 
   try {
+    const response = await fetch(`${WORKER}/api/session`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error("unauthorized");
 
-    const response =
-      await fetch(
-        `${WORKER}/api/session`,
-        {
-          headers: {
-            Authorization:
-              `Bearer ${token}`
-          }
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !data.ok
-    ) {
-
-      throw new Error(
-        "unauthorized"
-      );
-
-    }
-
-
-    state.user =
-      data.user;
-
-
+    state.user = data.user;
     fillUserInfo();
+    document.getElementById("loading").hidden = true;
+    document.getElementById("app").hidden = false;
 
+    refreshTaskUi();
 
-    document
-      .getElementById(
-        "loading"
-      )
-      .hidden =
-        true;
+    const requested = normalizeHash(location.hash);
+    const started = getActiveStartedAt();
 
-
-    document
-      .getElementById(
-        "app"
-      )
-      .hidden =
-        false;
-
-
-    const requested =
-      normalizeHash(
-        location.hash
-      );
-
-
-    if (requested) {
-
-      showScreen(
-        requested,
-        false
-      );
-
+    if (requested && (requested !== "task-start" || !started)) {
+      showScreen(requested, false);
     } else {
-
-      const started =
-        sessionStorage.getItem(
-          "dotjp_task_started_at"
-        );
-
-
-      showScreen(
-        started
-          ? "home"
-          : "task-start",
-
-        false
-      );
-
+      showScreen(started ? "home" : "task-start", false);
     }
-
 
     updateRegion();
-
     startTimerLoop();
-
-
   } catch (error) {
-
-    sessionStorage.removeItem(
-      "dotjp_access_token"
-    );
-
-
-    location.replace(
-      "./"
-    );
-
+    console.error(error);
+    sessionStorage.removeItem("dotjp_access_token");
+    location.replace("./");
   }
-
 }
-
 
 function wireActions() {
-
-  document
-    .querySelectorAll(
-      "[data-route]"
-    )
-    .forEach(
-      element => {
-
-        element.addEventListener(
-          "click",
-          () => {
-
-            showScreen(
-              element.dataset.route
-            );
-
-          }
-        );
-
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      "[data-region]"
-    )
-    .forEach(
-      element => {
-
-        element.addEventListener(
-          "click",
-          () => {
-
-            state.region =
-              element.dataset.region;
-
-
-            sessionStorage.setItem(
-              "dotjp_region",
-              state.region
-            );
-
-
-            updateRegion();
-
-          }
-        );
-
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      "[data-placeholder]"
-    )
-    .forEach(
-      element => {
-
-        element.addEventListener(
-          "click",
-          () => {
-
-            showToast(
-              `${element.dataset.placeholder} はリンク先未設定です`
-            );
-
-          }
-        );
-
-      }
-    );
-
-
-  document
-    .querySelector(
-      '[data-action="start-task"]'
-    )
-    .addEventListener(
-      "click",
-      () => {
-
-        sessionStorage.setItem(
-          "dotjp_task_started_at",
-          String(
-            Date.now()
-          )
-        );
-
-
-        showScreen(
-          "home"
-        );
-
-      }
-    );
-
-
-  document
-    .querySelector(
-      '[data-action="confirm-post"]'
-    )
-    .addEventListener(
-      "click",
-      () => {
-
-        const payload = {
-
-          requester:
-            document
-              .getElementById(
-                "requester"
-              )
-              .value
-              .trim(),
-
-          destination:
-            document
-              .getElementById(
-                "destination"
-              )
-              .value
-              .trim(),
-
-          deadline:
-            document
-              .getElementById(
-                "deadline"
-              )
-              .value
-              .trim(),
-
-          content:
-            document
-              .getElementById(
-                "content"
-              )
-              .value
-              .trim()
-
-        };
-
-
-        sessionStorage.setItem(
-          "dotjp_post_draft",
-          JSON.stringify(
-            payload
-          )
-        );
-
-
-        renderPostConfirmation(
-          payload
-        );
-
-
-        showScreen(
-          "post-confirm"
-        );
-
-      }
-    );
-
-
-  document
-    .querySelector(
-      '[data-action="send-post"]'
-    )
-    .addEventListener(
-      "click",
-      () => {
-
-        const draft =
-          sessionStorage.getItem(
-            "dotjp_post_draft"
-          );
-
-
-        if (draft) {
-
-          localStorage.setItem(
-            "dotjp_last_post",
-            draft
-          );
-
-        }
-
-
-        sessionStorage.removeItem(
-          "dotjp_post_draft"
-        );
-
-
-        showToast(
-          "送信処理を完了しました"
-        );
-
-
-        setTimeout(
-          () =>
-            showScreen(
-              "home"
-            ),
-
-          450
-        );
-
-      }
-    );
-
-
-  document
-    .getElementById(
-      "postFile"
-    )
-    .addEventListener(
-      "change",
-      event => {
-
-        const file =
-          event.target
-            .files?.[0];
-
-
-        if (!file) {
-          return;
-        }
-
-
-        const payload = {
-
-          requester:
-            state.user?.name ||
-            "",
-
-          destination:
-            "",
-
-          deadline:
-            "",
-
-          content:
-            `選択ファイル：${file.name}`
-
-        };
-
-
-        sessionStorage.setItem(
-          "dotjp_post_draft",
-          JSON.stringify(
-            payload
-          )
-        );
-
-
-        renderPostConfirmation(
-          payload
-        );
-
-
-        showScreen(
-          "post-confirm"
-        );
-
-      }
-    );
-
-
-  document
-    .getElementById(
-      "googleAccountRow"
-    )
-    .addEventListener(
-      "click",
-      event => {
-
-        event
-          .currentTarget
-          .classList
-          .toggle(
-            "selected"
-          );
-
-      }
-    );
-
-
-  document
-    .querySelector(
-      '[data-action="finish-task"]'
-    )
-    .addEventListener(
-      "click",
-      finishTask
-    );
-
+  document.querySelectorAll("[data-route]").forEach((element) => {
+    element.addEventListener("click", () => showScreen(element.dataset.route));
+  });
+
+  document.querySelectorAll("[data-region]").forEach((element) => {
+    element.addEventListener("click", () => {
+      state.region = element.dataset.region;
+      sessionStorage.setItem("dotjp_region", state.region);
+      updateRegion();
+    });
+  });
+
+  document.querySelectorAll("[data-placeholder]").forEach((element) => {
+    element.addEventListener("click", () => {
+      showToast(`${element.dataset.placeholder} はリンク先未設定です`);
+    });
+  });
+
+  document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
+
+  document.querySelector('[data-action="confirm-post"]').addEventListener("click", () => {
+    const payload = {
+      requester: document.getElementById("requester").value.trim(),
+      destination: document.getElementById("destination").value.trim(),
+      deadline: document.getElementById("deadline").value.trim(),
+      content: document.getElementById("content").value.trim()
+    };
+    sessionStorage.setItem("dotjp_post_draft", JSON.stringify(payload));
+    renderPostConfirmation(payload);
+    showScreen("post-confirm");
+  });
+
+  document.querySelector('[data-action="send-post"]').addEventListener("click", () => {
+    const draft = sessionStorage.getItem("dotjp_post_draft");
+    if (draft) localStorage.setItem(userStorageKey("last_post"), draft);
+    sessionStorage.removeItem("dotjp_post_draft");
+    showToast("送信処理を完了しました");
+    setTimeout(() => showScreen("home"), 450);
+  });
+
+  document.getElementById("postFile").addEventListener("change", (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const payload = {
+      requester: state.user?.name || "",
+      destination: "",
+      deadline: "",
+      content: `選択ファイル：${file.name}`
+    };
+    sessionStorage.setItem("dotjp_post_draft", JSON.stringify(payload));
+    renderPostConfirmation(payload);
+    showScreen("post-confirm");
+  });
+
+  document.getElementById("googleAccountRow").addEventListener("click", (event) => {
+    event.currentTarget.classList.toggle("selected");
+  });
+
+  document.querySelector('[data-action="finish-task"]').addEventListener("click", finishTask);
 }
 
+function showScreen(name, updateHash = true) {
+  if (!screenNames.has(name)) return;
 
-function showScreen(
-  name,
-  updateHash = true
-) {
+  document.querySelectorAll(".screen").forEach((screen) => {
+    screen.classList.toggle("is-active", screen.dataset.screen === name);
+  });
+  state.currentScreen = name;
 
-  if (
-    !screenNames.has(
-      name
-    )
-  ) {
-    return;
+  if (name === "task-start") renderStartTasks();
+  if (name === "home") refreshTaskUi();
+  if (name === "task-end") updateElapsedTaskText();
+  if (name === "post-manual") hydratePostDraft();
+  if (name === "post-confirm") {
+    renderPostConfirmation(parseJson(sessionStorage.getItem("dotjp_post_draft"), {}));
   }
 
-
-  document
-    .querySelectorAll(
-      ".screen"
-    )
-    .forEach(
-      screen => {
-
-        screen
-          .classList
-          .toggle(
-            "is-active",
-
-            screen.dataset.screen
-              ===
-              name
-          );
-
-      }
-    );
-
-
-  state.currentScreen =
-    name;
-
-
-  if (
-    name ===
-    "home"
-  ) {
-
-    updateRegion();
-
-    updateTaskTimer();
-
-  }
-
-
-  if (
-    name ===
-    "task-end"
-  ) {
-
-    updateElapsedTaskText();
-
-  }
-
-
-  if (
-    name ===
-    "post-manual"
-  ) {
-
-    hydratePostDraft();
-
-  }
-
-
-  if (
-    name ===
-    "post-confirm"
-  ) {
-
-    const draft =
-      parseJson(
-        sessionStorage.getItem(
-          "dotjp_post_draft"
-        ),
-
-        {}
-      );
-
-
-    renderPostConfirmation(
-      draft
-    );
-
-  }
-
-
-  if (updateHash) {
-
-    history.pushState(
-      null,
-      "",
-      `#${name}`
-    );
-
-  }
-
+  if (updateHash) history.pushState(null, "", `#${name}`);
 }
-
 
 function routeFromHash() {
-
-  const name =
-    normalizeHash(
-      location.hash
-    );
-
-
-  if (name) {
-
-    showScreen(
-      name,
-      false
-    );
-
-  }
-
+  const name = normalizeHash(location.hash);
+  if (name) showScreen(name, false);
 }
-
 
 function normalizeHash(hash) {
-
-  const value =
-    String(
-      hash || ""
-    )
-      .replace(
-        /^#/,
-        ""
-      );
-
-
-  return screenNames.has(
-    value
-  )
-    ? value
-    : "";
-
+  const value = String(hash || "").replace(/^#/, "");
+  return screenNames.has(value) ? value : "";
 }
-
 
 function fillUserInfo() {
-
-  const displayName =
-    state.user?.name ||
-    state.user?.email ||
-    "名前";
-
-
-  const displayEmail =
-    state.user?.email ||
-    "";
-
-
-  document
-    .querySelectorAll(
-      "[data-user-name]"
-    )
-    .forEach(
-      node => {
-
-        node.textContent =
-          `＜${displayName}＞`;
-
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      "[data-user-email]"
-    )
-    .forEach(
-      node => {
-
-        node.textContent =
-          displayEmail;
-
-      }
-    );
-
+  const displayName = state.user?.name || state.user?.email || "名前";
+  const displayEmail = state.user?.email || "";
+  document.querySelectorAll("[data-user-name]").forEach((node) => {
+    node.textContent = `＜${displayName}＞`;
+  });
+  document.querySelectorAll("[data-user-email]").forEach((node) => {
+    node.textContent = displayEmail;
+  });
 }
 
-
-function updateRegion() {
-
-  document
-    .querySelectorAll(
-      "[data-region]"
-    )
-    .forEach(
-      button => {
-
-        button
-          .classList
-          .toggle(
-            "is-active",
-
-            button.dataset.region
-              ===
-              state.region
-          );
-
-      }
-    );
-
+function userIdentity() {
+  return String(state.user?.email || "unknown").trim().toLowerCase();
 }
 
+function userStorageKey(name) {
+  return `dotjp_portal_${name}_${userIdentity()}`;
+}
+
+function userSessionKey(name) {
+  return `dotjp_portal_session_${name}_${userIdentity()}`;
+}
+
+function loadTasks() {
+  const tasks = parseJson(localStorage.getItem(userStorageKey("tasks_v1")), []);
+  return Array.isArray(tasks) ? tasks : [];
+}
+
+function saveTasks(tasks) {
+  localStorage.setItem(userStorageKey("tasks_v1"), JSON.stringify(tasks));
+}
+
+function loadSessions() {
+  const sessions = parseJson(localStorage.getItem(userStorageKey("time_sessions_v1")), []);
+  return Array.isArray(sessions) ? sessions : [];
+}
+
+function saveSessions(sessions) {
+  localStorage.setItem(userStorageKey("time_sessions_v1"), JSON.stringify(sessions));
+}
+
+function weekBounds(base = new Date()) {
+  const start = new Date(base);
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - start.getDay());
+  const end = new Date(start);
+  end.setDate(end.getDate() + 7);
+  return { start, end };
+}
+
+function currentWeekTasks() {
+  const { start, end } = weekBounds();
+  return loadTasks().filter((task) => {
+    const created = new Date(task.createdAt);
+    return created >= start && created < end;
+  });
+}
+
+function weekLabel() {
+  const { start, end } = weekBounds();
+  const last = new Date(end);
+  last.setDate(last.getDate() - 1);
+  return `${start.getMonth() + 1}/${start.getDate()}（日）〜${last.getMonth() + 1}/${last.getDate()}（土）`;
+}
+
+function presetSelectionKey(type, title) {
+  return `preset:${type}:${encodeURIComponent(title)}`;
+}
+
+function parsePresetSelection(value) {
+  if (!String(value || "").startsWith("preset:")) return null;
+  const parts = String(value).split(":");
+  if (parts.length < 3) return null;
+  const type = parts[1];
+  const title = decodeURIComponent(parts.slice(2).join(":"));
+  if (!presetTaskCatalog[type]?.includes(title)) return null;
+  return { type, title };
+}
+
+function renderPresetTasks() {
+  const root = document.getElementById("presetTaskList");
+  const groups = [
+    ["department", "部署タスク"],
+    ["mtg", "MTG"],
+    ["other", "その他"]
+  ];
+
+  root.innerHTML = groups.map(([type, label]) => {
+    const buttons = presetTaskCatalog[type].map((title) => {
+      const key = presetSelectionKey(type, title);
+      const selected = state.selectedTaskId === key ? " is-selected" : "";
+      return `<button type="button" class="preset-task-button${selected}" data-preset-task="${escapeHtml(key)}">${escapeHtml(title)}</button>`;
+    }).join("");
+
+    return `<section class="preset-task-group">
+      <h3>${escapeHtml(label)}</h3>
+      <div class="preset-task-buttons">${buttons}</div>
+    </section>`;
+  }).join("");
+
+  root.querySelectorAll("[data-preset-task]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedTaskId = button.dataset.presetTask;
+      renderStartTasks();
+    });
+  });
+}
+
+function renderStartTasks() {
+  const week = weekLabel();
+  document.getElementById("startWeekLabel").textContent = week;
+
+  const tasks = currentWeekTasks().filter((task) => !task.completedAt);
+  const list = document.getElementById("startTaskList");
+  const preset = parsePresetSelection(state.selectedTaskId);
+
+  if (!preset && !tasks.some((task) => task.id === state.selectedTaskId)) {
+    state.selectedTaskId = null;
+  }
+
+  if (!tasks.length) {
+    list.innerHTML = '<div class="start-task-empty">今週の未完了タスクはありません。</div>';
+  } else {
+    list.innerHTML = tasks.map((task) => startTaskItemHtml(task)).join("");
+    list.querySelectorAll("[data-select-task]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.selectedTaskId = button.dataset.selectTask;
+        renderStartTasks();
+      });
+    });
+  }
+
+  renderPresetTasks();
+
+  const selectedTask = tasks.find((task) => task.id === state.selectedTaskId);
+  const selectedPreset = parsePresetSelection(state.selectedTaskId);
+  const selectedName = selectedTask?.title || selectedPreset?.title || "未選択";
+
+  document.getElementById("selectedTaskName").textContent = selectedName;
+  document.querySelector('[data-action="start-task"]').disabled = !(selectedTask || selectedPreset);
+}
+
+function startTaskItemHtml(task) {
+  const selected = task.id === state.selectedTaskId ? " is-selected" : "";
+  return `<button type="button" class="start-task-item${selected}" data-select-task="${escapeHtml(task.id)}">
+    ${taskBadgeHtml(task.type)}
+    <span class="start-task-title">${escapeHtml(task.title)}</span>
+  </button>`;
+}
+
+function startSelectedTask() {
+  let task = currentWeekTasks().find(
+    (item) => item.id === state.selectedTaskId && !item.completedAt
+  );
+
+  if (!task) {
+    const preset = parsePresetSelection(state.selectedTaskId);
+
+    if (!preset) {
+      showToast("タスクを選択してください");
+      return;
+    }
+
+    const tasks = loadTasks();
+    task = {
+      id: `task_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      title: preset.title,
+      type: preset.type,
+      createdAt: new Date().toISOString(),
+      completedAt: null
+    };
+
+    tasks.push(task);
+    saveTasks(tasks);
+    state.selectedTaskId = task.id;
+  }
+
+  sessionStorage.setItem(userSessionKey("active_task_id"), task.id);
+  sessionStorage.setItem(userSessionKey("task_started_at"), String(Date.now()));
+  refreshTaskUi();
+  showScreen("home");
+}
+
+function getActiveTaskId() {
+  return sessionStorage.getItem(userSessionKey("active_task_id"));
+}
+
+function getActiveStartedAt() {
+  const value = Number(sessionStorage.getItem(userSessionKey("task_started_at")));
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+function refreshTaskUi() {
+  renderStartTasks();
+  renderHomeTaskLists();
+  renderTaskTimeChart();
+}
+
+function renderHomeTaskLists() {
+  const tasks = currentWeekTasks();
+  const activeId = getActiveTaskId();
+  const unfinished = tasks.filter((task) => !task.completedAt);
+  const finished = tasks
+    .filter((task) => task.completedAt)
+    .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+
+  document.getElementById("unfinishedWeekLabel").textContent = weekLabel();
+  document.getElementById("finishedWeekLabel").textContent = weekLabel();
+  document.getElementById("unfinishedTasks").innerHTML = taskSummaryHtml(unfinished, activeId);
+  document.getElementById("finishedTasks").innerHTML = taskSummaryHtml(finished, activeId);
+}
+
+function taskSummaryHtml(tasks, activeId) {
+  if (!tasks.length) return '<div class="summary-empty">なし</div>';
+  return tasks.map((task) => {
+    const active = task.id === activeId ? " is-active" : "";
+    return `<div class="summary-task-row${active}" title="${escapeHtml(task.title)}">
+      ${taskBadgeHtml(task.type)}
+      <span class="summary-task-title">${escapeHtml(task.title)}</span>
+    </div>`;
+  }).join("");
+}
+
+function taskBadgeHtml(type) {
+  const label = taskTypeLabels[type] || taskTypeLabels.other;
+  const cls = type === "mtg" ? " type-mtg" : type === "other" ? " type-other" : "";
+  return `<span class="task-type-badge${cls}">${label}</span>`;
+}
 
 function startTimerLoop() {
-
-  clearInterval(
-    state.timerId
-  );
-
-
-  updateTaskTimer();
-
-
-  state.timerId =
-    setInterval(
-      updateTaskTimer,
-      1000
-    );
-
+  clearInterval(state.timerId);
+  refreshTaskUi();
+  state.timerId = setInterval(() => {
+    if (state.currentScreen === "home") renderTaskTimeChart();
+  }, 30000);
 }
-
 
 function getElapsedMs() {
-
-  const startedAt =
-    Number(
-      sessionStorage.getItem(
-        "dotjp_task_started_at"
-      )
-    );
-
-
-  if (
-    !Number.isFinite(
-      startedAt
-    ) ||
-    startedAt <= 0
-  ) {
-
-    return 0;
-
-  }
-
-
-  return Math.max(
-    0,
-    Date.now() -
-      startedAt
-  );
-
+  const startedAt = getActiveStartedAt();
+  if (!startedAt) return 0;
+  return Math.max(0, Date.now() - startedAt);
 }
-
-
-function updateTaskTimer() {
-
-  const ms =
-    getElapsedMs();
-
-
-  const totalSeconds =
-    Math.floor(
-      ms / 1000
-    );
-
-
-  const hours =
-    Math.floor(
-      totalSeconds /
-      3600
-    );
-
-
-  const minutes =
-    Math.floor(
-      (
-        totalSeconds %
-        3600
-      ) /
-      60
-    );
-
-
-  const seconds =
-    totalSeconds %
-    60;
-
-
-  const node =
-    document.getElementById(
-      "taskTimer"
-    );
-
-
-  if (node) {
-
-    node.textContent =
-      `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`;
-
-  }
-
-}
-
 
 function updateElapsedTaskText() {
-
-  const ms =
-    getElapsedMs();
-
-
-  const totalMinutes =
-    Math.floor(
-      ms /
-      60000
-    );
-
-
-  const hours =
-    Math.floor(
-      totalMinutes /
-      60
-    );
-
-
-  const minutes =
-    totalMinutes %
-    60;
-
-
-  document
-    .getElementById(
-      "elapsedTaskText"
-    )
-    .textContent =
-      `${hours}時間${minutes}分`;
-
+  const ms = getElapsedMs();
+  const totalMinutes = Math.floor(ms / 60000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  document.getElementById("elapsedTaskText").textContent = `${hours}時間${minutes}分`;
 }
 
+function lastSevenDays() {
+  const days = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  for (let offset = 6; offset >= 0; offset -= 1) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - offset);
+    days.push(date);
+  }
+  return days;
+}
+
+function localDateKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+
+function addDurationAcrossDays(start, end, totals) {
+  let cursor = new Date(start);
+
+  while (cursor < end) {
+    const nextDay = new Date(cursor);
+    nextDay.setHours(24, 0, 0, 0);
+    const segmentEnd = nextDay < end ? nextDay : end;
+    const key = localDateKey(cursor);
+
+    if (totals.has(key)) {
+      totals.set(key, totals.get(key) + Math.max(0, segmentEnd - cursor));
+    }
+
+    cursor = segmentEnd;
+  }
+}
+
+function renderTaskTimeChart() {
+  const chart = document.getElementById("taskTimeChart");
+  if (!chart || !state.user) return;
+
+  const days = lastSevenDays();
+  const totals = new Map(days.map((day) => [localDateKey(day), 0]));
+
+  loadSessions().forEach((session) => {
+    const start = new Date(session.startedAt);
+    const end = new Date(session.endedAt);
+    if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end <= start) return;
+    addDurationAcrossDays(start, end, totals);
+  });
+
+  const runningStart = getActiveStartedAt();
+  if (runningStart > 0) {
+    addDurationAcrossDays(new Date(runningStart), new Date(), totals);
+  }
+
+  const values = days.map((day) => totals.get(localDateKey(day)) || 0);
+  const max = Math.max(...values, 1);
+  const total = values.reduce((sum, value) => sum + value, 0);
+
+  const bars = days.map((day, index) => {
+    const value = values[index];
+    const height = value > 0 ? Math.max(5, Math.round((value / max) * 88)) : 0;
+    const label = `${day.getMonth() + 1}/${day.getDate()}`;
+    return `<div class="task-chart-column" title="${label}：${formatDuration(value)}">
+      <div class="task-chart-track"><div class="task-chart-bar" style="height:${height}px"></div></div>
+      <div class="task-chart-label">${label}</div>
+    </div>`;
+  }).join("");
+
+  chart.innerHTML = `<div class="task-chart-total">計 ${formatDuration(total)}</div><div class="task-chart-bars">${bars}</div>`;
+}
+
+function formatDuration(ms) {
+  const minutes = Math.floor(Number(ms || 0) / 60000);
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (hours > 0 && rest > 0) return `${hours}時間${rest}分`;
+  if (hours > 0) return `${hours}時間`;
+  return `${rest}分`;
+}
 
 function finishTask() {
+  const startedAt = getActiveStartedAt();
+  const activeTaskId = getActiveTaskId();
+  if (!startedAt || !activeTaskId) {
+    showToast("実行中のタスクがありません");
+    return;
+  }
 
+  const endedAt = new Date();
+  const durationMs = Math.max(0, endedAt.getTime() - startedAt);
   const progress = {};
+  document.querySelectorAll("[data-progress]").forEach((input) => {
+    progress[input.dataset.progress] = Number(input.value || 0);
+  });
 
+  const tasks = loadTasks();
+  const task = tasks.find((item) => item.id === activeTaskId);
+  if (task) task.completedAt = endedAt.toISOString();
+  saveTasks(tasks);
 
-  document
-    .querySelectorAll(
-      "[data-progress]"
-    )
-    .forEach(
-      input => {
-
-        progress[
-          input.dataset.progress
-        ] =
-          Number(
-            input.value ||
-            0
-          );
-
-      }
-    );
-
-
-  const result = {
-
-    endedAt:
-      new Date()
-        .toISOString(),
-
-    elapsedMs:
-      getElapsedMs(),
-
+  const sessions = loadSessions();
+  sessions.push({
+    id: `session_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    taskId: activeTaskId,
+    startedAt: new Date(startedAt).toISOString(),
+    endedAt: endedAt.toISOString(),
+    durationMs,
     progress,
+    reflection: document.getElementById("reflection").value.trim(),
+    tomorrowGoal: document.getElementById("tomorrowGoal").value.trim()
+  });
+  saveSessions(sessions);
 
-    reflection:
-      document
-        .getElementById(
-          "reflection"
-        )
-        .value
-        .trim(),
+  sessionStorage.removeItem(userSessionKey("active_task_id"));
+  sessionStorage.removeItem(userSessionKey("task_started_at"));
+  state.selectedTaskId = null;
 
-    tomorrowGoal:
-      document
-        .getElementById(
-          "tomorrowGoal"
-        )
-        .value
-        .trim()
+  document.querySelectorAll("[data-progress]").forEach((input) => { input.value = "0"; });
+  document.getElementById("reflection").value = "";
+  document.getElementById("tomorrowGoal").value = "";
 
-  };
-
-
-  localStorage.setItem(
-    "dotjp_last_task",
-    JSON.stringify(
-      result
-    )
-  );
-
-
-  sessionStorage.removeItem(
-    "dotjp_task_started_at"
-  );
-
-
-  document
-    .querySelectorAll(
-      "[data-progress]"
-    )
-    .forEach(
-      input => {
-
-        input.value =
-          "0";
-
-      }
-    );
-
-
-  document
-    .getElementById(
-      "reflection"
-    )
-    .value =
-      "";
-
-
-  document
-    .getElementById(
-      "tomorrowGoal"
-    )
-    .value =
-      "";
-
-
-  document
-    .getElementById(
-      "finishedTasks"
-    )
-    .textContent =
-      "1件";
-
-
-  document
-    .getElementById(
-      "unfinishedTasks"
-    )
-    .textContent =
-      "";
-
-
-  showToast(
-    "タスクを記録しました"
-  );
-
-
-  setTimeout(
-    () =>
-      showScreen(
-        "home"
-      ),
-
-    450
-  );
-
+  refreshTaskUi();
+  showToast("タスクを完了として記録しました");
+  setTimeout(() => showScreen("home"), 450);
 }
 
+function updateRegion() {
+  document.querySelectorAll("[data-region]").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.region === state.region);
+  });
+}
 
 function hydratePostDraft() {
-
-  const draft =
-    parseJson(
-      sessionStorage.getItem(
-        "dotjp_post_draft"
-      ),
-
-      null
-    );
-
-
-  if (!draft) {
-    return;
-  }
-
-
-  document
-    .getElementById(
-      "requester"
-    )
-    .value =
-      draft.requester ||
-      "";
-
-
-  document
-    .getElementById(
-      "destination"
-    )
-    .value =
-      draft.destination ||
-      "";
-
-
-  document
-    .getElementById(
-      "deadline"
-    )
-    .value =
-      draft.deadline ||
-      "";
-
-
-  document
-    .getElementById(
-      "content"
-    )
-    .value =
-      draft.content ||
-      "";
-
+  const draft = parseJson(sessionStorage.getItem("dotjp_post_draft"), null);
+  if (!draft) return;
+  document.getElementById("requester").value = draft.requester || "";
+  document.getElementById("destination").value = draft.destination || "";
+  document.getElementById("deadline").value = draft.deadline || "";
+  document.getElementById("content").value = draft.content || "";
 }
 
-
-function renderPostConfirmation(
-  payload
-) {
-
-  document
-    .querySelectorAll(
-      "[data-post-value]"
-    )
-    .forEach(
-      node => {
-
-        const key =
-          node.dataset
-            .postValue;
-
-
-        node.textContent =
-          payload?.[key] ||
-          "";
-
-      }
-    );
-
+function renderPostConfirmation(payload) {
+  document.querySelectorAll("[data-post-value]").forEach((node) => {
+    const key = node.dataset.postValue;
+    node.textContent = payload?.[key] || "";
+  });
 }
 
-
-function showToast(
-  message
-) {
-
-  const toast =
-    document.getElementById(
-      "toast"
-    );
-
-
-  toast.textContent =
-    message;
-
-
-  toast
-    .classList
-    .add(
-      "show"
-    );
-
-
-  clearTimeout(
-    showToast.timer
-  );
-
-
-  showToast.timer =
-    setTimeout(
-      () => {
-
-        toast
-          .classList
-          .remove(
-            "show"
-          );
-
-      },
-
-      1800
-    );
-
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 1800);
 }
-
 
 function fitCanvas() {
-
-  const scale =
-    Math.min(
-      window.innerWidth /
-        1440,
-
-      window.innerHeight /
-        1024,
-
-      1
-    );
-
-
-  const frame =
-    document.getElementById(
-      "canvasFrame"
-    );
-
-
-  const holder =
-    document.getElementById(
-      "canvasHolder"
-    );
-
-
-  if (
-    !frame ||
-    !holder
-  ) {
-    return;
-  }
-
-
-  frame.style.transform =
-    `scale(${scale})`;
-
-
-  holder.style.width =
-    `${1440 * scale}px`;
-
-
-  holder.style.height =
-    `${1024 * scale}px`;
-
+  const scale = Math.min(window.innerWidth / 1440, window.innerHeight / 1024, 1);
+  const frame = document.getElementById("canvasFrame");
+  const holder = document.getElementById("canvasHolder");
+  if (!frame || !holder) return;
+  frame.style.transform = `scale(${scale})`;
+  holder.style.width = `${1440 * scale}px`;
+  holder.style.height = `${1024 * scale}px`;
 }
 
-
-function pad2(value) {
-
-  return String(
-    value
-  )
-    .padStart(
-      2,
-      "0"
-    );
-
+function parseJson(value, fallback) {
+  try { return JSON.parse(value); } catch { return fallback; }
 }
 
-
-function parseJson(
-  value,
-  fallback
-) {
-
-  try {
-
-    return JSON.parse(
-      value
-    );
-
-  } catch {
-
-    return fallback;
-
-  }
-
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-</script>
+  </script>
 </body>
 </html>
