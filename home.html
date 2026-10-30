@@ -238,22 +238,46 @@ button {
 
 .region-switch {
   position: absolute;
-  right: -1px;
+  right: -6px;
   top: -6px;
   width: 320px;
   height: 160px;
   display: grid;
   grid-template-columns: 160px 160px;
+  z-index: 2;
 }
 
 .region-button {
   width: 160px;
   height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 6px solid var(--sky);
   background: #fff;
   color: var(--navy);
   font-size: 50px;
+  line-height: 1;
   font-weight: 500;
   cursor: pointer;
+  appearance: none;
+  position: relative;
+  z-index: 3;
+}
+
+/* 2つの正方形の境界線を二重にしない */
+.region-button + .region-button {
+  border-left: 0;
+}
+
+.region-button:hover {
+  filter: brightness(.97);
+}
+
+.region-button:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: -3px;
 }
 
 .region-button.is-active {
