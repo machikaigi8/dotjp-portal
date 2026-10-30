@@ -5,331 +5,948 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
-  <link rel="stylesheet" href="./portal.css">
+  <style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --page-bg: #f2f2ff;
+  --navy: #000060;
+  --blue: #283dff;
+  --sky: #40ccff;
+  --blue-title: #3080ff;
+  --green: #1b5d1b;
+  --green-border: #00b674;
+  --red: #ff003c;
+  --post-red: #cd351a;
+  --post-dark: #450303;
+  --postcard-red: #d76969;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--page-bg);
+  font-family: Inter, "Segoe UI", "Noto Sans JP", "Yu Gothic", sans-serif;
+  color: #000;
+  overflow: hidden;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  border: 0;
+}
+
+.loading-screen {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--page-bg);
+  font-size: 24px;
+}
+
+.app-shell {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  display: grid;
+  place-items: start center;
+  background: var(--page-bg);
+}
+
+.canvas-holder {
+  position: relative;
+  flex: none;
+}
+
+.canvas-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 1024px;
+  transform-origin: 0 0;
+  background: var(--page-bg);
+  overflow: hidden;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: var(--page-bg);
+}
+
+.screen.is-active {
+  display: block;
+}
+
+.user-name {
+  position: absolute;
+  left: 75px;
+  top: 40px;
+  width: 520px;
+  height: 36px;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 400;
+}
+
+/* タスク開始 */
+
+.start-panel {
+  position: absolute;
+  left: 120px;
+  top: 162px;
+  width: 1200px;
+  height: 700px;
+  background: #fff;
+  text-align: center;
+}
+
+.start-panel h1 {
+  margin: 80px 0 0;
+  font-size: 60px;
+  font-weight: 400;
+}
+
+.start-panel p {
+  margin: 125px 0 0;
+  font-size: 60px;
+  font-weight: 400;
+}
+
+.cyan-action {
+  background: var(--sky);
+  color: #fff;
+  cursor: pointer;
+  transition: filter .15s ease;
+}
+
+.cyan-action:hover {
+  filter: brightness(.94);
+}
+
+.start-panel .cyan-action {
+  position: absolute;
+  left: 495px;
+  top: 602px;
+  width: 210px;
+  height: 70px;
+  font-size: 40px;
+  font-weight: 500;
+}
+
+/* ホーム */
+
+.home-summary {
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  width: 1075px;
+  height: 200px;
+  display: grid;
+  grid-template-columns: 400px 400px 275px;
+  border: 3px solid var(--navy);
+  background: #fff;
+}
+
+.summary-cell {
+  position: relative;
+  padding: 8px 10px;
+  border-right: 2px solid var(--navy);
+}
+
+.summary-cell:last-child {
+  border-right: 0;
+}
+
+.summary-title {
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 500;
+}
+
+.summary-value {
+  padding-top: 22px;
+  font-size: 24px;
+  white-space: pre-line;
+}
+
+.timer-value {
+  font-size: 34px;
+  font-variant-numeric: tabular-nums;
+}
+
+.task-end-button {
+  position: absolute;
+  left: 1200px;
+  top: 97px;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--red);
+  color: #fff;
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.department-panel {
+  position: absolute;
+  left: 100px;
+  top: 330px;
+  width: 1300px;
+  height: 400px;
+  background: #fff;
+  border: 6px solid var(--sky);
+}
+
+.department-panel h2 {
+  position: absolute;
+  left: 5px;
+  top: 0;
+  margin: 0;
+  font-size: 35px;
+  line-height: 42px;
+  color: var(--blue-title);
+  font-weight: 700;
+}
+
+.region-switch {
+  position: absolute;
+  right: -1px;
+  top: -6px;
+  width: 320px;
+  height: 160px;
+  display: grid;
+  grid-template-columns: 160px 160px;
+}
+
+.region-button {
+  width: 160px;
+  height: 160px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 50px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.region-button.is-active {
+  background: var(--sky);
+  color: #fff;
+}
+
+.department-grid {
+  position: absolute;
+  left: 14px;
+  top: 64px;
+  width: 1260px;
+  display: grid;
+  grid-template-columns: 300px 300px 300px 300px;
+  grid-template-rows: 90px 90px 90px;
+  gap: 20px;
+}
+
+.blue-menu {
+  width: 300px;
+  height: 90px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 35px;
+  line-height: 1.1;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.blue-menu:hover {
+  filter: brightness(.93);
+}
+
+.department-grid > :nth-child(1) { grid-column: 1; grid-row: 1; }
+.department-grid > :nth-child(2) { grid-column: 2; grid-row: 1; }
+.department-grid > :nth-child(3) { grid-column: 3; grid-row: 1; }
+.department-grid > :nth-child(4) { grid-column: 1; grid-row: 2; }
+.department-grid > :nth-child(5) { grid-column: 2; grid-row: 2; }
+.department-grid > :nth-child(6) { grid-column: 3; grid-row: 2; }
+.department-grid > :nth-child(7) { grid-column: 1; grid-row: 3; }
+.department-grid > :nth-child(8) { grid-column: 2; grid-row: 3; }
+.department-grid > :nth-child(9) { grid-column: 3; grid-row: 3; }
+.department-grid > :nth-child(10) { grid-column: 4; grid-row: 3; }
+
+.schedule-button {
+  grid-column: 4;
+  grid-row: 2;
+}
+
+.links-panel {
+  position: absolute;
+  left: 100px;
+  top: 760px;
+  width: 1300px;
+  height: 200px;
+  background: #fff;
+  border: 6px solid var(--green-border);
+}
+
+.links-panel h2 {
+  position: absolute;
+  left: 19px;
+  top: 12px;
+  margin: 0;
+  font-size: 35px;
+  line-height: 42px;
+  color: green;
+  font-weight: 700;
+}
+
+.links-grid {
+  position: absolute;
+  left: 14px;
+  top: 74px;
+  display: grid;
+  grid-template-columns: repeat(4, 300px);
+  gap: 20px;
+}
+
+.green-menu {
+  width: 300px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green);
+  color: #fff;
+  font-size: 35px;
+  font-weight: 500;
+  text-align: center;
+}
+
+a.green-menu {
+  text-decoration: underline;
+}
+
+.form-link {
+  font-size: 30px;
+}
+
+.green-placeholder {
+  text-decoration: none;
+}
+
+/* POST */
+
+.post-machine {
+  position: absolute;
+  left: 271px;
+  top: 111px;
+  width: 897px;
+  height: 855px;
+}
+
+.post-machine::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 897px;
+  height: 586px;
+  background: var(--post-red);
+}
+
+.post-machine-leg {
+  position: absolute;
+  left: 343px;
+  top: 586px;
+  width: 211px;
+  height: 269px;
+  background: var(--post-dark);
+}
+
+.post-input-box {
+  position: absolute;
+  left: 129px;
+  top: 65px;
+  width: 639px;
+  height: 260px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #fff;
+  z-index: 2;
+}
+
+.post-choice {
+  position: relative;
+  text-align: center;
+}
+
+.post-divider {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 5px;
+  height: 260px;
+  transform: translateX(-50%);
+  background: #b7b7b7;
+}
+
+.file-choice-button {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 27px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  background: #d9d9d9;
+  color: #000;
+  font-size: 20px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button.file-choice-button {
+  width: calc(100% - 48px);
+}
+
+.post-choice-description {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 106px;
+  color: #5b0000;
+  font-size: 30px;
+  line-height: 1.25;
+  font-weight: 500;
+}
+
+.post-machine-title {
+  position: absolute;
+  left: 314px;
+  top: 329px;
+  width: 268px;
+  height: 261px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 500;
+  z-index: 2;
+}
+
+.post-machine-title strong {
+  margin: 4px 0;
+  font-size: 58px;
+  font-weight: 500;
+}
+
+/* はがき（完全HTML/CSS） */
+
+.postcard-card {
+  position: absolute;
+  left: 470px;
+  top: 142px;
+  width: 500px;
+  height: 740px;
+  background: #fff;
+  border: 3px solid #000;
+  overflow: hidden;
+}
+
+.postcard-top {
+  position: absolute;
+  left: 38px;
+  right: 34px;
+  top: 28px;
+  height: 110px;
+}
+
+.stamp-box {
+  position: absolute;
+  left: 0;
+  top: 18px;
+  width: 74px;
+  height: 80px;
+  border: 3px solid #198d46;
+  color: #198d46;
+  overflow: hidden;
+}
+
+.stamp-bird {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  font-size: 42px;
+  line-height: 1;
+  transform: rotate(-28deg) scaleX(1.15);
+  font-family: Georgia, serif;
+}
+
+.stamp-amount {
+  position: absolute;
+  right: 4px;
+  bottom: -2px;
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.postcard-address-block {
+  position: absolute;
+  left: 112px;
+  top: 0;
+  width: 270px;
+}
+
+.postcard-caption {
+  color: var(--postcard-red);
+  font-size: 13px;
+  letter-spacing: 7px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.postal-boxes {
+  display: grid;
+  grid-template-columns: repeat(7, 34px);
+  gap: 2px;
+  justify-content: center;
+}
+
+.postal-boxes span {
+  width: 34px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--postcard-red);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.postcard-form-row,
+.postcard-display-row {
+  position: absolute;
+  left: 32px;
+  right: 30px;
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  align-items: start;
+  font-size: 30px;
+  line-height: 1.25;
+  font-weight: 500;
+  z-index: 3;
+}
+
+.postcard-form-row input,
+.postcard-form-row textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(0,0,0,.3);
+  outline: none;
+  font-size: 26px;
+  padding: 1px 4px 3px;
+}
+
+.postcard-form-row textarea {
+  height: 125px;
+  resize: none;
+  border: 1px solid rgba(0,0,0,.16);
+}
+
+.postcard-display-row span {
+  min-height: 38px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.row-requester {
+  top: 225px;
+}
+
+.row-destination {
+  top: 270px;
+}
+
+.row-deadline {
+  top: 430px;
+}
+
+.row-content {
+  top: 475px;
+}
+
+.postcard-bottom {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  width: 235px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bottom-postal-boxes {
+  display: grid;
+  grid-template-columns: repeat(7, 18px);
+  gap: 1px;
+}
+
+.bottom-postal-boxes span {
+  width: 18px;
+  height: 26px;
+  border: 1px solid #e5b0b0;
+}
+
+.postcard-mark {
+  width: 58px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  color: var(--postcard-red);
+  border: 1px solid #e5b0b0;
+  border-radius: 4px;
+  font-size: 18px;
+}
+
+.postcard-confirm {
+  position: absolute;
+  left: 286px;
+  top: 653px;
+  width: 195px;
+  height: 61px;
+  background: #d4d5ff;
+  color: #000;
+  font-size: 30px;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 4;
+}
+
+/* スケジュール */
+
+.schedule-body {
+  position: absolute;
+  left: 70px;
+  top: 137px;
+  width: 1300px;
+  height: 750px;
+  background: #fff;
+}
+
+.calendar-list {
+  position: absolute;
+  left: 35px;
+  top: 78px;
+  width: 600px;
+}
+
+.calendar-list h2 {
+  position: absolute;
+  left: 0;
+  margin: 0;
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.calendar-list h2:nth-of-type(1) { top: 0; }
+.calendar-list h2:nth-of-type(2) { top: 232px; }
+.calendar-list h2:nth-of-type(3) { top: 464px; }
+
+.google-account-row {
+  position: absolute;
+  left: 7px;
+  top: 106px;
+  min-width: 471px;
+  height: 69px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 4px solid #1320ff;
+  border-radius: 22px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.calendar-radio {
+  width: 50px;
+  height: 50px;
+  flex: none;
+  border-radius: 50%;
+  border: 3px solid #000;
+  background: #fff;
+}
+
+.google-account-row.selected .calendar-radio::after {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 28px;
+  margin: 8px;
+  border-radius: 50%;
+  background: #1320ff;
+}
+
+.available-times {
+  position: absolute;
+  left: 775px;
+  top: 25px;
+  width: 500px;
+  height: 700px;
+  border: 5px solid #000;
+  padding: 15px 10px;
+}
+
+.available-times h2 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 500;
+}
+
+.back-button {
+  position: absolute;
+  left: 128px;
+  top: 912px;
+  width: 140px;
+  height: 60px;
+  background: var(--blue-title);
+  color: #fff;
+  font-size: 40px;
+  line-height: 47px;
+  cursor: pointer;
+}
+
+/* タスク終了 */
+
+.task-end-panel {
+  position: absolute;
+  left: 120px;
+  top: 62px;
+  width: 1200px;
+  height: 900px;
+  background: #fff;
+}
+
+.task-end-panel > h1 {
+  margin: 70px auto 0;
+  width: 1140px;
+  text-align: center;
+  font-size: 55px;
+  line-height: 1.15;
+  font-weight: 400;
+}
+
+.progress-columns {
+  position: absolute;
+  left: 60px;
+  top: 240px;
+  width: 1080px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.progress-group {
+  font-size: 34px;
+}
+
+.progress-group h2 {
+  margin: 0 0 28px;
+  font-size: 40px;
+  font-weight: 400;
+}
+
+.progress-group label {
+  display: block;
+  margin: 4px 0;
+  text-align: center;
+}
+
+.progress-group input {
+  width: 70px;
+  border: 0;
+  border-bottom: 2px solid #999;
+  text-align: right;
+  font-size: 34px;
+  background: transparent;
+}
+
+.wide-task-input {
+  position: absolute;
+  left: 82px;
+  width: 1036px;
+  height: 85px;
+  border: 4px solid #000;
+  resize: none;
+  padding: 10px;
+  font-size: 36px;
+  line-height: 1.3;
+}
+
+#reflection {
+  top: 588px;
+}
+
+#tomorrowGoal {
+  top: 705px;
+}
+
+.task-submit {
+  position: absolute;
+  left: 495px;
+  top: 812px;
+  width: 210px;
+  height: 70px;
+  font-size: 40px;
+}
+
+/* 共通 */
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  z-index: 50;
+  transform: translateX(-50%);
+  padding: 14px 22px;
+  border-radius: 8px;
+  background: rgba(0,0,0,.82);
+  color: #fff;
+  font-size: 22px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+</style>
 </head>
 <body>
-  <div id="loading" class="loading-screen">
-    認証情報を確認しています…
-  </div>
+  <div id="loading" class="loading-screen">認証情報を確認しています…</div>
 
   <div id="app" class="app-shell" hidden>
     <div id="canvasHolder" class="canvas-holder">
       <main id="canvasFrame" class="canvas-frame">
 
-        <!-- タスク開始 -->
-        <section
-          class="screen screen-task-start"
-          data-screen="task-start"
-        >
+        <section class="screen screen-task-start" data-screen="task-start">
           <div class="start-panel">
-            <h1>
-              ログイン完了！
-            </h1>
-
-            <p>
-              これからやるタスクを選択
-            </p>
-
-            <button
-              class="cyan-action"
-              type="button"
-              data-action="start-task"
-            >
-              スタート
-            </button>
+            <h1>ログイン完了！</h1>
+            <p>これからやるタスクを選択</p>
+            <button class="cyan-action" type="button" data-action="start-task">スタート</button>
           </div>
         </section>
 
-
-        <!-- ホーム -->
-        <section
-          class="screen screen-home"
-          data-screen="home"
-        >
-          <div
-            class="user-name"
-            data-user-name
-          >
-            ＜名前＞
-          </div>
+        <section class="screen screen-home" data-screen="home">
+          <div class="user-name" data-user-name>＜名前＞</div>
 
           <div class="home-summary">
-
             <div class="summary-cell">
-              <div class="summary-title">
-                未完了タスク一覧
-              </div>
-
-              <div
-                class="summary-value"
-                id="unfinishedTasks"
-              ></div>
+              <div class="summary-title">未完了タスク一覧</div>
+              <div class="summary-value" id="unfinishedTasks"></div>
             </div>
-
             <div class="summary-cell">
-              <div class="summary-title">
-                終わったタスク
-              </div>
-
-              <div
-                class="summary-value"
-                id="finishedTasks"
-              ></div>
+              <div class="summary-title">終わったタスク</div>
+              <div class="summary-value" id="finishedTasks"></div>
             </div>
-
             <div class="summary-cell">
-              <div class="summary-title">
-                タスク時間
-              </div>
-
-              <div
-                class="summary-value timer-value"
-                id="taskTimer"
-              ></div>
+              <div class="summary-title">タスク時間</div>
+              <div class="summary-value timer-value" id="taskTimer"></div>
             </div>
-
           </div>
 
-
-          <button
-            class="task-end-button"
-            type="button"
-            data-route="task-end"
-          >
+          <button class="task-end-button" type="button" data-route="task-end">
             <span>タスク</span>
             <span>終了</span>
           </button>
 
-
           <section class="department-panel">
-
-            <h2>
-              部署関連
-            </h2>
+            <h2>部署関連</h2>
 
             <div class="region-switch">
-
-              <button
-                type="button"
-                class="region-button"
-                data-region="kanto"
-              >
-                関東
-              </button>
-
-              <button
-                type="button"
-                class="region-button"
-                data-region="kansai"
-              >
-                関西
-              </button>
-
+              <button type="button" class="region-button" data-region="kanto">関東</button>
+              <button type="button" class="region-button" data-region="kansai">関西</button>
             </div>
-
 
             <div class="department-grid">
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-placeholder="コンス"
-              >
-                コンス
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-placeholder="マーケティング"
-              >
-                マーケティング
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-placeholder="人事局"
-              >
-                人事局
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-placeholder="プログラム"
-              >
-                プログラム
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-placeholder="クライアント"
-              >
-                クライアント
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-placeholder="事務局"
-              >
-                事務局
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-placeholder="MTG出欠登録"
-              >
-                MTG出欠登録
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-route="post"
-              >
-                〒依頼出しPOST
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-route="schedule"
-              >
-                スケジュール登録
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu"
-                data-placeholder="HPへの要望"
-              >
-                HPへの要望
-              </button>
-
-              <button
-                type="button"
-                class="blue-menu schedule-button"
-                data-placeholder="予定確認"
-              >
-                予定確認
-              </button>
-
+              <button type="button" class="blue-menu" data-placeholder="コンス">コンス</button>
+              <button type="button" class="blue-menu" data-placeholder="マーケティング">マーケティング</button>
+              <button type="button" class="blue-menu" data-placeholder="人事局">人事局</button>
+              <button type="button" class="blue-menu" data-placeholder="プログラム">プログラム</button>
+              <button type="button" class="blue-menu" data-placeholder="クライアント">クライアント</button>
+              <button type="button" class="blue-menu" data-placeholder="事務局">事務局</button>
+              <button type="button" class="blue-menu" data-placeholder="MTG出欠登録">MTG出欠登録</button>
+              <button type="button" class="blue-menu" data-route="post">〒依頼出しPOST</button>
+              <button type="button" class="blue-menu" data-route="schedule">スケジュール登録</button>
+              <button type="button" class="blue-menu" data-placeholder="HPへの要望">HPへの要望</button>
+              <button type="button" class="blue-menu schedule-button" data-placeholder="予定確認">予定確認</button>
             </div>
           </section>
-
 
           <section class="links-panel">
-
-            <h2>
-              リンク集
-            </h2>
-
+            <h2>リンク集</h2>
             <div class="links-grid">
-
-              <a
-                class="green-menu"
-                href="https://docs.google.com/spreadsheets/d/1isxF8Tmc6FnSVq0IhrcoHMxO6CbnBqD4mrqGBsEWiJg/edit?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                経営管理シート
-              </a>
-
-              <a
-                class="green-menu"
-                href="https://docs.google.com/spreadsheets/d/1Tgw7UTuS1HPIt1_vaRi8em5atPb1QQW_sokdY9AH7DE/edit?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                経費発生報告
-              </a>
-
-              <a
-                class="green-menu form-link"
-                href="https://docs.google.com/forms/d/e/1FAIpQLSc-vCSYxRdcyz-F6B5-RIBOOZODO-FHwI-qwj06nYSF77EOkQ/viewform"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                説明会申込フォーム
-              </a>
-
-              <div class="green-menu green-placeholder">
-                空き
-              </div>
-
+              <a class="green-menu" href="https://docs.google.com/spreadsheets/d/1isxF8Tmc6FnSVq0IhrcoHMxO6CbnBqD4mrqGBsEWiJg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">経営管理シート</a>
+              <a class="green-menu" href="https://docs.google.com/spreadsheets/d/1Tgw7UTuS1HPIt1_vaRi8em5atPb1QQW_sokdY9AH7DE/edit?usp=sharing" target="_blank" rel="noopener noreferrer">経費発生報告</a>
+              <a class="green-menu form-link" href="https://docs.google.com/forms/d/e/1FAIpQLSc-vCSYxRdcyz-F6B5-RIBOOZODO-FHwI-qwj06nYSF77EOkQ/viewform" target="_blank" rel="noopener noreferrer">説明会申込フォーム</a>
+              <div class="green-menu green-placeholder">空き</div>
             </div>
           </section>
-
         </section>
 
-
-        <!-- 〒依頼出しPOST -->
-        <section
-          class="screen screen-post"
-          data-screen="post"
-        >
-
-          <div
-            class="user-name"
-            data-user-name
-          >
-            ＜名前＞
-          </div>
-
+        <section class="screen screen-post" data-screen="post">
+          <div class="user-name" data-user-name>＜名前＞</div>
 
           <div class="post-machine">
-
             <div class="post-input-box">
-
               <div class="post-choice">
-
-                <label
-                  class="file-choice-button"
-                  for="postFile"
-                >
-                  ファイルを選択
-                </label>
-
-                <input
-                  id="postFile"
-                  type="file"
-                  accept=".png,.jpg,.jpeg,.webp,.pdf"
-                  hidden
-                >
-
-                <div class="post-choice-description">
-                  ファイルから<br>
-                  自動読み込み
-                </div>
-
+                <label class="file-choice-button" for="postFile">ファイルを選択</label>
+                <input id="postFile" type="file" accept=".png,.jpg,.jpeg,.webp,.pdf" hidden>
+                <div class="post-choice-description">ファイルから<br>自動読み込み</div>
               </div>
-
 
               <div class="post-divider"></div>
 
-
               <div class="post-choice">
-
-                <button
-                  class="file-choice-button"
-                  type="button"
-                  data-route="post-manual"
-                >
-                  手入力
-                </button>
-
-                <div class="post-choice-description">
-                  手動で入力
-                </div>
-
+                <button class="file-choice-button" type="button" data-route="post-manual">手入力</button>
+                <div class="post-choice-description">手動で入力</div>
               </div>
-
             </div>
-
 
             <div class="post-machine-title">
               <span>依頼出し</span>
@@ -337,441 +954,1335 @@
               <span>POST</span>
             </div>
 
-
             <div class="post-machine-leg"></div>
-
           </div>
         </section>
 
+        <section class="screen screen-postcard" data-screen="post-manual">
+          <div class="user-name" data-user-name>＜名前＞</div>
 
-        <!-- 手動入力 -->
-        <section
-          class="screen screen-postcard"
-          data-screen="post-manual"
-        >
-
-          <div
-            class="user-name"
-            data-user-name
-          >
-            ＜名前＞
-          </div>
-
-
-          <div class="postcard-card postcard-edit">
-
-            <img
-              class="postcard-source"
-              src="./assets/hagaki_kansei.png"
-              alt=""
-              onload="this.parentElement.classList.add('has-postcard-image')"
-              onerror="this.hidden=true; this.parentElement.classList.add('postcard-fallback')"
-            >
-
-
-            <div
-              class="postcard-fallback-art"
-              aria-hidden="true"
-            >
-
-              <div class="fallback-stamp">
-                85
+          <div class="postcard-card">
+            <div class="postcard-top">
+              <div class="stamp-box" aria-label="切手欄">
+                <div class="stamp-bird">◇</div>
+                <div class="stamp-amount">85</div>
               </div>
 
-              <div class="fallback-caption">
-                郵便はがき
+              <div class="postcard-address-block">
+                <div class="postcard-caption">郵 便 は が き</div>
+                <div class="postal-boxes" aria-label="郵便番号欄">
+                  <span>D</span><span>o</span><span>t</span><span>j</span><span>p</span><span>C</span><span>P</span>
+                </div>
               </div>
-
-              <div class="fallback-postcode">
-                D o t&nbsp; j p C P
-              </div>
-
-              <div class="fallback-bottom-boxes">
-                □□□□□□□
-              </div>
-
             </div>
-
 
             <div class="postcard-form-row row-requester">
-
-              <label for="requester">
-                依頼元：
-              </label>
-
-              <input
-                id="requester"
-                type="text"
-                autocomplete="off"
-              >
-
+              <label for="requester">依頼元：</label>
+              <input id="requester" type="text" autocomplete="off">
             </div>
-
 
             <div class="postcard-form-row row-destination">
-
-              <label for="destination">
-                宛先：
-              </label>
-
-              <input
-                id="destination"
-                type="text"
-                autocomplete="off"
-              >
-
+              <label for="destination">宛先：</label>
+              <input id="destination" type="text" autocomplete="off">
             </div>
-
 
             <div class="postcard-form-row row-deadline">
-
-              <label for="deadline">
-                期限：
-              </label>
-
-              <input
-                id="deadline"
-                type="text"
-                autocomplete="off"
-              >
-
+              <label for="deadline">期限：</label>
+              <input id="deadline" type="text" autocomplete="off">
             </div>
-
 
             <div class="postcard-form-row row-content">
-
-              <label for="content">
-                内容：
-              </label>
-
+              <label for="content">内容：</label>
               <textarea id="content"></textarea>
-
             </div>
 
+            <div class="postcard-bottom">
+              <div class="bottom-postal-boxes">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="postcard-mark">〒</div>
+            </div>
 
-            <button
-              class="postcard-confirm"
-              type="button"
-              data-action="confirm-post"
-            >
-              確認
-            </button>
-
+            <button class="postcard-confirm" type="button" data-action="confirm-post">確認</button>
           </div>
         </section>
 
+        <section class="screen screen-postcard" data-screen="post-confirm">
+          <div class="user-name" data-user-name>＜名前＞</div>
 
-        <!-- POST 最終確認 -->
-        <section
-          class="screen screen-postcard"
-          data-screen="post-confirm"
-        >
-
-          <div
-            class="user-name"
-            data-user-name
-          >
-            ＜名前＞
-          </div>
-
-
-          <div class="postcard-card postcard-confirm-view">
-
-            <img
-              class="postcard-source"
-              src="./assets/hagaki_kansei.png"
-              alt=""
-              onload="this.parentElement.classList.add('has-postcard-image')"
-              onerror="this.hidden=true; this.parentElement.classList.add('postcard-fallback')"
-            >
-
-
-            <div
-              class="postcard-fallback-art"
-              aria-hidden="true"
-            >
-
-              <div class="fallback-stamp">
-                85
+          <div class="postcard-card">
+            <div class="postcard-top">
+              <div class="stamp-box" aria-label="切手欄">
+                <div class="stamp-bird">◇</div>
+                <div class="stamp-amount">85</div>
               </div>
 
-              <div class="fallback-caption">
-                郵便はがき
+              <div class="postcard-address-block">
+                <div class="postcard-caption">郵 便 は が き</div>
+                <div class="postal-boxes" aria-label="郵便番号欄">
+                  <span>D</span><span>o</span><span>t</span><span>j</span><span>p</span><span>C</span><span>P</span>
+                </div>
               </div>
-
-              <div class="fallback-postcode">
-                D o t&nbsp; j p C P
-              </div>
-
-              <div class="fallback-bottom-boxes">
-                □□□□□□□
-              </div>
-
             </div>
-
 
             <div class="postcard-display-row row-requester">
               <strong>依頼元：</strong>
               <span data-post-value="requester"></span>
             </div>
 
-
             <div class="postcard-display-row row-destination">
               <strong>宛先：</strong>
               <span data-post-value="destination"></span>
             </div>
-
 
             <div class="postcard-display-row row-deadline">
               <strong>期限：</strong>
               <span data-post-value="deadline"></span>
             </div>
 
-
             <div class="postcard-display-row row-content">
               <strong>内容：</strong>
               <span data-post-value="content"></span>
             </div>
 
+            <div class="postcard-bottom">
+              <div class="bottom-postal-boxes">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="postcard-mark">〒</div>
+            </div>
 
-            <button
-              class="postcard-confirm"
-              type="button"
-              data-action="send-post"
-            >
-              送る
-            </button>
-
+            <button class="postcard-confirm" type="button" data-action="send-post">送る</button>
           </div>
         </section>
 
-
-        <!-- スケジュール登録 -->
-        <section
-          class="screen screen-schedule"
-          data-screen="schedule"
-        >
-
-          <div
-            class="user-name"
-            data-user-name
-          >
-            ＜名前＞
-          </div>
-
+        <section class="screen screen-schedule" data-screen="schedule">
+          <div class="user-name" data-user-name>＜名前＞</div>
 
           <div class="schedule-body">
-
             <div class="calendar-list">
+              <h2>Googleカレンダー</h2>
 
-              <h2>
-                Googleカレンダー
-              </h2>
-
-
-              <button
-                class="google-account-row selected"
-                type="button"
-                id="googleAccountRow"
-              >
-
+              <button class="google-account-row selected" type="button" id="googleAccountRow">
                 <span class="calendar-radio"></span>
-
-                <span data-user-email>
-                  user@dot-jp.or.jp
-                </span>
-
+                <span data-user-email>user@dot-jp.or.jp</span>
               </button>
 
-
-              <h2>
-                Appleカレンダー
-              </h2>
-
-              <h2>
-                Outlookカレンダー
-              </h2>
-
+              <h2>Appleカレンダー</h2>
+              <h2>Outlookカレンダー</h2>
             </div>
-
 
             <div class="available-times">
-
-              <h2>
-                今週空いている時間
-              </h2>
-
+              <h2>今週空いている時間</h2>
               <div id="availableTimeContent"></div>
-
             </div>
-
           </div>
 
-
-          <button
-            class="back-button"
-            type="button"
-            data-route="home"
-          >
-            ←戻る
-          </button>
-
+          <button class="back-button" type="button" data-route="home">←戻る</button>
         </section>
 
-
-        <!-- タスク終了 -->
-        <section
-          class="screen screen-task-end"
-          data-screen="task-end"
-        >
-
+        <section class="screen screen-task-end" data-screen="task-end">
           <div class="task-end-panel">
-
             <h1>
               お疲れ様でした！<br>
               この<span id="elapsedTaskText">○時間○分</span>の進捗を教えて下さい！
             </h1>
 
-
             <div class="progress-columns">
-
               <div class="progress-group">
-
-                <h2>
-                  🎓 学生向けアプローチ
-                </h2>
-
-                <label>
-                  ・声掛け数：
-                  <input
-                    type="number"
-                    min="0"
-                    value="0"
-                    data-progress="student_voice"
-                  >件
-                </label>
-
-                <label>
-                  ・架電数：
-                  <input
-                    type="number"
-                    min="0"
-                    value="0"
-                    data-progress="student_call"
-                  >件
-                </label>
-
-                <label>
-                  ・通電数：
-                  <input
-                    type="number"
-                    min="0"
-                    value="0"
-                    data-progress="student_connected"
-                  >件
-                </label>
-
-                <label>
-                  ・獲得数：
-                  <input
-                    type="number"
-                    min="0"
-                    value="0"
-                    data-progress="student_won"
-                  >件
-                </label>
-
+                <h2>🎓 学生向けアプローチ</h2>
+                <label>・声掛け数：<input type="number" min="0" value="0" data-progress="student_voice">件</label>
+                <label>・架電数：<input type="number" min="0" value="0" data-progress="student_call">件</label>
+                <label>・通電数：<input type="number" min="0" value="0" data-progress="student_connected">件</label>
+                <label>・獲得数：<input type="number" min="0" value="0" data-progress="student_won">件</label>
               </div>
 
-
               <div class="progress-group">
-
-                <h2>
-                  🏢 企業向けアプローチ
-                </h2>
-
-                <label>
-                  ・リストアップ数：
-                  <input
-                    type="number"
-                    min="0"
-                    value="0"
-                    data-progress="company_list"
-                  >社
-                </label>
-
-                <label>
-                  ・架電数：
-                  <input
-                    type="number"
-                    min="0"
-                    value="0"
-                    data-progress="company_call"
-                  >件
-                </label>
-
-                <label>
-                  ・お問い合わせメール数：
-                  <input
-                    type="number"
-                    min="0"
-                    value="0"
-                    data-progress="company_mail"
-                  >件
-                </label>
-
-                <label>
-                  ・獲得数：
-                  <input
-                    type="number"
-                    min="0"
-                    value="0"
-                    data-progress="company_won"
-                  >社
-                </label>
-
+                <h2>🏢 企業向けアプローチ</h2>
+                <label>・リストアップ数：<input type="number" min="0" value="0" data-progress="company_list">社</label>
+                <label>・架電数：<input type="number" min="0" value="0" data-progress="company_call">件</label>
+                <label>・お問い合わせメール数：<input type="number" min="0" value="0" data-progress="company_mail">件</label>
+                <label>・獲得数：<input type="number" min="0" value="0" data-progress="company_won">社</label>
               </div>
-
             </div>
 
+            <textarea id="reflection" class="wide-task-input" placeholder="振り返り（任意）"></textarea>
+            <textarea id="tomorrowGoal" class="wide-task-input" placeholder="明日の目標（任意）"></textarea>
 
-            <textarea
-              id="reflection"
-              class="wide-task-input"
-              placeholder="振り返り（任意）"
-            ></textarea>
-
-
-            <textarea
-              id="tomorrowGoal"
-              class="wide-task-input"
-              placeholder="明日の目標（任意）"
-            ></textarea>
-
-
-            <button
-              class="cyan-action task-submit"
-              type="button"
-              data-action="finish-task"
-            >
-              送信
-            </button>
-
+            <button class="cyan-action task-submit" type="button" data-action="finish-task">送信</button>
           </div>
         </section>
 
-
-        <div
-          id="toast"
-          class="toast"
-          role="status"
-          aria-live="polite"
-        ></div>
-
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
       </main>
     </div>
   </div>
 
-  <script src="./portal.js"></script>
+  <script>
+const WORKER =
+  "https://dotjp-login.taka-souda516.workers.dev";
+
+
+const state = {
+  user: null,
+
+  region:
+    sessionStorage.getItem(
+      "dotjp_region"
+    ) || "kanto",
+
+  currentScreen: null,
+
+  timerId: null
+};
+
+
+const screenNames =
+  new Set([
+    "task-start",
+    "home",
+    "post",
+    "post-manual",
+    "post-confirm",
+    "schedule",
+    "task-end"
+  ]);
+
+
+document.addEventListener(
+  "DOMContentLoaded",
+  init
+);
+
+
+async function init() {
+
+  fitCanvas();
+
+  window.addEventListener(
+    "resize",
+    fitCanvas
+  );
+
+
+  window.addEventListener(
+    "hashchange",
+    routeFromHash
+  );
+
+
+  wireActions();
+
+
+  const token =
+    sessionStorage.getItem(
+      "dotjp_access_token"
+    );
+
+
+  if (!token) {
+
+    location.replace(
+      "./"
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        `${WORKER}/api/session`,
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      !data.ok
+    ) {
+
+      throw new Error(
+        "unauthorized"
+      );
+
+    }
+
+
+    state.user =
+      data.user;
+
+
+    fillUserInfo();
+
+
+    document
+      .getElementById(
+        "loading"
+      )
+      .hidden =
+        true;
+
+
+    document
+      .getElementById(
+        "app"
+      )
+      .hidden =
+        false;
+
+
+    const requested =
+      normalizeHash(
+        location.hash
+      );
+
+
+    if (requested) {
+
+      showScreen(
+        requested,
+        false
+      );
+
+    } else {
+
+      const started =
+        sessionStorage.getItem(
+          "dotjp_task_started_at"
+        );
+
+
+      showScreen(
+        started
+          ? "home"
+          : "task-start",
+
+        false
+      );
+
+    }
+
+
+    updateRegion();
+
+    startTimerLoop();
+
+
+  } catch (error) {
+
+    sessionStorage.removeItem(
+      "dotjp_access_token"
+    );
+
+
+    location.replace(
+      "./"
+    );
+
+  }
+
+}
+
+
+function wireActions() {
+
+  document
+    .querySelectorAll(
+      "[data-route]"
+    )
+    .forEach(
+      element => {
+
+        element.addEventListener(
+          "click",
+          () => {
+
+            showScreen(
+              element.dataset.route
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      "[data-region]"
+    )
+    .forEach(
+      element => {
+
+        element.addEventListener(
+          "click",
+          () => {
+
+            state.region =
+              element.dataset.region;
+
+
+            sessionStorage.setItem(
+              "dotjp_region",
+              state.region
+            );
+
+
+            updateRegion();
+
+          }
+        );
+
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      "[data-placeholder]"
+    )
+    .forEach(
+      element => {
+
+        element.addEventListener(
+          "click",
+          () => {
+
+            showToast(
+              `${element.dataset.placeholder} はリンク先未設定です`
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+  document
+    .querySelector(
+      '[data-action="start-task"]'
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        sessionStorage.setItem(
+          "dotjp_task_started_at",
+          String(
+            Date.now()
+          )
+        );
+
+
+        showScreen(
+          "home"
+        );
+
+      }
+    );
+
+
+  document
+    .querySelector(
+      '[data-action="confirm-post"]'
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        const payload = {
+
+          requester:
+            document
+              .getElementById(
+                "requester"
+              )
+              .value
+              .trim(),
+
+          destination:
+            document
+              .getElementById(
+                "destination"
+              )
+              .value
+              .trim(),
+
+          deadline:
+            document
+              .getElementById(
+                "deadline"
+              )
+              .value
+              .trim(),
+
+          content:
+            document
+              .getElementById(
+                "content"
+              )
+              .value
+              .trim()
+
+        };
+
+
+        sessionStorage.setItem(
+          "dotjp_post_draft",
+          JSON.stringify(
+            payload
+          )
+        );
+
+
+        renderPostConfirmation(
+          payload
+        );
+
+
+        showScreen(
+          "post-confirm"
+        );
+
+      }
+    );
+
+
+  document
+    .querySelector(
+      '[data-action="send-post"]'
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        const draft =
+          sessionStorage.getItem(
+            "dotjp_post_draft"
+          );
+
+
+        if (draft) {
+
+          localStorage.setItem(
+            "dotjp_last_post",
+            draft
+          );
+
+        }
+
+
+        sessionStorage.removeItem(
+          "dotjp_post_draft"
+        );
+
+
+        showToast(
+          "送信処理を完了しました"
+        );
+
+
+        setTimeout(
+          () =>
+            showScreen(
+              "home"
+            ),
+
+          450
+        );
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      "postFile"
+    )
+    .addEventListener(
+      "change",
+      event => {
+
+        const file =
+          event.target
+            .files?.[0];
+
+
+        if (!file) {
+          return;
+        }
+
+
+        const payload = {
+
+          requester:
+            state.user?.name ||
+            "",
+
+          destination:
+            "",
+
+          deadline:
+            "",
+
+          content:
+            `選択ファイル：${file.name}`
+
+        };
+
+
+        sessionStorage.setItem(
+          "dotjp_post_draft",
+          JSON.stringify(
+            payload
+          )
+        );
+
+
+        renderPostConfirmation(
+          payload
+        );
+
+
+        showScreen(
+          "post-confirm"
+        );
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      "googleAccountRow"
+    )
+    .addEventListener(
+      "click",
+      event => {
+
+        event
+          .currentTarget
+          .classList
+          .toggle(
+            "selected"
+          );
+
+      }
+    );
+
+
+  document
+    .querySelector(
+      '[data-action="finish-task"]'
+    )
+    .addEventListener(
+      "click",
+      finishTask
+    );
+
+}
+
+
+function showScreen(
+  name,
+  updateHash = true
+) {
+
+  if (
+    !screenNames.has(
+      name
+    )
+  ) {
+    return;
+  }
+
+
+  document
+    .querySelectorAll(
+      ".screen"
+    )
+    .forEach(
+      screen => {
+
+        screen
+          .classList
+          .toggle(
+            "is-active",
+
+            screen.dataset.screen
+              ===
+              name
+          );
+
+      }
+    );
+
+
+  state.currentScreen =
+    name;
+
+
+  if (
+    name ===
+    "home"
+  ) {
+
+    updateRegion();
+
+    updateTaskTimer();
+
+  }
+
+
+  if (
+    name ===
+    "task-end"
+  ) {
+
+    updateElapsedTaskText();
+
+  }
+
+
+  if (
+    name ===
+    "post-manual"
+  ) {
+
+    hydratePostDraft();
+
+  }
+
+
+  if (
+    name ===
+    "post-confirm"
+  ) {
+
+    const draft =
+      parseJson(
+        sessionStorage.getItem(
+          "dotjp_post_draft"
+        ),
+
+        {}
+      );
+
+
+    renderPostConfirmation(
+      draft
+    );
+
+  }
+
+
+  if (updateHash) {
+
+    history.pushState(
+      null,
+      "",
+      `#${name}`
+    );
+
+  }
+
+}
+
+
+function routeFromHash() {
+
+  const name =
+    normalizeHash(
+      location.hash
+    );
+
+
+  if (name) {
+
+    showScreen(
+      name,
+      false
+    );
+
+  }
+
+}
+
+
+function normalizeHash(hash) {
+
+  const value =
+    String(
+      hash || ""
+    )
+      .replace(
+        /^#/,
+        ""
+      );
+
+
+  return screenNames.has(
+    value
+  )
+    ? value
+    : "";
+
+}
+
+
+function fillUserInfo() {
+
+  const displayName =
+    state.user?.name ||
+    state.user?.email ||
+    "名前";
+
+
+  const displayEmail =
+    state.user?.email ||
+    "";
+
+
+  document
+    .querySelectorAll(
+      "[data-user-name]"
+    )
+    .forEach(
+      node => {
+
+        node.textContent =
+          `＜${displayName}＞`;
+
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      "[data-user-email]"
+    )
+    .forEach(
+      node => {
+
+        node.textContent =
+          displayEmail;
+
+      }
+    );
+
+}
+
+
+function updateRegion() {
+
+  document
+    .querySelectorAll(
+      "[data-region]"
+    )
+    .forEach(
+      button => {
+
+        button
+          .classList
+          .toggle(
+            "is-active",
+
+            button.dataset.region
+              ===
+              state.region
+          );
+
+      }
+    );
+
+}
+
+
+function startTimerLoop() {
+
+  clearInterval(
+    state.timerId
+  );
+
+
+  updateTaskTimer();
+
+
+  state.timerId =
+    setInterval(
+      updateTaskTimer,
+      1000
+    );
+
+}
+
+
+function getElapsedMs() {
+
+  const startedAt =
+    Number(
+      sessionStorage.getItem(
+        "dotjp_task_started_at"
+      )
+    );
+
+
+  if (
+    !Number.isFinite(
+      startedAt
+    ) ||
+    startedAt <= 0
+  ) {
+
+    return 0;
+
+  }
+
+
+  return Math.max(
+    0,
+    Date.now() -
+      startedAt
+  );
+
+}
+
+
+function updateTaskTimer() {
+
+  const ms =
+    getElapsedMs();
+
+
+  const totalSeconds =
+    Math.floor(
+      ms / 1000
+    );
+
+
+  const hours =
+    Math.floor(
+      totalSeconds /
+      3600
+    );
+
+
+  const minutes =
+    Math.floor(
+      (
+        totalSeconds %
+        3600
+      ) /
+      60
+    );
+
+
+  const seconds =
+    totalSeconds %
+    60;
+
+
+  const node =
+    document.getElementById(
+      "taskTimer"
+    );
+
+
+  if (node) {
+
+    node.textContent =
+      `${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`;
+
+  }
+
+}
+
+
+function updateElapsedTaskText() {
+
+  const ms =
+    getElapsedMs();
+
+
+  const totalMinutes =
+    Math.floor(
+      ms /
+      60000
+    );
+
+
+  const hours =
+    Math.floor(
+      totalMinutes /
+      60
+    );
+
+
+  const minutes =
+    totalMinutes %
+    60;
+
+
+  document
+    .getElementById(
+      "elapsedTaskText"
+    )
+    .textContent =
+      `${hours}時間${minutes}分`;
+
+}
+
+
+function finishTask() {
+
+  const progress = {};
+
+
+  document
+    .querySelectorAll(
+      "[data-progress]"
+    )
+    .forEach(
+      input => {
+
+        progress[
+          input.dataset.progress
+        ] =
+          Number(
+            input.value ||
+            0
+          );
+
+      }
+    );
+
+
+  const result = {
+
+    endedAt:
+      new Date()
+        .toISOString(),
+
+    elapsedMs:
+      getElapsedMs(),
+
+    progress,
+
+    reflection:
+      document
+        .getElementById(
+          "reflection"
+        )
+        .value
+        .trim(),
+
+    tomorrowGoal:
+      document
+        .getElementById(
+          "tomorrowGoal"
+        )
+        .value
+        .trim()
+
+  };
+
+
+  localStorage.setItem(
+    "dotjp_last_task",
+    JSON.stringify(
+      result
+    )
+  );
+
+
+  sessionStorage.removeItem(
+    "dotjp_task_started_at"
+  );
+
+
+  document
+    .querySelectorAll(
+      "[data-progress]"
+    )
+    .forEach(
+      input => {
+
+        input.value =
+          "0";
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      "reflection"
+    )
+    .value =
+      "";
+
+
+  document
+    .getElementById(
+      "tomorrowGoal"
+    )
+    .value =
+      "";
+
+
+  document
+    .getElementById(
+      "finishedTasks"
+    )
+    .textContent =
+      "1件";
+
+
+  document
+    .getElementById(
+      "unfinishedTasks"
+    )
+    .textContent =
+      "";
+
+
+  showToast(
+    "タスクを記録しました"
+  );
+
+
+  setTimeout(
+    () =>
+      showScreen(
+        "home"
+      ),
+
+    450
+  );
+
+}
+
+
+function hydratePostDraft() {
+
+  const draft =
+    parseJson(
+      sessionStorage.getItem(
+        "dotjp_post_draft"
+      ),
+
+      null
+    );
+
+
+  if (!draft) {
+    return;
+  }
+
+
+  document
+    .getElementById(
+      "requester"
+    )
+    .value =
+      draft.requester ||
+      "";
+
+
+  document
+    .getElementById(
+      "destination"
+    )
+    .value =
+      draft.destination ||
+      "";
+
+
+  document
+    .getElementById(
+      "deadline"
+    )
+    .value =
+      draft.deadline ||
+      "";
+
+
+  document
+    .getElementById(
+      "content"
+    )
+    .value =
+      draft.content ||
+      "";
+
+}
+
+
+function renderPostConfirmation(
+  payload
+) {
+
+  document
+    .querySelectorAll(
+      "[data-post-value]"
+    )
+    .forEach(
+      node => {
+
+        const key =
+          node.dataset
+            .postValue;
+
+
+        node.textContent =
+          payload?.[key] ||
+          "";
+
+      }
+    );
+
+}
+
+
+function showToast(
+  message
+) {
+
+  const toast =
+    document.getElementById(
+      "toast"
+    );
+
+
+  toast.textContent =
+    message;
+
+
+  toast
+    .classList
+    .add(
+      "show"
+    );
+
+
+  clearTimeout(
+    showToast.timer
+  );
+
+
+  showToast.timer =
+    setTimeout(
+      () => {
+
+        toast
+          .classList
+          .remove(
+            "show"
+          );
+
+      },
+
+      1800
+    );
+
+}
+
+
+function fitCanvas() {
+
+  const scale =
+    Math.min(
+      window.innerWidth /
+        1440,
+
+      window.innerHeight /
+        1024,
+
+      1
+    );
+
+
+  const frame =
+    document.getElementById(
+      "canvasFrame"
+    );
+
+
+  const holder =
+    document.getElementById(
+      "canvasHolder"
+    );
+
+
+  if (
+    !frame ||
+    !holder
+  ) {
+    return;
+  }
+
+
+  frame.style.transform =
+    `scale(${scale})`;
+
+
+  holder.style.width =
+    `${1440 * scale}px`;
+
+
+  holder.style.height =
+    `${1024 * scale}px`;
+
+}
+
+
+function pad2(value) {
+
+  return String(
+    value
+  )
+    .padStart(
+      2,
+      "0"
+    );
+
+}
+
+
+function parseJson(
+  value,
+  fallback
+) {
+
+  try {
+
+    return JSON.parse(
+      value
+    );
+
+  } catch {
+
+    return fallback;
+
+  }
+
+}
+
+</script>
 </body>
 </html>
