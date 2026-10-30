@@ -491,6 +491,49 @@ button.file-choice-button {
   font-weight: 500;
 }
 
+.post-ai-status {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 196px;
+  min-height: 24px;
+  color: #333;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.post-ai-status.is-error {
+  color: #b00020;
+}
+
+.post-ai-result-badge {
+  position: absolute;
+  right: 18px;
+  top: 16px;
+  z-index: 6;
+  padding: 6px 10px;
+  border: 2px solid #8057ff;
+  border-radius: 999px;
+  background: #f2eeff;
+  color: #4a24b8;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.postcard-edit-result {
+  position: absolute;
+  left: 70px;
+  top: 653px;
+  width: 180px;
+  height: 61px;
+  background: #efefef;
+  color: #000;
+  font-size: 28px;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 4;
+}
+
 /* はがき（完全HTML/CSS） */
 
 .postcard-card {
@@ -1334,7 +1377,8 @@ button.file-choice-button {
               <div class="post-choice">
                 <label class="file-choice-button" for="postFile">ファイルを選択</label>
                 <input id="postFile" type="file" accept=".png,.jpg,.jpeg,.webp,.pdf" hidden>
-                <div class="post-choice-description">ファイルから<br>自動読み込み</div>
+                <div class="post-choice-description">ファイルから<br>AI自動読み込み</div>
+                <div id="postAiStatus" class="post-ai-status" aria-live="polite"></div>
               </div>
 
               <div class="post-divider"></div>
@@ -1408,6 +1452,7 @@ button.file-choice-button {
           <div class="user-name" data-user-name>＜名前＞</div>
 
           <div class="postcard-card">
+            <div id="postAiResultBadge" class="post-ai-result-badge" hidden>AI読み取り結果</div>
             <div class="postcard-top">
               <div class="stamp-box" aria-label="切手欄">
                 <div class="stamp-bird">◇</div>
@@ -1449,6 +1494,7 @@ button.file-choice-button {
               <div class="postcard-mark">〒</div>
             </div>
 
+            <button class="postcard-edit-result" type="button" data-route="post-manual">修正</button>
             <button class="postcard-confirm" type="button" data-action="send-post">送る</button>
           </div>
         </section>
@@ -1524,8 +1570,15 @@ button.file-choice-button {
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
+
 const WORKER = "https://dotjp-login.taka-souda516.workers.dev";
+const POST_AI_WORKER = "https://dotjp-post-ai.taka-souda516.workers.dev";
 
 const state = {
   user: null,
@@ -1659,18 +1712,22 @@ function wireActions() {
     setTimeout(() => showScreen("home"), 450);
   });
 
-  document.getElementById("postFile").addEventListener("change", (event) => {
+  document.getElementById("postFile").addEventListener("change", async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const payload = {
-      requester: state.user?.name || "",
-      destination: "",
-      deadline: "",
-      content: `選択ファイル：${file.name}`
-    };
-    sessionStorage.setItem("dotjp_post_draft", JSON.stringify(payload));
-    renderPostConfirmation(payload);
-    showScreen("post-confirm");
+
+    try {
+      await analyzePostFile(file);
+    } catch (error) {
+      console.error("POST AI analysis failed", error);
+      setPostAiStatus(
+        error?.message || "ファイルを解析できませんでした。手入力を利用してください。",
+        true
+      );
+      showToast("AI解析に失敗しました");
+    } finally {
+      event.target.value = "";
+    }
   });
 
   document.getElementById("googleAccountRow").addEventListener("click", (event) => {
@@ -2210,11 +2267,222 @@ function hydratePostDraft() {
   document.getElementById("content").value = draft.content || "";
 }
 
+function setPostAiStatus(message, isError = false) {
+  const node = document.getElementById("postAiStatus");
+  if (!node) return;
+
+  node.textContent = message || "";
+  node.classList.toggle("is-error", Boolean(isError));
+}
+
+async function analyzePostFile(file) {
+  const token = sessionStorage.getItem("dotjp_access_token");
+
+  if (!token) {
+    throw new Error("ログイン情報がありません。再ログインしてください。");
+  }
+
+  setPostAiStatus("AIで「誰に・いつまでに・何をするか」を読み取っています…");
+
+  const source = await buildPostAnalyzeSource(file);
+
+  const response = await fetch(`${POST_AI_WORKER}/api/post/analyze`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      filename: file.name,
+      mimeType: file.type || "",
+      currentDate: localDateIso(new Date()),
+      text: source.text,
+      images: source.images
+    })
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok || !data.ok) {
+    throw new Error(
+      data.error ||
+      "AI解析サーバーから正常な応答を受け取れませんでした。"
+    );
+  }
+
+  const result = data.result || {};
+
+  const payload = {
+    requester:
+      result.requester ||
+      state.user?.name ||
+      state.user?.email ||
+      "",
+    destination: result.recipient || "",
+    deadline: result.deadline || "",
+    content: result.action || "",
+    aiAnalyzed: true,
+    aiSourceFile: file.name,
+    aiNotes: result.notes || "",
+    aiConfidence: result.confidence || null
+  };
+
+  sessionStorage.setItem(
+    "dotjp_post_draft",
+    JSON.stringify(payload)
+  );
+
+  renderPostConfirmation(payload);
+  setPostAiStatus("読み取り完了。確認画面に反映しました。");
+  showScreen("post-confirm");
+}
+
+async function buildPostAnalyzeSource(file) {
+  const mime = String(file.type || "").toLowerCase();
+
+  if (mime.startsWith("image/")) {
+    return {
+      text: "",
+      images: [await imageFileToAiDataUrl(file)]
+    };
+  }
+
+  if (
+    mime === "application/pdf" ||
+    file.name.toLowerCase().endsWith(".pdf")
+  ) {
+    return await pdfFileToAiSource(file);
+  }
+
+  throw new Error("対応形式は画像（JPG/PNG/WebP）またはPDFです。");
+}
+
+async function imageFileToAiDataUrl(file) {
+  const original = await fileToDataUrl(file);
+  const image = await loadHtmlImage(original);
+
+  const maxSide = 1600;
+  const scale = Math.min(
+    1,
+    maxSide / Math.max(image.naturalWidth, image.naturalHeight)
+  );
+
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+
+  const context = canvas.getContext("2d", { alpha: false });
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL("image/jpeg", 0.84);
+}
+
+async function pdfFileToAiSource(file) {
+  if (!window.pdfjsLib) {
+    throw new Error("PDF読み取り機能を読み込めませんでした。");
+  }
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+
+  const textPages = [];
+  const images = [];
+
+  const textPageLimit = Math.min(pdf.numPages, 20);
+  const imagePageLimit = Math.min(pdf.numPages, 5);
+
+  for (let pageNumber = 1; pageNumber <= textPageLimit; pageNumber += 1) {
+    const page = await pdf.getPage(pageNumber);
+    const content = await page.getTextContent();
+
+    const pageText = content.items
+      .map((item) => String(item.str || "").trim())
+      .filter(Boolean)
+      .join(" ");
+
+    if (pageText) {
+      textPages.push(`【${pageNumber}ページ】\n${pageText}`);
+    }
+
+    if (pageNumber <= imagePageLimit) {
+      const viewport = page.getViewport({ scale: 1.35 });
+      const canvas = document.createElement("canvas");
+
+      const maxWidth = 1500;
+      const scaleDown = Math.min(1, maxWidth / viewport.width);
+
+      canvas.width = Math.max(1, Math.round(viewport.width * scaleDown));
+      canvas.height = Math.max(1, Math.round(viewport.height * scaleDown));
+
+      const context = canvas.getContext("2d", { alpha: false });
+
+      await page.render({
+        canvasContext: context,
+        viewport,
+        transform:
+          scaleDown === 1
+            ? null
+            : [scaleDown, 0, 0, scaleDown, 0, 0]
+      }).promise;
+
+      images.push(
+        canvas.toDataURL("image/jpeg", 0.78)
+      );
+    }
+  }
+
+  if (pdf.numPages > textPageLimit) {
+    textPages.push(
+      `※PDFは${pdf.numPages}ページあります。テキスト解析は先頭${textPageLimit}ページまでです。`
+    );
+  }
+
+  return {
+    text: textPages.join("\n\n").slice(0, 50000),
+    images
+  };
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("ファイルを読み込めませんでした。"));
+
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadHtmlImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("画像を読み込めませんでした。"));
+    image.src = src;
+  });
+}
+
+function localDateIso(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function renderPostConfirmation(payload) {
   document.querySelectorAll("[data-post-value]").forEach((node) => {
     const key = node.dataset.postValue;
     node.textContent = payload?.[key] || "";
   });
+
+  const badge = document.getElementById("postAiResultBadge");
+  if (badge) {
+    badge.hidden = !payload?.aiAnalyzed;
+  }
 }
 
 function showToast(message) {
