@@ -776,83 +776,108 @@ button.file-choice-button {
 .task-end-panel {
   position: absolute;
   left: 120px;
-  top: 62px;
+  top: 42px;
   width: 1200px;
-  height: 900px;
+  height: 940px;
+  padding: 48px 60px 24px;
+  display: flex;
+  flex-direction: column;
   background: #fff;
+  overflow: hidden;
 }
 
 .task-end-panel > h1 {
-  margin: 70px auto 0;
-  width: 1140px;
+  flex: none;
+  margin: 0;
+  width: 100%;
   text-align: center;
-  font-size: 55px;
-  line-height: 1.15;
+  font-size: 48px;
+  line-height: 1.12;
   font-weight: 400;
 }
 
 .progress-columns {
-  position: absolute;
-  left: 60px;
-  top: 240px;
-  width: 1080px;
+  flex: none;
+  width: 100%;
+  margin-top: 34px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 22px;
 }
 
 .progress-group {
-  font-size: 34px;
+  min-width: 0;
+  font-size: 22px;
 }
 
 .progress-group h2 {
-  margin: 0 0 28px;
-  font-size: 40px;
+  margin: 0 0 14px;
+  font-size: 28px;
+  line-height: 1.15;
   font-weight: 400;
+  text-align: center;
 }
 
 .progress-group label {
   display: block;
-  margin: 4px 0;
+  margin: 2px 0;
+  line-height: 1.42;
   text-align: center;
+  white-space: nowrap;
 }
 
 .progress-group input {
-  width: 70px;
+  width: 66px;
   border: 0;
   border-bottom: 2px solid #999;
   text-align: right;
-  font-size: 34px;
+  font-size: 24px;
   background: transparent;
 }
 
+.other-progress-input {
+  width: 100%;
+  height: 132px;
+  margin-top: 4px;
+  padding: 10px;
+  border: 2px solid #999;
+  resize: none;
+  font-size: 22px;
+  line-height: 1.35;
+  background: #fff;
+}
+
 .wide-task-input {
-  position: absolute;
-  left: 82px;
-  width: 1036px;
-  height: 85px;
+  position: static;
+  flex: none;
+  width: 100%;
+  height: 76px;
+  margin-top: 18px;
   border: 4px solid #000;
   resize: none;
-  padding: 10px;
-  font-size: 36px;
-  line-height: 1.3;
+  padding: 9px 12px;
+  font-size: 30px;
+  line-height: 1.25;
 }
 
-#reflection {
-  top: 588px;
-}
-
+#reflection,
 #tomorrowGoal {
-  top: 705px;
+  top: auto;
 }
 
 .task-submit {
-  position: absolute;
-  left: 495px;
-  top: 812px;
+  position: static;
+  flex: none;
+  align-self: center;
   width: 210px;
-  height: 70px;
-  font-size: 40px;
+  height: 64px;
+  margin-top: 18px;
+  font-size: 36px;
+}
+
+.task-submit:disabled {
+  opacity: .45;
+  cursor: not-allowed;
 }
 
 /* 共通 */
@@ -1457,7 +1482,7 @@ button.file-choice-button {
           <div class="task-end-panel">
             <h1>
               お疲れ様でした！<br>
-              この<span id="elapsedTaskText">○時間○分</span>の進捗を教えて下さい！
+              <span id="taskEndMessage">今回の進捗を教えて下さい！</span>
             </h1>
 
             <div class="progress-columns">
@@ -1475,6 +1500,15 @@ button.file-choice-button {
                 <label>・架電数：<input type="number" min="0" value="0" data-progress="company_call">件</label>
                 <label>・お問い合わせメール数：<input type="number" min="0" value="0" data-progress="company_mail">件</label>
                 <label>・獲得数：<input type="number" min="0" value="0" data-progress="company_won">社</label>
+              </div>
+
+              <div class="progress-group">
+                <h2>📝 その他</h2>
+                <textarea
+                  id="otherProgress"
+                  class="other-progress-input"
+                  placeholder="その他の進捗を入力"
+                ></textarea>
               </div>
             </div>
 
@@ -1560,6 +1594,7 @@ async function init() {
 
     state.user = data.user;
     fillUserInfo();
+    ensureLoginStartedAt();
     document.getElementById("loading").hidden = true;
     document.getElementById("app").hidden = false;
 
@@ -1643,6 +1678,10 @@ function wireActions() {
   });
 
   document.querySelector('[data-action="finish-task"]').addEventListener("click", finishTask);
+
+  document.querySelectorAll("[data-progress], #otherProgress, #reflection, #tomorrowGoal").forEach((input) => {
+    input.addEventListener("input", updateFinishButtonState);
+  });
 }
 
 function showScreen(name, updateHash = true) {
@@ -1655,7 +1694,10 @@ function showScreen(name, updateHash = true) {
 
   if (name === "task-start") renderStartTasks();
   if (name === "home") refreshTaskUi();
-  if (name === "task-end") updateElapsedTaskText();
+  if (name === "task-end") {
+    updateElapsedTaskText();
+    updateFinishButtonState();
+  }
   if (name === "post-manual") hydratePostDraft();
   if (name === "post-confirm") {
     renderPostConfirmation(parseJson(sessionStorage.getItem("dotjp_post_draft"), {}));
@@ -1908,7 +1950,41 @@ function startTimerLoop() {
   refreshTaskUi();
   state.timerId = setInterval(() => {
     if (state.currentScreen === "home") renderTaskTimeChart();
+    if (state.currentScreen === "task-end") updateElapsedTaskText();
   }, 30000);
+}
+
+function ensureLoginStartedAt() {
+  const key = userSessionKey("login_started_at");
+  const existing = Number(sessionStorage.getItem(key));
+
+  if (Number.isFinite(existing) && existing > 0) {
+    return existing;
+  }
+
+  const now = Date.now();
+  sessionStorage.setItem(key, String(now));
+  return now;
+}
+
+function getLoginStartedAt() {
+  if (!state.user) return 0;
+
+  const value = Number(
+    sessionStorage.getItem(
+      userSessionKey("login_started_at")
+    )
+  );
+
+  return Number.isFinite(value) && value > 0
+    ? value
+    : ensureLoginStartedAt();
+}
+
+function getLoginElapsedMs() {
+  const startedAt = getLoginStartedAt();
+  if (!startedAt) return 0;
+  return Math.max(0, Date.now() - startedAt);
 }
 
 function getElapsedMs() {
@@ -1918,11 +1994,15 @@ function getElapsedMs() {
 }
 
 function updateElapsedTaskText() {
-  const ms = getElapsedMs();
+  const message = document.getElementById("taskEndMessage");
+  const ms = getLoginElapsedMs();
+
   const totalMinutes = Math.floor(ms / 60000);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-  document.getElementById("elapsedTaskText").textContent = `${hours}時間${minutes}分`;
+
+  message.textContent =
+    `ログインから${hours}時間${minutes}分の進捗を教えて下さい！`;
 }
 
 function lastSevenDays() {
@@ -2007,36 +2087,96 @@ function formatDuration(ms) {
   return `${rest}分`;
 }
 
-function finishTask() {
-  const startedAt = getActiveStartedAt();
-  const activeTaskId = getActiveTaskId();
-  if (!startedAt || !activeTaskId) {
-    showToast("実行中のタスクがありません");
-    return;
-  }
-
-  const endedAt = new Date();
-  const durationMs = Math.max(0, endedAt.getTime() - startedAt);
+function reportInputSnapshot() {
   const progress = {};
+
   document.querySelectorAll("[data-progress]").forEach((input) => {
     progress[input.dataset.progress] = Number(input.value || 0);
   });
 
+  return {
+    progress,
+    otherProgress: document.getElementById("otherProgress").value.trim(),
+    reflection: document.getElementById("reflection").value.trim(),
+    tomorrowGoal: document.getElementById("tomorrowGoal").value.trim()
+  };
+}
+
+function hasReportInput(snapshot = reportInputSnapshot()) {
+  const hasNumber = Object.values(snapshot.progress).some((value) => Number(value) > 0);
+  const hasText = Boolean(
+    snapshot.otherProgress ||
+    snapshot.reflection ||
+    snapshot.tomorrowGoal
+  );
+  return hasNumber || hasText;
+}
+
+function updateFinishButtonState() {
+  const button = document.querySelector('[data-action="finish-task"]');
+  if (!button) return;
+
+  const hasActiveTask = Boolean(getActiveStartedAt() && getActiveTaskId());
+  button.disabled = !(hasActiveTask || hasReportInput());
+}
+
+function logoutAfterReport() {
+  sessionStorage.removeItem("dotjp_access_token");
+  sessionStorage.removeItem("dotjp_2fa_ticket");
+  sessionStorage.removeItem("dotjp_2fa_ticket_v1");
+  sessionStorage.removeItem(userSessionKey("active_task_id"));
+  sessionStorage.removeItem(userSessionKey("task_started_at"));
+  sessionStorage.removeItem(userSessionKey("login_started_at"));
+
+  location.replace("./");
+}
+
+function finishTask() {
+  const startedAt = getActiveStartedAt();
+  const activeTaskId = getActiveTaskId();
+  const snapshot = reportInputSnapshot();
+  const hasActiveTask = Boolean(startedAt && activeTaskId);
+
+  if (!hasActiveTask && !hasReportInput(snapshot)) {
+    showToast("入力内容がありません");
+    updateFinishButtonState();
+    return;
+  }
+
+  const endedAt = new Date();
+  const durationMs = hasActiveTask
+    ? Math.max(0, endedAt.getTime() - startedAt)
+    : 0;
+
+  const loginStartedAt = getLoginStartedAt();
+  const loginDurationMs = loginStartedAt
+    ? Math.max(0, endedAt.getTime() - loginStartedAt)
+    : 0;
+
   const tasks = loadTasks();
-  const task = tasks.find((item) => item.id === activeTaskId);
-  if (task) task.completedAt = endedAt.toISOString();
-  saveTasks(tasks);
+
+  if (hasActiveTask) {
+    const task = tasks.find((item) => item.id === activeTaskId);
+    if (task) task.completedAt = endedAt.toISOString();
+    saveTasks(tasks);
+  }
 
   const sessions = loadSessions();
   sessions.push({
     id: `session_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    taskId: activeTaskId,
-    startedAt: new Date(startedAt).toISOString(),
+    taskId: activeTaskId || null,
+    startedAt: hasActiveTask ? new Date(startedAt).toISOString() : null,
     endedAt: endedAt.toISOString(),
     durationMs,
-    progress,
-    reflection: document.getElementById("reflection").value.trim(),
-    tomorrowGoal: document.getElementById("tomorrowGoal").value.trim()
+    loginStartedAt: loginStartedAt
+      ? new Date(loginStartedAt).toISOString()
+      : null,
+    loginDurationMs,
+    progress: snapshot.progress,
+    otherProgress: snapshot.otherProgress,
+    reflection: snapshot.reflection,
+    tomorrowGoal: snapshot.tomorrowGoal,
+    reportOnly: !hasActiveTask
   });
   saveSessions(sessions);
 
@@ -2044,13 +2184,15 @@ function finishTask() {
   sessionStorage.removeItem(userSessionKey("task_started_at"));
   state.selectedTaskId = null;
 
-  document.querySelectorAll("[data-progress]").forEach((input) => { input.value = "0"; });
+  document.querySelectorAll("[data-progress]").forEach((input) => {
+    input.value = "0";
+  });
+  document.getElementById("otherProgress").value = "";
   document.getElementById("reflection").value = "";
   document.getElementById("tomorrowGoal").value = "";
 
-  refreshTaskUi();
-  showToast("タスクを完了として記録しました");
-  setTimeout(() => showScreen("home"), 450);
+  showToast("集計を送信しました。ログアウトします");
+  setTimeout(logoutAfterReport, 550);
 }
 
 function updateRegion() {
