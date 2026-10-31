@@ -1818,6 +1818,169 @@ button.file-choice-button {
   background: #7b48d6;
 }
 
+
+/* =========================================================
+   v4: POST選択側への投函・AI削除・共通戻る
+========================================================= */
+
+.common-back-button {
+  position: absolute;
+  left: 28px;
+  top: 92px;
+  z-index: 120;
+  min-width: 122px;
+  height: 48px;
+  padding: 0 18px;
+  border: 2px solid #5f64a8;
+  background: rgba(255,255,255,.94);
+  color: #202060;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 9px rgba(0,0,0,.08);
+}
+
+.common-back-button:hover {
+  background: #eceeff;
+}
+
+/* 既存の個別戻るボタンは共通ボタンに統一 */
+.portal-back-button,
+.back-button {
+  display: none !important;
+}
+
+.post-confirm-actions {
+  gap: 14px;
+}
+
+.post-delete-current {
+  width: 150px;
+  height: 52px;
+  background: #ffe0e0;
+  color: #b40018;
+  border: 2px solid #e06370;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 最初の依頼出しPOSTと同じ形で投函 */
+.post-send-animation {
+  background: rgba(242,242,255,.96);
+}
+
+.send-animation-scene {
+  position: relative;
+  width: 1100px;
+  height: 900px;
+}
+
+.post-send-animation .send-animation-machine {
+  left: 101px;
+  top: 18px;
+  transform: scale(.94);
+  transform-origin: top center;
+}
+
+.send-animation-input-box {
+  overflow: visible;
+}
+
+.send-target-choice {
+  transition:
+    background .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease;
+}
+
+.send-target-choice.is-target {
+  background: #fffbe0;
+  box-shadow: inset 0 0 0 6px #ffd63d;
+}
+
+.send-target-title {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 27px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  background: #d9d9d9;
+  color: #000;
+  font-size: 20px;
+}
+
+.send-target-slot {
+  position: absolute;
+  left: 58px;
+  right: 58px;
+  bottom: 26px;
+  height: 14px;
+  border-radius: 999px;
+  background: #4f0905;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.55);
+  opacity: .18;
+}
+
+.send-target-choice.is-target .send-target-slot {
+  opacity: 1;
+}
+
+.post-send-animation .send-animation-card {
+  position: absolute;
+  left: 410px;
+  top: -72px;
+  width: 280px;
+  height: 175px;
+  background: #fff;
+  border: 3px solid #222;
+  transform-origin: center;
+  z-index: 20;
+  opacity: 0;
+}
+
+.post-send-animation .send-animation-card.is-ready {
+  opacity: 1;
+}
+
+.post-send-animation .send-animation-card.is-dropping {
+  animation: postcardDropToSelected 980ms cubic-bezier(.45,.03,.72,1) forwards;
+}
+
+.post-send-animation .send-animation-card.target-ai {
+  --post-drop-x: -215px;
+}
+
+.post-send-animation .send-animation-card.target-manual {
+  --post-drop-x: 105px;
+}
+
+@keyframes postcardDropToSelected {
+  0% {
+    transform: translate(0, 0) rotate(-4deg) scale(1);
+    opacity: 1;
+  }
+  55% {
+    transform: translate(var(--post-drop-x), 235px) rotate(4deg) scale(.67);
+    opacity: 1;
+  }
+  82% {
+    transform: translate(var(--post-drop-x), 298px) rotate(0) scale(.42);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--post-drop-x), 330px) rotate(0) scale(.18);
+    opacity: 0;
+  }
+}
+
+.post-send-animation .send-animation-message {
+  bottom: 5px;
+  font-size: 26px;
+}
+
 </style>
 </head>
 <body>
@@ -1928,7 +2091,7 @@ button.file-choice-button {
               <div class="post-divider"></div>
 
               <div class="post-choice">
-                <button class="file-choice-button" type="button" data-route="post-manual">手入力</button>
+                <button class="file-choice-button" type="button" data-route="post-manual" data-post-source="manual">手入力</button>
                 <div class="post-choice-description">手動で入力</div>
               </div>
             </div>
@@ -2011,6 +2174,7 @@ button.file-choice-button {
             </div>
 
             <div class="post-confirm-actions">
+              <button id="postDeleteButton" class="post-delete-current" type="button" data-action="delete-current-post" hidden>削除</button>
               <button class="post-edit-all" type="button" data-action="edit-current-post">修正</button>
               <button class="post-send-all" type="button" data-action="send-post">送る</button>
             </div>
@@ -2171,15 +2335,37 @@ button.file-choice-button {
 
         <div id="postSendAnimation" class="post-send-animation" hidden>
           <div class="send-animation-scene">
+            <div class="post-machine send-animation-machine">
+              <div class="post-input-box send-animation-input-box">
+                <div id="sendTargetAi" class="post-choice send-target-choice">
+                  <div class="send-target-title">ファイルを選択</div>
+                  <div class="post-choice-description">ファイルから<br>AI自動読み込み</div>
+                  <div class="send-target-slot"></div>
+                </div>
+
+                <div class="post-divider"></div>
+
+                <div id="sendTargetManual" class="post-choice send-target-choice">
+                  <div class="send-target-title">手入力</div>
+                  <div class="post-choice-description">手動で入力</div>
+                  <div class="send-target-slot"></div>
+                </div>
+              </div>
+
+              <div class="post-machine-title">
+                <span>依頼出し</span>
+                <strong>〒</strong>
+                <span>POST</span>
+              </div>
+
+              <div class="post-machine-leg"></div>
+            </div>
+
             <div class="send-animation-card" id="sendAnimationCard">
               <div class="mini-stamp">85</div>
               <div class="mini-lines"></div>
             </div>
-            <div class="send-animation-postbox">
-              <div class="postbox-slot"></div>
-              <div class="postbox-symbol">〒</div>
-              <div class="postbox-label">POST</div>
-            </div>
+
             <div id="sendAnimationMessage" class="send-animation-message">投函しています…</div>
           </div>
         </div>
@@ -2211,6 +2397,7 @@ const state = {
   currentScreen: null,
   timerId: null,
   selectedTaskId: null,
+  screenHistory: [],
   share: {
     roomId: "",
     participantId: "",
@@ -2272,6 +2459,7 @@ async function init() {
   window.addEventListener("resize", fitCanvas);
   window.addEventListener("hashchange", routeFromHash);
   wireActions();
+  installCommonBackButtons();
 
   const token = sessionStorage.getItem("dotjp_access_token");
   if (!token) {
@@ -2318,7 +2506,19 @@ async function init() {
 
 function wireActions() {
   document.querySelectorAll("[data-route]").forEach((element) => {
-    element.addEventListener("click", () => showScreen(element.dataset.route));
+    element.addEventListener("click", () => {
+      if (element.dataset.postSource) {
+        sessionStorage.setItem(
+          "dotjp_post_source_mode",
+          element.dataset.postSource
+        );
+      }
+      showScreen(element.dataset.route);
+    });
+  });
+
+  document.querySelectorAll("[data-common-back]").forEach((element) => {
+    element.addEventListener("click", goBackScreen);
   });
 
   document.querySelectorAll("[data-region]").forEach((element) => {
@@ -2344,7 +2544,8 @@ function wireActions() {
       deadline: document.getElementById("deadline").value.trim(),
       content: document.getElementById("content").value.trim(),
       evidence: "",
-      aiAnalyzed: false
+      aiAnalyzed: false,
+      sourceMode: sessionStorage.getItem("dotjp_post_source_mode") || "manual"
     };
 
     const editingIndex = Number(
@@ -2361,7 +2562,8 @@ function wireActions() {
         ...previous,
         ...payload,
         evidence: previous.evidence || "",
-        aiAnalyzed: previous.aiAnalyzed || false
+        aiAnalyzed: previous.aiAnalyzed || false,
+        sourceMode: previous.sourceMode || payload.sourceMode || "manual"
       };
       state.postCardIndex = editingIndex;
     } else {
@@ -2392,6 +2594,7 @@ function wireActions() {
   });
 
   document.querySelector('[data-action="edit-current-post"]').addEventListener("click", editCurrentPostCard);
+  document.querySelector('[data-action="delete-current-post"]').addEventListener("click", deleteCurrentPostCard);
 
   document.getElementById("hpEditButton").addEventListener("click", () => {
     if (state.isDeveloper) {
@@ -2412,6 +2615,8 @@ function wireActions() {
   document.getElementById("postFile").addEventListener("change", async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    sessionStorage.setItem("dotjp_post_source_mode", "ai");
 
     try {
       await analyzePostFile(file);
@@ -2438,8 +2643,22 @@ function wireActions() {
   });
 }
 
-function showScreen(name, updateHash = true) {
+function showScreen(name, updateHash = true, recordHistory = true) {
   if (!screenNames.has(name)) return;
+
+  const previousScreen = state.currentScreen;
+
+  if (
+    recordHistory &&
+    previousScreen &&
+    previousScreen !== name
+  ) {
+    state.screenHistory.push(previousScreen);
+
+    if (state.screenHistory.length > 30) {
+      state.screenHistory.shift();
+    }
+  }
 
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.toggle("is-active", screen.dataset.screen === name);
@@ -2458,6 +2677,7 @@ function showScreen(name, updateHash = true) {
     sessionStorage.removeItem("dotjp_post_cards");
     sessionStorage.removeItem("dotjp_post_card_index");
     sessionStorage.removeItem("dotjp_editing_post_index");
+    sessionStorage.removeItem("dotjp_post_source_mode");
   }
 
   if (name === "post-manual") hydratePostDraft();
@@ -2484,6 +2704,53 @@ function showScreen(name, updateHash = true) {
   }
 
   if (updateHash) history.pushState(null, "", `#${name}`);
+}
+
+
+function goBackScreen() {
+  let target = "";
+
+  while (state.screenHistory.length) {
+    const candidate = state.screenHistory.pop();
+
+    if (
+      candidate &&
+      candidate !== state.currentScreen &&
+      screenNames.has(candidate)
+    ) {
+      target = candidate;
+      break;
+    }
+  }
+
+  if (!target) {
+    target =
+      state.currentScreen === "post-manual" ||
+      state.currentScreen === "post-confirm"
+        ? "post"
+        : "home";
+  }
+
+  showScreen(target, true, false);
+}
+
+function installCommonBackButtons() {
+  const excluded = new Set(["task-start", "home"]);
+
+  document.querySelectorAll(".screen").forEach((screen) => {
+    const name = screen.dataset.screen;
+
+    if (!name || excluded.has(name)) return;
+    if (screen.querySelector("[data-common-back]")) return;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "common-back-button";
+    button.dataset.commonBack = "";
+    button.textContent = "← 戻る";
+    button.addEventListener("click", goBackScreen);
+    screen.appendChild(button);
+  });
 }
 
 function routeFromHash() {
@@ -3123,7 +3390,8 @@ async function analyzePostFile(file) {
     evidence: task.evidence || "",
     notes: task.notes || "",
     aiAnalyzed: true,
-    aiSourceFile: file.name
+    aiSourceFile: file.name,
+    sourceMode: "ai"
   }));
 
   state.postCardIndex = 0;
@@ -3403,6 +3671,11 @@ function renderPostConfirmation() {
   document.getElementById("postEvidenceText").textContent =
     card.evidence || "—";
 
+  const deleteButton = document.getElementById("postDeleteButton");
+  if (deleteButton) {
+    deleteButton.hidden = !card.aiAnalyzed;
+  }
+
   const sendButton = document.querySelector('[data-action="send-post"]');
   if (sendButton) {
     sendButton.textContent =
@@ -3434,6 +3707,41 @@ function editCurrentPostCard() {
   showScreen("post-manual");
 }
 
+function deleteCurrentPostCard() {
+  restorePostCards();
+
+  const card = state.postCards[state.postCardIndex];
+
+  if (!card || !card.aiAnalyzed) {
+    showToast("このはがきはAI生成ではありません");
+    return;
+  }
+
+  const currentNumber = state.postCardIndex + 1;
+
+  state.postCards.splice(state.postCardIndex, 1);
+
+  if (!state.postCards.length) {
+    state.postCardIndex = 0;
+    sessionStorage.removeItem("dotjp_post_cards");
+    sessionStorage.removeItem("dotjp_post_card_index");
+    sessionStorage.removeItem("dotjp_editing_post_index");
+    showToast(`AI生成の${currentNumber}枚目を削除しました`);
+    showScreen("post");
+    return;
+  }
+
+  state.postCardIndex = Math.min(
+    state.postCardIndex,
+    state.postCards.length - 1
+  );
+
+  persistPostCards();
+  renderPostConfirmation();
+  showToast(`AI生成の${currentNumber}枚目を削除しました`);
+}
+
+
 async function sendPostCards() {
   restorePostCards();
 
@@ -3447,7 +3755,8 @@ async function sendPostCards() {
     destination: card.destination || "全員",
     deadline: card.deadline || "",
     content: card.content || "",
-    evidence: card.evidence || ""
+    evidence: card.evidence || "",
+    sourceMode: card.sourceMode || (card.aiAnalyzed ? "ai" : "manual")
   }));
 
   try {
@@ -3456,7 +3765,7 @@ async function sendPostCards() {
       body: { cards }
     });
 
-    await runPostboxAnimation(cards.length);
+    await runPostboxAnimation(cards);
 
     localStorage.setItem(
       userStorageKey("last_post"),
@@ -3481,30 +3790,75 @@ async function sendPostCards() {
   }
 }
 
-async function runPostboxAnimation(count) {
+async function runPostboxAnimation(cards) {
+  const list = Array.isArray(cards) ? cards : [];
   const overlay = document.getElementById("postSendAnimation");
-  const card = document.getElementById("sendAnimationCard");
+  const cardNode = document.getElementById("sendAnimationCard");
   const message = document.getElementById("sendAnimationMessage");
+  const aiTarget = document.getElementById("sendTargetAi");
+  const manualTarget = document.getElementById("sendTargetManual");
+
+  if (!list.length) return;
 
   overlay.hidden = false;
 
-  for (let i = 0; i < count; i += 1) {
+  for (let i = 0; i < list.length; i += 1) {
+    const sourceMode =
+      list[i]?.sourceMode === "manual"
+        ? "manual"
+        : "ai";
+
+    aiTarget.classList.toggle(
+      "is-target",
+      sourceMode === "ai"
+    );
+
+    manualTarget.classList.toggle(
+      "is-target",
+      sourceMode === "manual"
+    );
+
     message.textContent =
-      count > 1
-        ? `${i + 1} / ${count} 枚目を投函しています…`
-        : "ポストに投函しています…";
+      list.length > 1
+        ? `${i + 1} / ${list.length} 枚目を${sourceMode === "ai" ? "AI自動読み込み" : "手入力"}側へ投函しています…`
+        : `${sourceMode === "ai" ? "AI自動読み込み" : "手入力"}側へ投函しています…`;
 
-    card.classList.remove("is-dropping");
-    void card.offsetWidth;
-    card.classList.add("is-dropping");
+    cardNode.classList.remove(
+      "is-dropping",
+      "is-ready",
+      "target-ai",
+      "target-manual"
+    );
 
-    await sleep(950);
+    cardNode.classList.add(
+      sourceMode === "ai"
+        ? "target-ai"
+        : "target-manual"
+    );
+
+    void cardNode.offsetWidth;
+
+    cardNode.classList.add("is-ready");
+    await sleep(100);
+
+    cardNode.classList.add("is-dropping");
+    await sleep(1030);
   }
+
+  aiTarget.classList.remove("is-target");
+  manualTarget.classList.remove("is-target");
 
   message.textContent = "投函しました！";
   await sleep(650);
+
   overlay.hidden = true;
-  card.classList.remove("is-dropping");
+
+  cardNode.classList.remove(
+    "is-dropping",
+    "is-ready",
+    "target-ai",
+    "target-manual"
+  );
 }
 
 function sleep(ms) {
