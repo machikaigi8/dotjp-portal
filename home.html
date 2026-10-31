@@ -623,12 +623,17 @@ button.file-choice-button {
   left: 32px;
   right: 30px;
   display: grid;
-  grid-template-columns: 118px 1fr;
+  grid-template-columns: 142px minmax(0, 1fr);
   align-items: start;
   font-size: 30px;
   line-height: 1.25;
   font-weight: 500;
   z-index: 3;
+}
+
+.postcard-form-row label,
+.postcard-display-row strong {
+  white-space: nowrap;
 }
 
 .postcard-form-row input,
@@ -646,6 +651,12 @@ button.file-choice-button {
   height: 125px;
   resize: none;
   border: 1px solid rgba(0,0,0,.16);
+}
+
+#requester[readonly] {
+  color: #222;
+  background: rgba(242, 242, 255, .55);
+  cursor: default;
 }
 
 .postcard-display-row span {
@@ -1419,7 +1430,7 @@ button.file-choice-button {
 
             <div class="postcard-form-row row-requester">
               <label for="requester">依頼元：</label>
-              <input id="requester" type="text" autocomplete="off">
+              <input id="requester" type="text" autocomplete="off" readonly aria-readonly="true">
             </div>
 
             <div class="postcard-form-row row-destination">
@@ -1694,7 +1705,7 @@ function wireActions() {
 
   document.querySelector('[data-action="confirm-post"]').addEventListener("click", () => {
     const payload = {
-      requester: document.getElementById("requester").value.trim(),
+      requester: currentRequesterName(),
       destination: document.getElementById("destination").value.trim(),
       deadline: document.getElementById("deadline").value.trim(),
       content: document.getElementById("content").value.trim()
@@ -1782,6 +1793,19 @@ function fillUserInfo() {
   document.querySelectorAll("[data-user-email]").forEach((node) => {
     node.textContent = displayEmail;
   });
+
+  const requesterInput = document.getElementById("requester");
+  if (requesterInput) {
+    requesterInput.value = displayName;
+  }
+}
+
+function currentRequesterName() {
+  return String(
+    state.user?.name ||
+    state.user?.email ||
+    ""
+  ).trim();
 }
 
 function userIdentity() {
@@ -2259,12 +2283,22 @@ function updateRegion() {
 }
 
 function hydratePostDraft() {
-  const draft = parseJson(sessionStorage.getItem("dotjp_post_draft"), null);
-  if (!draft) return;
-  document.getElementById("requester").value = draft.requester || "";
-  document.getElementById("destination").value = draft.destination || "";
-  document.getElementById("deadline").value = draft.deadline || "";
-  document.getElementById("content").value = draft.content || "";
+  const draft = parseJson(
+    sessionStorage.getItem("dotjp_post_draft"),
+    {}
+  );
+
+  document.getElementById("requester").value =
+    currentRequesterName();
+
+  document.getElementById("destination").value =
+    draft.destination || "";
+
+  document.getElementById("deadline").value =
+    draft.deadline || "";
+
+  document.getElementById("content").value =
+    draft.content || "";
 }
 
 function setPostAiStatus(message, isError = false) {
@@ -2313,11 +2347,7 @@ async function analyzePostFile(file) {
   const result = data.result || {};
 
   const payload = {
-    requester:
-      result.requester ||
-      state.user?.name ||
-      state.user?.email ||
-      "",
+    requester: currentRequesterName(),
     destination: result.recipient || "",
     deadline: result.deadline || "",
     content: result.action || "",
@@ -2474,14 +2504,19 @@ function localDateIso(date) {
 }
 
 function renderPostConfirmation(payload) {
+  const normalizedPayload = {
+    ...(payload || {}),
+    requester: currentRequesterName()
+  };
+
   document.querySelectorAll("[data-post-value]").forEach((node) => {
     const key = node.dataset.postValue;
-    node.textContent = payload?.[key] || "";
+    node.textContent = normalizedPayload[key] || "";
   });
 
   const badge = document.getElementById("postAiResultBadge");
   if (badge) {
-    badge.hidden = !payload?.aiAnalyzed;
+    badge.hidden = !normalizedPayload.aiAnalyzed;
   }
 }
 
