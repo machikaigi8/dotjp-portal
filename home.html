@@ -1285,6 +1285,511 @@ button.file-choice-button {
   white-space: nowrap;
 }
 
+
+/* =========================================================
+   vNext: 複数はがき・HP編集・画面共有・投函アニメーション
+========================================================= */
+
+.screen-share-link {
+  border: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.post-confirm-shell {
+  position: absolute;
+  left: 390px;
+  top: 95px;
+  width: 660px;
+  height: 865px;
+  padding: 10px 20px 20px;
+  background: rgba(255,255,255,.62);
+  border: 3px solid #b8b8e8;
+}
+
+.post-confirm-toolbar {
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.post-nav-button {
+  width: 58px;
+  height: 42px;
+  background: #d7d9ff;
+  color: #111;
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.post-nav-button:disabled {
+  opacity: .32;
+  cursor: default;
+}
+
+.post-card-counter {
+  min-width: 115px;
+  text-align: center;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.post-confirm-card-host {
+  height: 675px;
+  display: grid;
+  place-items: center;
+}
+
+.post-confirm-shell .postcard-card {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 440px;
+  height: 650px;
+}
+
+.post-confirm-shell .row-requester {
+  top: 200px;
+}
+
+.post-confirm-shell .row-destination {
+  top: 245px;
+}
+
+.post-confirm-shell .row-deadline {
+  top: 378px;
+}
+
+.post-confirm-shell .row-content {
+  top: 423px;
+}
+
+.post-confirm-shell .postcard-bottom {
+  bottom: 16px;
+}
+
+.post-evidence-area {
+  min-height: 42px;
+  margin-top: 2px;
+  padding: 6px 10px;
+  background: #fff9dc;
+  border: 1px solid #dfcf7c;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.post-confirm-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.post-edit-all,
+.post-send-all {
+  width: 180px;
+  height: 52px;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.post-edit-all {
+  background: #e5e5e5;
+}
+
+.post-send-all {
+  background: #cfd2ff;
+}
+
+.post-ai-multi-badge {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  padding: 5px 8px;
+  border: 2px solid #8057ff;
+  border-radius: 999px;
+  background: #f2eeff;
+  color: #4a24b8;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* HP編集 */
+
+.hp-edit-panel,
+.screen-share-panel {
+  position: absolute;
+  left: 90px;
+  top: 90px;
+  width: 1260px;
+  height: 850px;
+  padding: 28px 34px;
+  background: #fff;
+  border: 4px solid var(--sky);
+  overflow: hidden;
+}
+
+.portal-screen-title-row {
+  height: 88px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 3px solid #d9d9ee;
+}
+
+.portal-screen-title-row h1 {
+  margin: 0;
+  font-size: 42px;
+  color: var(--navy);
+}
+
+.portal-screen-title-row p {
+  margin: 4px 0 0;
+  font-size: 18px;
+  color: #666;
+}
+
+.portal-back-button {
+  min-width: 150px;
+  height: 52px;
+  background: #3657ff;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.roster-editor {
+  padding-top: 20px;
+}
+
+.roster-editor h2 {
+  margin: 0;
+  font-size: 34px;
+}
+
+.roster-note {
+  margin: 6px 0 16px;
+  font-size: 18px;
+}
+
+.roster-add-row {
+  display: grid;
+  grid-template-columns: 280px 420px 140px;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.roster-add-row input {
+  height: 50px;
+  padding: 8px 12px;
+  border: 2px solid #a8a8bd;
+  font-size: 21px;
+}
+
+.roster-add-row button {
+  height: 50px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.roster-table-wrap {
+  height: 590px;
+  overflow: auto;
+  border: 2px solid #d0d0df;
+}
+
+.roster-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 20px;
+}
+
+.roster-table th,
+.roster-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #d8d8e0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.roster-table th {
+  position: sticky;
+  top: 0;
+  background: #f1f2ff;
+  z-index: 2;
+}
+
+.roster-table input[type="text"],
+.roster-table input[type="email"] {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #bbb;
+  font-size: 18px;
+}
+
+.roster-action-button {
+  padding: 7px 12px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.roster-save-button {
+  background: #d9e4ff;
+}
+
+.roster-delete-button {
+  background: #ffe0e0;
+}
+
+/* 画面共有 */
+
+.screen-share-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  height: 680px;
+  padding-top: 20px;
+}
+
+.share-host-card,
+.share-view-card {
+  position: relative;
+  padding: 18px;
+  border: 3px solid #c7c7dc;
+  background: #fafaff;
+  overflow: auto;
+}
+
+.share-host-card h2,
+.share-view-card h2 {
+  margin: 0 0 12px;
+  font-size: 30px;
+}
+
+.share-button-row {
+  display: flex;
+  gap: 10px;
+}
+
+.share-primary,
+.share-stop,
+.share-refresh,
+.share-stop-view {
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.share-primary {
+  background: #3156ff;
+  color: #fff;
+}
+
+.share-stop,
+.share-stop-view {
+  background: #ffdddd;
+}
+
+.share-refresh {
+  background: #e2e5ff;
+}
+
+.share-primary:disabled,
+.share-stop:disabled,
+.share-stop-view:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.share-room-code {
+  margin: 12px 0;
+  font-size: 21px;
+}
+
+.share-video {
+  width: 100%;
+  height: 310px;
+  margin-top: 10px;
+  background: #111;
+  object-fit: contain;
+}
+
+.share-room-list {
+  max-height: 150px;
+  overflow: auto;
+  margin: 10px 0;
+}
+
+.share-room-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border: 1px solid #c5c5d8;
+  background: #fff;
+}
+
+.share-room-row button {
+  padding: 5px 10px;
+  background: #3156ff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.share-view-status {
+  min-height: 28px;
+  font-size: 17px;
+}
+
+.screen-share-note {
+  margin: 10px 0 0;
+  font-size: 16px;
+  color: #555;
+}
+
+/* 投函アニメーション */
+
+.post-send-animation {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(240,240,255,.92);
+  display: grid;
+  place-items: center;
+}
+
+.send-animation-scene {
+  position: relative;
+  width: 760px;
+  height: 780px;
+}
+
+.send-animation-postbox {
+  position: absolute;
+  left: 190px;
+  bottom: 55px;
+  width: 380px;
+  height: 420px;
+  background: #d92e18;
+  border-radius: 32px 32px 8px 8px;
+  box-shadow: 0 16px 30px rgba(0,0,0,.2);
+}
+
+.postbox-slot {
+  position: absolute;
+  left: 70px;
+  top: 78px;
+  width: 240px;
+  height: 28px;
+  background: #4a0805;
+  border: 8px solid #8d1b10;
+  border-radius: 8px;
+}
+
+.postbox-symbol {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 148px;
+  text-align: center;
+  color: #fff;
+  font-size: 86px;
+  font-weight: 700;
+}
+
+.postbox-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 260px;
+  text-align: center;
+  color: #fff;
+  font-size: 44px;
+  font-weight: 700;
+}
+
+.send-animation-card {
+  position: absolute;
+  left: 230px;
+  top: 20px;
+  width: 300px;
+  height: 190px;
+  background: #fff;
+  border: 3px solid #222;
+  transform-origin: center;
+  z-index: 3;
+}
+
+.mini-stamp {
+  position: absolute;
+  left: 20px;
+  top: 18px;
+  width: 48px;
+  height: 56px;
+  border: 2px solid #1a8b48;
+  color: #1a8b48;
+  display: grid;
+  place-items: end center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.mini-lines {
+  position: absolute;
+  left: 92px;
+  top: 65px;
+  width: 165px;
+  height: 70px;
+  border-top: 3px solid #bbb;
+  border-bottom: 3px solid #bbb;
+}
+
+.send-animation-card.is-dropping {
+  animation: postcardDrop 900ms cubic-bezier(.5,.05,.72,1) forwards;
+}
+
+.send-animation-message {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+@keyframes postcardDrop {
+  0% {
+    transform: translateY(0) rotate(-4deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(210px) rotate(6deg) scale(.82);
+    opacity: 1;
+  }
+  82% {
+    transform: translateY(318px) rotate(1deg) scale(.55);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(390px) rotate(0) scale(.22);
+    opacity: 0;
+  }
+}
+
+.task-type-badge.type-request {
+  background: #7b48d6;
+}
+
 </style>
 </head>
 <body>
@@ -1364,7 +1869,7 @@ button.file-choice-button {
               <button type="button" class="blue-menu" data-placeholder="MTG出欠登録">MTG出欠登録</button>
               <button type="button" class="blue-menu" data-route="post">〒依頼出しPOST</button>
               <button type="button" class="blue-menu" data-route="schedule">スケジュール登録</button>
-              <button type="button" class="blue-menu" data-placeholder="HPへの要望">HPへの要望</button>
+              <button id="hpEditButton" type="button" class="blue-menu">HPへの要望</button>
               <button type="button" class="blue-menu schedule-button" data-placeholder="予定確認">予定確認</button>
             </div>
           </section>
@@ -1375,7 +1880,7 @@ button.file-choice-button {
               <a class="green-menu" href="https://docs.google.com/spreadsheets/d/1isxF8Tmc6FnSVq0IhrcoHMxO6CbnBqD4mrqGBsEWiJg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">経営管理シート</a>
               <a class="green-menu" href="https://docs.google.com/spreadsheets/d/1Tgw7UTuS1HPIt1_vaRi8em5atPb1QQW_sokdY9AH7DE/edit?usp=sharing" target="_blank" rel="noopener noreferrer">経費発生報告</a>
               <a class="green-menu form-link" href="https://docs.google.com/forms/d/e/1FAIpQLSc-vCSYxRdcyz-F6B5-RIBOOZODO-FHwI-qwj06nYSF77EOkQ/viewform" target="_blank" rel="noopener noreferrer">説明会申込フォーム</a>
-              <div class="green-menu green-placeholder">空き</div>
+              <button type="button" class="green-menu screen-share-link" data-route="screen-share">画面共有</button>
             </div>
           </section>
         </section>
@@ -1435,7 +1940,8 @@ button.file-choice-button {
 
             <div class="postcard-form-row row-destination">
               <label for="destination">宛先：</label>
-              <input id="destination" type="text" autocomplete="off">
+              <input id="destination" type="text" autocomplete="off" list="destinationRosterOptions">
+              <datalist id="destinationRosterOptions"></datalist>
             </div>
 
             <div class="postcard-form-row row-deadline">
@@ -1462,51 +1968,107 @@ button.file-choice-button {
         <section class="screen screen-postcard" data-screen="post-confirm">
           <div class="user-name" data-user-name>＜名前＞</div>
 
-          <div class="postcard-card">
-            <div id="postAiResultBadge" class="post-ai-result-badge" hidden>AI読み取り結果</div>
-            <div class="postcard-top">
-              <div class="stamp-box" aria-label="切手欄">
-                <div class="stamp-bird">◇</div>
-                <div class="stamp-amount">85</div>
+          <div class="post-confirm-shell">
+            <div class="post-confirm-toolbar">
+              <button id="postPrevButton" class="post-nav-button" type="button" data-action="post-prev">‹</button>
+              <div id="postCardCounter" class="post-card-counter">1 / 1</div>
+              <button id="postNextButton" class="post-nav-button" type="button" data-action="post-next">›</button>
+            </div>
+
+            <div id="postConfirmCardHost" class="post-confirm-card-host"></div>
+
+            <div class="post-evidence-area">
+              <strong>AIの判断根拠：</strong>
+              <span id="postEvidenceText">—</span>
+            </div>
+
+            <div class="post-confirm-actions">
+              <button class="post-edit-all" type="button" data-action="edit-current-post">修正</button>
+              <button class="post-send-all" type="button" data-action="send-post">送る</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen screen-hp-edit" data-screen="hp-edit">
+          <div class="user-name" data-user-name>＜名前＞</div>
+
+          <div class="hp-edit-panel">
+            <div class="portal-screen-title-row">
+              <div>
+                <h1>HP編集</h1>
+                <p>デベロッパー専用</p>
+              </div>
+              <button class="portal-back-button" type="button" data-route="home">← ホーム</button>
+            </div>
+
+            <section class="roster-editor">
+              <h2>名簿管理</h2>
+              <p class="roster-note">
+                AIはこの名簿の氏名と資料中の名前を照合します。名前指定がない依頼は「全員」になります。
+              </p>
+
+              <div class="roster-add-row">
+                <input id="rosterNameInput" type="text" placeholder="氏名">
+                <input id="rosterEmailInput" type="email" placeholder="name@dot-jp.or.jp">
+                <button type="button" data-action="roster-add">追加</button>
               </div>
 
-              <div class="postcard-address-block">
-                <div class="postcard-caption">郵 便 は が き</div>
-                <div class="postal-boxes" aria-label="郵便番号欄">
-                  <span>D</span><span>o</span><span>t</span><span>j</span><span>p</span><span>C</span><span>P</span>
+              <div class="roster-table-wrap">
+                <table class="roster-table">
+                  <thead>
+                    <tr>
+                      <th>氏名</th>
+                      <th>メール</th>
+                      <th>有効</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="rosterTableBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="screen screen-share" data-screen="screen-share">
+          <div class="user-name" data-user-name>＜名前＞</div>
+
+          <div class="screen-share-panel">
+            <div class="portal-screen-title-row">
+              <div>
+                <h1>画面共有</h1>
+                <p>ポータル内のログインユーザー同士で共有</p>
+              </div>
+              <button class="portal-back-button" type="button" data-route="home">← ホーム</button>
+            </div>
+
+            <div class="screen-share-grid">
+              <section class="share-host-card">
+                <h2>自分の画面を共有</h2>
+                <p id="shareHostStatus">共有していません</p>
+                <div class="share-button-row">
+                  <button class="share-primary" type="button" data-action="share-start">画面共有を開始</button>
+                  <button class="share-stop" type="button" data-action="share-stop" disabled>共有終了</button>
                 </div>
-              </div>
+                <div class="share-room-code">
+                  ルーム：<strong id="shareRoomCode">—</strong>
+                </div>
+                <video id="shareLocalVideo" class="share-video" autoplay muted playsinline></video>
+              </section>
+
+              <section class="share-view-card">
+                <h2>共有中の画面を見る</h2>
+                <button class="share-refresh" type="button" data-action="share-refresh">一覧更新</button>
+                <div id="shareRoomList" class="share-room-list"></div>
+                <div class="share-view-status" id="shareViewerStatus">未接続</div>
+                <video id="shareRemoteVideo" class="share-video" autoplay playsinline></video>
+                <button class="share-stop-view" type="button" data-action="share-leave" disabled>視聴終了</button>
+              </section>
             </div>
 
-            <div class="postcard-display-row row-requester">
-              <strong>依頼元：</strong>
-              <span data-post-value="requester"></span>
-            </div>
-
-            <div class="postcard-display-row row-destination">
-              <strong>宛先：</strong>
-              <span data-post-value="destination"></span>
-            </div>
-
-            <div class="postcard-display-row row-deadline">
-              <strong>期限：</strong>
-              <span data-post-value="deadline"></span>
-            </div>
-
-            <div class="postcard-display-row row-content">
-              <strong>内容：</strong>
-              <span data-post-value="content"></span>
-            </div>
-
-            <div class="postcard-bottom">
-              <div class="bottom-postal-boxes">
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <div class="postcard-mark">〒</div>
-            </div>
-
-            <button class="postcard-edit-result" type="button" data-route="post-manual">修正</button>
-            <button class="postcard-confirm" type="button" data-action="send-post">送る</button>
+            <p class="screen-share-note">
+              ※ WebRTCのP2P接続です。ネットワーク環境によっては接続できない場合があります。
+            </p>
           </div>
         </section>
 
@@ -1576,6 +2138,21 @@ button.file-choice-button {
           </div>
         </section>
 
+        <div id="postSendAnimation" class="post-send-animation" hidden>
+          <div class="send-animation-scene">
+            <div class="send-animation-card" id="sendAnimationCard">
+              <div class="mini-stamp">85</div>
+              <div class="mini-lines"></div>
+            </div>
+            <div class="send-animation-postbox">
+              <div class="postbox-slot"></div>
+              <div class="postbox-symbol">〒</div>
+              <div class="postbox-label">POST</div>
+            </div>
+            <div id="sendAnimationMessage" class="send-animation-message">投函しています…</div>
+          </div>
+        </div>
+
         <div id="toast" class="toast" role="status" aria-live="polite"></div>
       </main>
     </div>
@@ -1590,13 +2167,32 @@ if (window.pdfjsLib) {
 
 const WORKER = "https://dotjp-login.taka-souda516.workers.dev";
 const POST_AI_WORKER = "https://dotjp-post-ai.taka-souda516.workers.dev";
+const PORTAL_API_WORKER = "https://dotjp-portal-api.taka-souda516.workers.dev";
 
 const state = {
   user: null,
+  isDeveloper: false,
+  roster: [],
+  remoteTasks: [],
+  postCards: [],
+  postCardIndex: 0,
   region: sessionStorage.getItem("dotjp_region") || "kanto",
   currentScreen: null,
   timerId: null,
-  selectedTaskId: null
+  selectedTaskId: null,
+  share: {
+    roomId: "",
+    participantId: "",
+    localStream: null,
+    hostPeers: new Map(),
+    viewerPeer: null,
+    offeredParticipants: new Set(),
+    hostSignalAfter: 0,
+    viewerSignalAfter: 0,
+    hostPollTimer: null,
+    viewerPollTimer: null,
+    roomRefreshTimer: null
+  }
 };
 
 const screenNames = new Set([
@@ -1606,13 +2202,16 @@ const screenNames = new Set([
   "post-manual",
   "post-confirm",
   "schedule",
+  "hp-edit",
+  "screen-share",
   "task-end"
 ]);
 
 const taskTypeLabels = {
   department: "部署",
   mtg: "MTG",
-  other: "その他"
+  other: "その他",
+  request: "依頼"
 };
 
 const presetTaskCatalog = {
@@ -1659,6 +2258,10 @@ async function init() {
     state.user = data.user;
     fillUserInfo();
     ensureLoginStartedAt();
+
+    await loadPortalProfile();
+    await refreshRemoteTasks();
+
     document.getElementById("loading").hidden = true;
     document.getElementById("app").hidden = false;
 
@@ -1706,22 +2309,73 @@ function wireActions() {
   document.querySelector('[data-action="confirm-post"]').addEventListener("click", () => {
     const payload = {
       requester: currentRequesterName(),
-      destination: document.getElementById("destination").value.trim(),
+      destination: document.getElementById("destination").value.trim() || "全員",
       deadline: document.getElementById("deadline").value.trim(),
-      content: document.getElementById("content").value.trim()
+      content: document.getElementById("content").value.trim(),
+      evidence: "",
+      aiAnalyzed: false
     };
-    sessionStorage.setItem("dotjp_post_draft", JSON.stringify(payload));
-    renderPostConfirmation(payload);
+
+    const editingIndex = Number(
+      sessionStorage.getItem("dotjp_editing_post_index")
+    );
+
+    if (
+      Number.isInteger(editingIndex) &&
+      editingIndex >= 0 &&
+      editingIndex < state.postCards.length
+    ) {
+      const previous = state.postCards[editingIndex] || {};
+      state.postCards[editingIndex] = {
+        ...previous,
+        ...payload,
+        evidence: previous.evidence || "",
+        aiAnalyzed: previous.aiAnalyzed || false
+      };
+      state.postCardIndex = editingIndex;
+    } else {
+      state.postCards = [payload];
+      state.postCardIndex = 0;
+    }
+
+    sessionStorage.removeItem("dotjp_editing_post_index");
+    persistPostCards();
+    renderPostConfirmation();
     showScreen("post-confirm");
   });
 
-  document.querySelector('[data-action="send-post"]').addEventListener("click", () => {
-    const draft = sessionStorage.getItem("dotjp_post_draft");
-    if (draft) localStorage.setItem(userStorageKey("last_post"), draft);
-    sessionStorage.removeItem("dotjp_post_draft");
-    showToast("送信処理を完了しました");
-    setTimeout(() => showScreen("home"), 450);
+  document.querySelector('[data-action="send-post"]').addEventListener("click", sendPostCards);
+
+  document.querySelector('[data-action="post-prev"]').addEventListener("click", () => {
+    if (state.postCardIndex > 0) {
+      state.postCardIndex -= 1;
+      renderPostConfirmation();
+    }
   });
+
+  document.querySelector('[data-action="post-next"]').addEventListener("click", () => {
+    if (state.postCardIndex < state.postCards.length - 1) {
+      state.postCardIndex += 1;
+      renderPostConfirmation();
+    }
+  });
+
+  document.querySelector('[data-action="edit-current-post"]').addEventListener("click", editCurrentPostCard);
+
+  document.getElementById("hpEditButton").addEventListener("click", () => {
+    if (state.isDeveloper) {
+      showScreen("hp-edit");
+    } else {
+      showToast("HP編集はデベロッパー専用です");
+    }
+  });
+
+  document.querySelector('[data-action="roster-add"]').addEventListener("click", addRosterMember);
+
+  document.querySelector('[data-action="share-start"]').addEventListener("click", startScreenShare);
+  document.querySelector('[data-action="share-stop"]').addEventListener("click", stopScreenShare);
+  document.querySelector('[data-action="share-refresh"]').addEventListener("click", refreshScreenRooms);
+  document.querySelector('[data-action="share-leave"]').addEventListener("click", leaveScreenViewer);
 
   document.getElementById("postFile").addEventListener("change", async (event) => {
     const file = event.target.files?.[0];
@@ -1766,9 +2420,35 @@ function showScreen(name, updateHash = true) {
     updateElapsedTaskText();
     updateFinishButtonState();
   }
+  if (name === "post") {
+    state.postCards = [];
+    state.postCardIndex = 0;
+    sessionStorage.removeItem("dotjp_post_cards");
+    sessionStorage.removeItem("dotjp_post_card_index");
+    sessionStorage.removeItem("dotjp_editing_post_index");
+  }
+
   if (name === "post-manual") hydratePostDraft();
+
   if (name === "post-confirm") {
-    renderPostConfirmation(parseJson(sessionStorage.getItem("dotjp_post_draft"), {}));
+    restorePostCards();
+    renderPostConfirmation();
+  }
+
+  if (name === "hp-edit") {
+    if (!state.isDeveloper) {
+      showToast("デベロッパー専用です");
+      showScreen("home", updateHash);
+      return;
+    }
+    loadRoster(true);
+  }
+
+  if (name === "screen-share") {
+    refreshScreenRooms();
+    startRoomRefreshLoop();
+  } else {
+    stopRoomRefreshLoop();
   }
 
   if (updateHash) history.pushState(null, "", `#${name}`);
@@ -1849,10 +2529,15 @@ function weekBounds(base = new Date()) {
 
 function currentWeekTasks() {
   const { start, end } = weekBounds();
-  return loadTasks().filter((task) => {
+
+  const local = loadTasks().filter((task) => {
     const created = new Date(task.createdAt);
     return created >= start && created < end;
   });
+
+  return [...state.remoteTasks, ...local].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 }
 
 function weekLabel() {
@@ -2022,7 +2707,14 @@ function taskSummaryHtml(tasks, activeId) {
 
 function taskBadgeHtml(type) {
   const label = taskTypeLabels[type] || taskTypeLabels.other;
-  const cls = type === "mtg" ? " type-mtg" : type === "other" ? " type-other" : "";
+  const cls =
+    type === "mtg"
+      ? " type-mtg"
+      : type === "request"
+        ? " type-request"
+        : type === "other"
+          ? " type-other"
+          : "";
   return `<span class="task-type-badge${cls}">${label}</span>`;
 }
 
@@ -2030,8 +2722,23 @@ function startTimerLoop() {
   clearInterval(state.timerId);
   refreshTaskUi();
   state.timerId = setInterval(() => {
-    if (state.currentScreen === "home") renderTaskTimeChart();
-    if (state.currentScreen === "task-end") updateElapsedTaskText();
+    if (
+      state.currentScreen === "home" ||
+      state.currentScreen === "task-start"
+    ) {
+      refreshRemoteTasks().then(() => {
+        renderStartTasks();
+        renderHomeTaskLists();
+      }).catch(console.warn);
+    }
+
+    if (state.currentScreen === "home") {
+      renderTaskTimeChart();
+    }
+
+    if (state.currentScreen === "task-end") {
+      updateElapsedTaskText();
+    }
   }, 30000);
 }
 
@@ -2202,6 +2909,9 @@ function updateFinishButtonState() {
 }
 
 function logoutAfterReport() {
+  stopScreenShare();
+  leaveScreenViewer();
+
   sessionStorage.removeItem("dotjp_access_token");
   sessionStorage.removeItem("dotjp_2fa_ticket");
   sessionStorage.removeItem("dotjp_2fa_ticket_v1");
@@ -2212,7 +2922,7 @@ function logoutAfterReport() {
   location.replace("./");
 }
 
-function finishTask() {
+async function finishTask() {
   const startedAt = getActiveStartedAt();
   const activeTaskId = getActiveTaskId();
   const snapshot = reportInputSnapshot();
@@ -2234,12 +2944,26 @@ function finishTask() {
     ? Math.max(0, endedAt.getTime() - loginStartedAt)
     : 0;
 
-  const tasks = loadTasks();
-
   if (hasActiveTask) {
-    const task = tasks.find((item) => item.id === activeTaskId);
-    if (task) task.completedAt = endedAt.toISOString();
-    saveTasks(tasks);
+    if (String(activeTaskId).startsWith("remote_")) {
+      const remoteId = Number(String(activeTaskId).replace("remote_", ""));
+
+      try {
+        await portalFetch("/api/tasks/complete", {
+          method: "POST",
+          body: { id: remoteId }
+        });
+        await refreshRemoteTasks();
+      } catch (error) {
+        showToast(error.message || "依頼タスクを完了できませんでした");
+        return;
+      }
+    } else {
+      const tasks = loadTasks();
+      const task = tasks.find((item) => item.id === activeTaskId);
+      if (task) task.completedAt = endedAt.toISOString();
+      saveTasks(tasks);
+    }
   }
 
   const sessions = loadSessions();
@@ -2283,22 +3007,26 @@ function updateRegion() {
 }
 
 function hydratePostDraft() {
-  const draft = parseJson(
-    sessionStorage.getItem("dotjp_post_draft"),
-    {}
-  );
+  restorePostCards();
+
+  const draft =
+    state.postCards[state.postCardIndex] ||
+    parseJson(sessionStorage.getItem("dotjp_post_draft"), {}) ||
+    {};
 
   document.getElementById("requester").value =
     currentRequesterName();
 
   document.getElementById("destination").value =
-    draft.destination || "";
+    draft.destination || "全員";
 
   document.getElementById("deadline").value =
     draft.deadline || "";
 
   document.getElementById("content").value =
     draft.content || "";
+
+  renderDestinationRosterOptions();
 }
 
 function setPostAiStatus(message, isError = false) {
@@ -2316,9 +3044,11 @@ async function analyzePostFile(file) {
     throw new Error("ログイン情報がありません。再ログインしてください。");
   }
 
-  setPostAiStatus("AIで「誰に・いつまでに・何をするか」を読み取っています…");
+  setPostAiStatus("①資料を文字化しています…");
 
   const source = await buildPostAnalyzeSource(file);
+
+  setPostAiStatus("②文字化した内容から依頼タスクを分析しています…");
 
   const response = await fetch(`${POST_AI_WORKER}/api/post/analyze`, {
     method: "POST",
@@ -2344,26 +3074,39 @@ async function analyzePostFile(file) {
     );
   }
 
-  const result = data.result || {};
+  const tasks = Array.isArray(data.tasks)
+    ? data.tasks
+    : [];
 
-  const payload = {
+  if (!tasks.length) {
+    throw new Error("依頼タスクを抽出できませんでした。");
+  }
+
+  state.postCards = tasks.map((task) => ({
     requester: currentRequesterName(),
-    destination: result.recipient || "",
-    deadline: result.deadline || "",
-    content: result.action || "",
+    destination: task.recipient || "全員",
+    recipientEmail: task.recipientEmail || "",
+    deadline: task.deadline || "",
+    content: task.action || "",
+    evidence: task.evidence || "",
+    notes: task.notes || "",
     aiAnalyzed: true,
-    aiSourceFile: file.name,
-    aiNotes: result.notes || "",
-    aiConfidence: result.confidence || null
-  };
+    aiSourceFile: file.name
+  }));
+
+  state.postCardIndex = 0;
 
   sessionStorage.setItem(
-    "dotjp_post_draft",
-    JSON.stringify(payload)
+    "dotjp_post_transcription",
+    data.transcription || ""
   );
 
-  renderPostConfirmation(payload);
-  setPostAiStatus("読み取り完了。確認画面に反映しました。");
+  persistPostCards();
+
+  setPostAiStatus(
+    `${state.postCards.length}件の依頼を読み取りました。確認してください。`
+  );
+
   showScreen("post-confirm");
 }
 
@@ -2503,21 +3246,972 @@ function localDateIso(date) {
   return `${year}-${month}-${day}`;
 }
 
-function renderPostConfirmation(payload) {
-  const normalizedPayload = {
-    ...(payload || {}),
+
+function persistPostCards() {
+  sessionStorage.setItem(
+    "dotjp_post_cards",
+    JSON.stringify(state.postCards)
+  );
+  sessionStorage.setItem(
+    "dotjp_post_card_index",
+    String(state.postCardIndex)
+  );
+}
+
+function restorePostCards() {
+  if (!state.postCards.length) {
+    const saved = parseJson(
+      sessionStorage.getItem("dotjp_post_cards"),
+      []
+    );
+    state.postCards = Array.isArray(saved) ? saved : [];
+  }
+
+  const savedIndex = Number(
+    sessionStorage.getItem("dotjp_post_card_index") || 0
+  );
+
+  if (
+    Number.isInteger(savedIndex) &&
+    savedIndex >= 0 &&
+    savedIndex < state.postCards.length
+  ) {
+    state.postCardIndex = savedIndex;
+  }
+}
+
+function postcardInnerHtml(card) {
+  return `
+    <div class="post-ai-multi-badge" ${card.aiAnalyzed ? "" : "hidden"}>AI読み取り結果</div>
+
+    <div class="postcard-top">
+      <div class="stamp-box" aria-label="切手欄">
+        <div class="stamp-bird">◇</div>
+        <div class="stamp-amount">85</div>
+      </div>
+
+      <div class="postcard-address-block">
+        <div class="postcard-caption">郵 便 は が き</div>
+        <div class="postal-boxes" aria-label="郵便番号欄">
+          <span>D</span><span>o</span><span>t</span><span>j</span><span>p</span><span>C</span><span>P</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="postcard-display-row row-requester">
+      <strong>依頼元：</strong>
+      <span>${escapeHtml(currentRequesterName())}</span>
+    </div>
+
+    <div class="postcard-display-row row-destination">
+      <strong>宛先：</strong>
+      <span>${escapeHtml(card.destination || "全員")}</span>
+    </div>
+
+    <div class="postcard-display-row row-deadline">
+      <strong>期限：</strong>
+      <span>${escapeHtml(card.deadline || "")}</span>
+    </div>
+
+    <div class="postcard-display-row row-content">
+      <strong>内容：</strong>
+      <span>${escapeHtml(card.content || "")}</span>
+    </div>
+
+    <div class="postcard-bottom">
+      <div class="bottom-postal-boxes">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="postcard-mark">〒</div>
+    </div>
+  `;
+}
+
+function renderPostConfirmation() {
+  restorePostCards();
+
+  if (!state.postCards.length) {
+    document.getElementById("postConfirmCardHost").innerHTML =
+      '<div style="font-size:24px">確認する依頼がありません。</div>';
+    return;
+  }
+
+  state.postCardIndex = Math.min(
+    Math.max(0, state.postCardIndex),
+    state.postCards.length - 1
+  );
+
+  const card = {
+    ...state.postCards[state.postCardIndex],
     requester: currentRequesterName()
   };
 
-  document.querySelectorAll("[data-post-value]").forEach((node) => {
-    const key = node.dataset.postValue;
-    node.textContent = normalizedPayload[key] || "";
+  state.postCards[state.postCardIndex] = card;
+  persistPostCards();
+
+  document.getElementById("postConfirmCardHost").innerHTML =
+    `<div class="postcard-card">${postcardInnerHtml(card)}</div>`;
+
+  document.getElementById("postCardCounter").textContent =
+    `${state.postCardIndex + 1} / ${state.postCards.length}`;
+
+  document.getElementById("postPrevButton").disabled =
+    state.postCardIndex <= 0;
+
+  document.getElementById("postNextButton").disabled =
+    state.postCardIndex >= state.postCards.length - 1;
+
+  document.getElementById("postEvidenceText").textContent =
+    card.evidence || "—";
+
+  const sendButton = document.querySelector('[data-action="send-post"]');
+  if (sendButton) {
+    sendButton.textContent =
+      state.postCards.length > 1
+        ? `送る（${state.postCards.length}枚）`
+        : "送る";
+  }
+}
+
+function editCurrentPostCard() {
+  restorePostCards();
+  const card = state.postCards[state.postCardIndex];
+
+  if (!card) {
+    showToast("修正する依頼がありません");
+    return;
+  }
+
+  document.getElementById("requester").value = currentRequesterName();
+  document.getElementById("destination").value = card.destination || "全員";
+  document.getElementById("deadline").value = card.deadline || "";
+  document.getElementById("content").value = card.content || "";
+
+  sessionStorage.setItem(
+    "dotjp_editing_post_index",
+    String(state.postCardIndex)
+  );
+
+  showScreen("post-manual");
+}
+
+async function sendPostCards() {
+  restorePostCards();
+
+  if (!state.postCards.length) {
+    showToast("送信する依頼がありません");
+    return;
+  }
+
+  const cards = state.postCards.map((card) => ({
+    requester: currentRequesterName(),
+    destination: card.destination || "全員",
+    deadline: card.deadline || "",
+    content: card.content || "",
+    evidence: card.evidence || ""
+  }));
+
+  try {
+    const result = await portalFetch("/api/tasks/create", {
+      method: "POST",
+      body: { cards }
+    });
+
+    await runPostboxAnimation(cards.length);
+
+    localStorage.setItem(
+      userStorageKey("last_post"),
+      JSON.stringify(cards)
+    );
+
+    state.postCards = [];
+    state.postCardIndex = 0;
+
+    sessionStorage.removeItem("dotjp_post_cards");
+    sessionStorage.removeItem("dotjp_post_card_index");
+    sessionStorage.removeItem("dotjp_post_transcription");
+    sessionStorage.removeItem("dotjp_editing_post_index");
+
+    await refreshRemoteTasks();
+    refreshTaskUi();
+
+    showToast(`${result.created || cards.length}件の依頼を投函しました`);
+    showScreen("home");
+  } catch (error) {
+    showToast(error.message || "依頼を送信できませんでした");
+  }
+}
+
+async function runPostboxAnimation(count) {
+  const overlay = document.getElementById("postSendAnimation");
+  const card = document.getElementById("sendAnimationCard");
+  const message = document.getElementById("sendAnimationMessage");
+
+  overlay.hidden = false;
+
+  for (let i = 0; i < count; i += 1) {
+    message.textContent =
+      count > 1
+        ? `${i + 1} / ${count} 枚目を投函しています…`
+        : "ポストに投函しています…";
+
+    card.classList.remove("is-dropping");
+    void card.offsetWidth;
+    card.classList.add("is-dropping");
+
+    await sleep(950);
+  }
+
+  message.textContent = "投函しました！";
+  await sleep(650);
+  overlay.hidden = true;
+  card.classList.remove("is-dropping");
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
+
+async function portalFetch(path, options = {}) {
+  const token = sessionStorage.getItem("dotjp_access_token");
+
+  if (!token) {
+    throw new Error("ログイン情報がありません。");
+  }
+
+  const init = {
+    method: options.method || "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(options.body
+        ? { "Content-Type": "application/json" }
+        : {})
+    }
+  };
+
+  if (options.body) {
+    init.body = JSON.stringify(options.body);
+  }
+
+  const response = await fetch(
+    `${PORTAL_API_WORKER}${path}`,
+    init
+  );
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok || !data.ok) {
+    throw new Error(
+      data.error ||
+      "ポータルAPIから正常な応答を受け取れませんでした。"
+    );
+  }
+
+  return data;
+}
+
+async function loadPortalProfile() {
+  try {
+    const data = await portalFetch("/api/me");
+    state.isDeveloper = Boolean(data.developer);
+
+    const button = document.getElementById("hpEditButton");
+
+    if (state.isDeveloper) {
+      button.textContent = "HP編集";
+    } else {
+      button.textContent = "HPへの要望";
+    }
+
+    await loadRoster(false);
+  } catch (error) {
+    console.warn("Portal API profile unavailable", error);
+    state.isDeveloper = false;
+    document.getElementById("hpEditButton").textContent = "HPへの要望";
+  }
+}
+
+async function loadRoster(includeDisabled = false) {
+  try {
+    const data = await portalFetch(
+      `/api/roster${includeDisabled ? "?all=1" : ""}`
+    );
+
+    state.roster = Array.isArray(data.roster)
+      ? data.roster
+      : [];
+
+    renderDestinationRosterOptions();
+
+    if (includeDisabled) {
+      renderRosterTable();
+    }
+  } catch (error) {
+    if (includeDisabled) {
+      showToast(error.message || "名簿を取得できませんでした");
+    }
+  }
+}
+
+function renderDestinationRosterOptions() {
+  const datalist =
+    document.getElementById("destinationRosterOptions");
+
+  if (!datalist) return;
+
+  datalist.innerHTML = [
+    '<option value="全員"></option>',
+    ...state.roster
+      .filter((item) => Number(item.enabled) !== 0)
+      .map(
+        (item) =>
+          `<option value="${escapeHtml(item.name)}"></option>`
+      )
+  ].join("");
+}
+
+function renderRosterTable() {
+  const body = document.getElementById("rosterTableBody");
+  if (!body) return;
+
+  if (!state.roster.length) {
+    body.innerHTML =
+      '<tr><td colspan="4">名簿はまだありません。</td></tr>';
+    return;
+  }
+
+  body.innerHTML = state.roster.map((item) => `
+    <tr data-roster-row="${item.id}">
+      <td>
+        <input
+          type="text"
+          data-roster-name
+          value="${escapeHtml(item.name)}"
+        >
+      </td>
+      <td>
+        <input
+          type="email"
+          data-roster-email
+          value="${escapeHtml(item.email)}"
+        >
+      </td>
+      <td>
+        <input
+          type="checkbox"
+          data-roster-enabled
+          ${Number(item.enabled) !== 0 ? "checked" : ""}
+        >
+      </td>
+      <td>
+        <button
+          type="button"
+          class="roster-action-button roster-save-button"
+          data-roster-save="${item.id}"
+        >保存</button>
+        <button
+          type="button"
+          class="roster-action-button roster-delete-button"
+          data-roster-delete="${item.id}"
+        >削除</button>
+      </td>
+    </tr>
+  `).join("");
+
+  body.querySelectorAll("[data-roster-save]").forEach((button) => {
+    button.addEventListener("click", () => saveRosterRow(Number(button.dataset.rosterSave)));
   });
 
-  const badge = document.getElementById("postAiResultBadge");
-  if (badge) {
-    badge.hidden = !normalizedPayload.aiAnalyzed;
+  body.querySelectorAll("[data-roster-delete]").forEach((button) => {
+    button.addEventListener("click", () => deleteRosterRow(Number(button.dataset.rosterDelete)));
+  });
+}
+
+async function addRosterMember() {
+  const name = document.getElementById("rosterNameInput").value.trim();
+  const email = document.getElementById("rosterEmailInput").value.trim();
+
+  if (!name || !email) {
+    showToast("氏名とメールを入力してください");
+    return;
   }
+
+  try {
+    await portalFetch("/api/roster/save", {
+      method: "POST",
+      body: {
+        name,
+        email,
+        enabled: true
+      }
+    });
+
+    document.getElementById("rosterNameInput").value = "";
+    document.getElementById("rosterEmailInput").value = "";
+
+    await loadRoster(true);
+    showToast("名簿に追加しました");
+  } catch (error) {
+    showToast(error.message || "名簿に追加できませんでした");
+  }
+}
+
+async function saveRosterRow(id) {
+  const row = document.querySelector(
+    `[data-roster-row="${id}"]`
+  );
+
+  if (!row) return;
+
+  try {
+    await portalFetch("/api/roster/save", {
+      method: "POST",
+      body: {
+        id,
+        name: row.querySelector("[data-roster-name]").value.trim(),
+        email: row.querySelector("[data-roster-email]").value.trim(),
+        enabled: row.querySelector("[data-roster-enabled]").checked
+      }
+    });
+
+    await loadRoster(true);
+    showToast("名簿を更新しました");
+  } catch (error) {
+    showToast(error.message || "名簿を更新できませんでした");
+  }
+}
+
+async function deleteRosterRow(id) {
+  if (!confirm("この名簿データを削除しますか？")) {
+    return;
+  }
+
+  try {
+    await portalFetch("/api/roster/delete", {
+      method: "POST",
+      body: { id }
+    });
+
+    await loadRoster(true);
+    showToast("削除しました");
+  } catch (error) {
+    showToast(error.message || "削除できませんでした");
+  }
+}
+
+async function refreshRemoteTasks() {
+  try {
+    const { start, end } = weekBounds();
+
+    const params = new URLSearchParams({
+      start: start.toISOString(),
+      end: end.toISOString()
+    });
+
+    const data = await portalFetch(
+      `/api/tasks/week?${params.toString()}`
+    );
+
+    state.remoteTasks = (data.tasks || []).map((task) => ({
+      id: `remote_${task.id}`,
+      remoteId: Number(task.id),
+      title:
+        `${task.content}` +
+        (task.deadline ? `（期限：${task.deadline}）` : ""),
+      type: "request",
+      createdAt: task.created_at,
+      completedAt: task.completed_at || null,
+      requester: task.requester_name,
+      recipient: task.recipient_name,
+      deadline: task.deadline,
+      content: task.content
+    }));
+  } catch (error) {
+    console.warn("remote tasks unavailable", error);
+    state.remoteTasks = [];
+  }
+}
+
+/* =========================
+   画面共有
+========================= */
+
+function rtcConfig() {
+  return {
+    iceServers: [
+      {
+        urls: "stun:stun.cloudflare.com:3478"
+      }
+    ]
+  };
+}
+
+async function startScreenShare() {
+  if (!navigator.mediaDevices?.getDisplayMedia) {
+    showToast("この端末・ブラウザでは画面共有を開始できません");
+    return;
+  }
+
+  if (state.share.localStream) {
+    showToast("すでに共有中です");
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+      audio: false
+    });
+
+    const data = await portalFetch("/api/screen/create", {
+      method: "POST",
+      body: {}
+    });
+
+    state.share.localStream = stream;
+    state.share.roomId = data.roomId;
+    state.share.hostSignalAfter = 0;
+    state.share.offeredParticipants.clear();
+
+    const video = document.getElementById("shareLocalVideo");
+    video.srcObject = stream;
+
+    document.getElementById("shareRoomCode").textContent =
+      data.roomId;
+
+    document.getElementById("shareHostStatus").textContent =
+      "共有中";
+
+    document.querySelector('[data-action="share-start"]').disabled =
+      true;
+
+    document.querySelector('[data-action="share-stop"]').disabled =
+      false;
+
+    const track = stream.getVideoTracks()[0];
+
+    if (track) {
+      track.addEventListener("ended", () => {
+        stopScreenShare();
+      }, { once: true });
+    }
+
+    startHostSharePolling();
+    refreshScreenRooms();
+  } catch (error) {
+    console.error(error);
+
+    if (error?.name !== "NotAllowedError") {
+      showToast(error.message || "画面共有を開始できませんでした");
+    }
+  }
+}
+
+function startHostSharePolling() {
+  clearInterval(state.share.hostPollTimer);
+
+  state.share.hostPollTimer = setInterval(async () => {
+    if (!state.share.roomId || !state.share.localStream) {
+      return;
+    }
+
+    try {
+      await discoverShareParticipants();
+      await pollHostSignals();
+    } catch (error) {
+      console.warn("host share poll", error);
+    }
+  }, 1000);
+}
+
+async function discoverShareParticipants() {
+  const params = new URLSearchParams({
+    roomId: state.share.roomId
+  });
+
+  const data = await portalFetch(
+    `/api/screen/participants?${params.toString()}`
+  );
+
+  for (const participant of data.participants || []) {
+    const participantId = participant.participant_id;
+
+    if (
+      state.share.offeredParticipants.has(participantId) ||
+      state.share.hostPeers.has(participantId)
+    ) {
+      continue;
+    }
+
+    state.share.offeredParticipants.add(participantId);
+    await createHostPeer(participantId);
+  }
+}
+
+async function createHostPeer(participantId) {
+  const pc = new RTCPeerConnection(rtcConfig());
+  state.share.hostPeers.set(participantId, pc);
+
+  for (const track of state.share.localStream.getTracks()) {
+    pc.addTrack(track, state.share.localStream);
+  }
+
+  pc.onicecandidate = (event) => {
+    if (!event.candidate) return;
+
+    sendScreenSignal(
+      "host",
+      participantId,
+      {
+        type: "candidate",
+        candidate: event.candidate
+      }
+    ).catch(console.warn);
+  };
+
+  pc.onconnectionstatechange = () => {
+    if (
+      ["failed", "closed"].includes(pc.connectionState)
+    ) {
+      pc.close();
+      state.share.hostPeers.delete(participantId);
+      state.share.offeredParticipants.delete(participantId);
+    }
+  };
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  await sendScreenSignal(
+    "host",
+    participantId,
+    {
+      type: "offer",
+      sdp: pc.localDescription
+    }
+  );
+}
+
+async function pollHostSignals() {
+  const params = new URLSearchParams({
+    roomId: state.share.roomId,
+    participantId: "host",
+    after: String(state.share.hostSignalAfter)
+  });
+
+  const data = await portalFetch(
+    `/api/screen/signals?${params.toString()}`
+  );
+
+  for (const signal of data.signals || []) {
+    state.share.hostSignalAfter = Math.max(
+      state.share.hostSignalAfter,
+      Number(signal.id || 0)
+    );
+
+    const pc = state.share.hostPeers.get(signal.sender_id);
+    if (!pc) continue;
+
+    const payload = signal.payload || {};
+
+    if (payload.type === "answer" && payload.sdp) {
+      await pc.setRemoteDescription(
+        new RTCSessionDescription(payload.sdp)
+      );
+    }
+
+    if (payload.type === "candidate" && payload.candidate) {
+      try {
+        await pc.addIceCandidate(
+          new RTCIceCandidate(payload.candidate)
+        );
+      } catch (error) {
+        console.warn("host addIceCandidate", error);
+      }
+    }
+  }
+}
+
+async function stopScreenShare() {
+  clearInterval(state.share.hostPollTimer);
+  state.share.hostPollTimer = null;
+
+  for (const pc of state.share.hostPeers.values()) {
+    pc.close();
+  }
+
+  state.share.hostPeers.clear();
+  state.share.offeredParticipants.clear();
+
+  if (state.share.localStream) {
+    for (const track of state.share.localStream.getTracks()) {
+      track.stop();
+    }
+  }
+
+  if (state.share.roomId) {
+    portalFetch("/api/screen/leave", {
+      method: "POST",
+      body: {
+        roomId: state.share.roomId,
+        participantId: "host"
+      }
+    }).catch(console.warn);
+  }
+
+  state.share.localStream = null;
+  state.share.roomId = "";
+  state.share.hostSignalAfter = 0;
+
+  document.getElementById("shareLocalVideo").srcObject = null;
+  document.getElementById("shareRoomCode").textContent = "—";
+  document.getElementById("shareHostStatus").textContent =
+    "共有していません";
+
+  document.querySelector('[data-action="share-start"]').disabled =
+    false;
+
+  document.querySelector('[data-action="share-stop"]').disabled =
+    true;
+
+  refreshScreenRooms();
+}
+
+async function refreshScreenRooms() {
+  const root = document.getElementById("shareRoomList");
+  if (!root) return;
+
+  try {
+    const data = await portalFetch("/api/screen/rooms");
+    const rooms = data.rooms || [];
+
+    if (!rooms.length) {
+      root.innerHTML =
+        '<div class="summary-empty">現在共有中の画面はありません。</div>';
+      return;
+    }
+
+    root.innerHTML = rooms.map((room) => `
+      <div class="share-room-row">
+        <div>
+          <strong>${escapeHtml(room.host_name)}</strong><br>
+          <small>${escapeHtml(room.room_id)}</small>
+        </div>
+        <button
+          type="button"
+          data-share-join="${escapeHtml(room.room_id)}"
+        >見る</button>
+      </div>
+    `).join("");
+
+    root.querySelectorAll("[data-share-join]").forEach((button) => {
+      button.addEventListener("click", () => {
+        joinScreenShare(button.dataset.shareJoin);
+      });
+    });
+  } catch (error) {
+    root.innerHTML =
+      `<div class="summary-empty">${escapeHtml(error.message || "一覧を取得できませんでした")}</div>`;
+  }
+}
+
+function startRoomRefreshLoop() {
+  stopRoomRefreshLoop();
+
+  state.share.roomRefreshTimer = setInterval(() => {
+    if (state.currentScreen === "screen-share") {
+      refreshScreenRooms();
+    }
+  }, 5000);
+}
+
+function stopRoomRefreshLoop() {
+  clearInterval(state.share.roomRefreshTimer);
+  state.share.roomRefreshTimer = null;
+}
+
+async function joinScreenShare(roomId) {
+  if (state.share.localStream) {
+    showToast("自分が画面共有中は、別の共有を視聴できません");
+    return;
+  }
+
+  await leaveScreenViewer();
+
+  try {
+    const joined = await portalFetch("/api/screen/join", {
+      method: "POST",
+      body: { roomId }
+    });
+
+    state.share.roomId = roomId;
+    state.share.participantId = joined.participantId;
+    state.share.viewerSignalAfter = 0;
+
+    const pc = new RTCPeerConnection(rtcConfig());
+    state.share.viewerPeer = pc;
+
+    pc.ontrack = (event) => {
+      const video = document.getElementById("shareRemoteVideo");
+
+      if (event.streams?.[0]) {
+        video.srcObject = event.streams[0];
+      } else {
+        const stream = new MediaStream([event.track]);
+        video.srcObject = stream;
+      }
+
+      document.getElementById("shareViewerStatus").textContent =
+        `${joined.hostName} さんの画面を表示中`;
+    };
+
+    pc.onicecandidate = (event) => {
+      if (!event.candidate) return;
+
+      sendScreenSignal(
+        state.share.participantId,
+        "host",
+        {
+          type: "candidate",
+          candidate: event.candidate
+        }
+      ).catch(console.warn);
+    };
+
+    pc.onconnectionstatechange = () => {
+      if (pc.connectionState === "failed") {
+        document.getElementById("shareViewerStatus").textContent =
+          "接続できませんでした。ネットワーク環境を確認してください。";
+      }
+    };
+
+    document.getElementById("shareViewerStatus").textContent =
+      "接続しています…";
+
+    document.querySelector('[data-action="share-leave"]').disabled =
+      false;
+
+    clearInterval(state.share.viewerPollTimer);
+
+    state.share.viewerPollTimer = setInterval(() => {
+      pollViewerSignals().catch(console.warn);
+    }, 800);
+
+    await pollViewerSignals();
+  } catch (error) {
+    showToast(error.message || "画面共有に参加できませんでした");
+  }
+}
+
+async function pollViewerSignals() {
+  if (
+    !state.share.roomId ||
+    !state.share.participantId ||
+    !state.share.viewerPeer
+  ) {
+    return;
+  }
+
+  const params = new URLSearchParams({
+    roomId: state.share.roomId,
+    participantId: state.share.participantId,
+    after: String(state.share.viewerSignalAfter)
+  });
+
+  const data = await portalFetch(
+    `/api/screen/signals?${params.toString()}`
+  );
+
+  for (const signal of data.signals || []) {
+    state.share.viewerSignalAfter = Math.max(
+      state.share.viewerSignalAfter,
+      Number(signal.id || 0)
+    );
+
+    const payload = signal.payload || {};
+    const pc = state.share.viewerPeer;
+
+    if (payload.type === "offer" && payload.sdp) {
+      await pc.setRemoteDescription(
+        new RTCSessionDescription(payload.sdp)
+      );
+
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+
+      await sendScreenSignal(
+        state.share.participantId,
+        "host",
+        {
+          type: "answer",
+          sdp: pc.localDescription
+        }
+      );
+    }
+
+    if (payload.type === "candidate" && payload.candidate) {
+      try {
+        await pc.addIceCandidate(
+          new RTCIceCandidate(payload.candidate)
+        );
+      } catch (error) {
+        console.warn("viewer addIceCandidate", error);
+      }
+    }
+  }
+}
+
+async function sendScreenSignal(senderId, targetId, payload) {
+  return portalFetch("/api/screen/signal", {
+    method: "POST",
+    body: {
+      roomId: state.share.roomId,
+      senderId,
+      targetId,
+      payload
+    }
+  });
+}
+
+async function leaveScreenViewer() {
+  clearInterval(state.share.viewerPollTimer);
+  state.share.viewerPollTimer = null;
+
+  if (state.share.viewerPeer) {
+    state.share.viewerPeer.close();
+    state.share.viewerPeer = null;
+  }
+
+  if (
+    state.share.roomId &&
+    state.share.participantId
+  ) {
+    portalFetch("/api/screen/leave", {
+      method: "POST",
+      body: {
+        roomId: state.share.roomId,
+        participantId: state.share.participantId
+      }
+    }).catch(console.warn);
+  }
+
+  state.share.participantId = "";
+  state.share.viewerSignalAfter = 0;
+
+  if (!state.share.localStream) {
+    state.share.roomId = "";
+  }
+
+  document.getElementById("shareRemoteVideo").srcObject = null;
+  document.getElementById("shareViewerStatus").textContent =
+    "未接続";
+
+  const button =
+    document.querySelector('[data-action="share-leave"]');
+
+  if (button) button.disabled = true;
 }
 
 function showToast(message) {
