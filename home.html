@@ -371,7 +371,15 @@ button {
 }
 
 a.green-menu {
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+.green-menu,
+.green-menu:link,
+.green-menu:visited,
+.green-menu:hover,
+.green-menu:active {
+  text-decoration: none !important;
 }
 
 .form-link {
@@ -1601,6 +1609,26 @@ button.file-choice-button {
   background: #e2e5ff;
 }
 
+.share-view-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.share-fullscreen {
+  min-height: 44px;
+  padding: 8px 14px;
+  background: #3156ff;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.share-fullscreen:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
 .share-primary:disabled,
 .share-stop:disabled,
 .share-stop-view:disabled {
@@ -2062,7 +2090,10 @@ button.file-choice-button {
                 <div id="shareRoomList" class="share-room-list"></div>
                 <div class="share-view-status" id="shareViewerStatus">未接続</div>
                 <video id="shareRemoteVideo" class="share-video" autoplay playsinline></video>
-                <button class="share-stop-view" type="button" data-action="share-leave" disabled>視聴終了</button>
+                <div class="share-view-actions">
+                  <button class="share-fullscreen" type="button" data-action="share-fullscreen" disabled>全画面表示</button>
+                  <button class="share-stop-view" type="button" data-action="share-leave" disabled>視聴終了</button>
+                </div>
               </section>
             </div>
 
@@ -2375,6 +2406,7 @@ function wireActions() {
   document.querySelector('[data-action="share-start"]').addEventListener("click", startScreenShare);
   document.querySelector('[data-action="share-stop"]').addEventListener("click", stopScreenShare);
   document.querySelector('[data-action="share-refresh"]').addEventListener("click", refreshScreenRooms);
+  document.querySelector('[data-action="share-fullscreen"]').addEventListener("click", enterShareFullscreen);
   document.querySelector('[data-action="share-leave"]').addEventListener("click", leaveScreenViewer);
 
   document.getElementById("postFile").addEventListener("change", async (event) => {
@@ -4065,6 +4097,9 @@ async function joinScreenShare(roomId) {
 
       document.getElementById("shareViewerStatus").textContent =
         `${joined.hostName} さんの画面を表示中`;
+
+      document.querySelector('[data-action="share-fullscreen"]').disabled =
+        false;
     };
 
     pc.onicecandidate = (event) => {
@@ -4175,6 +4210,37 @@ async function sendScreenSignal(senderId, targetId, payload) {
   });
 }
 
+async function enterShareFullscreen() {
+  const video = document.getElementById("shareRemoteVideo");
+
+  if (!video || !video.srcObject) {
+    showToast("共有画面がまだ接続されていません");
+    return;
+  }
+
+  try {
+    if (video.requestFullscreen) {
+      await video.requestFullscreen();
+      return;
+    }
+
+    if (video.webkitRequestFullscreen) {
+      video.webkitRequestFullscreen();
+      return;
+    }
+
+    if (video.webkitEnterFullscreen) {
+      video.webkitEnterFullscreen();
+      return;
+    }
+
+    showToast("このブラウザでは全画面表示を利用できません");
+  } catch (error) {
+    console.error("fullscreen failed", error);
+    showToast("全画面表示を開始できませんでした");
+  }
+}
+
 async function leaveScreenViewer() {
   clearInterval(state.share.viewerPollTimer);
   state.share.viewerPollTimer = null;
@@ -4212,6 +4278,11 @@ async function leaveScreenViewer() {
     document.querySelector('[data-action="share-leave"]');
 
   if (button) button.disabled = true;
+
+  const fullscreenButton =
+    document.querySelector('[data-action="share-fullscreen"]');
+
+  if (fullscreenButton) fullscreenButton.disabled = true;
 }
 
 function showToast(message) {
