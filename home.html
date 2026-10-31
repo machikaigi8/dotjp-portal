@@ -3291,13 +3291,18 @@ function persistPostCards() {
 }
 
 function restorePostCards() {
-  if (!state.postCards.length) {
-    const saved = parseJson(
-      sessionStorage.getItem("dotjp_post_cards"),
-      []
-    );
-    state.postCards = Array.isArray(saved) ? saved : [];
+  // メモリ上にカードがある場合は、現在のページ位置をそのまま使う。
+  // 画面遷移・再読込などでカードが空のときだけ sessionStorage から復元する。
+  if (state.postCards.length) {
+    return;
   }
+
+  const saved = parseJson(
+    sessionStorage.getItem("dotjp_post_cards"),
+    []
+  );
+
+  state.postCards = Array.isArray(saved) ? saved : [];
 
   const savedIndex = Number(
     sessionStorage.getItem("dotjp_post_card_index") || 0
@@ -3309,6 +3314,8 @@ function restorePostCards() {
     savedIndex < state.postCards.length
   ) {
     state.postCardIndex = savedIndex;
+  } else {
+    state.postCardIndex = 0;
   }
 }
 
