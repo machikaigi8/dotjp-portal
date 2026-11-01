@@ -2080,6 +2080,774 @@ button.file-choice-button {
   --approach-rotate: 9deg;
 }
 
+
+/* =========================================================
+   v6: Figma 1440x1024固定キャンバス + カレンダー実装
+========================================================= */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+}
+
+.app-shell {
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden !important;
+  display: grid;
+  place-items: center;
+}
+
+.canvas-holder {
+  position: relative;
+  flex: none;
+  overflow: visible;
+}
+
+.canvas-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px !important;
+  height: 1024px !important;
+  min-width: 1440px;
+  min-height: 1024px;
+  transform-origin: 0 0;
+  overflow: hidden !important;
+}
+
+.screen {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 1440px !important;
+  height: 1024px !important;
+  min-width: 1440px;
+  min-height: 1024px;
+  max-width: 1440px;
+  max-height: 1024px;
+  overflow: hidden !important;
+}
+
+.screen *,
+.canvas-frame * {
+  box-sizing: border-box;
+}
+
+/* Figma基準の共通戻るボタン */
+.common-back-button {
+  position: absolute !important;
+  left: 128px !important;
+  top: 912px !important;
+  width: 140px !important;
+  height: 60px !important;
+  min-width: 140px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #3080ff !important;
+  color: #fff !important;
+  font-size: 40px !important;
+  line-height: 60px !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  z-index: 150;
+}
+
+.portal-back-button,
+.back-button {
+  display: none !important;
+}
+
+/* リンク集は常に下線なし */
+.link-panel a,
+.link-panel a *,
+.green-menu,
+.green-menu *,
+.screen-home a.green-menu,
+.screen-home a.green-menu * {
+  text-decoration: none !important;
+}
+
+/* Figma: スケジュール登録 */
+.schedule-figma-panel {
+  position: absolute;
+  left: 70px;
+  top: 137px;
+  width: 1300px;
+  height: 750px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.calendar-provider-group {
+  position: absolute;
+  left: 78px;
+  width: 560px;
+  height: 205px;
+}
+
+.provider-google {
+  top: 105px;
+}
+
+.provider-apple {
+  top: 337px;
+}
+
+.provider-microsoft {
+  top: 569px;
+  height: 145px;
+}
+
+.calendar-provider-heading {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.calendar-provider-heading h2 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 500;
+}
+
+.calendar-connect-button {
+  height: 38px;
+  min-width: 82px;
+  padding: 0 12px;
+  border: 2px solid #283dff;
+  background: #fff;
+  color: #283dff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.calendar-connect-button.apple-disabled {
+  border-color: #999;
+  color: #777;
+}
+
+.calendar-account-list {
+  position: absolute;
+  left: 0;
+  top: 64px;
+  width: 500px;
+  max-height: 130px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.calendar-account-row {
+  min-height: 58px;
+  width: 471px;
+  margin-bottom: 7px;
+  padding: 5px 10px;
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr) 42px 34px;
+  align-items: center;
+  gap: 8px;
+  border: 3px solid #1320ff;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 22px;
+}
+
+.calendar-account-row.is-off {
+  opacity: .52;
+  border-color: #aaa;
+}
+
+.calendar-provider-icon {
+  width: 44px;
+  height: 44px;
+  border: 3px solid #000;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.calendar-provider-icon.google {
+  color: #2957d9;
+}
+
+.calendar-provider-icon.microsoft {
+  color: #1267b1;
+}
+
+.calendar-provider-icon.apple {
+  color: #111;
+}
+
+.calendar-account-email {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-account-toggle {
+  width: 34px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.calendar-disconnect-button {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  color: #9b0014;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.calendar-empty-account {
+  padding: 8px 2px;
+  font-size: 18px;
+  color: #666;
+}
+
+.calendar-provider-note {
+  position: absolute;
+  left: 0;
+  top: 108px;
+  font-size: 14px;
+  color: #777;
+}
+
+.available-times {
+  position: absolute !important;
+  left: 775px !important;
+  top: 25px !important;
+  width: 500px !important;
+  height: 700px !important;
+  padding: 14px 14px 72px !important;
+  border: 5px solid #000 !important;
+  background: #fff;
+  overflow: hidden;
+}
+
+.available-times-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.available-times-heading h2 {
+  margin: 0 !important;
+  font-size: 40px !important;
+  line-height: 48px;
+  font-weight: 500 !important;
+  white-space: nowrap;
+}
+
+.calendar-refresh-button {
+  margin-left: auto;
+  width: 66px;
+  height: 34px;
+  border: 1px solid #999;
+  background: #f5f5f5;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.availability-filter-row {
+  height: 46px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 17px;
+}
+
+.availability-filter-row select {
+  height: 32px;
+  font-size: 17px;
+}
+
+#availabilityWeekText {
+  color: #555;
+}
+
+.available-time-list {
+  height: 520px;
+  overflow-y: auto;
+  padding: 3px 2px 8px;
+}
+
+.available-time-button {
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent;
+  color: #000;
+  font-size: 27px;
+  line-height: 36px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.available-time-button:hover {
+  background: #eef0ff;
+}
+
+.available-time-empty {
+  padding: 22px 4px;
+  color: #666;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.work-hours-open-button {
+  position: absolute;
+  left: 20px;
+  bottom: 10px;
+  min-width: 300px;
+  height: 45px;
+  border: 0;
+  background: transparent;
+  color: #000;
+  font-size: 28px;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Figma: 日時登録 */
+.schedule-plan-panel,
+.schedule-hours-panel {
+  position: absolute;
+  left: 70px;
+  top: 137px;
+  width: 1300px;
+  height: 750px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.selected-availability-label {
+  position: absolute;
+  left: 128px;
+  top: 50px;
+  font-size: 40px;
+  line-height: 48px;
+}
+
+.schedule-plan-fields {
+  position: absolute;
+  left: 175px;
+  top: 155px;
+  width: 430px;
+}
+
+.plan-field-row {
+  height: 70px;
+  display: grid;
+  grid-template-columns: 260px 150px;
+  align-items: center;
+  font-size: 36px;
+}
+
+.plan-field-row input,
+.plan-field-row select {
+  height: 52px;
+  border: 2px solid #000;
+  background: #fff;
+  font-size: 26px;
+  padding: 4px 8px;
+}
+
+.plan-task-label {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  font-size: 40px;
+}
+
+.schedule-task-choice-grid {
+  position: absolute;
+  left: 501px;
+  top: 311px;
+  width: 654px;
+  display: grid;
+  grid-template-columns: repeat(3, 190px);
+  grid-auto-rows: 64px;
+  gap: 40px 42px;
+}
+
+.schedule-task-choice {
+  border: 3px solid #000;
+  background: #fff;
+  color: #000;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.schedule-task-choice.is-selected {
+  background: #7dc9ff;
+}
+
+.schedule-plan-calendar-targets {
+  position: absolute;
+  left: 501px;
+  top: 555px;
+  width: 650px;
+  min-height: 88px;
+}
+
+.schedule-plan-calendar-title {
+  font-size: 19px;
+  margin-bottom: 5px;
+}
+
+.schedule-plan-calendar-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  max-height: 58px;
+  overflow-y: auto;
+}
+
+.schedule-plan-calendar-option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+}
+
+.schedule-register-button {
+  position: absolute;
+  left: 553px;
+  top: 649px;
+  width: 195px;
+  height: 61px;
+  border: 0;
+  background: #d4d5ff;
+  color: #000;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+/* Figma: 稼働時間登録 */
+.work-hour-day-list {
+  position: absolute;
+  left: 45px;
+  top: 33px;
+  width: 603px;
+  height: 590px;
+  padding: 12px 18px;
+  background: #f4f4f6;
+  overflow-y: auto;
+}
+
+.work-hour-day-row {
+  width: 100%;
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 22px 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+  background: transparent;
+  color: #111;
+  font-size: 21px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.work-hour-day-row.is-selected {
+  background: #fff;
+}
+
+.work-hour-status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #5ac76b;
+}
+
+.work-hour-status-dot.off {
+  background: #bbb;
+}
+
+.work-hour-summary {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.work-hour-editor {
+  position: absolute;
+  left: 748px;
+  top: 33px;
+  width: 458px;
+  height: 410px;
+  padding: 12px 18px;
+  background: #f4f4f6;
+  overflow: hidden;
+}
+
+.work-hour-editor-head {
+  height: 50px;
+  display: grid;
+  grid-template-columns: 50px 1fr 50px;
+  align-items: center;
+  text-align: center;
+}
+
+.work-hour-editor-x,
+.work-hour-check {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #ddd;
+  color: #111;
+  font-size: 26px;
+}
+
+.work-hour-check {
+  justify-self: end;
+  background: #555;
+  color: #fff;
+}
+
+.work-hour-enable-row {
+  height: 58px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 17px;
+}
+
+.work-hour-enable-row input {
+  width: 48px;
+  height: 28px;
+}
+
+.work-hour-slots-title {
+  margin: 12px 4px 5px;
+  color: #888;
+  font-size: 14px;
+}
+
+.work-hour-slots {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.work-hour-slot-row {
+  min-height: 72px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  display: grid;
+  grid-template-columns: 1fr 28px 1fr 30px;
+  gap: 8px;
+  align-items: end;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.work-hour-slot-row label {
+  display: grid;
+  gap: 3px;
+  color: #777;
+  font-size: 12px;
+}
+
+.work-hour-slot-row input {
+  width: 100%;
+  height: 34px;
+  border: 0;
+  border-radius: 16px;
+  background: #e6e6e6;
+  padding: 3px 10px;
+  font-size: 16px;
+}
+
+.work-hour-slot-separator {
+  align-self: center;
+  text-align: center;
+  font-size: 18px;
+}
+
+.work-hour-slot-delete {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: #ffe0e0;
+  color: #b00020;
+  cursor: pointer;
+}
+
+.add-work-hour-slot {
+  width: 100%;
+  height: 42px;
+  border: 1px dashed #ccc;
+  background: #fff;
+  color: #347dff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.work-hours-save-button {
+  left: 553px;
+  top: 649px;
+}
+
+/* その他、既存後付けflex/gridによる外枠潰れを防止 */
+.home-summary,
+.department-panel,
+.link-panel,
+.post-machine,
+.postcard-card,
+.post-confirm-shell,
+.hp-edit-panel,
+.screen-share-panel,
+.task-end-panel,
+.start-panel {
+  flex: none !important;
+}
+
+/* 既存リンク下線を強制解除 */
+a,
+a:visited,
+a:hover,
+a:active {
+  text-decoration-skip-ink: auto;
+}
+
+.screen-home .link-panel a,
+.screen-home .link-panel a *,
+.screen-home .green-menu,
+.screen-home .green-menu * {
+  text-decoration: none !important;
+}
+
+
+/* v6.1: Figma再照合で見つかった枠線・はみ出し補正 */
+.home-summary {
+  grid-template-columns: 397px 400px 272px !important;
+  overflow: hidden !important;
+}
+
+.home-summary .summary-cell {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.links-panel,
+.department-panel,
+.home-summary {
+  box-sizing: border-box !important;
+}
+
+.links-panel a,
+.links-panel a *,
+.links-grid a,
+.links-grid a * {
+  text-decoration: none !important;
+}
+
+.task-end-panel {
+  left: 120px !important;
+  top: 62px !important;
+  width: 1200px !important;
+  height: 900px !important;
+  padding: 0 !important;
+  display: block !important;
+  overflow: hidden !important;
+}
+
+.task-end-panel > h1 {
+  position: absolute !important;
+  left: 0 !important;
+  top: 60px !important;
+  width: 1200px !important;
+  margin: 0 !important;
+  font-size: 52px !important;
+  line-height: 1.08 !important;
+  text-align: center !important;
+}
+
+.progress-columns {
+  position: absolute !important;
+  left: 60px !important;
+  top: 220px !important;
+  width: 1080px !important;
+  height: 305px !important;
+  margin: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+  overflow: hidden !important;
+}
+
+.progress-group {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.progress-group h2 {
+  font-size: 27px !important;
+}
+
+.progress-group label {
+  font-size: 21px !important;
+  white-space: nowrap !important;
+}
+
+#reflection,
+#tomorrowGoal {
+  position: absolute !important;
+  left: 82px !important;
+  width: 1036px !important;
+  height: 85px !important;
+  margin: 0 !important;
+  border: 4px solid #000 !important;
+  font-size: 30px !important;
+}
+
+#reflection {
+  top: 588px !important;
+}
+
+#tomorrowGoal {
+  top: 705px !important;
+}
+
+.task-submit {
+  position: absolute !important;
+  left: 495px !important;
+  top: 812px !important;
+  width: 210px !important;
+  height: 70px !important;
+  margin: 0 !important;
+  font-size: 40px !important;
+}
+
 </style>
 </head>
 <body>
@@ -2369,26 +3137,138 @@ button.file-choice-button {
         <section class="screen screen-schedule" data-screen="schedule">
           <div class="user-name" data-user-name>＜名前＞</div>
 
-          <div class="schedule-body">
-            <div class="calendar-list">
-              <h2>Googleカレンダー</h2>
+          <div class="schedule-figma-panel">
+            <section class="calendar-provider-group provider-google">
+              <div class="calendar-provider-heading">
+                <h2>Googleカレンダー</h2>
+                <button type="button" class="calendar-connect-button" data-calendar-connect="google">＋連携</button>
+              </div>
+              <div id="calendarAccountsGoogle" class="calendar-account-list"></div>
+            </section>
 
-              <button class="google-account-row selected" type="button" id="googleAccountRow">
-                <span class="calendar-radio"></span>
-                <span data-user-email>user@dot-jp.or.jp</span>
-              </button>
+            <section class="calendar-provider-group provider-apple">
+              <div class="calendar-provider-heading">
+                <h2>Appleカレンダー</h2>
+                <button type="button" class="calendar-connect-button apple-disabled" data-calendar-connect="apple">＋連携</button>
+              </div>
+              <div id="calendarAccountsApple" class="calendar-account-list"></div>
+              <div class="calendar-provider-note">iCloud / CalDAV は別途設定予定</div>
+            </section>
 
-              <h2>Appleカレンダー</h2>
-              <h2>Outlookカレンダー</h2>
-            </div>
+            <section class="calendar-provider-group provider-microsoft">
+              <div class="calendar-provider-heading">
+                <h2>Outlookカレンダー</h2>
+                <button type="button" class="calendar-connect-button" data-calendar-connect="microsoft">＋連携</button>
+              </div>
+              <div id="calendarAccountsMicrosoft" class="calendar-account-list"></div>
+            </section>
 
-            <div class="available-times">
-              <h2>今週空いている時間</h2>
-              <div id="availableTimeContent"></div>
-            </div>
+            <section class="available-times">
+              <div class="available-times-heading">
+                <h2>今週空いている時間</h2>
+                <button id="calendarRefreshButton" type="button" class="calendar-refresh-button">更新</button>
+              </div>
+
+              <div class="availability-filter-row">
+                <label>
+                  最低
+                  <select id="availabilityMinMinutes">
+                    <option value="30">30分</option>
+                    <option value="60">1時間</option>
+                    <option value="90">1時間30分</option>
+                    <option value="120">2時間</option>
+                  </select>
+                </label>
+                <span id="availabilityWeekText"></span>
+              </div>
+
+              <div id="availableTimeContent" class="available-time-list"></div>
+
+              <button
+                class="work-hours-open-button"
+                type="button"
+                data-route="schedule-hours"
+              >稼働時間を登録する</button>
+            </section>
           </div>
+        </section>
 
-          <button class="back-button" type="button" data-route="home">←戻る</button>
+        <section class="screen screen-schedule-plan" data-screen="schedule-plan">
+          <div class="user-name" data-user-name>＜名前＞</div>
+
+          <div class="schedule-plan-panel">
+            <div id="selectedAvailabilityLabel" class="selected-availability-label">
+              11/4(水)10:00～16:00
+            </div>
+
+            <div class="schedule-plan-fields">
+              <label class="plan-field-row">
+                <span>タスク開始時間：</span>
+                <input id="planStartTime" type="time">
+              </label>
+
+              <label class="plan-field-row">
+                <span>タスク時間：</span>
+                <select id="planDurationMinutes">
+                  <option value="30">30分</option>
+                  <option value="60">1時間</option>
+                  <option value="90">1時間30分</option>
+                  <option value="120">2時間</option>
+                  <option value="180">3時間</option>
+                  <option value="240">4時間</option>
+                </select>
+              </label>
+
+              <div class="plan-task-label">やること：</div>
+            </div>
+
+            <div id="scheduleTaskChoiceGrid" class="schedule-task-choice-grid"></div>
+
+            <div class="schedule-plan-calendar-targets">
+              <div class="schedule-plan-calendar-title">外部カレンダーにも登録</div>
+              <div id="schedulePlanCalendarTargets" class="schedule-plan-calendar-list"></div>
+            </div>
+
+            <button
+              id="schedulePlanRegisterButton"
+              class="schedule-register-button"
+              type="button"
+            >登録</button>
+          </div>
+        </section>
+
+        <section class="screen screen-schedule-hours" data-screen="schedule-hours">
+          <div class="user-name" data-user-name>＜名前＞</div>
+
+          <div class="schedule-hours-panel">
+            <div id="workHourDayList" class="work-hour-day-list"></div>
+
+            <div class="work-hour-editor">
+              <div class="work-hour-editor-head">
+                <button id="workHourEditorClose" type="button" class="work-hour-editor-x">×</button>
+                <strong id="workHourEditorDay">Sunday</strong>
+                <span class="work-hour-check">✓</span>
+              </div>
+
+              <label class="work-hour-enable-row">
+                <span id="workHourEnableText">Available on Sunday</span>
+                <input id="workHourEnabled" type="checkbox" checked>
+              </label>
+
+              <div class="work-hour-slots-title">Time Slots</div>
+              <div id="workHourSlots" class="work-hour-slots"></div>
+
+              <button id="addWorkHourSlot" type="button" class="add-work-hour-slot">
+                ＋ Add Time Slot
+              </button>
+            </div>
+
+            <button
+              id="saveWorkHoursButton"
+              class="schedule-register-button work-hours-save-button"
+              type="button"
+            >登録</button>
+          </div>
         </section>
 
         <section class="screen screen-task-end" data-screen="task-end">
@@ -2497,6 +3377,15 @@ const state = {
   timerId: null,
   selectedTaskId: null,
   screenHistory: [],
+  calendar: {
+    connections: [],
+    providerAvailability: {},
+    availability: [],
+    selectedSlot: null,
+    workDays: [],
+    selectedWorkDay: 0,
+    selectedTaskTitle: ""
+  },
   share: {
     roomId: "",
     participantId: "",
@@ -2519,6 +3408,8 @@ const screenNames = new Set([
   "post-manual",
   "post-confirm",
   "schedule",
+  "schedule-plan",
+  "schedule-hours",
   "hp-edit",
   "screen-share",
   "task-end"
@@ -2556,6 +3447,7 @@ document.addEventListener("DOMContentLoaded", init);
 async function init() {
   fitCanvas();
   window.addEventListener("resize", fitCanvas);
+  window.visualViewport?.addEventListener("resize", fitCanvas);
   window.addEventListener("hashchange", routeFromHash);
   wireActions();
   installCommonBackButtons();
@@ -2584,6 +3476,29 @@ async function init() {
     document.getElementById("app").hidden = false;
 
     refreshTaskUi();
+
+    const calendarResult = new URL(location.href).searchParams.get("calendar");
+    const calendarDetail = new URL(location.href).searchParams.get("detail");
+
+    if (calendarResult === "connected") {
+      showToast("カレンダーを連携しました");
+      history.replaceState(
+        null,
+        "",
+        `${location.pathname}#schedule`
+      );
+    } else if (calendarResult === "error") {
+      showToast(
+        calendarDetail
+          ? `カレンダー連携に失敗しました：${calendarDetail}`
+          : "カレンダー連携に失敗しました"
+      );
+      history.replaceState(
+        null,
+        "",
+        `${location.pathname}#schedule`
+      );
+    }
 
     const requested = normalizeHash(location.hash);
     const started = getActiveStartedAt();
@@ -2711,6 +3626,47 @@ function wireActions() {
   document.querySelector('[data-action="share-fullscreen"]').addEventListener("click", enterShareFullscreen);
   document.querySelector('[data-action="share-leave"]').addEventListener("click", leaveScreenViewer);
 
+  document.querySelectorAll("[data-calendar-connect]").forEach((button) => {
+    button.addEventListener("click", () => {
+      connectCalendarProvider(button.dataset.calendarConnect);
+    });
+  });
+
+  document.getElementById("calendarRefreshButton").addEventListener(
+    "click",
+    refreshCalendarSchedule
+  );
+
+  document.getElementById("availabilityMinMinutes").addEventListener(
+    "change",
+    refreshCalendarAvailability
+  );
+
+  document.getElementById("schedulePlanRegisterButton").addEventListener(
+    "click",
+    registerSchedulePlan
+  );
+
+  document.getElementById("saveWorkHoursButton").addEventListener(
+    "click",
+    saveWorkHours
+  );
+
+  document.getElementById("workHourEnabled").addEventListener(
+    "change",
+    onWorkHourEnabledChange
+  );
+
+  document.getElementById("addWorkHourSlot").addEventListener(
+    "click",
+    addWorkHourSlot
+  );
+
+  document.getElementById("workHourEditorClose").addEventListener(
+    "click",
+    goBackScreen
+  );
+
   document.getElementById("postFile").addEventListener("change", async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -2731,9 +3687,6 @@ function wireActions() {
     }
   });
 
-  document.getElementById("googleAccountRow").addEventListener("click", (event) => {
-    event.currentTarget.classList.toggle("selected");
-  });
 
   document.querySelector('[data-action="finish-task"]').addEventListener("click", finishTask);
 
@@ -2784,6 +3737,18 @@ function showScreen(name, updateHash = true, recordHistory = true) {
   if (name === "post-confirm") {
     restorePostCards();
     renderPostConfirmation();
+  }
+
+  if (name === "schedule") {
+    refreshCalendarSchedule();
+  }
+
+  if (name === "schedule-plan") {
+    renderSchedulePlanScreen();
+  }
+
+  if (name === "schedule-hours") {
+    loadWorkHours();
   }
 
   if (name === "hp-edit") {
@@ -4239,6 +5204,713 @@ async function refreshRemoteTasks() {
   }
 }
 
+
+/* =========================
+   カレンダー連携・スケジュール
+========================= */
+
+const calendarDayNamesJa = [
+  "日曜日",
+  "月曜日",
+  "火曜日",
+  "水曜日",
+  "木曜日",
+  "金曜日",
+  "土曜日"
+];
+
+const calendarDayNamesEn = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+];
+
+const scheduleTaskChoices = [
+  "声掛け",
+  "架電",
+  "通電",
+  "リストアップ",
+  "お問い合わせフォーム送信",
+  "MTG",
+  "資料作成",
+  "事務作業",
+  "その他"
+];
+
+async function refreshCalendarSchedule() {
+  await Promise.all([
+    loadCalendarConnections(),
+    refreshCalendarAvailability()
+  ]);
+}
+
+async function loadCalendarConnections() {
+  try {
+    const data = await portalFetch("/api/calendar/connections");
+
+    state.calendar.connections =
+      Array.isArray(data.connections)
+        ? data.connections
+        : [];
+
+    state.calendar.providerAvailability =
+      data.providerAvailability || {};
+
+    renderCalendarConnections();
+  } catch (error) {
+    console.warn("calendar connections", error);
+    renderCalendarConnections();
+  }
+}
+
+function renderCalendarConnections() {
+  const providerMap = {
+    google: document.getElementById("calendarAccountsGoogle"),
+    apple: document.getElementById("calendarAccountsApple"),
+    microsoft: document.getElementById("calendarAccountsMicrosoft")
+  };
+
+  for (const [provider, root] of Object.entries(providerMap)) {
+    if (!root) continue;
+
+    const items = state.calendar.connections.filter(
+      (item) => item.provider === provider
+    );
+
+    if (!items.length) {
+      root.innerHTML =
+        provider === "apple"
+          ? '<div class="calendar-empty-account">未連携</div>'
+          : '<div class="calendar-empty-account">連携アカウントなし</div>';
+      continue;
+    }
+
+    root.innerHTML = items.map((item) => {
+      const icon =
+        provider === "google"
+          ? "G"
+          : provider === "microsoft"
+            ? "M"
+            : "A";
+
+      return `
+        <div class="calendar-account-row ${Number(item.enabled) ? "" : "is-off"}">
+          <span class="calendar-provider-icon ${provider}">${icon}</span>
+          <span class="calendar-account-email">${escapeHtml(item.account_email)}</span>
+          <input
+            class="calendar-account-toggle"
+            type="checkbox"
+            data-calendar-toggle="${item.id}"
+            ${Number(item.enabled) ? "checked" : ""}
+            aria-label="空き時間計算に使用"
+          >
+          <button
+            type="button"
+            class="calendar-disconnect-button"
+            data-calendar-disconnect="${item.id}"
+            aria-label="連携解除"
+          >×</button>
+        </div>
+      `;
+    }).join("");
+
+    root.querySelectorAll("[data-calendar-toggle]").forEach((input) => {
+      input.addEventListener("change", async () => {
+        try {
+          await portalFetch("/api/calendar/toggle", {
+            method: "POST",
+            body: {
+              id: Number(input.dataset.calendarToggle),
+              enabled: input.checked
+            }
+          });
+
+          await refreshCalendarSchedule();
+        } catch (error) {
+          input.checked = !input.checked;
+          showToast(error.message || "カレンダー設定を変更できませんでした");
+        }
+      });
+    });
+
+    root.querySelectorAll("[data-calendar-disconnect]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        if (!confirm("このカレンダー連携を解除しますか？")) return;
+
+        try {
+          await portalFetch("/api/calendar/disconnect", {
+            method: "POST",
+            body: {
+              id: Number(button.dataset.calendarDisconnect)
+            }
+          });
+
+          await refreshCalendarSchedule();
+          showToast("カレンダー連携を解除しました");
+        } catch (error) {
+          showToast(error.message || "連携を解除できませんでした");
+        }
+      });
+    });
+  }
+
+  document.querySelectorAll("[data-calendar-connect]").forEach((button) => {
+    const provider = button.dataset.calendarConnect;
+
+    if (provider === "apple") {
+      button.disabled = false;
+      return;
+    }
+
+    const available =
+      state.calendar.providerAvailability?.[provider];
+
+    button.disabled = available === false;
+    button.title =
+      available === false
+        ? "Cloudflare側のOAuth設定後に利用できます"
+        : "";
+  });
+
+  renderSchedulePlanCalendarTargets();
+}
+
+async function connectCalendarProvider(provider) {
+  if (provider === "apple") {
+    showToast("Apple/iCloudはCalDAV方式で追加するため、次段階で設定します");
+    return;
+  }
+
+  try {
+    const data = await portalFetch("/api/calendar/connect", {
+      method: "POST",
+      body: { provider }
+    });
+
+    if (!data.authorizationUrl) {
+      throw new Error("認証URLを取得できませんでした。");
+    }
+
+    location.href = data.authorizationUrl;
+  } catch (error) {
+    showToast(error.message || "カレンダー連携を開始できませんでした");
+  }
+}
+
+function currentWeekDateRange() {
+  const now = new Date();
+  const tokyo = new Date(
+    now.toLocaleString("en-US", {
+      timeZone: "Asia/Tokyo"
+    })
+  );
+
+  tokyo.setHours(0, 0, 0, 0);
+  tokyo.setDate(tokyo.getDate() - tokyo.getDay());
+
+  const start = localDateIso(tokyo);
+  const endDate = new Date(tokyo);
+  endDate.setDate(endDate.getDate() + 6);
+
+  return {
+    start,
+    end: localDateIso(endDate)
+  };
+}
+
+async function refreshCalendarAvailability() {
+  const root = document.getElementById("availableTimeContent");
+  if (!root) return;
+
+  const range = currentWeekDateRange();
+  const minMinutes = Number(
+    document.getElementById("availabilityMinMinutes")?.value || 30
+  );
+
+  document.getElementById("availabilityWeekText").textContent =
+    `${formatShortDate(range.start)}～${formatShortDate(range.end)}`;
+
+  root.innerHTML =
+    '<div class="available-time-empty">空き時間を確認しています…</div>';
+
+  try {
+    const params = new URLSearchParams({
+      start: range.start,
+      end: range.end,
+      minMinutes: String(minMinutes)
+    });
+
+    const data = await portalFetch(
+      `/api/calendar/availability?${params.toString()}`
+    );
+
+    state.calendar.availability =
+      Array.isArray(data.slots)
+        ? data.slots
+        : [];
+
+    renderCalendarAvailability();
+  } catch (error) {
+    root.innerHTML =
+      `<div class="available-time-empty">${escapeHtml(error.message || "空き時間を取得できませんでした")}</div>`;
+  }
+}
+
+function renderCalendarAvailability() {
+  const root = document.getElementById("availableTimeContent");
+  if (!root) return;
+
+  const slots = state.calendar.availability;
+
+  if (!slots.length) {
+    root.innerHTML = `
+      <div class="available-time-empty">
+        条件に合う空き時間がありません。<br>
+        「稼働時間を登録する」から対象時間を変更できます。
+      </div>
+    `;
+    return;
+  }
+
+  root.innerHTML = slots.map((slot, index) => `
+    <button
+      type="button"
+      class="available-time-button"
+      data-availability-index="${index}"
+    >${escapeHtml(slot.label)}</button>
+  `).join("");
+
+  root.querySelectorAll("[data-availability-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.availabilityIndex);
+      const slot = state.calendar.availability[index];
+
+      if (!slot) return;
+
+      state.calendar.selectedSlot = slot;
+      state.calendar.selectedTaskTitle = "";
+      showScreen("schedule-plan");
+    });
+  });
+}
+
+function formatShortDate(isoDate) {
+  const [year, month, day] = String(isoDate).split("-");
+  return `${Number(month)}/${Number(day)}`;
+}
+
+function renderSchedulePlanScreen() {
+  const slot = state.calendar.selectedSlot;
+
+  if (!slot) {
+    showToast("空き時間を選択してください");
+    showScreen("schedule", true, false);
+    return;
+  }
+
+  document.getElementById("selectedAvailabilityLabel").textContent =
+    slot.label;
+
+  const startDate = new Date(slot.start);
+
+  document.getElementById("planStartTime").value =
+    formatTokyoClock(startDate);
+
+  renderScheduleTaskChoices();
+  renderSchedulePlanCalendarTargets();
+}
+
+function renderScheduleTaskChoices() {
+  const root = document.getElementById("scheduleTaskChoiceGrid");
+  if (!root) return;
+
+  root.innerHTML = scheduleTaskChoices.map((title) => `
+    <button
+      type="button"
+      class="schedule-task-choice ${state.calendar.selectedTaskTitle === title ? "is-selected" : ""}"
+      data-schedule-task="${escapeHtml(title)}"
+    >${escapeHtml(title)}</button>
+  `).join("");
+
+  root.querySelectorAll("[data-schedule-task]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const title = button.dataset.scheduleTask;
+
+      if (title === "その他") {
+        const custom = prompt("やることを入力してください");
+        if (!custom?.trim()) return;
+        state.calendar.selectedTaskTitle = custom.trim();
+      } else {
+        state.calendar.selectedTaskTitle = title;
+      }
+
+      renderScheduleTaskChoices();
+    });
+  });
+}
+
+function renderSchedulePlanCalendarTargets() {
+  const root = document.getElementById("schedulePlanCalendarTargets");
+  if (!root) return;
+
+  const connections = state.calendar.connections.filter(
+    (item) => Number(item.enabled)
+  );
+
+  if (!connections.length) {
+    root.innerHTML =
+      '<span style="color:#777;font-size:14px">ポータル内の予定として登録</span>';
+    return;
+  }
+
+  root.innerHTML = connections.map((item) => `
+    <label class="schedule-plan-calendar-option">
+      <input
+        type="checkbox"
+        data-plan-calendar-id="${item.id}"
+      >
+      <span>${escapeHtml(item.account_email)}</span>
+    </label>
+  `).join("");
+}
+
+async function registerSchedulePlan() {
+  const slot = state.calendar.selectedSlot;
+
+  if (!slot) {
+    showToast("空き時間を選択してください");
+    return;
+  }
+
+  const title = state.calendar.selectedTaskTitle;
+
+  if (!title) {
+    showToast("やることを選択してください");
+    return;
+  }
+
+  const time = document.getElementById("planStartTime").value;
+  const durationMinutes = Number(
+    document.getElementById("planDurationMinutes").value || 60
+  );
+
+  if (!time) {
+    showToast("開始時間を入力してください");
+    return;
+  }
+
+  const slotStart = new Date(slot.start);
+  const slotEnd = new Date(slot.end);
+
+  const date = tokyoDateFromIso(slot.start);
+  const startsAt = new Date(
+    `${date}T${time}:00+09:00`
+  );
+
+  const endsAt = new Date(
+    startsAt.getTime() + durationMinutes * 60000
+  );
+
+  if (
+    startsAt < slotStart ||
+    endsAt > slotEnd ||
+    endsAt <= startsAt
+  ) {
+    showToast("選択した空き時間の範囲内で時間を指定してください");
+    return;
+  }
+
+  const connectionIds = Array.from(
+    document.querySelectorAll("[data-plan-calendar-id]:checked")
+  ).map((input) => Number(input.dataset.planCalendarId));
+
+  try {
+    const data = await portalFetch("/api/calendar/plans", {
+      method: "POST",
+      body: {
+        title,
+        taskType: title,
+        startsAt: startsAt.toISOString(),
+        endsAt: endsAt.toISOString(),
+        connectionIds
+      }
+    });
+
+    const failed =
+      (data.externalResults || []).filter((item) => !item.ok);
+
+    if (failed.length) {
+      showToast(
+        `ポータルには登録しました。外部カレンダー${failed.length}件は登録に失敗しました`
+      );
+    } else {
+      showToast("タスク実施計画を登録しました");
+    }
+
+    state.calendar.selectedSlot = null;
+    state.calendar.selectedTaskTitle = "";
+
+    showScreen("schedule");
+  } catch (error) {
+    showToast(error.message || "タスク実施計画を登録できませんでした");
+  }
+}
+
+function tokyoDateFromIso(iso) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date(iso));
+
+  const value = (type) =>
+    parts.find((item) => item.type === type)?.value || "";
+
+  return `${value("year")}-${value("month")}-${value("day")}`;
+}
+
+function formatTokyoClock(date) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Tokyo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).format(date);
+}
+
+async function loadWorkHours() {
+  try {
+    const data = await portalFetch("/api/calendar/work-hours");
+
+    state.calendar.workDays =
+      Array.isArray(data.days)
+        ? data.days
+        : [];
+
+    if (!state.calendar.workDays.length) {
+      state.calendar.workDays =
+        buildDefaultWorkDays();
+    }
+
+    renderWorkHourDayList();
+    renderWorkHourEditor();
+  } catch (error) {
+    state.calendar.workDays = buildDefaultWorkDays();
+    renderWorkHourDayList();
+    renderWorkHourEditor();
+    showToast(error.message || "稼働時間を読み込めませんでした");
+  }
+}
+
+function buildDefaultWorkDays() {
+  return Array.from({ length: 7 }, (_, dayOfWeek) => ({
+    dayOfWeek,
+    enabled: true,
+    slots: [
+      {
+        start: "09:00",
+        end: "22:00"
+      }
+    ]
+  }));
+}
+
+function renderWorkHourDayList() {
+  const root = document.getElementById("workHourDayList");
+  if (!root) return;
+
+  root.innerHTML = state.calendar.workDays.map((day) => {
+    const summary = day.enabled
+      ? day.slots
+          .map((slot) => `${slot.start} – ${slot.end}`)
+          .join(", ")
+      : "利用しない";
+
+    return `
+      <button
+        type="button"
+        class="work-hour-day-row ${state.calendar.selectedWorkDay === day.dayOfWeek ? "is-selected" : ""}"
+        data-work-day="${day.dayOfWeek}"
+      >
+        <span class="work-hour-status-dot ${day.enabled ? "" : "off"}"></span>
+        <strong>${calendarDayNamesEn[day.dayOfWeek]}</strong>
+        <span class="work-hour-summary">${escapeHtml(summary)}</span>
+      </button>
+    `;
+  }).join("");
+
+  root.querySelectorAll("[data-work-day]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.calendar.selectedWorkDay =
+        Number(button.dataset.workDay);
+      renderWorkHourDayList();
+      renderWorkHourEditor();
+    });
+  });
+}
+
+function selectedWorkDay() {
+  return state.calendar.workDays.find(
+    (day) =>
+      Number(day.dayOfWeek) ===
+      Number(state.calendar.selectedWorkDay)
+  );
+}
+
+function renderWorkHourEditor() {
+  const day = selectedWorkDay();
+  if (!day) return;
+
+  document.getElementById("workHourEditorDay").textContent =
+    calendarDayNamesEn[day.dayOfWeek];
+
+  document.getElementById("workHourEnableText").textContent =
+    `Available on ${calendarDayNamesEn[day.dayOfWeek]}`;
+
+  document.getElementById("workHourEnabled").checked =
+    Boolean(day.enabled);
+
+  const root = document.getElementById("workHourSlots");
+
+  root.innerHTML = (day.slots || []).map((slot, index) => `
+    <div class="work-hour-slot-row">
+      <label>
+        <span>Start</span>
+        <input
+          type="time"
+          value="${escapeHtml(slot.start)}"
+          data-work-slot-start="${index}"
+          ${day.enabled ? "" : "disabled"}
+        >
+      </label>
+      <span class="work-hour-slot-separator">–</span>
+      <label>
+        <span>End</span>
+        <input
+          type="time"
+          value="${escapeHtml(slot.end)}"
+          data-work-slot-end="${index}"
+          ${day.enabled ? "" : "disabled"}
+        >
+      </label>
+      <button
+        type="button"
+        class="work-hour-slot-delete"
+        data-work-slot-delete="${index}"
+        ${day.enabled ? "" : "disabled"}
+      >×</button>
+    </div>
+  `).join("");
+
+  root.querySelectorAll("[data-work-slot-start]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const index = Number(input.dataset.workSlotStart);
+      day.slots[index].start = input.value;
+      renderWorkHourDayList();
+    });
+  });
+
+  root.querySelectorAll("[data-work-slot-end]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const index = Number(input.dataset.workSlotEnd);
+      day.slots[index].end = input.value;
+      renderWorkHourDayList();
+    });
+  });
+
+  root.querySelectorAll("[data-work-slot-delete]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.workSlotDelete);
+      day.slots.splice(index, 1);
+
+      if (!day.slots.length) {
+        day.enabled = false;
+      }
+
+      renderWorkHourDayList();
+      renderWorkHourEditor();
+    });
+  });
+}
+
+function onWorkHourEnabledChange() {
+  const day = selectedWorkDay();
+  if (!day) return;
+
+  day.enabled =
+    document.getElementById("workHourEnabled").checked;
+
+  if (day.enabled && !day.slots.length) {
+    day.slots.push({
+      start: "09:00",
+      end: "22:00"
+    });
+  }
+
+  renderWorkHourDayList();
+  renderWorkHourEditor();
+}
+
+function addWorkHourSlot() {
+  const day = selectedWorkDay();
+  if (!day) return;
+
+  day.enabled = true;
+
+  const last = day.slots[day.slots.length - 1];
+
+  day.slots.push(
+    last
+      ? {
+          start: last.end,
+          end: "22:00"
+        }
+      : {
+          start: "09:00",
+          end: "22:00"
+        }
+  );
+
+  renderWorkHourDayList();
+  renderWorkHourEditor();
+}
+
+async function saveWorkHours() {
+  const invalid = state.calendar.workDays.some((day) =>
+    day.enabled &&
+    day.slots.some(
+      (slot) =>
+        !slot.start ||
+        !slot.end ||
+        slot.start >= slot.end
+    )
+  );
+
+  if (invalid) {
+    showToast("開始時刻より後の終了時刻を指定してください");
+    return;
+  }
+
+  try {
+    await portalFetch("/api/calendar/work-hours", {
+      method: "POST",
+      body: {
+        days: state.calendar.workDays
+      }
+    });
+
+    showToast("稼働時間を登録しました");
+    showScreen("schedule");
+  } catch (error) {
+    showToast(error.message || "稼働時間を登録できませんでした");
+  }
+}
+
 /* =========================
    画面共有
 ========================= */
@@ -4767,10 +6439,16 @@ function showToast(message) {
 }
 
 function fitCanvas() {
-  const scale = Math.min(window.innerWidth / 1440, window.innerHeight / 1024, 1);
+  const viewport = window.visualViewport;
+  const width = viewport?.width || window.innerWidth;
+  const height = viewport?.height || window.innerHeight;
+  const scale = Math.min(width / 1440, height / 1024);
+
   const frame = document.getElementById("canvasFrame");
   const holder = document.getElementById("canvasHolder");
+
   if (!frame || !holder) return;
+
   frame.style.transform = `scale(${scale})`;
   holder.style.width = `${1440 * scale}px`;
   holder.style.height = `${1024 * scale}px`;
