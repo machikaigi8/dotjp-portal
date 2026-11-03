@@ -2858,6 +2858,114 @@ a:active {
   font-size: 40px !important;
 }
 
+
+/* Apple / iCloud CalDAV 連携 */
+.apple-calendar-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .38);
+}
+
+.apple-calendar-modal[hidden] {
+  display: none;
+}
+
+.apple-calendar-dialog {
+  width: 620px;
+  min-height: 430px;
+  padding: 44px 52px 38px;
+  border: 4px solid #111;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, .22);
+}
+
+.apple-calendar-dialog h2 {
+  margin: 0 0 12px;
+  font-size: 36px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.apple-calendar-dialog-note {
+  margin: 0 0 28px;
+  color: #555;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.apple-calendar-field {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.apple-calendar-field span {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.apple-calendar-field input {
+  width: 100%;
+  height: 58px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border: 3px solid #222;
+  border-radius: 12px;
+  background: #fff;
+  color: #111;
+  font: inherit;
+  font-size: 20px;
+}
+
+.apple-calendar-field input:focus {
+  outline: 3px solid rgba(48, 128, 255, .28);
+  border-color: #3080ff;
+}
+
+.apple-calendar-security-note {
+  margin: -4px 0 24px;
+  color: #666;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.apple-calendar-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.apple-calendar-dialog-actions button {
+  min-width: 150px;
+  height: 52px;
+  border-radius: 12px;
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.apple-calendar-cancel-button {
+  border: 2px solid #777;
+  background: #fff;
+  color: #333;
+}
+
+.apple-calendar-submit-button {
+  border: 2px solid #3080ff;
+  background: #3080ff;
+  color: #fff;
+}
+
+.apple-calendar-submit-button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
 </style>
 </head>
 <body>
@@ -3159,10 +3267,10 @@ a:active {
             <section class="calendar-provider-group provider-apple">
               <div class="calendar-provider-heading">
                 <h2>Appleカレンダー</h2>
-                <button type="button" class="calendar-connect-button apple-disabled" data-calendar-connect="apple">＋連携</button>
+                <button type="button" class="calendar-connect-button" data-calendar-connect="apple">＋連携</button>
               </div>
               <div id="calendarAccountsApple" class="calendar-account-list"></div>
-              <div class="calendar-provider-note">iCloud / CalDAV は別途設定予定</div>
+              <div class="calendar-provider-note">iCloud / CalDAV（アプリ用パスワード）</div>
             </section>
 
             <section class="calendar-provider-group provider-microsoft">
@@ -3356,6 +3464,60 @@ a:active {
             </div>
 
             <div id="sendAnimationMessage" class="send-animation-message">投函しています…</div>
+          </div>
+        </div>
+
+
+        <div id="appleCalendarModal" class="apple-calendar-modal" hidden>
+          <div
+            class="apple-calendar-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="appleCalendarDialogTitle"
+          >
+            <h2 id="appleCalendarDialogTitle">Appleカレンダー連携</h2>
+            <p class="apple-calendar-dialog-note">
+              Apple Accountと、account.apple.comで発行した
+              アプリ用パスワードを入力してください。
+            </p>
+
+            <label class="apple-calendar-field">
+              <span>Apple Account</span>
+              <input
+                id="appleCalendarEmail"
+                type="email"
+                autocomplete="username"
+                placeholder="example@icloud.com"
+              >
+            </label>
+
+            <label class="apple-calendar-field">
+              <span>アプリ用パスワード</span>
+              <input
+                id="appleCalendarPassword"
+                type="password"
+                autocomplete="new-password"
+                placeholder="xxxx-xxxx-xxxx-xxxx"
+              >
+            </label>
+
+            <p class="apple-calendar-security-note">
+              入力したパスワードはCloudflare WorkerへHTTPSで送信し、
+              暗号化して保存します。Apple Account本体のパスワードは入力しないでください。
+            </p>
+
+            <div class="apple-calendar-dialog-actions">
+              <button
+                id="appleCalendarCancelButton"
+                class="apple-calendar-cancel-button"
+                type="button"
+              >キャンセル</button>
+              <button
+                id="appleCalendarSubmitButton"
+                class="apple-calendar-submit-button"
+                type="button"
+              >連携する</button>
+            </div>
           </div>
         </div>
 
@@ -3641,6 +3803,25 @@ function wireActions() {
       connectCalendarProvider(button.dataset.calendarConnect);
     });
   });
+
+  document.getElementById("appleCalendarCancelButton").addEventListener(
+    "click",
+    closeAppleCalendarModal
+  );
+
+  document.getElementById("appleCalendarSubmitButton").addEventListener(
+    "click",
+    submitAppleCalendarConnection
+  );
+
+  document.getElementById("appleCalendarModal").addEventListener(
+    "click",
+    (event) => {
+      if (event.target.id === "appleCalendarModal") {
+        closeAppleCalendarModal();
+      }
+    }
+  );
 
   document.getElementById("calendarRefreshButton").addEventListener(
     "click",
@@ -5399,9 +5580,88 @@ function renderCalendarConnections() {
   renderSchedulePlanCalendarTargets();
 }
 
+function openAppleCalendarModal() {
+  const modal = document.getElementById("appleCalendarModal");
+  const email = document.getElementById("appleCalendarEmail");
+  const password = document.getElementById("appleCalendarPassword");
+
+  if (!modal || !email || !password) return;
+
+  password.value = "";
+  modal.hidden = false;
+
+  setTimeout(() => {
+    if (email.value) {
+      password.focus();
+    } else {
+      email.focus();
+    }
+  }, 0);
+}
+
+function closeAppleCalendarModal() {
+  const modal = document.getElementById("appleCalendarModal");
+  const password = document.getElementById("appleCalendarPassword");
+  const submit = document.getElementById("appleCalendarSubmitButton");
+
+  if (password) password.value = "";
+  if (submit) {
+    submit.disabled = false;
+    submit.textContent = "連携する";
+  }
+
+  if (modal) modal.hidden = true;
+}
+
+async function submitAppleCalendarConnection() {
+  const email = document
+    .getElementById("appleCalendarEmail")
+    ?.value
+    ?.trim();
+
+  const password = document
+    .getElementById("appleCalendarPassword")
+    ?.value
+    ?.trim();
+
+  const submit = document.getElementById("appleCalendarSubmitButton");
+
+  if (!email || !password) {
+    showToast("Apple Accountとアプリ用パスワードを入力してください");
+    return;
+  }
+
+  if (submit) {
+    submit.disabled = true;
+    submit.textContent = "接続中…";
+  }
+
+  try {
+    await portalFetch("/api/calendar/connect", {
+      method: "POST",
+      body: {
+        provider: "apple",
+        appleEmail: email,
+        applePassword: password
+      }
+    });
+
+    closeAppleCalendarModal();
+    await refreshCalendarSchedule();
+    showToast("Appleカレンダーを連携しました");
+  } catch (error) {
+    if (submit) {
+      submit.disabled = false;
+      submit.textContent = "連携する";
+    }
+
+    showToast(error.message || "Appleカレンダーを連携できませんでした");
+  }
+}
+
 async function connectCalendarProvider(provider) {
   if (provider === "apple") {
-    showToast("Apple/iCloudはCalDAV方式で追加するため、次段階で設定します");
+    openAppleCalendarModal();
     return;
   }
 
