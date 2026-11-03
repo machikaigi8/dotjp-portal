@@ -2295,6 +2295,16 @@ body {
   color: #111;
 }
 
+.calendar-account-avatar {
+  width: 44px;
+  height: 44px;
+  border: 3px solid #000;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  background: #fff;
+}
+
 .calendar-account-email {
   white-space: nowrap;
   overflow: hidden;
@@ -5297,9 +5307,19 @@ function renderCalendarConnections() {
             ? "M"
             : "A";
 
+      const accountIcon =
+        item.account_picture
+          ? `<img
+               class="calendar-account-avatar"
+               src="${escapeHtml(item.account_picture)}"
+               alt=""
+               referrerpolicy="no-referrer"
+             >`
+          : `<span class="calendar-provider-icon ${provider}">${icon}</span>`;
+
       return `
         <div class="calendar-account-row ${Number(item.enabled) ? "" : "is-off"}">
-          <span class="calendar-provider-icon ${provider}">${icon}</span>
+          ${accountIcon}
           <span class="calendar-account-email">${escapeHtml(item.account_email)}</span>
           <input
             class="calendar-account-toggle"
