@@ -805,6 +805,1544 @@ button.file-choice-button {
 }
 
 .available-times {
+  position: absolute;
+  left: 775px;
+  top: 25px;
+  width: 500px;
+  height: 700px;
+  border: 5px solid #000;
+  padding: 15px 10px;
+}
+
+.available-times h2 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 500;
+}
+
+.back-button {
+  position: absolute;
+  left: 128px;
+  top: 912px;
+  width: 140px;
+  height: 60px;
+  background: var(--blue-title);
+  color: #fff;
+  font-size: 40px;
+  line-height: 47px;
+  cursor: pointer;
+}
+
+/* タスク終了 */
+
+.task-end-panel {
+  position: absolute;
+  left: 120px;
+  top: 42px;
+  width: 1200px;
+  height: 940px;
+  padding: 48px 60px 24px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden;
+}
+
+.task-end-panel > h1 {
+  flex: none;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 48px;
+  line-height: 1.12;
+  font-weight: 400;
+}
+
+.progress-columns {
+  flex: none;
+  width: 100%;
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 22px;
+}
+
+.progress-group {
+  min-width: 0;
+  font-size: 22px;
+}
+
+.progress-group h2 {
+  margin: 0 0 14px;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 400;
+  text-align: center;
+}
+
+.progress-group label {
+  display: block;
+  margin: 2px 0;
+  line-height: 1.42;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.progress-group input {
+  width: 66px;
+  border: 0;
+  border-bottom: 2px solid #999;
+  text-align: right;
+  font-size: 24px;
+  background: transparent;
+}
+
+.other-progress-input {
+  width: 100%;
+  height: 132px;
+  margin-top: 4px;
+  padding: 10px;
+  border: 2px solid #999;
+  resize: none;
+  font-size: 22px;
+  line-height: 1.35;
+  background: #fff;
+}
+
+.wide-task-input {
+  position: static;
+  flex: none;
+  width: 100%;
+  height: 76px;
+  margin-top: 18px;
+  border: 4px solid #000;
+  resize: none;
+  padding: 9px 12px;
+  font-size: 30px;
+  line-height: 1.25;
+}
+
+#reflection,
+#tomorrowGoal {
+  top: auto;
+}
+
+.task-submit {
+  position: static;
+  flex: none;
+  align-self: center;
+  width: 210px;
+  height: 64px;
+  margin-top: 18px;
+  font-size: 36px;
+}
+
+.task-submit:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+/* 共通 */
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  z-index: 50;
+  transform: translateX(-50%);
+  padding: 14px 22px;
+  border-radius: 8px;
+  background: rgba(0,0,0,.82);
+  color: #fff;
+  font-size: 22px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+
+/* ===== 週次タスク管理 / 7日間タスク時間グラフ ===== */
+
+.task-picker-panel {
+  padding: 44px 70px 34px;
+  text-align: left;
+}
+
+.task-picker-panel h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 48px;
+}
+
+.start-subtitle {
+  margin-top: 26px;
+  text-align: center;
+  font-size: 34px;
+  font-weight: 500;
+}
+
+.start-week-label {
+  margin-top: 7px;
+  text-align: center;
+  color: #555;
+  font-size: 20px;
+}
+
+.start-task-board {
+  margin-top: 20px;
+  height: 178px;
+  border: 3px solid var(--navy);
+  background: #fff;
+}
+
+.start-task-board-head {
+  height: 54px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--navy);
+  font-size: 29px;
+  font-weight: 600;
+}
+
+.start-task-list {
+  height: 118px;
+  padding: 9px 12px;
+  overflow-y: auto;
+}
+
+.start-task-empty {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #777;
+  font-size: 23px;
+}
+
+.start-task-item {
+  width: 100%;
+  min-height: 46px;
+  margin-bottom: 6px;
+  padding: 6px 12px;
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 12px;
+  align-items: center;
+  border: 2px solid #c8c8df;
+  background: #fff;
+  color: #000;
+  text-align: left;
+  cursor: pointer;
+}
+
+.start-task-item:hover {
+  background: #f5f6ff;
+}
+
+.start-task-item.is-selected {
+  border: 4px solid var(--blue);
+  background: #eef0ff;
+}
+
+.task-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 86px;
+  height: 32px;
+  padding: 0 9px;
+  border-radius: 16px;
+  background: #ececff;
+  color: var(--navy);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.task-type-badge.type-mtg {
+  background: #e8f8ff;
+  color: #00698f;
+}
+
+.task-type-badge.type-other {
+  background: #f0f0f0;
+  color: #444;
+}
+
+.start-task-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.preset-task-board {
+  margin-top: 14px;
+  height: 216px;
+  border: 3px solid #b9c5ff;
+  background: #fff;
+}
+
+.preset-task-board-title {
+  height: 45px;
+  padding: 8px 16px;
+  border-bottom: 2px solid #b9c5ff;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.preset-task-grid {
+  height: 165px;
+  padding: 9px 12px;
+  display: grid;
+  grid-template-columns: 1.45fr .65fr 1.4fr;
+  gap: 12px;
+}
+
+.preset-task-group {
+  min-width: 0;
+}
+
+.preset-task-group h3 {
+  margin: 0 0 7px;
+  color: var(--navy);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.preset-task-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.preset-task-button {
+  min-height: 34px;
+  padding: 5px 10px;
+  border: 2px solid #c8c8df;
+  background: #fff;
+  color: #111;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.preset-task-button:hover {
+  background: #f5f6ff;
+}
+
+.preset-task-button.is-selected {
+  border-color: var(--blue);
+  background: #eef0ff;
+  color: var(--navy);
+}
+
+.selected-task-line {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 21px;
+}
+
+.start-panel .start-task-button {
+  position: absolute;
+  left: 495px;
+  top: 625px;
+  width: 210px;
+  height: 62px;
+  font-size: 34px;
+}
+
+.start-task-button:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
+.summary-week-label {
+  margin-top: -1px;
+  color: #666;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.task-summary-list {
+  height: 137px;
+  padding-top: 4px;
+  overflow-y: auto;
+  white-space: normal;
+}
+
+.summary-task-row {
+  min-height: 30px;
+  margin-bottom: 3px;
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 5px;
+  align-items: center;
+  font-size: 16px;
+}
+
+.summary-task-row .task-type-badge {
+  min-width: 64px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.summary-task-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-task-row.is-active .summary-task-title::after {
+  content: "  実行中";
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.summary-empty {
+  padding-top: 14px;
+  color: #888;
+  font-size: 17px;
+}
+
+.task-chart-cell {
+  padding-right: 6px;
+}
+
+.task-chart-period {
+  position: absolute;
+  right: 8px;
+  top: 10px;
+  color: #666;
+  font-size: 12px;
+}
+
+.task-time-chart {
+  position: absolute;
+  left: 7px;
+  right: 6px;
+  bottom: 7px;
+  height: 145px;
+}
+
+.task-chart-total {
+  height: 22px;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+  padding-right: 3px;
+}
+
+.task-chart-bars {
+  height: 121px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  align-items: end;
+}
+
+.task-chart-column {
+  height: 121px;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 94px 27px;
+  align-items: end;
+}
+
+.task-chart-track {
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  border-bottom: 1px solid #aaa;
+}
+
+.task-chart-bar {
+  width: 21px;
+  min-height: 0;
+  background: var(--blue);
+  transition: height .2s ease;
+}
+
+.task-chart-label {
+  padding-top: 4px;
+  overflow: hidden;
+  color: #555;
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   vNext: 複数はがき・HP編集・画面共有・投函アニメーション
+========================================================= */
+
+.screen-share-link {
+  border: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.post-confirm-shell {
+  position: absolute;
+  left: 390px;
+  top: 95px;
+  width: 660px;
+  height: 865px;
+  padding: 10px 20px 20px;
+  background: rgba(255,255,255,.62);
+  border: 3px solid #b8b8e8;
+}
+
+.post-confirm-toolbar {
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.post-nav-button {
+  width: 58px;
+  height: 42px;
+  background: #d7d9ff;
+  color: #111;
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.post-nav-button:disabled {
+  opacity: .32;
+  cursor: default;
+}
+
+.post-card-counter {
+  min-width: 115px;
+  text-align: center;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.post-confirm-card-host {
+  height: 675px;
+  display: grid;
+  place-items: center;
+}
+
+.post-confirm-shell .postcard-card {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 440px;
+  height: 650px;
+}
+
+.post-confirm-shell .row-requester {
+  top: 200px;
+}
+
+.post-confirm-shell .row-destination {
+  top: 245px;
+}
+
+.post-confirm-shell .row-deadline {
+  top: 378px;
+}
+
+.post-confirm-shell .row-content {
+  top: 423px;
+}
+
+.post-confirm-shell .postcard-bottom {
+  bottom: 16px;
+}
+
+.post-evidence-area {
+  min-height: 42px;
+  margin-top: 2px;
+  padding: 6px 10px;
+  background: #fff9dc;
+  border: 1px solid #dfcf7c;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.post-confirm-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.post-edit-all,
+.post-send-all {
+  width: 180px;
+  height: 52px;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.post-edit-all {
+  background: #e5e5e5;
+}
+
+.post-send-all {
+  background: #cfd2ff;
+}
+
+.post-ai-multi-badge {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  padding: 5px 8px;
+  border: 2px solid #8057ff;
+  border-radius: 999px;
+  background: #f2eeff;
+  color: #4a24b8;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* HP編集 */
+
+.hp-edit-panel,
+.screen-share-panel {
+  position: absolute;
+  left: 90px;
+  top: 90px;
+  width: 1260px;
+  height: 850px;
+  padding: 28px 34px;
+  background: #fff;
+  border: 4px solid var(--sky);
+  overflow: hidden;
+}
+
+.portal-screen-title-row {
+  height: 88px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 3px solid #d9d9ee;
+}
+
+.portal-screen-title-row h1 {
+  margin: 0;
+  font-size: 42px;
+  color: var(--navy);
+}
+
+.portal-screen-title-row p {
+  margin: 4px 0 0;
+  font-size: 18px;
+  color: #666;
+}
+
+.portal-back-button {
+  min-width: 150px;
+  height: 52px;
+  background: #3657ff;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.roster-editor {
+  padding-top: 20px;
+}
+
+.roster-editor h2 {
+  margin: 0;
+  font-size: 34px;
+}
+
+.roster-note {
+  margin: 6px 0 16px;
+  font-size: 18px;
+}
+
+.roster-add-row {
+  display: grid;
+  grid-template-columns: 280px 420px 140px;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.roster-add-row input {
+  height: 50px;
+  padding: 8px 12px;
+  border: 2px solid #a8a8bd;
+  font-size: 21px;
+}
+
+.roster-add-row button {
+  height: 50px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.roster-table-wrap {
+  height: 590px;
+  overflow: auto;
+  border: 2px solid #d0d0df;
+}
+
+.roster-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 20px;
+}
+
+.roster-table th,
+.roster-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #d8d8e0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.roster-table th {
+  position: sticky;
+  top: 0;
+  background: #f1f2ff;
+  z-index: 2;
+}
+
+.roster-table input[type="text"],
+.roster-table input[type="email"] {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #bbb;
+  font-size: 18px;
+}
+
+.roster-action-button {
+  padding: 7px 12px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.roster-save-button {
+  background: #d9e4ff;
+}
+
+.roster-delete-button {
+  background: #ffe0e0;
+}
+
+/* 画面共有 */
+
+.screen-share-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  height: 680px;
+  padding-top: 20px;
+}
+
+.share-host-card,
+.share-view-card {
+  position: relative;
+  padding: 18px;
+  border: 3px solid #c7c7dc;
+  background: #fafaff;
+  overflow: auto;
+}
+
+.share-host-card h2,
+.share-view-card h2 {
+  margin: 0 0 12px;
+  font-size: 30px;
+}
+
+.share-button-row {
+  display: flex;
+  gap: 10px;
+}
+
+.share-primary,
+.share-stop,
+.share-refresh,
+.share-stop-view {
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.share-primary {
+  background: #3156ff;
+  color: #fff;
+}
+
+.share-stop,
+.share-stop-view {
+  background: #ffdddd;
+}
+
+.share-refresh {
+  background: #e2e5ff;
+}
+
+.share-view-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.share-fullscreen {
+  min-height: 44px;
+  padding: 8px 14px;
+  background: #3156ff;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.share-fullscreen:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.share-primary:disabled,
+.share-stop:disabled,
+.share-stop-view:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.share-room-code {
+  margin: 12px 0;
+  font-size: 21px;
+}
+
+.share-video {
+  width: 100%;
+  height: 310px;
+  margin-top: 10px;
+  background: #111;
+  object-fit: contain;
+}
+
+.share-room-list {
+  max-height: 150px;
+  overflow: auto;
+  margin: 10px 0;
+}
+
+.share-room-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border: 1px solid #c5c5d8;
+  background: #fff;
+}
+
+.share-room-row button {
+  padding: 5px 10px;
+  background: #3156ff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.share-view-status {
+  min-height: 28px;
+  font-size: 17px;
+}
+
+.screen-share-note {
+  margin: 10px 0 0;
+  font-size: 16px;
+  color: #555;
+}
+
+/* 投函アニメーション */
+
+.post-send-animation {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(240,240,255,.92);
+  display: grid;
+  place-items: center;
+}
+
+.send-animation-scene {
+  position: relative;
+  width: 760px;
+  height: 780px;
+}
+
+.send-animation-postbox {
+  position: absolute;
+  left: 190px;
+  bottom: 55px;
+  width: 380px;
+  height: 420px;
+  background: #d92e18;
+  border-radius: 32px 32px 8px 8px;
+  box-shadow: 0 16px 30px rgba(0,0,0,.2);
+}
+
+.postbox-slot {
+  position: absolute;
+  left: 70px;
+  top: 78px;
+  width: 240px;
+  height: 28px;
+  background: #4a0805;
+  border: 8px solid #8d1b10;
+  border-radius: 8px;
+}
+
+.postbox-symbol {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 148px;
+  text-align: center;
+  color: #fff;
+  font-size: 86px;
+  font-weight: 700;
+}
+
+.postbox-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 260px;
+  text-align: center;
+  color: #fff;
+  font-size: 44px;
+  font-weight: 700;
+}
+
+.send-animation-card {
+  position: absolute;
+  left: 230px;
+  top: 20px;
+  width: 300px;
+  height: 190px;
+  background: #fff;
+  border: 3px solid #222;
+  transform-origin: center;
+  z-index: 3;
+}
+
+.mini-stamp {
+  position: absolute;
+  left: 20px;
+  top: 18px;
+  width: 48px;
+  height: 56px;
+  border: 2px solid #1a8b48;
+  color: #1a8b48;
+  display: grid;
+  place-items: end center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.mini-lines {
+  position: absolute;
+  left: 92px;
+  top: 65px;
+  width: 165px;
+  height: 70px;
+  border-top: 3px solid #bbb;
+  border-bottom: 3px solid #bbb;
+}
+
+.send-animation-card.is-dropping {
+  animation: postcardDrop 900ms cubic-bezier(.5,.05,.72,1) forwards;
+}
+
+.send-animation-message {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+@keyframes postcardDrop {
+  0% {
+    transform: translateY(0) rotate(-4deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(210px) rotate(6deg) scale(.82);
+    opacity: 1;
+  }
+  82% {
+    transform: translateY(318px) rotate(1deg) scale(.55);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(390px) rotate(0) scale(.22);
+    opacity: 0;
+  }
+}
+
+.task-type-badge.type-request {
+  background: #7b48d6;
+}
+
+
+/* =========================================================
+   v4: POST選択側への投函・AI削除・共通戻る
+========================================================= */
+
+.common-back-button {
+  position: absolute;
+  left: 28px;
+  top: 92px;
+  z-index: 120;
+  min-width: 122px;
+  height: 48px;
+  padding: 0 18px;
+  border: 2px solid #5f64a8;
+  background: rgba(255,255,255,.94);
+  color: #202060;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 9px rgba(0,0,0,.08);
+}
+
+.common-back-button:hover {
+  background: #eceeff;
+}
+
+/* 既存の個別戻るボタンは共通ボタンに統一 */
+.portal-back-button,
+.back-button {
+  display: none !important;
+}
+
+.post-confirm-actions {
+  gap: 14px;
+}
+
+.post-delete-current {
+  width: 150px;
+  height: 52px;
+  background: #ffe0e0;
+  color: #b40018;
+  border: 2px solid #e06370;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 最初の依頼出しPOSTと同じ形で投函 */
+.post-send-animation {
+  background: rgba(242,242,255,.96);
+}
+
+.send-animation-scene {
+  position: relative;
+  width: 1100px;
+  height: 900px;
+}
+
+.post-send-animation .send-animation-machine {
+  left: 101px;
+  top: 18px;
+  transform: scale(.94);
+  transform-origin: top center;
+}
+
+.send-animation-input-box {
+  overflow: visible;
+}
+
+.send-target-choice {
+  transition:
+    background .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease;
+}
+
+.send-target-choice.is-target {
+  background: #fffbe0;
+  box-shadow: inset 0 0 0 6px #ffd63d;
+}
+
+.send-target-title {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 27px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  background: #d9d9d9;
+  color: #000;
+  font-size: 20px;
+}
+
+.send-target-slot {
+  position: absolute;
+  left: 58px;
+  right: 58px;
+  bottom: 26px;
+  height: 14px;
+  border-radius: 999px;
+  background: #4f0905;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.55);
+  opacity: .18;
+}
+
+.send-target-choice.is-target .send-target-slot {
+  opacity: 1;
+}
+
+.post-send-animation .send-animation-card {
+  position: absolute;
+  left: 410px;
+  top: -72px;
+  width: 280px;
+  height: 175px;
+  background: #fff;
+  border: 3px solid #222;
+  transform-origin: center;
+  z-index: 20;
+  opacity: 0;
+}
+
+.post-send-animation .send-animation-card.is-ready {
+  opacity: 1;
+}
+
+.post-send-animation .send-animation-card.is-dropping {
+  animation: postcardDropToSelected 980ms cubic-bezier(.45,.03,.72,1) forwards;
+}
+
+.post-send-animation .send-animation-card.target-ai {
+  --post-drop-x: -215px;
+}
+
+.post-send-animation .send-animation-card.target-manual {
+  --post-drop-x: 105px;
+}
+
+@keyframes postcardDropToSelected {
+  0% {
+    transform: translate(0, 0) rotate(-4deg) scale(1);
+    opacity: 1;
+  }
+  55% {
+    transform: translate(var(--post-drop-x), 235px) rotate(4deg) scale(.67);
+    opacity: 1;
+  }
+  82% {
+    transform: translate(var(--post-drop-x), 298px) rotate(0) scale(.42);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--post-drop-x), 330px) rotate(0) scale(.18);
+    opacity: 0;
+  }
+}
+
+.post-send-animation .send-animation-message {
+  bottom: 5px;
+  font-size: 26px;
+}
+
+
+
+/* =========================================================
+   v5: よりリアルな投函アニメーション（投函口を開けて奥へ）
+========================================================= */
+.send-target-choice {
+  perspective: 1200px;
+}
+
+.send-target-choice::after {
+  content: "";
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  top: 46px;
+  height: 30px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(20,20,20,.92), rgba(64,10,10,.72));
+  box-shadow:
+    inset 0 6px 10px rgba(255,255,255,.06),
+    inset 0 -6px 12px rgba(0,0,0,.42);
+  opacity: 0;
+  transform: scaleY(.18);
+  transform-origin: top center;
+  transition: opacity .22s ease, transform .22s ease;
+}
+
+.send-target-choice.is-target {
+  transform: translateY(-2px);
+}
+
+.send-target-title {
+  transform-origin: top center;
+  transition:
+    transform .24s ease,
+    box-shadow .24s ease,
+    background .2s ease;
+  box-shadow: 0 3px 0 rgba(0,0,0,.18);
+}
+
+.send-target-choice.is-target .send-target-title {
+  background: #e3e3e3;
+}
+
+.send-target-choice.is-open::after {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.send-target-choice.is-open .send-target-title {
+  transform: perspective(1100px) rotateX(78deg) translateY(-4px);
+  box-shadow: 0 10px 16px rgba(0,0,0,.18);
+}
+
+.post-send-animation .send-animation-card {
+  left: 411px;
+  top: -92px;
+  opacity: 0;
+  transform: translate(0,0) rotate(-7deg) scale(1);
+  transition:
+    transform .62s cubic-bezier(.25,.78,.29,1),
+    opacity .22s linear;
+  box-shadow: 0 12px 28px rgba(0,0,0,.22);
+}
+
+.post-send-animation .send-animation-card.is-ready {
+  opacity: 1;
+  transform: translate(0,0) rotate(-7deg) scale(1);
+}
+
+.post-send-animation .send-animation-card.is-approaching {
+  opacity: 1;
+  transform: translate(var(--approach-x), var(--approach-y)) rotate(var(--approach-rotate)) scale(.98);
+}
+
+.post-send-animation .send-animation-card.is-inserting {
+  opacity: 1;
+  transform: translate(var(--approach-x), calc(var(--approach-y) + 24px)) rotate(var(--approach-rotate)) scaleX(.94) scaleY(.08);
+  transition: transform .42s ease-in, opacity .2s linear;
+}
+
+.post-send-animation .send-animation-card.is-gone {
+  opacity: 0;
+  transform: translate(var(--approach-x), calc(var(--approach-y) + 30px)) rotate(var(--approach-rotate)) scaleX(.88) scaleY(.02);
+  transition: transform .2s linear, opacity .18s linear;
+}
+
+.post-send-animation .send-animation-card.target-ai {
+  --approach-x: -166px;
+  --approach-y: 132px;
+  --approach-rotate: -10deg;
+}
+
+.post-send-animation .send-animation-card.target-manual {
+  --approach-x: 170px;
+  --approach-y: 132px;
+  --approach-rotate: 9deg;
+}
+
+
+/* =========================================================
+   v6: Figma 1440x1024固定キャンバス + カレンダー実装
+========================================================= */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+}
+
+.app-shell {
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden !important;
+  display: grid;
+  place-items: center;
+}
+
+.canvas-holder {
+  position: relative;
+  flex: none;
+  overflow: visible;
+}
+
+.canvas-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px !important;
+  height: 1024px !important;
+  min-width: 1440px;
+  min-height: 1024px;
+  transform-origin: 0 0;
+  overflow: hidden !important;
+}
+
+.screen {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 1440px !important;
+  height: 1024px !important;
+  min-width: 1440px;
+  min-height: 1024px;
+  max-width: 1440px;
+  max-height: 1024px;
+  overflow: hidden !important;
+}
+
+.screen *,
+.canvas-frame * {
+  box-sizing: border-box;
+}
+
+/* Figma基準の共通戻るボタン */
+.common-back-button {
+  position: absolute !important;
+  left: 128px !important;
+  top: 912px !important;
+  width: 140px !important;
+  height: 60px !important;
+  min-width: 140px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #3080ff !important;
+  color: #fff !important;
+  font-size: 40px !important;
+  line-height: 60px !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  z-index: 150;
+}
+
+.portal-back-button,
+.back-button {
+  display: none !important;
+}
+
+/* リンク集は常に下線なし */
+.link-panel a,
+.link-panel a *,
+.green-menu,
+.green-menu *,
+.screen-home a.green-menu,
+.screen-home a.green-menu * {
+  text-decoration: none !important;
+}
+
+/* Figma: スケジュール登録 */
+.schedule-figma-panel {
+  position: absolute;
+  left: 70px;
+  top: 137px;
+  width: 1300px;
+  height: 750px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.calendar-provider-group {
+  position: absolute;
+  left: 78px;
+  width: 560px;
+  height: 205px;
+}
+
+.provider-google {
+  top: 117px;
+}
+
+.provider-apple {
+  top: 349px;
+}
+
+.provider-microsoft {
+  top: 581px;
+  height: 145px;
+}
+
+.calendar-provider-heading {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.calendar-provider-heading h2 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 500;
+}
+
+.calendar-connect-button {
+  height: 38px;
+  min-width: 82px;
+  padding: 0 12px;
+  border: 2px solid #283dff;
+  background: #fff;
+  color: #283dff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.calendar-connect-button.apple-disabled {
+  border-color: #999;
+  color: #777;
+}
+
+.calendar-account-list {
+  position: absolute;
+  left: 0;
+  top: 67px;
+  width: 500px;
+  max-height: 130px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.calendar-account-row {
+  min-height: 69px;
+  height: 69px;
+  width: 471px;
+  margin-bottom: 7px;
+  padding: 5px 10px;
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr) 34px 30px;
+  align-items: center;
+  gap: 8px;
+  border: 4px solid #1320ff;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 24px;
+}
+
+.calendar-account-row.is-off {
+  opacity: .52;
+  border-color: #aaa;
+}
+
+.calendar-provider-icon {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #000;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.calendar-provider-icon.google {
+  color: #2957d9;
+}
+
+.calendar-provider-icon.microsoft {
+  color: #1267b1;
+}
+
+.calendar-provider-icon.apple {
+  color: #111;
+}
+
+.calendar-account-avatar {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #000;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  background: #fff;
+}
+
+.calendar-account-email {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-account-toggle {
+  width: 34px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.calendar-disconnect-button {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  color: #9b0014;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.calendar-empty-account {
+  padding: 8px 2px;
+  font-size: 18px;
+  color: #666;
+}
+
+.calendar-provider-note {
+  position: absolute;
+  left: 0;
+  top: 108px;
+  font-size: 14px;
+  color: #777;
+}
+
+.available-times {
   position: absolute !important;
   left: 746px !important;
   top: 25px !important;
