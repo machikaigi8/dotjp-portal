@@ -806,158 +806,178 @@ button.file-choice-button {
 
 .available-times {
   position: absolute !important;
-  left: 775px !important;
+  left: 746px !important;
   top: 25px !important;
-  width: 470px !important;
-  height: 505px !important;
-  padding: 12px 12px 66px !important;
-  border: 4px solid #000 !important;
+  width: 529px !important;
+  height: 700px !important;
+  padding: 0 !important;
+  border: 5px solid #000 !important;
   background: #fff;
   overflow: hidden;
 }
 
 .available-times-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 92px;
 }
 
 .available-times-heading h2 {
+  position: absolute;
+  left: 58px;
+  top: 23px;
   margin: 0 !important;
-  font-size: 26px !important;
-  line-height: 1.1;
-  font-weight: 700 !important;
+  font-size: 40px !important;
+  line-height: 48px;
+  font-weight: 500 !important;
   white-space: nowrap;
 }
 
 .calendar-refresh-button {
-  display: none;
+  display: none !important;
 }
 
 .availability-filter-row {
-  display: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.availability-filter-row > label,
+#availabilityWeekText {
+  display: none !important;
 }
 
 .availability-week-nav {
+  position: absolute;
+  left: 331px;
+  top: 37px;
   display: flex;
-  align-items: center;
-  gap: 4px;
+  gap: 13px;
+  pointer-events: auto;
 }
 
 .availability-week-nav button {
-  height: 27px;
-  min-width: 42px;
-  padding: 0 8px;
-  border: 1px solid #888;
-  background: #f5f5f5;
-  color: #333;
-  font-size: 12px;
-  line-height: 1;
+  width: 51px;
+  height: 30px;
+  min-width: 51px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #d9d9d9;
+  color: #000;
+  font-size: 20px;
+  line-height: 30px;
+  font-weight: 400;
+  text-align: center;
   cursor: pointer;
 }
 
 .availability-week-nav button:hover {
-  background: #ececec;
+  filter: brightness(.96);
 }
 
-#availabilityWeekText {
-  display: none;
+.figma-week-host {
+  position: absolute;
+  left: 15px;
+  top: 92px;
+  width: 490px;
+  height: 500px;
 }
 
-.schedule-availability-host {
-  position: relative;
-  height: 370px;
-  overflow: hidden;
-}
-
-.schedule-week-strip {
+.figma-week-strip {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  border-top: 1px solid #333;
-  border-left: 1px solid #333;
+  grid-template-columns: repeat(7, 70px);
+  width: 490px;
+  height: 70px;
 }
 
-.schedule-week-day-button {
-  min-width: 0;
-  padding: 6px 2px;
+.figma-week-day {
+  width: 70px;
+  height: 70px;
+  padding: 4px 0 0;
   border: 0;
-  border-right: 1px solid #333;
-  border-bottom: 1px solid #333;
-  background: #f3eeee;
-  color: #111;
-  cursor: pointer;
+  border-radius: 0;
+  background: #cfc4c4;
+  color: #000;
+  font-size: 24px;
+  line-height: 29px;
+  font-weight: 400;
   text-align: center;
+  cursor: pointer;
 }
 
-.schedule-week-day-button .dow {
-  display: block;
-  font-size: 13px;
-  line-height: 1.1;
+.figma-week-day:first-child {
+  background: rgba(161, 140, 140, .51);
 }
 
-.schedule-week-day-button .date {
-  display: block;
-  margin-top: 2px;
-  font-size: 20px;
-  line-height: 1.1;
-}
-
-.schedule-week-day-button.is-selected {
-  background: #552828;
+.figma-week-day.is-selected {
+  background: #391111;
   color: #fff;
 }
 
-.schedule-week-list {
-  height: 265px;
-  padding: 12px 6px 6px 16px;
+.figma-week-day .dow,
+.figma-week-day .date {
+  display: block;
+}
+
+.figma-week-list {
+  width: 490px;
+  height: 340px;
+  padding: 18px 0 0 38px;
   overflow-y: auto;
 }
 
-.schedule-week-empty {
-  padding: 20px 8px;
-  color: #666;
-  font-size: 18px;
-  line-height: 1.5;
-}
-
-.schedule-week-slot-button {
+.figma-week-slot {
   display: block;
-  width: 100%;
-  margin: 0 0 10px;
+  width: 430px;
+  margin: 0 0 12px;
   padding: 0;
   border: 0;
   background: transparent;
-  color: #111;
-  font-size: 20px;
-  line-height: 1.45;
+  color: #000;
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 400;
   text-align: left;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-.schedule-week-slot-button:hover {
+.figma-week-slot:hover {
   text-decoration: underline;
 }
 
-.available-time-empty {
-  padding: 22px 4px;
+.figma-week-empty {
+  padding-top: 20px;
   color: #666;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1.5;
 }
 
-.work-hours-open-button {
+.available-time-empty {
   position: absolute;
-  left: 20px;
-  bottom: 10px;
-  min-width: 300px;
-  height: 45px;
-  border: 0;
-  background: transparent;
-  color: #000;
-  font-size: 28px;
-  text-align: left;
+  left: 35px;
+  top: 120px;
+  color: #666;
+  font-size: 20px;
+}
+
+.work-hours-open-button {
+  position: absolute !important;
+  left: 58px !important;
+  bottom: 10px !important;
+  width: auto !important;
+  height: 42px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #000 !important;
+  font-size: 30px !important;
+  line-height: 42px !important;
+  font-weight: 400 !important;
   cursor: pointer;
 }
 
@@ -1840,11 +1860,6 @@ a:active {
             <section class="available-times">
               <div class="available-times-heading">
                 <h2>タスク時間登録</h2>
-                <div class="availability-week-nav">
-                  <button id="availabilityPrevWeek" type="button">前週</button>
-                  <button id="availabilityNextWeek" type="button">次週</button>
-                  <button id="availabilityThisWeek" type="button">今週</button>
-                </div>
                 <button id="calendarRefreshButton" type="button" class="calendar-refresh-button">更新</button>
               </div>
 
@@ -1852,16 +1867,21 @@ a:active {
                 <label>
                   最低
                   <select id="availabilityMinMinutes">
-                    <option value="30" selected>30分</option>
+                    <option value="30">30分</option>
                     <option value="60">1時間</option>
                     <option value="90">1時間30分</option>
                     <option value="120">2時間</option>
                   </select>
                 </label>
-                <span id="availabilityWeekText"></span>
+                <div class="availability-week-nav">
+                  <button id="availabilityPrevWeek" type="button">前週</button>
+                  <button id="availabilityNextWeek" type="button">次週</button>
+                  <button id="availabilityThisWeek" type="button">今週</button>
+                  <span id="availabilityWeekText"></span>
+                </div>
               </div>
 
-              <div id="availableTimeContent" class="schedule-availability-host"></div>
+              <div id="availableTimeContent" class="figma-week-host"></div>
 
               <button
                 class="work-hours-open-button"
@@ -2399,17 +2419,17 @@ function wireActions() {
     }
   );
 
-  document.getElementById("calendarRefreshButton")?.addEventListener(
+  document.getElementById("calendarRefreshButton").addEventListener(
     "click",
     refreshCalendarSchedule
   );
 
-  document.getElementById("availabilityMinMinutes")?.addEventListener(
+  document.getElementById("availabilityMinMinutes").addEventListener(
     "change",
     refreshCalendarAvailability
   );
 
-  document.getElementById("availabilityPrevWeek")?.addEventListener(
+  document.getElementById("availabilityPrevWeek").addEventListener(
     "click",
     () => {
       state.calendar.weekOffset -= 1;
@@ -2417,7 +2437,7 @@ function wireActions() {
     }
   );
 
-  document.getElementById("availabilityThisWeek")?.addEventListener(
+  document.getElementById("availabilityThisWeek").addEventListener(
     "click",
     () => {
       state.calendar.weekOffset = 0;
@@ -2425,7 +2445,7 @@ function wireActions() {
     }
   );
 
-  document.getElementById("availabilityNextWeek")?.addEventListener(
+  document.getElementById("availabilityNextWeek").addEventListener(
     "click",
     () => {
       state.calendar.weekOffset += 1;
@@ -4286,26 +4306,19 @@ async function connectCalendarProvider(provider) {
 function currentWeekDateRange() {
   const now = new Date();
   const tokyo = new Date(
-    now.toLocaleString("en-US", {
-      timeZone: "Asia/Tokyo"
-    })
+    now.toLocaleString("en-US", { timeZone: "Asia/Tokyo" })
   );
 
   tokyo.setHours(0, 0, 0, 0);
   tokyo.setDate(
-    tokyo.getDate() -
-    tokyo.getDay() +
-    Number(state.calendar.weekOffset || 0) * 7
+    tokyo.getDate() - tokyo.getDay() + Number(state.calendar.weekOffset || 0) * 7
   );
 
   const start = localDateIso(tokyo);
   const endDate = new Date(tokyo);
   endDate.setDate(endDate.getDate() + 6);
 
-  return {
-    start,
-    end: localDateIso(endDate)
-  };
+  return { start, end: localDateIso(endDate) };
 }
 
 async function refreshCalendarAvailability() {
@@ -4317,11 +4330,10 @@ async function refreshCalendarAvailability() {
     document.getElementById("availabilityMinMinutes")?.value || 30
   );
 
-  document.getElementById("availabilityWeekText").textContent =
-    `${formatShortDate(range.start)}〜${formatShortDate(range.end)}`;
+  const weekText = document.getElementById("availabilityWeekText");
+  if (weekText) weekText.textContent = `${formatShortDate(range.start)}〜${formatShortDate(range.end)}`;
 
-  root.innerHTML =
-    '<div class="available-time-empty">空き時間を確認しています…</div>';
+  root.innerHTML = '<div class="available-time-empty">空き時間を確認しています…</div>';
 
   try {
     const params = new URLSearchParams({
@@ -4330,38 +4342,31 @@ async function refreshCalendarAvailability() {
       minMinutes: String(minMinutes)
     });
 
-    const data = await portalFetch(
-      `/api/calendar/availability?${params.toString()}`
-    );
+    const data = await portalFetch(`/api/calendar/availability?${params.toString()}`);
+    state.calendar.availability = Array.isArray(data.slots) ? data.slots : [];
 
-    state.calendar.availability = Array.isArray(data.slots)
-      ? data.slots
-      : [];
-
-    const weekDates = buildWeekDates(range.start).map((item) => item.iso);
-    const stillInWeek = weekDates.includes(state.calendar.selectedAvailabilityDate);
-
-    if (!stillInWeek) {
-      const firstWithSlot = state.calendar.availability.find((slot) => weekDates.includes(tokyoDateFromIso(slot.start)));
-      state.calendar.selectedAvailabilityDate = firstWithSlot
-        ? tokyoDateFromIso(firstWithSlot.start)
-        : range.start;
+    const weekDates = buildWeekDates(range.start).map((d) => d.iso);
+    if (!weekDates.includes(state.calendar.selectedAvailabilityDate)) {
+      const today = tokyoDateFromIso(new Date().toISOString());
+      const firstSlot = state.calendar.availability[0];
+      state.calendar.selectedAvailabilityDate = weekDates.includes(today)
+        ? today
+        : firstSlot
+          ? tokyoDateFromIso(firstSlot.start)
+          : range.start;
     }
 
     renderCalendarAvailability();
   } catch (error) {
-    root.innerHTML =
-      `<div class="available-time-empty">${escapeHtml(error.message || "空き時間を取得できませんでした")}</div>`;
+    root.innerHTML = `<div class="available-time-empty">${escapeHtml(error.message || "空き時間を取得できませんでした")}</div>`;
   }
 }
 
 function buildWeekDates(startIso) {
   const start = new Date(`${startIso}T00:00:00+09:00`);
-
   return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(start.getTime());
     date.setDate(date.getDate() + index);
-
     return {
       iso: localDateIso(date),
       dayOfWeek: index,
@@ -4382,10 +4387,10 @@ function renderCalendarAvailability() {
     .filter((slot) => tokyoDateFromIso(slot.start) === selectedDate)
     .sort((a, b) => new Date(a.start) - new Date(b.start));
 
-  const dayButtonsHtml = weekDates.map((date) => `
+  const dayHtml = weekDates.map((date) => `
     <button
       type="button"
-      class="schedule-week-day-button ${date.iso === selectedDate ? "is-selected" : ""}"
+      class="figma-week-day ${date.iso === selectedDate ? "is-selected" : ""}"
       data-availability-date="${date.iso}"
     >
       <span class="dow">${escapeHtml(calendarDayNamesJa[date.dayOfWeek].replace("曜日", ""))}</span>
@@ -4393,25 +4398,20 @@ function renderCalendarAvailability() {
     </button>
   `).join("");
 
-  const slotHtml = slots.length
+  const slotsHtml = slots.length
     ? slots.map((slot, index) => {
         const startClock = formatTokyoClock(new Date(slot.start));
         const endClock = formatTokyoClock(new Date(slot.end));
-        const label = `${formatShortDate(selectedDate)}${startClock}〜${endClock}`;
-
-        return `
-          <button
-            type="button"
-            class="schedule-week-slot-button"
-            data-availability-slot-index="${index}"
-          >${escapeHtml(label)}</button>
-        `;
+        const dateObj = weekDates.find((d) => d.iso === selectedDate);
+        const weekday = dateObj ? calendarDayNamesJa[dateObj.dayOfWeek].replace("曜日", "") : "";
+        const short = dateObj ? `${dateObj.month}/${dateObj.day}(${weekday})` : formatShortDate(selectedDate);
+        return `<button type="button" class="figma-week-slot" data-slot-index="${index}">${escapeHtml(short)}${escapeHtml(startClock)}～${escapeHtml(endClock)}</button>`;
       }).join("")
-    : '<div class="schedule-week-empty">この日に条件に合う空き時間はありません。</div>';
+    : '<div class="figma-week-empty">この日に条件に合う空き時間はありません。</div>';
 
   root.innerHTML = `
-    <div class="schedule-week-strip">${dayButtonsHtml}</div>
-    <div class="schedule-week-list">${slotHtml}</div>
+    <div class="figma-week-strip">${dayHtml}</div>
+    <div class="figma-week-list">${slotsHtml}</div>
   `;
 
   root.querySelectorAll("[data-availability-date]").forEach((button) => {
@@ -4421,11 +4421,9 @@ function renderCalendarAvailability() {
     });
   });
 
-  const daySlots = slots;
-  root.querySelectorAll("[data-availability-slot-index]").forEach((button) => {
+  root.querySelectorAll("[data-slot-index]").forEach((button) => {
     button.addEventListener("click", () => {
-      const index = Number(button.dataset.availabilitySlotIndex);
-      const slot = daySlots[index];
+      const slot = slots[Number(button.dataset.slotIndex)];
       if (!slot) return;
       state.calendar.selectedSlot = slot;
       state.calendar.selectedTaskTitle = "";
