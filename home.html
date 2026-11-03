@@ -2548,6 +2548,128 @@ body {
 }
 
 /* Figma: 日時登録 */
+/* Figma: 予定確認 */
+.schedule-review-board {
+  position: absolute;
+  left: 40px;
+  top: 115px;
+  width: 1360px;
+  height: 842px;
+  background: #fff;
+  border: 3px solid #67005e;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.schedule-review-corner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 170px;
+  height: 58px;
+  border-right: 1px solid rgba(117, 38, 121, .5);
+  border-bottom: 1px solid rgba(117, 38, 121, .5);
+  box-sizing: border-box;
+  background:
+    linear-gradient(
+      to top right,
+      transparent 49.4%,
+      rgba(117, 38, 121, .5) 49.7%,
+      rgba(117, 38, 121, .5) 50.3%,
+      transparent 50.6%
+    );
+}
+
+.schedule-review-day-header {
+  position: absolute;
+  top: 0;
+  width: 170px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(117, 38, 121, .5);
+  border-bottom: 1px solid rgba(117, 38, 121, .5);
+  box-sizing: border-box;
+  font-size: 30px;
+  line-height: 58px;
+  white-space: nowrap;
+}
+
+.schedule-review-time-label {
+  position: absolute;
+  left: 0;
+  width: 170px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(117, 38, 121, .5);
+  border-bottom: 1px solid rgba(117, 38, 121, .5);
+  box-sizing: border-box;
+  font-size: 27px;
+  line-height: 56px;
+  white-space: nowrap;
+}
+
+.schedule-review-cell {
+  position: absolute;
+  width: 170px;
+  height: 56px;
+  border-right: 1px solid rgba(117, 38, 121, .5);
+  border-bottom: 1px solid rgba(117, 38, 121, .5);
+  box-sizing: border-box;
+}
+
+.schedule-review-event {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 4px;
+  border: 1px solid #804073;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #111;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+}
+
+.schedule-review-event-name,
+.schedule-review-event-title {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.schedule-review-empty,
+.schedule-review-error {
+  position: absolute;
+  left: 210px;
+  top: 75px;
+  right: 20px;
+  z-index: 4;
+  color: #666;
+  font-size: 24px;
+}
+
+.schedule-review-back {
+  position: absolute;
+  left: 40px;
+  top: 957px;
+  width: 140px;
+  height: 60px;
+  border: 0;
+  background: #3080ff;
+  color: #fff;
+  font-size: 40px;
+  line-height: 60px;
+  text-align: center;
+  cursor: pointer;
+}
+
 .schedule-plan-panel,
 .schedule-hours-panel {
   position: absolute;
@@ -3222,7 +3344,7 @@ a:active {
               <button type="button" class="blue-menu" data-route="post">〒依頼出しPOST</button>
               <button type="button" class="blue-menu" data-route="schedule">スケジュール登録</button>
               <button id="hpEditButton" type="button" class="blue-menu">HPへの要望</button>
-              <button type="button" class="blue-menu schedule-button" data-placeholder="予定確認">予定確認</button>
+              <button type="button" class="blue-menu schedule-button" data-route="schedule-review" data-review-current="1">予定確認</button>
             </div>
           </section>
 
@@ -3492,6 +3614,24 @@ a:active {
           </div>
         </section>
 
+        <section class="screen screen-schedule-review" data-screen="schedule-review">
+          <div class="user-name" data-user-name>＜名前＞</div>
+
+          <div id="scheduleReviewBoard" class="schedule-review-board">
+            <div class="schedule-review-corner"></div>
+            <div id="scheduleReviewHeaders"></div>
+            <div id="scheduleReviewGrid"></div>
+            <div id="scheduleReviewEvents"></div>
+            <div id="scheduleReviewMessage"></div>
+          </div>
+
+          <button
+            type="button"
+            class="schedule-review-back"
+            data-common-back
+          >←戻る</button>
+        </section>
+
         <section class="screen screen-schedule-plan" data-screen="schedule-plan">
           <div class="user-name" data-user-name>＜名前＞</div>
 
@@ -3752,7 +3892,9 @@ const state = {
     selectedWorkDay: 0,
     selectedTaskTitle: "",
     weekOffset: 0,
-    selectedAvailabilityDate: ""
+    selectedAvailabilityDate: "",
+    reviewPlans: [],
+    reviewAnchorDate: ""
   },
   share: {
     roomId: "",
@@ -3777,6 +3919,7 @@ const screenNames = new Set([
   "post-confirm",
   "schedule",
   "schedule-plan",
+  "schedule-review",
   "schedule-hours",
   "hp-edit",
   "screen-share",
@@ -3895,6 +4038,11 @@ function wireActions() {
           element.dataset.postSource
         );
       }
+
+      if (element.dataset.reviewCurrent === "1") {
+        state.calendar.reviewAnchorDate = "";
+      }
+
       showScreen(element.dataset.route);
     });
   });
@@ -4157,6 +4305,10 @@ function showScreen(name, updateHash = true, recordHistory = true) {
 
   if (name === "schedule-plan") {
     renderSchedulePlanScreen();
+  }
+
+  if (name === "schedule-review") {
+    loadScheduleReview();
   }
 
   if (name === "schedule-hours") {
@@ -6230,13 +6382,312 @@ async function registerSchedulePlan() {
       showToast("タスク実施計画を登録しました");
     }
 
+    state.calendar.reviewAnchorDate = date;
     state.calendar.selectedSlot = null;
     state.calendar.selectedTaskTitle = "";
 
-    showScreen("schedule");
+    showScreen("schedule-review");
   } catch (error) {
     showToast(error.message || "タスク実施計画を登録できませんでした");
   }
+}
+
+function reviewWeekRange() {
+  const anchor = state.calendar.reviewAnchorDate
+    ? new Date(`${state.calendar.reviewAnchorDate}T00:00:00+09:00`)
+    : new Date(
+        new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Tokyo"
+        })
+      );
+
+  anchor.setHours(0, 0, 0, 0);
+  anchor.setDate(anchor.getDate() - anchor.getDay());
+
+  const end = new Date(anchor);
+  end.setDate(end.getDate() + 7);
+
+  return {
+    startDate: localDateIso(anchor),
+    endDate: localDateIso(new Date(end.getTime() - 86400000)),
+    startIso: new Date(`${localDateIso(anchor)}T00:00:00+09:00`).toISOString(),
+    endIso: new Date(`${localDateIso(end)}T00:00:00+09:00`).toISOString()
+  };
+}
+
+async function loadScheduleReview() {
+  const message = document.getElementById("scheduleReviewMessage");
+  const eventsRoot = document.getElementById("scheduleReviewEvents");
+
+  if (message) {
+    message.className = "schedule-review-empty";
+    message.textContent = "予定を読み込んでいます…";
+  }
+
+  if (eventsRoot) {
+    eventsRoot.innerHTML = "";
+  }
+
+  const range = reviewWeekRange();
+  renderScheduleReviewGrid(range);
+
+  try {
+    const params = new URLSearchParams({
+      start: range.startIso,
+      end: range.endIso,
+      scope: "all"
+    });
+
+    const data = await portalFetch(
+      `/api/calendar/plans?${params.toString()}`
+    );
+
+    state.calendar.reviewPlans = Array.isArray(data.plans)
+      ? data.plans
+      : [];
+
+    renderScheduleReviewEvents(range);
+  } catch (error) {
+    if (message) {
+      message.className = "schedule-review-error";
+      message.textContent =
+        error.message || "予定を取得できませんでした";
+    }
+  }
+}
+
+function renderScheduleReviewGrid(range) {
+  const headersRoot = document.getElementById("scheduleReviewHeaders");
+  const gridRoot = document.getElementById("scheduleReviewGrid");
+
+  if (!headersRoot || !gridRoot) return;
+
+  const start = new Date(`${range.startDate}T00:00:00+09:00`);
+  const headers = [];
+  const cells = [];
+
+  for (let day = 0; day < 7; day += 1) {
+    const date = new Date(start);
+    date.setDate(date.getDate() + day);
+
+    const label = `${date.getMonth() + 1}/${date.getDate()}(${calendarDayNamesJa[day].replace("曜日", "")})`;
+
+    headers.push(`
+      <div
+        class="schedule-review-day-header"
+        style="left:${170 + day * 170}px"
+      >${escapeHtml(label)}</div>
+    `);
+  }
+
+  for (let hourIndex = 0; hourIndex < 14; hourIndex += 1) {
+    const hour = 9 + hourIndex;
+    const top = 58 + hourIndex * 56;
+
+    cells.push(`
+      <div
+        class="schedule-review-time-label"
+        style="top:${top}px"
+      >${hour}:00-${hour + 1}:00</div>
+    `);
+
+    for (let day = 0; day < 7; day += 1) {
+      cells.push(`
+        <div
+          class="schedule-review-cell"
+          style="left:${170 + day * 170}px;top:${top}px"
+        ></div>
+      `);
+    }
+  }
+
+  headersRoot.innerHTML = headers.join("");
+  gridRoot.innerHTML = cells.join("");
+}
+
+function reviewColorForEmail(email) {
+  const palette = [
+    "#e3e6ff",
+    "#ffe3e3",
+    "#e3ffe6",
+    "#fff1cc",
+    "#e8dcff",
+    "#dff6ff",
+    "#ffe2f1",
+    "#e8f4d8"
+  ];
+
+  let hash = 0;
+  const value = String(email || "").toLowerCase();
+
+  for (let index = 0; index < value.length; index += 1) {
+    hash = ((hash << 5) - hash + value.charCodeAt(index)) | 0;
+  }
+
+  return palette[Math.abs(hash) % palette.length];
+}
+
+function reviewDayIndex(iso, weekStartDate) {
+  const date = tokyoDateFromIso(iso);
+  const start = new Date(`${weekStartDate}T00:00:00+09:00`);
+  const current = new Date(`${date}T00:00:00+09:00`);
+  return Math.round((current - start) / 86400000);
+}
+
+function reviewMinutesFromMidnight(iso) {
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Tokyo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  });
+
+  const parts = formatter.formatToParts(new Date(iso));
+  const get = (type) => Number(
+    parts.find((part) => part.type === type)?.value || 0
+  );
+
+  return get("hour") * 60 + get("minute");
+}
+
+function assignReviewLanes(plans) {
+  const sorted = [...plans].sort(
+    (a, b) => new Date(a.starts_at) - new Date(b.starts_at)
+  );
+
+  const output = [];
+  let group = [];
+  let groupEnd = -Infinity;
+
+  const flushGroup = () => {
+    if (!group.length) return;
+
+    const laneEnds = [];
+    const withLane = [];
+
+    for (const plan of group) {
+      const start = new Date(plan.starts_at).getTime();
+      const end = new Date(plan.ends_at).getTime();
+      let lane = laneEnds.findIndex((laneEnd) => laneEnd <= start);
+
+      if (lane < 0) {
+        lane = laneEnds.length;
+        laneEnds.push(end);
+      } else {
+        laneEnds[lane] = end;
+      }
+
+      withLane.push({ ...plan, __lane: lane });
+    }
+
+    const laneCount = Math.max(1, laneEnds.length);
+    for (const item of withLane) {
+      output.push({ ...item, __laneCount: laneCount });
+    }
+
+    group = [];
+    groupEnd = -Infinity;
+  };
+
+  for (const plan of sorted) {
+    const start = new Date(plan.starts_at).getTime();
+    const end = new Date(plan.ends_at).getTime();
+
+    if (group.length && start >= groupEnd) {
+      flushGroup();
+    }
+
+    group.push(plan);
+    groupEnd = Math.max(groupEnd, end);
+  }
+
+  flushGroup();
+  return output;
+}
+
+function renderScheduleReviewEvents(range) {
+  const root = document.getElementById("scheduleReviewEvents");
+  const message = document.getElementById("scheduleReviewMessage");
+  if (!root || !message) return;
+
+  const visible = (state.calendar.reviewPlans || []).filter((plan) => {
+    const day = reviewDayIndex(plan.starts_at, range.startDate);
+    const start = reviewMinutesFromMidnight(plan.starts_at);
+    const end = reviewMinutesFromMidnight(plan.ends_at);
+    return day >= 0 && day < 7 && end > 9 * 60 && start < 23 * 60;
+  });
+
+  if (!visible.length) {
+    root.innerHTML = "";
+    message.className = "schedule-review-empty";
+    message.textContent = "この週に登録されている予定はありません。";
+    return;
+  }
+
+  message.textContent = "";
+  message.className = "";
+
+  const byDay = new Map();
+  for (const plan of visible) {
+    const day = reviewDayIndex(plan.starts_at, range.startDate);
+    if (!byDay.has(day)) byDay.set(day, []);
+    byDay.get(day).push(plan);
+  }
+
+  const laidOut = [];
+  for (const [day, plans] of byDay.entries()) {
+    for (const item of assignReviewLanes(plans)) {
+      laidOut.push({ ...item, __day: day });
+    }
+  }
+
+  root.innerHTML = laidOut.map((plan) => {
+    const startMinutes = Math.max(
+      9 * 60,
+      reviewMinutesFromMidnight(plan.starts_at)
+    );
+    const endMinutes = Math.min(
+      23 * 60,
+      reviewMinutesFromMidnight(plan.ends_at)
+    );
+
+    const laneWidth = 170 / plan.__laneCount;
+    const left =
+      170 +
+      plan.__day * 170 +
+      plan.__lane * laneWidth;
+    const top =
+      58 +
+      ((startMinutes - 9 * 60) / 60) * 56;
+    const height = Math.max(
+      18,
+      ((endMinutes - startMinutes) / 60) * 56
+    );
+
+    const displayName =
+      plan.user_name ||
+      plan.user_email ||
+      "";
+
+    return `
+      <div
+        class="schedule-review-event"
+        style="
+          left:${left}px;
+          top:${top}px;
+          width:${laneWidth}px;
+          height:${height}px;
+          background:${reviewColorForEmail(plan.user_email)};
+        "
+        title="${escapeHtml(`${displayName} ${plan.title || ""}`)}"
+      >
+        <div>
+          <span class="schedule-review-event-name">${escapeHtml(displayName)}</span>
+          <span class="schedule-review-event-title">${escapeHtml(plan.title || "")}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
 function tokyoDateFromIso(iso) {
