@@ -2377,51 +2377,209 @@ body {
   cursor: pointer;
 }
 
+
 .availability-filter-row {
-  height: 46px;
-  margin-top: 8px;
+  min-height: 40px;
+  margin-top: 6px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-size: 17px;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.availability-filter-row label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
 }
 
 .availability-filter-row select {
-  height: 32px;
-  font-size: 17px;
+  height: 30px;
+  font-size: 15px;
 }
 
-#availabilityWeekText {
-  color: #555;
+.availability-week-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.available-time-list {
-  height: 520px;
-  overflow-y: auto;
-  padding: 3px 2px 8px;
-}
-
-.available-time-button {
-  width: 100%;
-  min-height: 48px;
-  padding: 6px 4px;
-  border: 0;
-  background: transparent;
-  color: #000;
-  font-size: 27px;
-  line-height: 36px;
-  text-align: left;
+.availability-week-nav button {
+  height: 30px;
+  min-width: 34px;
+  padding: 0 7px;
+  border: 1px solid #999;
+  background: #fff;
+  font-size: 14px;
   cursor: pointer;
 }
 
-.available-time-button:hover {
-  background: #eef0ff;
+.availability-week-nav button:hover {
+  background: #f2f2f2;
+}
+
+#availabilityWeekText {
+  min-width: 104px;
+  color: #222;
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.weekly-calendar-host {
+  position: relative;
+  height: 515px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.weekly-calendar {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #aaa;
+  background: #fff;
+  overflow: hidden;
+}
+
+.weekly-calendar-header {
+  display: grid;
+  grid-template-columns: 42px repeat(7, minmax(0, 1fr));
+  height: 42px;
+  border-bottom: 1px solid #aaa;
+  background: #fafafa;
+}
+
+.weekly-calendar-header-spacer {
+  border-right: 1px solid #ccc;
+}
+
+.weekly-calendar-day-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  border-right: 1px solid #ddd;
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.weekly-calendar-day-header:last-child {
+  border-right: 0;
+}
+
+.weekly-calendar-day-header strong {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.weekly-calendar-day-header.is-today {
+  background: #eef5ff;
+}
+
+.weekly-calendar-body {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  height: calc(100% - 42px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.weekly-calendar-time-axis {
+  position: relative;
+  border-right: 1px solid #ccc;
+  background: #fff;
+}
+
+.weekly-calendar-time-label {
+  position: absolute;
+  left: 0;
+  width: 38px;
+  transform: translateY(-7px);
+  color: #666;
+  font-size: 10px;
+  line-height: 14px;
+  text-align: right;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+
+.weekly-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  position: relative;
+}
+
+.weekly-calendar-day {
+  position: relative;
+  min-width: 0;
+  border-right: 1px solid #ddd;
+}
+
+.weekly-calendar-day:last-child {
+  border-right: 0;
+}
+
+.weekly-calendar-hour-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e5e5e5;
+  pointer-events: none;
+}
+
+.weekly-calendar-slot {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  z-index: 2;
+  min-height: 18px;
+  padding: 2px 2px;
+  overflow: hidden;
+  border: 1.5px solid #3080ff;
+  border-radius: 4px;
+  background: #e9f2ff;
+  color: #111;
+  font-size: 10px;
+  line-height: 1.15;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.weekly-calendar-slot:hover {
+  background: #d9eaff;
+}
+
+.weekly-calendar-slot-time {
+  display: block;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.weekly-calendar-empty-note {
+  position: absolute;
+  left: 54px;
+  right: 12px;
+  top: 58px;
+  z-index: 4;
+  padding: 8px 10px;
+  border: 1px solid #bbb;
+  background: rgba(255,255,255,.92);
+  color: #666;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  pointer-events: none;
 }
 
 .available-time-empty {
   padding: 22px 4px;
   color: #666;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1.5;
 }
 
@@ -3317,7 +3475,7 @@ a:active {
 
             <section class="available-times">
               <div class="available-times-heading">
-                <h2>今週空いている時間</h2>
+                <h2>1週間の空き時間</h2>
                 <button id="calendarRefreshButton" type="button" class="calendar-refresh-button">更新</button>
               </div>
 
@@ -3331,10 +3489,16 @@ a:active {
                     <option value="120">2時間</option>
                   </select>
                 </label>
-                <span id="availabilityWeekText"></span>
+
+                <div class="availability-week-nav">
+                  <button id="availabilityPrevWeek" type="button" aria-label="前の週">‹</button>
+                  <button id="availabilityThisWeek" type="button">今週</button>
+                  <span id="availabilityWeekText"></span>
+                  <button id="availabilityNextWeek" type="button" aria-label="次の週">›</button>
+                </div>
               </div>
 
-              <div id="availableTimeContent" class="available-time-list"></div>
+              <div id="availableTimeContent" class="weekly-calendar-host"></div>
 
               <button
                 class="work-hours-open-button"
@@ -3603,7 +3767,8 @@ const state = {
     selectedSlot: null,
     workDays: [],
     selectedWorkDay: 0,
-    selectedTaskTitle: ""
+    selectedTaskTitle: "",
+    weekOffset: 0
   },
   share: {
     roomId: "",
@@ -3878,6 +4043,30 @@ function wireActions() {
   document.getElementById("availabilityMinMinutes").addEventListener(
     "change",
     refreshCalendarAvailability
+  );
+
+  document.getElementById("availabilityPrevWeek").addEventListener(
+    "click",
+    () => {
+      state.calendar.weekOffset -= 1;
+      refreshCalendarAvailability();
+    }
+  );
+
+  document.getElementById("availabilityThisWeek").addEventListener(
+    "click",
+    () => {
+      state.calendar.weekOffset = 0;
+      refreshCalendarAvailability();
+    }
+  );
+
+  document.getElementById("availabilityNextWeek").addEventListener(
+    "click",
+    () => {
+      state.calendar.weekOffset += 1;
+      refreshCalendarAvailability();
+    }
   );
 
   document.getElementById("schedulePlanRegisterButton").addEventListener(
@@ -5482,8 +5671,10 @@ const scheduleTaskChoices = [
 async function refreshCalendarSchedule() {
   await Promise.all([
     loadCalendarConnections(),
-    refreshCalendarAvailability()
+    loadWorkHours()
   ]);
+
+  await refreshCalendarAvailability();
 }
 
 async function loadCalendarConnections() {
@@ -5737,7 +5928,11 @@ function currentWeekDateRange() {
   );
 
   tokyo.setHours(0, 0, 0, 0);
-  tokyo.setDate(tokyo.getDate() - tokyo.getDay());
+  tokyo.setDate(
+    tokyo.getDate() -
+    tokyo.getDay() +
+    Number(state.calendar.weekOffset || 0) * 7
+  );
 
   const start = localDateIso(tokyo);
   const endDate = new Date(tokyo);
@@ -5759,7 +5954,7 @@ async function refreshCalendarAvailability() {
   );
 
   document.getElementById("availabilityWeekText").textContent =
-    `${formatShortDate(range.start)}～${formatShortDate(range.end)}`;
+    `${formatShortDate(range.start)}〜${formatShortDate(range.end)}`;
 
   root.innerHTML =
     '<div class="available-time-empty">空き時間を確認しています…</div>';
@@ -5787,29 +5982,173 @@ async function refreshCalendarAvailability() {
   }
 }
 
+function parseClockMinutes(value) {
+  const [hour, minute] = String(value || "").split(":").map(Number);
+
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return null;
+  }
+
+  return hour * 60 + minute;
+}
+
+function weeklyCalendarMinuteRange() {
+  const starts = [];
+  const ends = [];
+
+  for (const day of state.calendar.workDays || []) {
+    if (!day?.enabled) continue;
+
+    for (const slot of day.slots || []) {
+      const start = parseClockMinutes(slot.start);
+      const end = parseClockMinutes(slot.end);
+
+      if (start !== null) starts.push(start);
+      if (end !== null) ends.push(end);
+    }
+  }
+
+  for (const slot of state.calendar.availability || []) {
+    const startClock = formatTokyoClock(new Date(slot.start));
+    const endClock = formatTokyoClock(new Date(slot.end));
+    const start = parseClockMinutes(startClock);
+    const end = parseClockMinutes(endClock);
+
+    if (start !== null) starts.push(start);
+    if (end !== null) ends.push(end);
+  }
+
+  let startMinutes = starts.length
+    ? Math.floor(Math.min(...starts) / 60) * 60
+    : 9 * 60;
+
+  let endMinutes = ends.length
+    ? Math.ceil(Math.max(...ends) / 60) * 60
+    : 22 * 60;
+
+  startMinutes = Math.max(0, startMinutes);
+  endMinutes = Math.min(24 * 60, endMinutes);
+
+  if (endMinutes - startMinutes < 4 * 60) {
+    endMinutes = Math.min(24 * 60, startMinutes + 4 * 60);
+  }
+
+  return { startMinutes, endMinutes };
+}
+
+function buildWeekDates(startIso) {
+  const start = new Date(`${startIso}T00:00:00+09:00`);
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(start.getTime());
+    date.setDate(date.getDate() + index);
+
+    return {
+      iso: localDateIso(date),
+      dayOfWeek: index,
+      month: date.getMonth() + 1,
+      day: date.getDate()
+    };
+  });
+}
+
 function renderCalendarAvailability() {
   const root = document.getElementById("availableTimeContent");
   if (!root) return;
 
-  const slots = state.calendar.availability;
+  const range = currentWeekDateRange();
+  const weekDates = buildWeekDates(range.start);
+  const slots = state.calendar.availability || [];
+  const { startMinutes, endMinutes } = weeklyCalendarMinuteRange();
 
-  if (!slots.length) {
-    root.innerHTML = `
-      <div class="available-time-empty">
-        条件に合う空き時間がありません。<br>
-        「稼働時間を登録する」から対象時間を変更できます。
-      </div>
-    `;
-    return;
+  const hourHeight = 38;
+  const totalMinutes = endMinutes - startMinutes;
+  const bodyHeight = Math.max(4, Math.ceil(totalMinutes / 60)) * hourHeight;
+  const today = tokyoDateFromIso(new Date().toISOString());
+
+  const headerHtml = weekDates.map((date) => `
+    <div class="weekly-calendar-day-header ${date.iso === today ? "is-today" : ""}">
+      <strong>${calendarDayNamesJa[date.dayOfWeek].replace("曜日", "")}</strong>
+      <span>${date.month}/${date.day}</span>
+    </div>
+  `).join("");
+
+  const hourLabels = [];
+  const dayColumns = [];
+
+  for (let minutes = startMinutes; minutes <= endMinutes; minutes += 60) {
+    const top = ((minutes - startMinutes) / 60) * hourHeight;
+    const hour = String(Math.floor(minutes / 60)).padStart(2, "0");
+
+    if (minutes < endMinutes) {
+      hourLabels.push(`
+        <div class="weekly-calendar-time-label" style="top:${top}px">${hour}:00</div>
+      `);
+    }
   }
 
-  root.innerHTML = slots.map((slot, index) => `
-    <button
-      type="button"
-      class="available-time-button"
-      data-availability-index="${index}"
-    >${escapeHtml(slot.label)}</button>
-  `).join("");
+  for (const date of weekDates) {
+    const daySlots = slots
+      .map((slot, index) => ({ slot, index }))
+      .filter(({ slot }) => tokyoDateFromIso(slot.start) === date.iso);
+
+    const lines = [];
+
+    for (let minutes = startMinutes; minutes <= endMinutes; minutes += 60) {
+      const top = ((minutes - startMinutes) / 60) * hourHeight;
+      lines.push(`<div class="weekly-calendar-hour-line" style="top:${top}px"></div>`);
+    }
+
+    const slotButtons = daySlots.map(({ slot, index }) => {
+      const startClock = formatTokyoClock(new Date(slot.start));
+      const endClock = formatTokyoClock(new Date(slot.end));
+      const slotStart = parseClockMinutes(startClock);
+      const slotEnd = parseClockMinutes(endClock);
+      const top = ((slotStart - startMinutes) / 60) * hourHeight;
+      const height = Math.max(18, ((slotEnd - slotStart) / 60) * hourHeight);
+
+      return `
+        <button
+          type="button"
+          class="weekly-calendar-slot"
+          data-availability-index="${index}"
+          style="top:${top}px;height:${height}px"
+          title="${escapeHtml(slot.label || `${startClock}〜${endClock}`)}"
+        >
+          <span class="weekly-calendar-slot-time">${escapeHtml(startClock)}〜${escapeHtml(endClock)}</span>
+        </button>
+      `;
+    }).join("");
+
+    dayColumns.push(`
+      <div class="weekly-calendar-day" style="height:${bodyHeight}px">
+        ${lines.join("")}
+        ${slotButtons}
+      </div>
+    `);
+  }
+
+  root.innerHTML = `
+    <div class="weekly-calendar">
+      <div class="weekly-calendar-header">
+        <div class="weekly-calendar-header-spacer"></div>
+        ${headerHtml}
+      </div>
+      <div class="weekly-calendar-body">
+        <div class="weekly-calendar-time-axis" style="height:${bodyHeight}px">
+          ${hourLabels.join("")}
+        </div>
+        <div class="weekly-calendar-days" style="height:${bodyHeight}px">
+          ${dayColumns.join("")}
+        </div>
+      </div>
+    </div>
+    ${slots.length ? "" : `
+      <div class="weekly-calendar-empty-note">
+        この週は条件に合う空き時間がありません。
+      </div>
+    `}
+  `;
 
   root.querySelectorAll("[data-availability-index]").forEach((button) => {
     button.addEventListener("click", () => {
