@@ -2337,9 +2337,13 @@ body {
 .calendar-provider-note {
   position: absolute;
   left: 0;
-  top: 108px;
+  top: 132px;
   font-size: 14px;
   color: #777;
+}
+
+.provider-apple:has(.calendar-account-row) .calendar-provider-note {
+  display: none;
 }
 
 .available-times {
@@ -2364,8 +2368,8 @@ body {
 
 .available-times-heading h2 {
   position: absolute;
-  left: 58px;
-  top: 23px;
+  left: 41px;
+  top: 30px;
   margin: 0 !important;
   font-size: 40px !important;
   line-height: 48px;
@@ -2390,8 +2394,8 @@ body {
 
 .availability-week-nav {
   position: absolute;
-  left: 331px;
-  top: 37px;
+  left: 336px;
+  top: 42px;
   display: flex;
   gap: 13px;
   pointer-events: auto;
@@ -2415,6 +2419,17 @@ body {
 
 .availability-week-nav button:hover {
   filter: brightness(.96);
+}
+
+.availability-week-nav button:disabled {
+  opacity: .42;
+  cursor: default;
+  filter: none;
+}
+
+.availability-week-nav button.is-current {
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1px #777;
 }
 
 .figma-week-host {
@@ -2454,6 +2469,19 @@ body {
 .figma-week-day.is-selected {
   background: #391111;
   color: #fff;
+}
+
+.figma-week-day.is-past,
+.figma-week-day:disabled {
+  background: #e6e2e2 !important;
+  color: #9b9696 !important;
+  cursor: default;
+  opacity: .72;
+}
+
+.figma-week-day.is-past:hover,
+.figma-week-day:disabled:hover {
+  filter: none;
 }
 
 .figma-week-day .dow,
@@ -3413,8 +3441,8 @@ a:active {
                 </label>
                 <div class="availability-week-nav">
                   <button id="availabilityPrevWeek" type="button">前週</button>
-                  <button id="availabilityNextWeek" type="button">次週</button>
                   <button id="availabilityThisWeek" type="button">今週</button>
+                  <button id="availabilityNextWeek" type="button">次週</button>
                   <span id="availabilityWeekText"></span>
                 </div>
               </div>
@@ -3970,6 +3998,7 @@ function wireActions() {
   document.getElementById("availabilityPrevWeek").addEventListener(
     "click",
     () => {
+      if (Number(state.calendar.weekOffset || 0) <= 0) return;
       state.calendar.weekOffset -= 1;
       refreshCalendarAvailability();
     }
@@ -5848,8 +5877,14 @@ function currentWeekDateRange() {
   );
 
   tokyo.setHours(0, 0, 0, 0);
+
+  state.calendar.weekOffset = Math.max(
+    0,
+    Number(state.calendar.weekOffset || 0)
+  );
+
   tokyo.setDate(
-    tokyo.getDate() - tokyo.getDay() + Number(state.calendar.weekOffset || 0) * 7
+    tokyo.getDate() - tokyo.getDay() + state.calendar.weekOffset * 7
   );
 
   const start = localDateIso(tokyo);
@@ -5859,11 +5894,31 @@ function currentWeekDateRange() {
   return { start, end: localDateIso(endDate) };
 }
 
+function updateWeekNavigationState() {
+  const offset = Math.max(0, Number(state.calendar.weekOffset || 0));
+  const prevButton = document.getElementById("availabilityPrevWeek");
+  const thisButton = document.getElementById("availabilityThisWeek");
+
+  if (prevButton) {
+    prevButton.disabled = offset <= 0;
+  }
+
+  if (thisButton) {
+    thisButton.classList.toggle("is-current", offset === 0);
+    thisButton.setAttribute(
+      "aria-current",
+      offset === 0 ? "date" : "false"
+    );
+  }
+}
+
 async function refreshCalendarAvailability() {
   const root = document.getElementById("availableTimeContent");
   if (!root) return;
 
   const range = currentWeekDateRange();
+  updateWeekNavigationState();
+
   const minMinutes = Number(
     document.getElementById("availabilityMinMinutes")?.value || 30
   );
@@ -5884,13 +5939,20 @@ async function refreshCalendarAvailability() {
     state.calendar.availability = Array.isArray(data.slots) ? data.slots : [];
 
     const weekDates = buildWeekDates(range.start).map((d) => d.iso);
-    if (!weekDates.includes(state.calendar.selectedAvailabilityDate)) {
-      const today = tokyoDateFromIso(new Date().toISOString());
-      const firstSlot = state.calendar.availability[0];
+    const today = tokyoDateFromIso(new Date().toISOString());
+    const selectedIsUsable =
+      weekDates.includes(state.calendar.selectedAvailabilityDate) &&
+      state.calendar.selectedAvailabilityDate >= today;
+
+    if (!selectedIsUsable) {
+      const firstFutureSlot = state.calendar.availability.find(
+        (slot) => tokyoDateFromIso(slot.start) >= today
+      );
+
       state.calendar.selectedAvailabilityDate = weekDates.includes(today)
         ? today
-        : firstSlot
-          ? tokyoDateFromIso(firstSlot.start)
+        : firstFutureSlot
+          ? tokyoDateFromIso(firstFutureSlot.start)
           : range.start;
     }
 
@@ -5925,16 +5987,23 @@ function renderCalendarAvailability() {
     .filter((slot) => tokyoDateFromIso(slot.start) === selectedDate)
     .sort((a, b) => new Date(a.start) - new Date(b.start));
 
-  const dayHtml = weekDates.map((date) => `
-    <button
-      type="button"
-      class="figma-week-day ${date.iso === selectedDate ? "is-selected" : ""}"
-      data-availability-date="${date.iso}"
-    >
-      <span class="dow">${escapeHtml(calendarDayNamesJa[date.dayOfWeek].replace("曜日", ""))}</span>
-      <span class="date">${date.month}/${date.day}</span>
-    </button>
-  `).join("");
+  const today = tokyoDateFromIso(new Date().toISOString());
+
+  const dayHtml = weekDates.map((date) => {
+    const isPast = date.iso < today;
+
+    return `
+      <button
+        type="button"
+        class="figma-week-day ${date.iso === selectedDate ? "is-selected" : ""} ${isPast ? "is-past" : ""}"
+        data-availability-date="${date.iso}"
+        ${isPast ? "disabled aria-disabled=\"true\"" : ""}
+      >
+        <span class="dow">${escapeHtml(calendarDayNamesJa[date.dayOfWeek].replace("曜日", ""))}</span>
+        <span class="date">${date.month}/${date.day}</span>
+      </button>
+    `;
+  }).join("");
 
   const slotsHtml = slots.length
     ? slots.map((slot, index) => {
@@ -5954,7 +6023,11 @@ function renderCalendarAvailability() {
 
   root.querySelectorAll("[data-availability-date]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.calendar.selectedAvailabilityDate = button.dataset.availabilityDate || range.start;
+      if (button.disabled) return;
+
+      state.calendar.selectedAvailabilityDate =
+        button.dataset.availabilityDate || range.start;
+
       renderCalendarAvailability();
     });
   });
