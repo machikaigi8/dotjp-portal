@@ -2562,32 +2562,44 @@ body {
 .selected-availability-label {
   position: absolute;
   left: 128px;
-  top: 50px;
+  top: 57px;
   font-size: 40px;
   line-height: 48px;
+  white-space: nowrap;
 }
 
 .schedule-plan-fields {
   position: absolute;
   left: 175px;
-  top: 155px;
-  width: 430px;
+  top: 164px;
+  width: 500px;
 }
 
 .plan-field-row {
   height: 70px;
-  display: grid;
-  grid-template-columns: 260px 150px;
+  display: flex;
   align-items: center;
-  font-size: 36px;
+  font-size: 40px;
+  line-height: 70px;
+  white-space: nowrap;
+}
+
+.plan-field-row > span {
+  flex: 0 0 326px;
+  width: 326px;
+  white-space: nowrap;
 }
 
 .plan-field-row input,
 .plan-field-row select {
+  width: 160px;
   height: 52px;
+  box-sizing: border-box;
   border: 2px solid #000;
   background: #fff;
+  color: #000;
   font-size: 26px;
+  line-height: normal;
   padding: 4px 8px;
 }
 
@@ -2596,6 +2608,8 @@ body {
   display: flex;
   align-items: center;
   font-size: 40px;
+  line-height: 70px;
+  white-space: nowrap;
 }
 
 .schedule-task-choice-grid {
@@ -2614,6 +2628,9 @@ body {
   background: #fff;
   color: #000;
   font-size: 24px;
+  line-height: 1.15;
+  padding: 3px 6px;
+  overflow: hidden;
   cursor: pointer;
 }
 
@@ -2624,29 +2641,46 @@ body {
 .schedule-plan-calendar-targets {
   position: absolute;
   left: 501px;
-  top: 555px;
-  width: 650px;
-  min-height: 88px;
+  top: 590px;
+  width: 654px;
+  height: 54px;
+  overflow: hidden;
 }
 
 .schedule-plan-calendar-title {
-  font-size: 19px;
-  margin-bottom: 5px;
+  height: 18px;
+  margin: 0 0 2px;
+  font-size: 14px;
+  line-height: 18px;
+  white-space: nowrap;
 }
 
 .schedule-plan-calendar-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  max-height: 58px;
-  overflow-y: auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 30px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
 }
 
 .schedule-plan-calendar-option {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 16px;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.schedule-plan-calendar-option input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
 }
 
 .schedule-register-button {
