@@ -5356,6 +5356,14 @@ function weekBounds(base = new Date()) {
   return { start, end };
 }
 
+// 「部署タスク」と「MTG」は作業開始時の選択肢です。
+// 以前の版で作成された同名の記録も、未完了・完了一覧には表示しません。
+function isPickerOnlyTask(task) {
+  if (!task) return false;
+  return (task.type === "department" && task.title === "部署タスク") ||
+         (task.type === "mtg" && task.title === "MTG");
+}
+
 function currentWeekTasks() {
   const { start, end } = weekBounds();
 
@@ -5364,9 +5372,9 @@ function currentWeekTasks() {
     return created >= start && created < end;
   });
 
-  return [...state.remoteTasks, ...local].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
+  return [...state.remoteTasks, ...local]
+    .filter((task) => !isPickerOnlyTask(task))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
 
 function weekLabel() {
@@ -5468,17 +5476,13 @@ function startSelectedTask() {
       return;
     }
 
-    const tasks = loadTasks();
+    // 選択用ボタンは一覧に登録せず、今回の作業セッションだけで管理します。
+    // タスク時間やログアウト時の進捗集計は従来どおり記録します。
     task = {
-      id: `task_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      id: presetSelectionKey(preset.type, preset.title),
       title: preset.title,
-      type: preset.type,
-      createdAt: new Date().toISOString(),
-      completedAt: null
+      type: preset.type
     };
-
-    tasks.push(task);
-    saveTasks(tasks);
     state.selectedTaskId = task.id;
   }
 
@@ -5783,11 +5787,14 @@ async function finishTask() {
         showToast(error.message || "依頼タスクを完了できませんでした");
         return;
       }
-    } else {
+    } else if (!String(activeTaskId).startsWith("preset:")) {
+      // 実タスクだけを完了扱いにする（部署タスク・MTGは記録しない）。
       const tasks = loadTasks();
       const task = tasks.find((item) => item.id === activeTaskId);
-      if (task) task.completedAt = endedAt.toISOString();
-      saveTasks(tasks);
+      if (task) {
+        task.completedAt = endedAt.toISOString();
+        saveTasks(tasks);
+      }
     }
   }
 
