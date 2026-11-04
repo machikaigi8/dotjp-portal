@@ -4447,7 +4447,6 @@ async function init() {
     ensureLoginStartedAt();
 
     await loadPortalProfile();
-    personalizeClientForm();
     // Prefetch the assigned company queue while other dashboard data loads.
     void loadClientCompanies(false, true);
     await refreshRemoteTasks();
@@ -4678,22 +4677,6 @@ async function markClientCompanySent() {
     clientMarkSentBusy = false;
     syncClientCompanySelection();
   }
-}
-
-function personalizeClientForm() {
-  const displayName = String(state.user?.name || "").trim();
-  if (!displayName || displayName.includes("@")) return;
-  const nameInput = document.getElementById("clientNameKanji");
-  const message = document.getElementById("clientMessage");
-  if (!nameInput || !message) return;
-  nameInput.value = displayName;
-  // Figma's sample signature must not be sent as a different employee.
-  message.value = message.value
-    .replace("中央大学の工藤と申します。", `${displayName}と申します。`)
-    .replace(/\n工藤\s*$/, `\n${displayName}`);
-  // Do not guess reading of an employee name.
-  document.getElementById("clientNameKana").value = "";
-  document.getElementById("clientNameKatakana").value = "";
 }
 
 async function copyClientFieldText(value, label) {
