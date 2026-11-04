@@ -3640,16 +3640,30 @@ a:active {
 .screen-client-send .client-subtabs {
   left: 40px;
   top: 196px;
-  gap: 16px;
+  gap: 12px;
 }
 .screen-client-send .client-subtab {
-  width: 254px;
+  flex: 0 0 200px;
+  width: 200px;
   height: 54px;
-  font-size: 28px;
+  font-size: 24px;
 }
 .screen-client-send .client-sent-button {
-  width: 168px !important;
-  font-size: 27px;
+  flex-basis: 135px;
+  width: 135px !important;
+  font-size: 22px;
+}
+.screen-client-send .client-skip-button {
+  flex-basis: 117px;
+  width: 117px !important;
+  background: #eeeeee;
+  border: 1px solid #a6a6b0;
+  color: #252535;
+  font-size: 22px;
+}
+.screen-client-send .client-skip-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }
 .screen-client-send .client-queue-summary {
   left: 40px;
@@ -3722,14 +3736,14 @@ a:active {
 .screen-client-send .client-edge-link {
   position: absolute;
   z-index: 6;
-  left: 495px;
+  left: 528px;
   top: 196px;
-  width: 265px;
+  width: 232px;
   height: 54px;
   border: 1px solid #9b9ccc;
   background: #d4d5ff;
   color: #12122b;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 600;
   text-decoration: none;
   display: flex;
@@ -3908,6 +3922,7 @@ a:active {
           <nav class="client-subtabs" aria-label="お問い合わせフォームの操作">
             <button class="client-subtab" type="button" data-route="client-send">フォームを送る</button>
             <button class="client-subtab client-sent-button" type="button" id="clientMarkSent" disabled>送信済み</button>
+            <button class="client-subtab client-skip-button" type="button" id="clientSkipCompany" disabled title="この作業中だけ対象から外し、次の企業へ進む">スキップ</button>
           </nav>
           <div class="client-form-fields" aria-label="お問い合わせフォームの内容">
           <label class="client-form-control" style="--cf-x:120px;--cf-y:331px;--cf-w:320px;" for="clientCompany">
@@ -4683,8 +4698,36 @@ let clientSheetFetchedAt = 0;
 let clientSheetInFlight = null;
 let clientMarkSentBusy = false;
 
+// 関東専用の一時スキップ。スプレッドシートのM/N列やD1は更新しない。
+// sessionStorageを使うためページ再読込でも保持し、ログアウト時に破棄できる。
+function clientSkippedRowsKey() {
+  return userSessionKey("client_kanto_skipped_rows");
+}
+
+function clientSkippedRows() {
+  if (!state.user) return [];
+  const stored = parseJson(sessionStorage.getItem(clientSkippedRowsKey()), []);
+  if (!Array.isArray(stored)) return [];
+  return [...new Set(stored.map(Number).filter(Number.isSafeInteger))];
+}
+
 function selectedClientCompany() {
-  return clientSheetCompanies[0] || null;
+  const skipped = new Set(clientSkippedRows());
+  return clientSheetCompanies.find((company) => !skipped.has(Number(company.row))) || null;
+}
+
+function skipClientCompany() {
+  if (clientMarkSentBusy) return;
+  const company = selectedClientCompany();
+  if (!company) {
+    showToast("スキップする企業がありません");
+    return;
+  }
+  const skipped = new Set(clientSkippedRows());
+  skipped.add(Number(company.row));
+  sessionStorage.setItem(clientSkippedRowsKey(), JSON.stringify([...skipped]));
+  syncClientCompanySelection();
+  showToast(`${company.name}を今回だけスキップしました`);
 }
 
 function clientExternalTargetUrl(company = selectedClientCompany()) {
@@ -4706,18 +4749,26 @@ function syncClientCompanySelection() {
   const companyInput = document.getElementById("clientCompany");
   const hField = document.getElementById("clientHColumnUrl");
   const sentButton = document.getElementById("clientMarkSent");
+  const skipButton = document.getElementById("clientSkipCompany");
   const count = document.getElementById("clientQueueSummary");
   const link = document.getElementById("clientOpenTarget");
-  if (!companyInput || !hField || !sentButton || !count || !link) return;
+  if (!companyInput || !hField || !sentButton || !skipButton || !count || !link) return;
 
-  companyInput.value = company?.name ||
-    (clientSheetFetchedAt ? "未対応の担当企業はありません" : "企業を読み込み中…");
+  const skipped = new Set(clientSkippedRows());
+  const skippedCount = clientSheetCompanies.filter((c) => skipped.has(Number(c.row))).length;
+  const remainingCount = clientSheetCompanies.length - skippedCount;
+  companyInput.value = company?.name || (clientSheetFetchedAt
+    ? (skippedCount > 0 ? "今回の企業はすべて確認済み（スキップあり）" : "未対応の担当企業はありません")
+    : "企業を読み込み中…");
   companyInput.title = company?.name ? "クリックして会社名をコピー" : "";
   hField.value = company?.url || "";
   sentButton.disabled = clientMarkSentBusy || !company;
+  skipButton.disabled = clientMarkSentBusy || !company;
   count.textContent = company
-    ? `未対応 ${clientSheetCompanies.length}社 ／ 行番号 ${company.row}`
-    : "未対応の担当企業はありません";
+    ? `残り ${remainingCount}社 ／ 今回スキップ ${skippedCount}社 ／ 行番号 ${company.row}`
+    : skippedCount > 0
+      ? `今回の候補は終了（スキップ ${skippedCount}社）。ログアウト後に再表示されます`
+      : "未対応の担当企業はありません";
 
   if (!company) {
     link.removeAttribute("href");
@@ -4909,6 +4960,7 @@ function wireActions() {
 
   enableClientFieldCopying();
   document.getElementById("clientMarkSent").addEventListener("click", markClientCompanySent);
+  document.getElementById("clientSkipCompany").addEventListener("click", skipClientCompany);
 
   document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
 
@@ -5690,6 +5742,7 @@ function logoutAfterReport() {
   sessionStorage.removeItem(userSessionKey("task_started_at"));
   sessionStorage.removeItem(userSessionKey("login_started_at"));
   sessionStorage.removeItem(clientSentRowsKey());
+  sessionStorage.removeItem(clientSkippedRowsKey()); // 次回ログインでスキップ企業を再表示
 
   location.replace("./");
 }
