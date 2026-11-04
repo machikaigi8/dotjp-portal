@@ -3683,17 +3683,32 @@ a:active {
 .screen-client-send .client-form-control[for="clientEmail"] {
   left: 40px;
   top: 482px;
-  width: 720px;
+  width: 440px;
+}
+.screen-client-send .client-form-control[for="clientPhone"] {
+  left: 494px;
+  top: 482px;
+  width: 266px;
 }
 .screen-client-send .client-form-control[for="clientAddress"] {
   left: 40px;
   top: 574px;
-  width: 720px;
+  width: 535px;
+}
+.screen-client-send .client-form-control[for="clientContactMethod"] {
+  left: 590px;
+  top: 574px;
+  width: 170px;
 }
 .screen-client-send .client-form-control[for="clientOrganization"] {
   left: 40px;
   top: 665px;
-  width: 720px;
+  width: 535px;
+}
+.screen-client-send .client-form-control[for="clientPosition"] {
+  left: 590px;
+  top: 665px;
+  width: 170px;
 }
 .screen-client-send .client-message-region {
   left: 40px;
@@ -3892,13 +3907,25 @@ a:active {
             <span>メールアドレス</span>
             <input id="clientEmail" type="text" autocomplete="off" value="companytokyo@dot-jp.or.jp" readonly aria-readonly="true" data-client-copy-label="メールアドレス" title="クリックしてコピー">
           </label>
+          <label class="client-form-control" style="--cf-x:456px;--cf-y:527px;--cf-w:264px;" for="clientPhone">
+            <span>電話番号</span>
+            <input id="clientPhone" type="text" autocomplete="off" value="自分の電話番号" readonly aria-readonly="true" data-client-copy-label="電話番号" title="クリックしてコピー">
+          </label>
           <label class="client-form-control" style="--cf-x:120px;--cf-y:625px;--cf-w:411px;" for="clientAddress">
             <span>住所</span>
             <input id="clientAddress" type="text" autocomplete="off" value="〒102-0083 東京都千代田区麹町2-10-2" readonly aria-readonly="true" data-client-copy-label="住所" title="クリックしてコピー">
           </label>
+          <label class="client-form-control" style="--cf-x:554px;--cf-y:625px;--cf-w:166px;" for="clientContactMethod">
+            <span>ご連絡方法</span>
+            <input id="clientContactMethod" type="text" autocomplete="off" value="メール" readonly aria-readonly="true" data-client-copy-label="ご連絡方法" title="クリックしてコピー">
+          </label>
           <label class="client-form-control" style="--cf-x:120px;--cf-y:723px;--cf-w:411px;" for="clientOrganization">
             <span>貴社名</span>
             <input id="clientOrganization" type="text" autocomplete="off" value="NPO法人ドットジェイピー" readonly aria-readonly="true" data-client-copy-label="貴社名" title="クリックしてコピー">
+          </label>
+          <label class="client-form-control" style="--cf-x:554px;--cf-y:723px;--cf-w:166px;" for="clientPosition">
+            <span>役職</span>
+            <input id="clientPosition" type="text" autocomplete="off" value="代表" readonly aria-readonly="true" data-client-copy-label="役職" title="クリックしてコピー">
           </label>
           <label class="client-message-region" for="clientMessage">
             <span class="client-message-label">お問い合わせ内容</span>
