@@ -3264,6 +3264,259 @@ a:active {
   cursor: wait;
 }
 
+
+/* =========================================================
+   Figma: クライアント 64:637 / お問い合わせフォーム 105:463 /
+          フォームを送る 107:489 (1440x1024 canvas)
+   LINE通知は本体に含めない。
+========================================================= */
+.screen-client, .screen-client-contact, .screen-client-send {
+  background: #f2f2ff;
+}
+.client-tabs {
+  position: absolute;
+  left: 120px;
+  top: 110px;
+  display: grid;
+  grid-template-columns: repeat(3, 360px);
+  column-gap: 60px;
+  z-index: 3;
+}
+.client-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 360px;
+  height: 60px;
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  background: #d4d5ff;
+  color: #000;
+  font-size: 35px;
+  line-height: 1.2;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.client-tab:hover, .client-subtab:hover { filter: brightness(.965); }
+.client-panel {
+  position: absolute;
+  left: 70px;
+  top: 208px;
+  width: 1300px;
+  height: 750px;
+  background: #fff;
+}
+.client-subtabs {
+  position: absolute;
+  left: 107px;
+  top: 242px;
+  display: flex;
+  gap: 49px;
+  z-index: 3;
+}
+.client-subtab {
+  width: 300px;
+  height: 60px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #d4d5ff;
+  color: #000;
+  font-size: 35px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.screen-client-send .client-panel {
+  top: 200px;
+  height: 800px;
+}
+/* Figma: fields are fixed at source canvas coordinates. */
+.client-form-control {
+  position: absolute;
+  left: var(--cf-x);
+  top: var(--cf-y);
+  width: var(--cf-w);
+  height: 70px;
+  z-index: 3;
+  display: block;
+}
+.client-form-control > span,
+.client-message-label {
+  display: block;
+  width: 100%;
+  height: 29px;
+  padding-left: 2px;
+  color: #000;
+  font-size: 24px;
+  line-height: 29px;
+  font-weight: 300;
+  white-space: nowrap;
+}
+.client-form-control input {
+  display: block;
+  height: 40px;
+  width: 100%;
+  padding: 2px 4px;
+  border: 1px solid #111;
+  border-radius: 0;
+  background: #fff;
+  color: #111;
+  font-size: 22px;
+  line-height: 34px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.client-form-control select {
+  display: block;
+  height: 40px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2px 4px;
+  border: 1px solid #111;
+  border-radius: 0;
+  background: #fff;
+  color: #111;
+  font-size: 22px;
+  line-height: 34px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.client-form-control input::placeholder { color: #333; opacity: 1; }
+.client-form-control input[readonly],
+.client-form-name-row input[readonly] {
+  background: #fff;
+  cursor: copy;
+}
+.client-form-control input[readonly]:hover,
+.client-form-name-row input[readonly]:hover,
+.client-message-region textarea[readonly]:hover {
+  background: #f7f8ff;
+}
+.client-form-control input[readonly]:focus-visible,
+.client-form-name-row input[readonly]:focus-visible,
+.client-message-region textarea[readonly]:focus-visible {
+  outline: 3px solid #608bff;
+  outline-offset: 1px;
+}
+.client-message-region textarea[readonly] {
+  cursor: copy;
+}
+
+.client-form-name-row {
+  position: absolute;
+  left: 120px;
+  top: 429px;
+  width: 600px;
+  height: 69px;
+  z-index: 3;
+}
+.client-form-name-row .client-name-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, 200px);
+  height: 40px;
+}
+.client-form-name-row input {
+  width: 200px;
+  height: 40px;
+  border: 1px solid #111;
+  border-radius: 0;
+  margin: 0;
+  padding: 2px 4px;
+  background: #fff;
+  font-size: 22px;
+  color: #000;
+}
+.client-form-name-row input + input { border-left: 0; }
+.client-message-region {
+  position: absolute;
+  left: 120px;
+  top: 821px;
+  width: 600px;
+  z-index: 3;
+}
+.client-message-region textarea {
+  display: block;
+  width: 600px;
+  height: 116px;
+  resize: none;
+  padding: 3px 4px;
+  border: 1px solid #111;
+  border-radius: 0;
+  background: #fff;
+  color: #000;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 400;
+  white-space: pre-wrap;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.client-web-pane {
+  position: absolute;
+  left: 758px;
+  top: 0;
+  height: 1024px;
+  width: 682px;
+  z-index: 6;
+  background: #d9d9d9;
+}
+.client-web-pane-title {
+  position: absolute;
+  top: 425px;
+  left: 0;
+  width: 682px;
+  text-align: center;
+  font-size: 48px;
+  line-height: 1.23;
+  font-weight: 400;
+}
+.client-web-actions {
+  position: absolute;
+  top: 720px;
+  left: 60px;
+  width: 565px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.client-web-actions input {
+  grid-column: span 2;
+  width: 100%;
+  height: 42px;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid #444;
+  font-size: 19px;
+}
+.client-web-actions button {
+  min-height: 46px;
+  padding: 5px 8px;
+  background: #d4d5ff;
+  border: 1px solid #8b8bc8;
+  color: #111;
+  font-size: 20px;
+  cursor: pointer;
+}
+.client-web-actions button:disabled { opacity: .45; cursor: not-allowed; }
+.client-web-actions .client-copy-button { grid-column: span 2; }
+/* This form contains a text box at bottom left, so its common back
+   button moves into the right pane rather than covering editable text. */
+.screen-client-send .common-back-button {
+  left: 1020px !important;
+  top: 930px !important;
+  z-index: 151 !important;
+}
+
 </style>
 </head>
 <body>
@@ -3338,7 +3591,7 @@ a:active {
               <button type="button" class="blue-menu" data-placeholder="マーケティング">マーケティング</button>
               <button type="button" class="blue-menu" data-placeholder="人事局">人事局</button>
               <button type="button" class="blue-menu" data-placeholder="プログラム">プログラム</button>
-              <button type="button" class="blue-menu" data-placeholder="クライアント">クライアント</button>
+              <button type="button" class="blue-menu" data-route="client">クライアント</button>
               <button type="button" class="blue-menu" data-placeholder="事務局">事務局</button>
               <button type="button" class="blue-menu" data-placeholder="MTG出欠登録">MTG出欠登録</button>
               <button type="button" class="blue-menu" data-route="post">〒依頼出しPOST</button>
@@ -3357,6 +3610,134 @@ a:active {
               <button type="button" class="green-menu screen-share-link" data-route="screen-share">画面共有</button>
             </div>
           </section>
+        </section>
+
+
+        <!-- Figma 64:637: クライアント -->
+        <section class="screen screen-client" data-screen="client">
+          <div class="user-name" data-user-name>＜名前＞</div>
+
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
+          </nav>
+        </section>
+
+        <!-- Figma 105:463: お問い合わせフォーム -->
+        <section class="screen screen-client-contact" data-screen="client-contact">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="client-panel"></div>
+
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
+          </nav>
+          <nav class="client-subtabs" aria-label="お問い合わせフォームの操作">
+            <button class="client-subtab" type="button" data-route="client-send">フォームを送る</button>
+            <button class="client-subtab" type="button" data-placeholder="担当リスト（Figmaの遷移先未作成）">担当リストを見る</button>
+          </nav>
+        </section>
+
+        <!-- Figma 107:489: フォームを送る -->
+        <section class="screen screen-client-send" data-screen="client-send">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="client-panel"></div>
+
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
+          </nav>
+          <nav class="client-subtabs" aria-label="お問い合わせフォームの操作">
+            <button class="client-subtab" type="button" data-route="client-send">フォームを送る</button>
+            <button class="client-subtab" type="button" data-placeholder="担当リスト（Figmaの遷移先未作成）">担当リストを見る</button>
+          </nav>
+          <div class="client-form-fields" aria-label="お問い合わせフォームの内容">
+          <label class="client-form-control" style="--cf-x:120px;--cf-y:331px;--cf-w:320px;" for="clientCompany">
+            <span>会社名</span>
+            <select id="clientCompany" aria-label="企業名（B列から選択すると会社名をコピー）" title="企業を選択すると会社名をコピー">
+              <option value="">企業一覧を読み込み中…</option>
+            </select>
+          </label>
+          <label class="client-form-control" style="--cf-x:460px;--cf-y:331px;--cf-w:260px;" for="clientType">
+            <span>種別</span>
+            <input id="clientType" type="text" autocomplete="off" value="協業・提携などのご相談" readonly aria-readonly="true" data-client-copy-label="種別" title="クリックしてコピー">
+          </label>
+          <div class="client-form-name-row">
+            <label class="client-message-label" for="clientNameKanji">名前</label>
+            <div class="client-name-inputs">
+              <input id="clientNameKanji" aria-label="氏名" type="text" value="工藤廉汰" readonly aria-readonly="true" data-client-copy-label="氏名" title="クリックしてコピー">
+              <input id="clientNameKana" aria-label="ひらがな" type="text" value="くどうれんた" readonly aria-readonly="true" data-client-copy-label="ふりがな" title="クリックしてコピー">
+              <input id="clientNameKatakana" aria-label="カタカナ" type="text" value="クドウレンタ" readonly aria-readonly="true" data-client-copy-label="カタカナ" title="クリックしてコピー">
+            </div>
+          </div>
+          <label class="client-form-control" style="--cf-x:120px;--cf-y:527px;--cf-w:320px;" for="clientEmail">
+            <span>メールアドレス</span>
+            <input id="clientEmail" type="text" autocomplete="off" value="companytokyo@dot-jp.or.jp" readonly aria-readonly="true" data-client-copy-label="メールアドレス" title="クリックしてコピー">
+          </label>
+          <label class="client-form-control" style="--cf-x:120px;--cf-y:625px;--cf-w:411px;" for="clientAddress">
+            <span>住所</span>
+            <input id="clientAddress" type="text" autocomplete="off" value="〒102-0083 東京都千代田区麹町2-10-2" readonly aria-readonly="true" data-client-copy-label="住所" title="クリックしてコピー">
+          </label>
+          <label class="client-form-control" style="--cf-x:120px;--cf-y:723px;--cf-w:411px;" for="clientOrganization">
+            <span>貴社名</span>
+            <input id="clientOrganization" type="text" autocomplete="off" value="NPO法人ドットジェイピー" readonly aria-readonly="true" data-client-copy-label="貴社名" title="クリックしてコピー">
+          </label>
+          <label class="client-message-region" for="clientMessage">
+            <span class="client-message-label">お問い合わせ内容</span>
+            <textarea id="clientMessage" spellcheck="false" readonly aria-readonly="true" data-client-copy-label="お問い合わせ内容" title="クリックしてコピー（枠内は縦スクロールできます）">お問い合わせ失礼いたします。
+中央大学の工藤と申します。
+現在、大学生の長期インターンシップの送客・マッチング事業を行っております。
+（弊団体は、全国44拠点・約10,000人の大学生ネットワークを有しており、
+学生自身が学生にアプローチすることで、長期インターンシップを希望する学生のご紹介を行っております。）
+━━━━━━━━━━━━━━━━━━━━━━━━
+■ サービスの特長
+━━━━━━━━━━━━━━━━━━━━━━━━
+【1】完全成果報酬型で、初期費用は一切かかりません
+　学生の雇用が確定するまでの費用は一切いただきません。
+　料金と規定については、ご契約前に詳しくご説明いたします。
+
+【2】GMARCHをはじめ、その他関東の有力大学の学生をご紹介します
+　中心となるのは、弊団体のNPO/議員/大使館インターンシップ
+　を修了した学生です。
+
+【3】社会人基礎力と行動力のある学生が多くいます
+　弊団体に現在所属している、または過去に所属していた学生が中心です。
+　主体的に動き、組織の中で成果を出した経験を持っています。
+
+【4】事前に絞り込んだ学生だけをご紹介します
+　貴社が求める学生層や地域などを伺い、弊団体で事前に選考します。
+　条件に合う学生だけをご紹介するため、選考にかかる貴社の手間を減らせます。
+━━━━━━━━━━━━━━━━━━━━━━━━
+30分ほどのお時間で、貴社の採用状況や課題をお伺いし、
+弊団体でどのようなご支援ができるかをご説明させていただければと考えております。
+
+　■ 対応曜日：土日を含め、全日対応可能です
+　■ 形式　　：オンライン・対面のどちらでも対応いたします
+　■ 所要時間：30分程度
+お打ち合わせをご希望の場合は、本メールへご返信いただけますと幸いです。
+
+ご返信をいただきましたら、改めて日程調整のメールを送信いたします。
+ご多忙のところ恐れ入りますが、何卒よろしくお願いいたします。
+
+団体HP：https://www.dot-jp.or.jp/
+工藤</textarea>
+          </label>
+          </div>
+
+          <!-- Figma right gray pane: Google search / H-column URL placeholder.
+               B/H values are loaded from the authenticated portal API. -->
+          <aside class="client-web-pane" aria-label="Google検索画面・H列リンク">
+            <div class="client-web-pane-title">Google検索画面<br>or<br>H列リンク</div>
+            <div class="client-web-actions">
+              <input id="clientHColumnUrl" type="url" inputmode="url" placeholder="B列の企業を選ぶと、同じ行のH列リンクを表示" aria-label="H列リンクのURL" readonly>
+              <button type="button" id="clientGoogleSearch">Googleで検索</button>
+              <button type="button" id="clientOpenHColumnUrl">H列リンクを開く</button>
+              <button type="button" class="client-copy-button" id="clientCopyMessage">お問い合わせ本文をコピー</button>
+            </div>
+          </aside>
         </section>
 
         <section class="screen screen-post" data-screen="post">
@@ -3921,6 +4302,9 @@ const screenNames = new Set([
   "schedule-plan",
   "schedule-review",
   "schedule-hours",
+  "client",
+  "client-contact",
+  "client-send",
   "hp-edit",
   "screen-share",
   "task-end"
@@ -4029,6 +4413,135 @@ async function init() {
   }
 }
 
+const CLIENT_SHEET_CACHE_MS = 5 * 60 * 1000;
+let clientSheetCompanies = [];
+let clientSheetFetchedAt = 0;
+let clientSheetInFlight = null;
+
+function selectedClientCompany() {
+  const selector = document.getElementById("clientCompany");
+  const row = Number(selector?.value || 0);
+  return clientSheetCompanies.find((item) => Number(item.row) === row) || null;
+}
+
+function syncClientCompanySelection() {
+  const company = selectedClientCompany();
+  const hField = document.getElementById("clientHColumnUrl");
+  const open = document.getElementById("clientOpenHColumnUrl");
+  const google = document.getElementById("clientGoogleSearch");
+
+  hField.value = company?.url || "";
+  const valid = /^https?:\/\/\S+$/i.test(company?.url || "");
+  open.disabled = !valid;
+  google.disabled = !company?.name;
+}
+
+async function loadClientCompanies(force = false) {
+  const selector = document.getElementById("clientCompany");
+  if (!selector) return;
+
+  if (!force && clientSheetCompanies.length && Date.now() - clientSheetFetchedAt < CLIENT_SHEET_CACHE_MS) {
+    if (selector.options.length <= 1) renderClientCompanyOptions();
+    return;
+  }
+  if (clientSheetInFlight) return clientSheetInFlight;
+
+  const previousRow = selector.value;
+  selector.disabled = true;
+  selector.replaceChildren(new Option("企業一覧を読み込み中…", ""));
+
+  clientSheetInFlight = (async () => {
+    try {
+      const data = await portalFetch("/api/client/companies");
+      clientSheetCompanies = Array.isArray(data.companies) ? data.companies : [];
+      clientSheetFetchedAt = Date.now();
+      renderClientCompanyOptions(previousRow);
+    } catch (error) {
+      console.warn("会社一覧の取得に失敗", error);
+      selector.replaceChildren(new Option("企業一覧を取得できません", ""));
+      syncClientCompanySelection();
+      showToast(`企業一覧を取得できません：${error.message || "接続設定を確認してください"}`);
+    } finally {
+      selector.disabled = false;
+      clientSheetInFlight = null;
+    }
+  })();
+
+  return clientSheetInFlight;
+}
+
+function renderClientCompanyOptions(preferredRow = "") {
+  const selector = document.getElementById("clientCompany");
+  if (!selector) return;
+  selector.replaceChildren(new Option("企業を選択してください", ""));
+
+  for (const company of clientSheetCompanies) {
+    if (!company?.name || !Number(company.row)) continue;
+    // Values are always text nodes, not HTML; avoid spreadsheet cell injection.
+    selector.add(new Option(String(company.name), String(company.row)));
+  }
+  const pref = String(preferredRow || "");
+  if (pref && clientSheetCompanies.some((c) => String(c.row) === pref)) {
+    selector.value = pref;
+  }
+  if (!clientSheetCompanies.length) {
+    selector.replaceChildren(new Option("B列に企業名がありません", ""));
+  }
+  syncClientCompanySelection();
+}
+
+async function copyClientFieldText(value, label) {
+  const text = String(value || "");
+  if (!text.trim()) {
+    showToast(`${label}にはコピーする文字がありません`);
+    return;
+  }
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      // Fallback: secure clipboard API is not available in this context.
+      const helper = document.createElement("textarea");
+      helper.value = text;
+      helper.setAttribute("readonly", "");
+      helper.style.position = "fixed";
+      helper.style.opacity = "0";
+      document.body.appendChild(helper);
+      helper.select();
+      const ok = document.execCommand("copy");
+      helper.remove();
+      if (!ok) throw new Error("copy denied");
+    }
+    showToast(`${label}をコピーしました`);
+  } catch (error) {
+    console.warn("Client field copy failed", error);
+    showToast(`${label}をコピーできませんでした。文字を選択してコピーしてください`);
+  }
+}
+
+function enableClientFieldCopying() {
+  document.querySelectorAll('[data-client-copy-label]').forEach((field) => {
+    const copy = () => copyClientFieldText(field.value, field.dataset.clientCopyLabel);
+    field.addEventListener('click', copy);
+    field.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || (event.key === ' ' && field.tagName !== 'TEXTAREA')) {
+        event.preventDefault();
+        copy();
+      }
+    });
+  });
+
+  // The native dropdown remains usable: company name is copied on selection.
+  const companySelect = document.getElementById('clientCompany');
+  if (companySelect) {
+    const copySelectedCompany = () => {
+      const company = selectedClientCompany();
+      if (company?.name) copyClientFieldText(company.name, '会社名');
+    };
+    companySelect.addEventListener('change', copySelectedCompany);
+  }
+}
+
 function wireActions() {
   document.querySelectorAll("[data-route]").forEach((element) => {
     element.addEventListener("click", () => {
@@ -4063,6 +4576,48 @@ function wireActions() {
     element.addEventListener("click", () => {
       showToast(`${element.dataset.placeholder} はリンク先未設定です`);
     });
+  });
+
+
+  // Figmaの右側はGoogle検索またはH列リンク。リンク先の推測や自動送信はしない。
+  document.getElementById("clientCompany").addEventListener("change", syncClientCompanySelection);
+  enableClientFieldCopying();
+
+  document.getElementById("clientGoogleSearch").addEventListener("click", () => {
+    const company = selectedClientCompany()?.name || "";
+    if (!company) {
+      showToast("会社名を入力してから検索してください");
+      document.getElementById("clientCompany").focus();
+      return;
+    }
+    const url = `https://www.google.com/search?q=${encodeURIComponent(company + " お問い合わせフォーム")}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  });
+
+  document.getElementById("clientOpenHColumnUrl").addEventListener("click", () => {
+    const value = document.getElementById("clientHColumnUrl").value.trim();
+    let parsed;
+    try { parsed = new URL(value); } catch { /* validation below */ }
+    if (!parsed || !["http:", "https:"].includes(parsed.protocol)) {
+      showToast("H列リンクの有効なURLを入力してください");
+      return;
+    }
+    window.open(parsed.href, "_blank", "noopener,noreferrer");
+  });
+
+  document.getElementById("clientCopyMessage").addEventListener("click", async () => {
+    const message = document.getElementById("clientMessage").value;
+    if (!message.trim()) {
+      showToast("お問い合わせ本文がありません");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(message);
+      showToast("お問い合わせ本文をコピーしました");
+    } catch (error) {
+      console.warn("Clipboard failed", error);
+      showToast("コピーできませんでした。本文を選択してコピーしてください");
+    }
   });
 
   document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
@@ -4297,6 +4852,10 @@ function showScreen(name, updateHash = true, recordHistory = true) {
   if (name === "post-confirm") {
     restorePostCards();
     renderPostConfirmation();
+  }
+
+  if (name === "client-send") {
+    loadClientCompanies();
   }
 
   if (name === "schedule") {
