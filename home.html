@@ -3464,57 +3464,133 @@ a:active {
   position: absolute;
   left: 758px;
   top: 0;
+  width: 682px;
   height: 1024px;
-  width: 682px;
+  box-sizing: border-box;
+  background: #f0f0f0;
   z-index: 6;
-  background: #d9d9d9;
+  overflow: hidden;
 }
-.client-web-pane-title {
-  position: absolute;
-  top: 425px;
-  left: 0;
-  width: 682px;
-  text-align: center;
-  font-size: 48px;
-  line-height: 1.23;
-  font-weight: 400;
-}
-.client-web-actions {
-  position: absolute;
-  top: 720px;
-  left: 60px;
-  width: 565px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: start;
-}
-.client-web-actions input {
-  grid-column: span 2;
+.client-external-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
   width: 100%;
-  height: 42px;
-  padding: 4px 10px;
-  background: #fff;
-  border: 1px solid #444;
-  font-size: 19px;
+  height: 84px;
+  padding: 10px 20px;
+  background: #f0f0f0;
+  gap: 12px;
+  border-bottom: 1px solid #bbb;
 }
-.client-web-actions button {
-  min-height: 46px;
-  padding: 5px 8px;
+.client-external-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #222;
+}
+.client-external-copy strong {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  max-width: 425px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.client-external-copy span {
+  font-size: 17px;
+  color: #444;
+}
+.client-external-header button, .client-external-fallback button {
+  flex: none;
+  padding: 9px 12px;
+  font-size: 17px;
   background: #d4d5ff;
-  border: 1px solid #8b8bc8;
-  color: #111;
-  font-size: 20px;
+  border: 1px solid #aaaacc;
+  color: #181818;
   cursor: pointer;
 }
-.client-web-actions button:disabled { opacity: .45; cursor: not-allowed; }
-.client-web-actions .client-copy-button { grid-column: span 2; }
-/* This form contains a text box at bottom left, so its common back
-   button moves into the right pane rather than covering editable text. */
+.client-external-header button:disabled, .client-external-fallback button:disabled {
+  opacity: .45;
+  cursor: default;
+}
+#clientExternalFrame {
+  display: block;
+  width: 100%;
+  height: 890px;
+  border: 0;
+  background: #fff;
+}
+.client-external-fallback {
+  position: absolute;
+  top: 84px;
+  left: 0;
+  width: 100%;
+  height: 890px;
+  box-sizing: border-box;
+  padding: 100px 45px;
+  background: #ededed;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  text-align: center;
+  justify-content: center;
+  font-size: 23px;
+  line-height: 1.5;
+}
+.client-external-fallback[hidden] { display: none; }
+.client-external-footnote {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+  box-sizing: border-box;
+  background: #f0f0f0;
+  border-top: 1px solid #bbb;
+  padding: 5px 14px;
+  font-size: 15px;
+  line-height: 1.3;
+  color: #555;
+}
+/* This back button is deliberately at x=194 in the latest Figma layout.
+   Shift the dynamic (possibly long) user name left to avoid overlapping it. */
+.screen-client-send .user-name {
+  left: 24px;
+  width: 165px;
+  font-size: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The send screen is the one Figma exception for the back button. */
 .screen-client-send .common-back-button {
-  left: 1020px !important;
-  top: 930px !important;
+  left: 194px !important;
+  top: 26px !important;
+  width: 140px !important;
+  height: 60px !important;
   z-index: 151 !important;
+}
+.screen-client-send .client-sent-button {
+  width: 264px;
+  background: #ffd4d5;
+}
+.client-sent-button:disabled { opacity: .55; cursor: default; }
+.client-queue-summary {
+  position: absolute;
+  left: 120px;
+  top: 307px;
+  z-index: 3;
+  width: 600px;
+  font-size: 17px;
+  color: #444;
+  height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 </style>
@@ -3652,15 +3728,14 @@ a:active {
           </nav>
           <nav class="client-subtabs" aria-label="お問い合わせフォームの操作">
             <button class="client-subtab" type="button" data-route="client-send">フォームを送る</button>
-            <button class="client-subtab" type="button" data-placeholder="担当リスト（Figmaの遷移先未作成）">担当リストを見る</button>
+            <button class="client-subtab client-sent-button" type="button" id="clientMarkSent" disabled>送信済み</button>
           </nav>
           <div class="client-form-fields" aria-label="お問い合わせフォームの内容">
           <label class="client-form-control" style="--cf-x:120px;--cf-y:331px;--cf-w:320px;" for="clientCompany">
             <span>会社名</span>
-            <select id="clientCompany" aria-label="企業名（B列から選択すると会社名をコピー）" title="企業を選択すると会社名をコピー">
-              <option value="">企業一覧を読み込み中…</option>
-            </select>
+            <input id="clientCompany" type="text" value="読み込み中…" readonly aria-readonly="true" data-client-copy-label="会社名" title="クリックして会社名をコピー">
           </label>
+          <div id="clientQueueSummary" class="client-queue-summary" aria-live="polite"></div>
           <label class="client-form-control" style="--cf-x:460px;--cf-y:331px;--cf-w:260px;" for="clientType">
             <span>種別</span>
             <input id="clientType" type="text" autocomplete="off" value="協業・提携などのご相談" readonly aria-readonly="true" data-client-copy-label="種別" title="クリックしてコピー">
@@ -3727,16 +3802,23 @@ a:active {
           </label>
           </div>
 
-          <!-- Figma right gray pane: Google search / H-column URL placeholder.
-               B/H values are loaded from the authenticated portal API. -->
-          <aside class="client-web-pane" aria-label="Google検索画面・H列リンク">
-            <div class="client-web-pane-title">Google検索画面<br>or<br>H列リンク</div>
-            <div class="client-web-actions">
-              <input id="clientHColumnUrl" type="url" inputmode="url" placeholder="B列の企業を選ぶと、同じ行のH列リンクを表示" aria-label="H列リンクのURL" readonly>
-              <button type="button" id="clientGoogleSearch">Googleで検索</button>
-              <button type="button" id="clientOpenHColumnUrl">H列リンクを開く</button>
-              <button type="button" class="client-copy-button" id="clientCopyMessage">お問い合わせ本文をコピー</button>
+          <!-- Figma 107:489: Large right-hand Web pane.
+               External sites may disallow iframe embedding; the open-in-tab action always works. -->
+          <aside class="client-web-pane" aria-label="企業の外部サイト・Google検索">
+            <header class="client-external-header">
+              <div class="client-external-copy">
+                <strong id="clientExternalCompany">企業サイト</strong>
+                <span id="clientExternalKind">表示先を確認中…</span>
+              </div>
+              <button id="clientOpenTarget" type="button" disabled>別タブで開く ↗</button>
+            </header>
+            <iframe id="clientExternalFrame" title="企業のWebページ" referrerpolicy="no-referrer" loading="lazy"></iframe>
+            <div id="clientExternalFallback" class="client-external-fallback">
+              <div id="clientExternalFallbackText">企業情報を読み込んでいます…</div>
+              <button id="clientOpenTargetFallback" type="button" disabled>別タブで開く ↗</button>
             </div>
+            <div class="client-external-footnote">サイトが枠内に表示されない場合は「別タブで開く」を選択してください。Edgeの「画面分割」で左右表示もできます。</div>
+            <input id="clientHColumnUrl" type="hidden" value="">
           </aside>
         </section>
 
@@ -4365,6 +4447,9 @@ async function init() {
     ensureLoginStartedAt();
 
     await loadPortalProfile();
+    personalizeClientForm();
+    // Prefetch the assigned company queue while other dashboard data loads.
+    void loadClientCompanies(false, true);
     await refreshRemoteTasks();
 
     document.getElementById("loading").hidden = true;
@@ -4413,81 +4498,202 @@ async function init() {
   }
 }
 
-const CLIENT_SHEET_CACHE_MS = 5 * 60 * 1000;
+// Authenticated users only receive their own uncompleted B/H/L/M/N rows.
+const CLIENT_SHEET_CACHE_MS = 2 * 60 * 1000;
 let clientSheetCompanies = [];
 let clientSheetFetchedAt = 0;
 let clientSheetInFlight = null;
+let clientMarkSentBusy = false;
+let clientExternalWindow = null;
 
 function selectedClientCompany() {
-  const selector = document.getElementById("clientCompany");
-  const row = Number(selector?.value || 0);
-  return clientSheetCompanies.find((item) => Number(item.row) === row) || null;
+  return clientSheetCompanies[0] || null;
+}
+
+function clientExternalTargetUrl(company = selectedClientCompany()) {
+  if (!company?.name) return "";
+  try {
+    const parsed = new URL(String(company.url || ""));
+    if (parsed.protocol === "https:" || parsed.protocol === "http:") return parsed.href;
+  } catch (_) { /* Google fallback */ }
+  return `https://www.google.com/search?q=${encodeURIComponent(company.name + " お問い合わせフォーム")}`;
+}
+
+function clientGoogleFallback(company = selectedClientCompany()) {
+  if (!company?.name) return false;
+  try { return !/^https?:\/\//i.test(new URL(company.url).href); } catch (_) { return true; }
+}
+
+function openClientExternalTab() {
+  const url = clientExternalTargetUrl();
+  if (!url) {
+    showToast("担当企業がありません");
+    return false;
+  }
+  try {
+    if (clientExternalWindow && !clientExternalWindow.closed) {
+      clientExternalWindow.location.href = url;
+      clientExternalWindow.focus();
+      return true;
+    }
+    clientExternalWindow = window.open(url, "dotjp_client_external");
+    if (!clientExternalWindow) {
+      showToast("別タブを開けませんでした。ポップアップを許可してください");
+      return false;
+    }
+    try { clientExternalWindow.opener = null; } catch (_) { /* cross-origin navigation */ }
+    return true;
+  } catch (error) {
+    console.warn("Client tab navigation failed", error);
+    showToast("右側の「別タブで開く」から開いてください");
+    return false;
+  }
 }
 
 function syncClientCompanySelection() {
   const company = selectedClientCompany();
+  const companyInput = document.getElementById("clientCompany");
   const hField = document.getElementById("clientHColumnUrl");
-  const open = document.getElementById("clientOpenHColumnUrl");
-  const google = document.getElementById("clientGoogleSearch");
+  const sentButton = document.getElementById("clientMarkSent");
+  const count = document.getElementById("clientQueueSummary");
+  const header = document.getElementById("clientExternalCompany");
+  const kind = document.getElementById("clientExternalKind");
+  const iframe = document.getElementById("clientExternalFrame");
+  const fallback = document.getElementById("clientExternalFallback");
+  const fallbackText = document.getElementById("clientExternalFallbackText");
+  const openButton = document.getElementById("clientOpenTarget");
+  const openFallback = document.getElementById("clientOpenTargetFallback");
+  if (!companyInput) return;
 
+  companyInput.value = company?.name || (clientSheetFetchedAt ? "未対応の担当企業はありません" : "企業を読み込み中…");
+  companyInput.title = company?.name ? "クリックして会社名をコピー" : "";
   hField.value = company?.url || "";
-  const valid = /^https?:\/\/\S+$/i.test(company?.url || "");
-  open.disabled = !valid;
-  google.disabled = !company?.name;
+  sentButton.disabled = clientMarkSentBusy || !company;
+  count.textContent = company ? `未対応 ${clientSheetCompanies.length}社 ／ 行番号 ${company.row}` : "未対応の担当企業はありません";
+  header.textContent = company?.name || "対象企業なし";
+  const google = clientGoogleFallback(company);
+  kind.textContent = company ? (google ? "Google検索で問い合わせ先を探す" : "H列のお問い合わせリンク") : "表示する企業がありません";
+  openButton.disabled = !company;
+  openFallback.disabled = !company;
+
+  if (!company || google) {
+    // Google Search cannot normally be embedded due to its frame security headers.
+    iframe.removeAttribute("src");
+    fallback.hidden = false;
+    fallbackText.textContent = company
+      ? "Google検索は画面内に埋め込めません。別タブで検索結果を開き、Edgeの画面分割を利用してください。"
+      : "対象の企業はありません。企業一覧が更新されるとここに表示されます。";
+  } else {
+    iframe.src = clientExternalTargetUrl(company);
+    fallback.hidden = true;
+  }
 }
 
-async function loadClientCompanies(force = false) {
-  const selector = document.getElementById("clientCompany");
-  if (!selector) return;
-
-  if (!force && clientSheetCompanies.length && Date.now() - clientSheetFetchedAt < CLIENT_SHEET_CACHE_MS) {
-    if (selector.options.length <= 1) renderClientCompanyOptions();
+async function loadClientCompanies(force = false, silent = false) {
+  if (!force && clientSheetFetchedAt && Date.now() - clientSheetFetchedAt < CLIENT_SHEET_CACHE_MS) {
+    syncClientCompanySelection();
     return;
   }
   if (clientSheetInFlight) return clientSheetInFlight;
-
-  const previousRow = selector.value;
-  selector.disabled = true;
-  selector.replaceChildren(new Option("企業一覧を読み込み中…", ""));
 
   clientSheetInFlight = (async () => {
     try {
       const data = await portalFetch("/api/client/companies");
       clientSheetCompanies = Array.isArray(data.companies) ? data.companies : [];
       clientSheetFetchedAt = Date.now();
-      renderClientCompanyOptions(previousRow);
-    } catch (error) {
-      console.warn("会社一覧の取得に失敗", error);
-      selector.replaceChildren(new Option("企業一覧を取得できません", ""));
       syncClientCompanySelection();
-      showToast(`企業一覧を取得できません：${error.message || "接続設定を確認してください"}`);
+    } catch (error) {
+      console.warn("Failed to preload client companies", error);
+      if (!silent || state.currentScreen === "client-send") {
+        document.getElementById("clientCompany").value = "企業リストを取得できません";
+        document.getElementById("clientQueueSummary").textContent = String(error.message || error);
+        showToast(`企業リストを取得できません：${error.message || "API設定を確認してください"}`);
+      }
     } finally {
-      selector.disabled = false;
       clientSheetInFlight = null;
     }
   })();
-
   return clientSheetInFlight;
 }
 
-function renderClientCompanyOptions(preferredRow = "") {
-  const selector = document.getElementById("clientCompany");
-  if (!selector) return;
-  selector.replaceChildren(new Option("企業を選択してください", ""));
+function clientSentRowsKey() {
+  return userSessionKey("client_sent_rows");
+}
 
-  for (const company of clientSheetCompanies) {
-    if (!company?.name || !Number(company.row)) continue;
-    // Values are always text nodes, not HTML; avoid spreadsheet cell injection.
-    selector.add(new Option(String(company.name), String(company.row)));
+function clientSentRows() {
+  if (!state.user) return [];
+  const stored = parseJson(sessionStorage.getItem(clientSentRowsKey()), []);
+  return Array.isArray(stored) ? stored.filter((x) => Number.isInteger(Number(x))) : [];
+}
+
+function recordClientSentRow(row) {
+  const rows = new Set(clientSentRows().map(Number));
+  rows.add(Number(row));
+  sessionStorage.setItem(clientSentRowsKey(), JSON.stringify([...rows]));
+  syncClientSendCountToReport();
+}
+
+function syncClientSendCountToReport() {
+  const input = document.querySelector('[data-progress="company_mail"]');
+  if (!input) return;
+  const sessionCount = clientSentRows().length;
+  // Preserve manually entered higher totals; don't overwrite manual edits.
+  input.value = String(Math.max(sessionCount, Number(input.value || 0)));
+  updateFinishButtonState();
+}
+
+async function markClientCompanySent() {
+  if (clientMarkSentBusy) return;
+  const current = selectedClientCompany();
+  if (!current) {
+    showToast("未対応の担当企業がありません");
+    return;
   }
-  const pref = String(preferredRow || "");
-  if (pref && clientSheetCompanies.some((c) => String(c.row) === pref)) {
-    selector.value = pref;
-  }
-  if (!clientSheetCompanies.length) {
-    selector.replaceChildren(new Option("B列に企業名がありません", ""));
-  }
+  clientMarkSentBusy = true;
   syncClientCompanySelection();
+  try {
+    const data = await portalFetch("/api/client/mark-sent", {
+      method: "POST",
+      body: { row: current.row, company: current.name }
+    });
+    if (data.recorded) recordClientSentRow(current.row);
+    clientSheetCompanies = Array.isArray(data.companies)
+      ? data.companies
+      : clientSheetCompanies.filter((c) => c.row !== current.row);
+    clientSheetFetchedAt = Date.now();
+    // Navigate an already-opened company tab to the next company.
+    const nextUrl = clientExternalTargetUrl();
+    if (nextUrl && clientExternalWindow && !clientExternalWindow.closed) {
+      try { clientExternalWindow.location.href = nextUrl; } catch (_) { /* tab is external */ }
+    }
+    showToast(data.recorded
+      ? `送信済み：N列をTRUEに更新しました（今回 ${clientSentRows().length}件）`
+      : "送信済みに変更しました。記録済みのため重複集計はしません");
+  } catch (error) {
+    showToast(`送信済みにできませんでした：${error.message}`);
+    // Reload if the sheet changed in the meantime.
+    clientSheetFetchedAt = 0;
+    await loadClientCompanies(true, true);
+  } finally {
+    clientMarkSentBusy = false;
+    syncClientCompanySelection();
+  }
+}
+
+function personalizeClientForm() {
+  const displayName = String(state.user?.name || "").trim();
+  if (!displayName || displayName.includes("@")) return;
+  const nameInput = document.getElementById("clientNameKanji");
+  const message = document.getElementById("clientMessage");
+  if (!nameInput || !message) return;
+  nameInput.value = displayName;
+  // Figma's sample signature must not be sent as a different employee.
+  message.value = message.value
+    .replace("中央大学の工藤と申します。", `${displayName}と申します。`)
+    .replace(/\n工藤\s*$/, `\n${displayName}`);
+  // Do not guess reading of an employee name.
+  document.getElementById("clientNameKana").value = "";
+  document.getElementById("clientNameKatakana").value = "";
 }
 
 async function copyClientFieldText(value, label) {
@@ -4531,15 +4737,7 @@ function enableClientFieldCopying() {
     });
   });
 
-  // The native dropdown remains usable: company name is copied on selection.
-  const companySelect = document.getElementById('clientCompany');
-  if (companySelect) {
-    const copySelectedCompany = () => {
-      const company = selectedClientCompany();
-      if (company?.name) copyClientFieldText(company.name, '会社名');
-    };
-    companySelect.addEventListener('change', copySelectedCompany);
-  }
+
 }
 
 function wireActions() {
@@ -4557,6 +4755,9 @@ function wireActions() {
       }
 
       showScreen(element.dataset.route);
+      if (element.dataset.route === "client-send" && selectedClientCompany()) {
+        openClientExternalTab();
+      }
     });
   });
 
@@ -4579,46 +4780,10 @@ function wireActions() {
   });
 
 
-  // Figmaの右側はGoogle検索またはH列リンク。リンク先の推測や自動送信はしない。
-  document.getElementById("clientCompany").addEventListener("change", syncClientCompanySelection);
   enableClientFieldCopying();
-
-  document.getElementById("clientGoogleSearch").addEventListener("click", () => {
-    const company = selectedClientCompany()?.name || "";
-    if (!company) {
-      showToast("会社名を入力してから検索してください");
-      document.getElementById("clientCompany").focus();
-      return;
-    }
-    const url = `https://www.google.com/search?q=${encodeURIComponent(company + " お問い合わせフォーム")}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-  });
-
-  document.getElementById("clientOpenHColumnUrl").addEventListener("click", () => {
-    const value = document.getElementById("clientHColumnUrl").value.trim();
-    let parsed;
-    try { parsed = new URL(value); } catch { /* validation below */ }
-    if (!parsed || !["http:", "https:"].includes(parsed.protocol)) {
-      showToast("H列リンクの有効なURLを入力してください");
-      return;
-    }
-    window.open(parsed.href, "_blank", "noopener,noreferrer");
-  });
-
-  document.getElementById("clientCopyMessage").addEventListener("click", async () => {
-    const message = document.getElementById("clientMessage").value;
-    if (!message.trim()) {
-      showToast("お問い合わせ本文がありません");
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(message);
-      showToast("お問い合わせ本文をコピーしました");
-    } catch (error) {
-      console.warn("Clipboard failed", error);
-      showToast("コピーできませんでした。本文を選択してコピーしてください");
-    }
-  });
+  document.getElementById("clientMarkSent").addEventListener("click", markClientCompanySent);
+  document.getElementById("clientOpenTarget").addEventListener("click", openClientExternalTab);
+  document.getElementById("clientOpenTargetFallback").addEventListener("click", openClientExternalTab);
 
   document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
 
@@ -4836,6 +5001,7 @@ function showScreen(name, updateHash = true, recordHistory = true) {
   if (name === "home") refreshTaskUi();
   if (name === "task-end") {
     updateElapsedTaskText();
+    syncClientSendCountToReport();
     updateFinishButtonState();
   }
   if (name === "post") {
@@ -5404,6 +5570,7 @@ function logoutAfterReport() {
   sessionStorage.removeItem(userSessionKey("active_task_id"));
   sessionStorage.removeItem(userSessionKey("task_started_at"));
   sessionStorage.removeItem(userSessionKey("login_started_at"));
+  sessionStorage.removeItem(clientSentRowsKey());
 
   location.replace("./");
 }
