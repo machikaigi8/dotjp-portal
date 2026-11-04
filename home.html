@@ -1503,6 +1503,14 @@ button.file-choice-button {
   cursor: pointer;
 }
 
+.roster-category-row td {
+  background: #e9efff;
+  color: #183968;
+  font-weight: bold;
+  text-align: left;
+  border-bottom: 2px solid #d1d9ec;
+}
+
 .roster-table-wrap {
   height: 590px;
   overflow: auto;
@@ -4008,8 +4016,7 @@ a:active {
           </label>
           </div>
 
-          <!-- Edge split-screen: an ordinary anchor keeps the portal on the left
-               when Edge's "Open left links to the right" setting is enabled. -->
+          <!-- 登録済みフォームはEdge右側／検索だけはtarget="_blank"で新規タブ -->
           <a id="clientOpenTarget" class="client-edge-link is-disabled"
              aria-disabled="true">お問い合わせ先を開く ↗</a>
           <input id="clientHColumnUrl" type="hidden" value="">
@@ -4150,6 +4157,7 @@ a:active {
                     <tr>
                       <th>氏名</th>
                       <th>メール</th>
+                      <th>振り分け</th>
                       <th>有効</th>
                       <th></th>
                     </tr>
@@ -4772,6 +4780,8 @@ function syncClientCompanySelection() {
 
   if (!company) {
     link.removeAttribute("href");
+    link.removeAttribute("target");
+    link.removeAttribute("rel");
     link.setAttribute("aria-disabled", "true");
     link.classList.add("is-disabled");
     link.textContent = "お問い合わせ先なし";
@@ -4783,10 +4793,20 @@ function syncClientCompanySelection() {
   link.href = clientExternalTargetUrl(company);
   link.removeAttribute("aria-disabled");
   link.classList.remove("is-disabled");
-  link.textContent = known ? "お問い合わせ先を開く ↗" : "問い合わせ先を検索 ↗";
-  link.title = known
-    ? "登録済みのお問い合わせページをEdge右側で開く"
-    : "お問い合わせURL未登録のため、Brave検索結果をEdge右側で開く";
+
+  if (known) {
+    // 登録済みフォーム：通常のリンク。Edgeの「左のリンクを右に開く」に対応。
+    link.removeAttribute("target");
+    link.removeAttribute("rel");
+    link.textContent = "お問い合わせ先を開く ↗";
+    link.title = "登録済みのお問い合わせページをEdge右側で開く";
+  } else {
+    // URL未登録時の検索だけは、分割画面の右側ではなく新しいタブに開く。
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "問い合わせ先を検索 ↗";
+    link.title = "Brave検索結果を新しいタブで開く";
+  }
 }
 
 async function loadClientCompanies(force = false, silent = false) {
@@ -6516,11 +6536,18 @@ function renderRosterTable() {
 
   if (!state.roster.length) {
     body.innerHTML =
-      '<tr><td colspan="4">名簿はまだありません。</td></tr>';
+      '<tr><td colspan="5">名簿はまだありません。</td></tr>';
     return;
   }
 
-  body.innerHTML = state.roster.map((item) => `
+  let lastGroupName = "";
+  body.innerHTML = state.roster.map((item) => {
+    const groupName = String(item.group_name || "未振り分け");
+    const heading = groupName !== lastGroupName
+      ? `<tr class="roster-category-row"><td colspan="5">${escapeHtml(groupName)}</td></tr>`
+      : "";
+    lastGroupName = groupName;
+    return heading + `
     <tr data-roster-row="${item.id}">
       <td>
         <input
@@ -6534,6 +6561,14 @@ function renderRosterTable() {
           type="email"
           data-roster-email
           value="${escapeHtml(item.email)}"
+        >
+      </td>
+      <td>
+        <input
+          type="text"
+          data-roster-group
+          value="${escapeHtml(groupName)}"
+          placeholder="未振り分け"
         >
       </td>
       <td>
@@ -6556,7 +6591,8 @@ function renderRosterTable() {
         >削除</button>
       </td>
     </tr>
-  `).join("");
+  `;
+  }).join("");
 
   body.querySelectorAll("[data-roster-save]").forEach((button) => {
     button.addEventListener("click", () => saveRosterRow(Number(button.dataset.rosterSave)));
@@ -6610,6 +6646,7 @@ async function saveRosterRow(id) {
         id,
         name: row.querySelector("[data-roster-name]").value.trim(),
         email: row.querySelector("[data-roster-email]").value.trim(),
+        group_name: row.querySelector("[data-roster-group]").value.trim() || "未振り分け",
         enabled: row.querySelector("[data-roster-enabled]").checked
       }
     });
