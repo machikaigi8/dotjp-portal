@@ -998,7 +998,6 @@ button.file-choice-button {
   color: #555;
   font-size: 20px;
 }
-
 .start-task-board {
   margin-top: 20px;
   height: 178px;
@@ -1998,7 +1997,7 @@ button.file-choice-button {
   top: 46px;
   height: 30px;
   border-radius: 4px;
-  background: linear-gradient(180deg, rgba(20,20,20,.92), rgba(64,10,10,.72));
+background: linear-gradient(180deg, rgba(20,20,20,.92), rgba(64,10,10,.72));
   box-shadow:
     inset 0 6px 10px rgba(255,255,255,.06),
     inset 0 -6px 12px rgba(0,0,0,.42);
@@ -3593,6 +3592,149 @@ a:active {
   text-overflow: ellipsis;
 }
 
+
+/* =========================================================
+   Edge左右分割専用：クライアント／フォームを送る
+   800 x 900の専用キャンバス。他画面は元の1440 x 1024のまま。
+========================================================= */
+.screen-client-send {
+  width: 800px !important;
+  min-width: 800px !important;
+  max-width: 800px !important;
+  height: 900px !important;
+  min-height: 900px !important;
+  max-height: 900px !important;
+  overflow: hidden !important;
+}
+.screen-client-send .client-web-pane { display: none !important; }
+.screen-client-send .user-name {
+  top: 32px;
+  left: 22px;
+  width: 188px;
+  font-size: 22px;
+}
+.screen-client-send .common-back-button {
+  top: 22px !important;
+  left: 226px !important;
+  width: 134px !important;
+  height: 54px !important;
+  min-width: 134px !important;
+  font-size: 34px !important;
+  line-height: 54px !important;
+}
+.screen-client-send .client-tabs {
+  left: 35px;
+  top: 104px;
+  display: block;
+}
+.screen-client-send .client-tab {
+  width: 730px;
+  height: 52px;
+  font-size: 33px;
+}
+.screen-client-send .client-tab:not(:first-child) { display: none; }
+.screen-client-send .client-panel {
+  left: 20px;
+  top: 171px;
+  width: 760px;
+  height: 729px;
+}
+.screen-client-send .client-subtabs {
+  left: 40px;
+  top: 196px;
+  gap: 16px;
+}
+.screen-client-send .client-subtab {
+  width: 254px;
+  height: 54px;
+  font-size: 28px;
+}
+.screen-client-send .client-sent-button {
+  width: 168px !important;
+  font-size: 27px;
+}
+.screen-client-send .client-queue-summary {
+  left: 40px;
+  top: 267px;
+  width: 720px;
+  font-size: 17px;
+}
+.screen-client-send .client-form-control,
+.screen-client-send .client-form-name-row,
+.screen-client-send .client-message-region { z-index: 3; }
+.screen-client-send .client-form-control[for="clientCompany"] {
+  left: 40px;
+  top: 294px;
+  width: 330px;
+}
+.screen-client-send .client-form-control[for="clientType"] {
+  left: 389px;
+  top: 294px;
+  width: 371px;
+}
+.screen-client-send .client-form-name-row {
+  left: 40px;
+  top: 388px;
+  width: 720px;
+}
+.screen-client-send .client-form-name-row .client-name-inputs {
+  grid-template-columns: repeat(3, 240px);
+  width: 720px;
+}
+.screen-client-send .client-form-name-row input { width: 240px; }
+.screen-client-send .client-form-control[for="clientEmail"] {
+  left: 40px;
+  top: 482px;
+  width: 720px;
+}
+.screen-client-send .client-form-control[for="clientAddress"] {
+  left: 40px;
+  top: 574px;
+  width: 720px;
+}
+.screen-client-send .client-form-control[for="clientOrganization"] {
+  left: 40px;
+  top: 665px;
+  width: 720px;
+}
+.screen-client-send .client-message-region {
+  left: 40px;
+  top: 756px;
+  width: 720px;
+}
+.screen-client-send .client-message-region textarea {
+  width: 720px;
+  height: 108px;
+}
+.screen-client-send .client-edge-link {
+  position: absolute;
+  z-index: 6;
+  left: 495px;
+  top: 196px;
+  width: 265px;
+  height: 54px;
+  border: 1px solid #9b9ccc;
+  background: #d4d5ff;
+  color: #12122b;
+  font-size: 22px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.screen-client-send .client-edge-link:hover { filter: brightness(.965); }
+.screen-client-send .client-edge-link:focus-visible {
+  outline: 3px solid #3080ff;
+  outline-offset: 2px;
+}
+.screen-client-send .client-edge-link.is-disabled {
+  opacity: .45;
+  pointer-events: none;
+  cursor: default;
+}
+
 </style>
 </head>
 <body>
@@ -3802,24 +3944,11 @@ a:active {
           </label>
           </div>
 
-          <!-- Figma 107:489: Large right-hand Web pane.
-               External sites may disallow iframe embedding; the open-in-tab action always works. -->
-          <aside class="client-web-pane" aria-label="企業の外部サイト・Google検索">
-            <header class="client-external-header">
-              <div class="client-external-copy">
-                <strong id="clientExternalCompany">企業サイト</strong>
-                <span id="clientExternalKind">表示先を確認中…</span>
-              </div>
-              <button id="clientOpenTarget" type="button" disabled>別タブで開く ↗</button>
-            </header>
-            <iframe id="clientExternalFrame" title="企業のWebページ" referrerpolicy="no-referrer" loading="lazy"></iframe>
-            <div id="clientExternalFallback" class="client-external-fallback">
-              <div id="clientExternalFallbackText">企業情報を読み込んでいます…</div>
-              <button id="clientOpenTargetFallback" type="button" disabled>別タブで開く ↗</button>
-            </div>
-            <div class="client-external-footnote">サイトが枠内に表示されない場合は「別タブで開く」を選択してください。Edgeの「画面分割」で左右表示もできます。</div>
-            <input id="clientHColumnUrl" type="hidden" value="">
-          </aside>
+          <!-- Edge split-screen: an ordinary anchor keeps the portal on the left
+               when Edge's "Open left links to the right" setting is enabled. -->
+          <a id="clientOpenTarget" class="client-edge-link is-disabled"
+             aria-disabled="true">お問い合わせ先を開く ↗</a>
+          <input id="clientHColumnUrl" type="hidden" value="">
         </section>
 
         <section class="screen screen-post" data-screen="post">
@@ -3998,7 +4127,7 @@ a:active {
                 <h2>共有中の画面を見る</h2>
                 <button class="share-refresh" type="button" data-action="share-refresh">一覧更新</button>
                 <div id="shareRoomList" class="share-room-list"></div>
-                <div class="share-view-status" id="shareViewerStatus">未接続</div>
+<div class="share-view-status" id="shareViewerStatus">未接続</div>
                 <video id="shareRemoteVideo" class="share-video" autoplay playsinline></video>
                 <div class="share-view-actions">
                   <button class="share-fullscreen" type="button" data-action="share-fullscreen" disabled>全画面表示</button>
@@ -4503,7 +4632,6 @@ let clientSheetCompanies = [];
 let clientSheetFetchedAt = 0;
 let clientSheetInFlight = null;
 let clientMarkSentBusy = false;
-let clientExternalWindow = null;
 
 function selectedClientCompany() {
   return clientSheetCompanies[0] || null;
@@ -4515,38 +4643,12 @@ function clientExternalTargetUrl(company = selectedClientCompany()) {
     const parsed = new URL(String(company.url || ""));
     if (parsed.protocol === "https:" || parsed.protocol === "http:") return parsed.href;
   } catch (_) { /* Google fallback */ }
-  return `https://www.google.com/search?q=${encodeURIComponent(company.name + " お問い合わせフォーム")}`;
+  return `https://search.brave.com/search?q=${encodeURIComponent(company.name + " お問い合わせフォーム")}`;
 }
 
 function clientGoogleFallback(company = selectedClientCompany()) {
   if (!company?.name) return false;
   try { return !/^https?:\/\//i.test(new URL(company.url).href); } catch (_) { return true; }
-}
-
-function openClientExternalTab() {
-  const url = clientExternalTargetUrl();
-  if (!url) {
-    showToast("担当企業がありません");
-    return false;
-  }
-  try {
-    if (clientExternalWindow && !clientExternalWindow.closed) {
-      clientExternalWindow.location.href = url;
-      clientExternalWindow.focus();
-      return true;
-    }
-    clientExternalWindow = window.open(url, "dotjp_client_external");
-    if (!clientExternalWindow) {
-      showToast("別タブを開けませんでした。ポップアップを許可してください");
-      return false;
-    }
-    try { clientExternalWindow.opener = null; } catch (_) { /* cross-origin navigation */ }
-    return true;
-  } catch (error) {
-    console.warn("Client tab navigation failed", error);
-    showToast("右側の「別タブで開く」から開いてください");
-    return false;
-  }
 }
 
 function syncClientCompanySelection() {
@@ -4555,37 +4657,35 @@ function syncClientCompanySelection() {
   const hField = document.getElementById("clientHColumnUrl");
   const sentButton = document.getElementById("clientMarkSent");
   const count = document.getElementById("clientQueueSummary");
-  const header = document.getElementById("clientExternalCompany");
-  const kind = document.getElementById("clientExternalKind");
-  const iframe = document.getElementById("clientExternalFrame");
-  const fallback = document.getElementById("clientExternalFallback");
-  const fallbackText = document.getElementById("clientExternalFallbackText");
-  const openButton = document.getElementById("clientOpenTarget");
-  const openFallback = document.getElementById("clientOpenTargetFallback");
-  if (!companyInput) return;
+  const link = document.getElementById("clientOpenTarget");
+  if (!companyInput || !hField || !sentButton || !count || !link) return;
 
-  companyInput.value = company?.name || (clientSheetFetchedAt ? "未対応の担当企業はありません" : "企業を読み込み中…");
+  companyInput.value = company?.name ||
+    (clientSheetFetchedAt ? "未対応の担当企業はありません" : "企業を読み込み中…");
   companyInput.title = company?.name ? "クリックして会社名をコピー" : "";
   hField.value = company?.url || "";
   sentButton.disabled = clientMarkSentBusy || !company;
-  count.textContent = company ? `未対応 ${clientSheetCompanies.length}社 ／ 行番号 ${company.row}` : "未対応の担当企業はありません";
-  header.textContent = company?.name || "対象企業なし";
-  const google = clientGoogleFallback(company);
-  kind.textContent = company ? (google ? "Google検索で問い合わせ先を探す" : "H列のお問い合わせリンク") : "表示する企業がありません";
-  openButton.disabled = !company;
-  openFallback.disabled = !company;
+  count.textContent = company
+    ? `未対応 ${clientSheetCompanies.length}社 ／ 行番号 ${company.row}`
+    : "未対応の担当企業はありません";
 
-  if (!company || google) {
-    // Google Search cannot normally be embedded due to its frame security headers.
-    iframe.removeAttribute("src");
-    fallback.hidden = false;
-    fallbackText.textContent = company
-      ? "Google検索は画面内に埋め込めません。別タブで検索結果を開き、Edgeの画面分割を利用してください。"
-      : "対象の企業はありません。企業一覧が更新されるとここに表示されます。";
-  } else {
-    iframe.src = clientExternalTargetUrl(company);
-    fallback.hidden = true;
+  if (!company) {
+    link.removeAttribute("href");
+    link.setAttribute("aria-disabled", "true");
+    link.classList.add("is-disabled");
+    link.textContent = "お問い合わせ先なし";
+    link.title = "担当企業がありません";
+    return;
   }
+
+  const known = !clientGoogleFallback(company);
+  link.href = clientExternalTargetUrl(company);
+  link.removeAttribute("aria-disabled");
+  link.classList.remove("is-disabled");
+  link.textContent = known ? "お問い合わせ先を開く ↗" : "問い合わせ先を検索 ↗";
+  link.title = known
+    ? "登録済みのお問い合わせページをEdge右側で開く"
+    : "お問い合わせURL未登録のため、Brave検索結果をEdge右側で開く";
 }
 
 async function loadClientCompanies(force = false, silent = false) {
@@ -4660,11 +4760,8 @@ async function markClientCompanySent() {
       ? data.companies
       : clientSheetCompanies.filter((c) => c.row !== current.row);
     clientSheetFetchedAt = Date.now();
-    // Navigate an already-opened company tab to the next company.
-    const nextUrl = clientExternalTargetUrl();
-    if (nextUrl && clientExternalWindow && !clientExternalWindow.closed) {
-      try { clientExternalWindow.location.href = nextUrl; } catch (_) { /* tab is external */ }
-    }
+    // Edge's right pane is controlled by the browser, not by window.open().
+    // The next company's link is refreshed by syncClientCompanySelection().
     showToast(data.recorded
       ? `送信済み：N列をTRUEに更新しました（今回 ${clientSentRows().length}件）`
       : "送信済みに変更しました。記録済みのため重複集計はしません");
@@ -4738,9 +4835,6 @@ function wireActions() {
       }
 
       showScreen(element.dataset.route);
-      if (element.dataset.route === "client-send" && selectedClientCompany()) {
-        openClientExternalTab();
-      }
     });
   });
 
@@ -4765,8 +4859,6 @@ function wireActions() {
 
   enableClientFieldCopying();
   document.getElementById("clientMarkSent").addEventListener("click", markClientCompanySent);
-  document.getElementById("clientOpenTarget").addEventListener("click", openClientExternalTab);
-  document.getElementById("clientOpenTargetFallback").addEventListener("click", openClientExternalTab);
 
   document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
 
@@ -4979,6 +5071,7 @@ function showScreen(name, updateHash = true, recordHistory = true) {
     screen.classList.toggle("is-active", screen.dataset.screen === name);
   });
   state.currentScreen = name;
+  fitCanvas();
 
   if (name === "task-start") renderStartTasks();
   if (name === "home") refreshTaskUi();
@@ -4997,8 +5090,7 @@ function showScreen(name, updateHash = true, recordHistory = true) {
   }
 
   if (name === "post-manual") hydratePostDraft();
-
-  if (name === "post-confirm") {
+if (name === "post-confirm") {
     restorePostCards();
     renderPostConfirmation();
   }
@@ -5998,8 +6090,7 @@ function renderPostConfirmation() {
 
   document.getElementById("postCardCounter").textContent =
     `${state.postCardIndex + 1} / ${state.postCards.length}`;
-
-  document.getElementById("postPrevButton").disabled =
+document.getElementById("postPrevButton").disabled =
     state.postCardIndex <= 0;
 
   document.getElementById("postNextButton").disabled =
@@ -6998,7 +7089,7 @@ function renderSchedulePlanCalendarTargets() {
   if (!root) return;
 
   const connections = state.calendar.connections.filter(
-    (item) => Number(item.enabled)
+(item) => Number(item.enabled)
   );
 
   if (!connections.length) {
@@ -7998,8 +8089,7 @@ async function joinScreenShare(roomId) {
         }
       ).catch(console.warn);
     };
-
-    pc.onconnectionstatechange = () => {
+pc.onconnectionstatechange = () => {
       if (pc.connectionState === "failed") {
         document.getElementById("shareViewerStatus").textContent =
           "接続できませんでした。ネットワーク環境を確認してください。";
@@ -8181,16 +8271,20 @@ function fitCanvas() {
   const viewport = window.visualViewport;
   const width = viewport?.width || window.innerWidth;
   const height = viewport?.height || window.innerHeight;
-  const scale = Math.min(width / 1440, height / 1024);
+  const compact = state.currentScreen === "client-send";
+  const virtualWidth = compact ? 800 : 1440;
+  const virtualHeight = compact ? 900 : 1024;
+  const scale = Math.min(width / virtualWidth, height / virtualHeight);
 
   const frame = document.getElementById("canvasFrame");
   const holder = document.getElementById("canvasHolder");
-
   if (!frame || !holder) return;
 
+  frame.style.setProperty("width", `${virtualWidth}px`, "important");
+  frame.style.setProperty("height", `${virtualHeight}px`, "important");
   frame.style.transform = `scale(${scale})`;
-  holder.style.width = `${1440 * scale}px`;
-  holder.style.height = `${1024 * scale}px`;
+  holder.style.width = `${virtualWidth * scale}px`;
+  holder.style.height = `${virtualHeight * scale}px`;
 }
 
 function parseJson(value, fallback) {
