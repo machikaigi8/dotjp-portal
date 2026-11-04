@@ -3748,6 +3748,30 @@ a:active {
   cursor: default;
 }
 
+
+/* v26: These 3 reference-only fields are intentionally not copyable. */
+.screen-client-send .client-form-control:is(
+  [for="clientPhone"],
+  [for="clientContactMethod"],
+  [for="clientPosition"]
+) > span {
+  color: #888888;
+}
+.screen-client-send .client-form-control:is(
+  [for="clientPhone"],
+  [for="clientContactMethod"],
+  [for="clientPosition"]
+) > input:disabled {
+  background: #e8e8e8;
+  border-color: #bcbcbc;
+  color: #888888;
+  -webkit-text-fill-color: #888888;
+  cursor: not-allowed;
+  opacity: 1;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 </style>
 </head>
 <body>
@@ -3909,7 +3933,7 @@ a:active {
           </label>
           <label class="client-form-control" style="--cf-x:456px;--cf-y:527px;--cf-w:264px;" for="clientPhone">
             <span>電話番号</span>
-            <input id="clientPhone" type="text" autocomplete="off" value="自分の電話番号" readonly aria-readonly="true" data-client-copy-label="電話番号" title="クリックしてコピー">
+            <input id="clientPhone" type="text" autocomplete="off" value="自分の電話番号" disabled aria-disabled="true">
           </label>
           <label class="client-form-control" style="--cf-x:120px;--cf-y:625px;--cf-w:411px;" for="clientAddress">
             <span>住所</span>
@@ -3917,7 +3941,7 @@ a:active {
           </label>
           <label class="client-form-control" style="--cf-x:554px;--cf-y:625px;--cf-w:166px;" for="clientContactMethod">
             <span>ご連絡方法</span>
-            <input id="clientContactMethod" type="text" autocomplete="off" value="メール" readonly aria-readonly="true" data-client-copy-label="ご連絡方法" title="クリックしてコピー">
+            <input id="clientContactMethod" type="text" autocomplete="off" value="メール" disabled aria-disabled="true">
           </label>
           <label class="client-form-control" style="--cf-x:120px;--cf-y:723px;--cf-w:411px;" for="clientOrganization">
             <span>貴社名</span>
@@ -3925,7 +3949,7 @@ a:active {
           </label>
           <label class="client-form-control" style="--cf-x:554px;--cf-y:723px;--cf-w:166px;" for="clientPosition">
             <span>役職</span>
-            <input id="clientPosition" type="text" autocomplete="off" value="代表" readonly aria-readonly="true" data-client-copy-label="役職" title="クリックしてコピー">
+            <input id="clientPosition" type="text" autocomplete="off" value="代表" disabled aria-disabled="true">
           </label>
           <label class="client-message-region" for="clientMessage">
             <span class="client-message-label">お問い合わせ内容</span>
