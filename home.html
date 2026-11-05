@@ -4852,6 +4852,7 @@ const state = {
   canEditRoster: false,
   roster: [],
   preferredRegion: null,
+  regionWorkSessions: null,
   hpRequests: [],
   remoteTasks: [],
   postCards: [],
@@ -4970,6 +4971,9 @@ async function init() {
     ensureLoginStartedAt();
 
     await loadPortalProfile();
+    // 旧版の端末内履歴も、現在の所属地域で安全にD1へ移行する。
+    void syncLegacySessionsToD1();
+    void loadRegionalWorkSessions();
     // Prefetch the assigned company queue while other dashboard data loads.
     void loadClientCompanies(false, true);
     await refreshRemoteTasks();
@@ -5289,6 +5293,17 @@ function wireActions() {
       state.region = element.dataset.region;
       sessionStorage.setItem("dotjp_region", state.region);
       updateRegion();
+      state.remoteTasks = [];
+      state.calendar.reviewPlans = [];
+      state.regionWorkSessions = null;
+      refreshTaskUi();
+      void refreshRemoteTasks().then(refreshTaskUi);
+      void loadRegionalWorkSessions();
+      if (state.currentScreen === 'schedule-review') void loadScheduleReview();
+      if (state.currentScreen === 'hp-edit' && state.isDeveloper &&
+          document.querySelector('[data-hp-tab="requests"]')?.classList.contains('is-active')) {
+        void loadHpRequests();
+      }
     });
   });
 
@@ -5684,6 +5699,36 @@ function userSessionKey(name) {
   return `dotjp_portal_session_${name}_${userIdentity()}`;
 }
 
+// 地域別集計はCloudflare D1で共有する。地域の画面を切り替えた際に再取得する。
+async function loadRegionalWorkSessions() {
+  const region = state.region;
+  try {
+    const since = new Date(Date.now()-7*86400000).toISOString();
+    const params = new URLSearchParams({region,since});
+    const data = await portalFetch('/api/work-sessions?' + params.toString());
+    if (region !== state.region) return;
+    state.regionWorkSessions = Array.isArray(data.sessions) ? data.sessions : [];
+    renderTaskTimeChart();
+  } catch (error) {
+    console.warn('regional work sessions unavailable',error);
+    if (region !== state.region) return;
+    state.regionWorkSessions = null;
+    renderTaskTimeChart();
+  }
+}
+
+async function syncLegacySessionsToD1() {
+  const sessions=loadSessions().filter(s=>s?.id && s?.endedAt);
+  for(let i=0;i<sessions.length;i+=50){
+    try {
+      await portalFetch('/api/work-sessions',{
+        method:'POST',body:{region:state.region,sessions:sessions.slice(i,i+50)}
+      });
+    } catch(error){console.warn('local work history sync postponed',error);break;}
+  }
+  await loadRegionalWorkSessions();
+}
+
 function loadTasks() {
   const tasks = parseJson(localStorage.getItem(userStorageKey("tasks_v1")), []);
   return Array.isArray(tasks) ? tasks : [];
@@ -5724,7 +5769,8 @@ function currentWeekTasks() {
 
   const local = loadTasks().filter((task) => {
     const created = new Date(task.createdAt);
-    return created >= start && created < end;
+    const dataRegion = state.preferredRegion || task.region || 'kanto';
+    return created >= start && created < end && dataRegion === state.region;
   });
 
   return [...state.remoteTasks, ...local]
@@ -6020,6 +6066,9 @@ function renderTaskTimeChart() {
   const totals = new Map(days.map((day) => [localDateKey(day), 0]));
 
   loadSessions().forEach((session) => {
+    // 旧版のローカル記録は現時点の名簿所属へ引き継ぐ。
+    const dataRegion = state.preferredRegion || session.region || 'kanto';
+    if (dataRegion !== state.region) return;
     const start = new Date(session.startedAt);
     const end = new Date(session.endedAt);
     if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end <= start) return;
@@ -6027,7 +6076,7 @@ function renderTaskTimeChart() {
   });
 
   const runningStart = getActiveStartedAt();
-  if (runningStart > 0) {
+  if (runningStart > 0 && (state.preferredRegion || state.region) === state.region) {
     addDurationAcrossDays(new Date(runningStart), new Date(), totals);
   }
 
@@ -6045,7 +6094,13 @@ function renderTaskTimeChart() {
     </div>`;
   }).join("");
 
-  chart.innerHTML = `<div class="task-chart-total">計 ${formatDuration(total)}</div><div class="task-chart-bars">${bars}</div>`;
+  // 自分の時間と、画面で選択中の地域全体の時間を同じ行に表示。
+  const regionTotal = state.regionWorkSessions == null ? null :
+    state.regionWorkSessions.reduce((sum,item)=>sum+Math.max(0,Number(item.duration_ms)||0),0);
+  const regionLabel = state.region === 'kansai' ? '関西' : '関東';
+  const totalLabel = regionTotal == null ? `自分 ${formatDuration(total)}` :
+    `自分 ${formatDuration(total)} ｜ ${regionLabel} ${formatDuration(regionTotal)}`;
+  chart.innerHTML = `<div class="task-chart-total" style="font-size:11px;white-space:nowrap" title="選択中の地域の集計">${totalLabel}</div><div class="task-chart-bars">${bars}</div>`;
 }
 
 function formatDuration(ms) {
@@ -6155,7 +6210,7 @@ async function finishTask() {
   }
 
   const sessions = loadSessions();
-  sessions.push({
+  const sessionRecord = {
     id: `session_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     taskId: activeTaskId || null,
     startedAt: hasActiveTask ? new Date(startedAt).toISOString() : null,
@@ -6169,8 +6224,17 @@ async function finishTask() {
     otherProgress: snapshot.otherProgress,
     reflection: snapshot.reflection,
     tomorrowGoal: snapshot.tomorrowGoal,
-    reportOnly: !hasActiveTask
-  });
+    reportOnly: !hasActiveTask,
+    region: state.preferredRegion || state.region
+  };
+  // D1に保存してからログアウト。通信失敗時は入力を保持し再送可能にする。
+  try {
+    await portalFetch('/api/work-sessions', {method:'POST', body:{region:state.region,sessions:[sessionRecord]}});
+  } catch (error) {
+    showToast(error.message || '進捗の保存に失敗しました。再度送信してください');
+    return;
+  }
+  sessions.push(sessionRecord);
   saveSessions(sessions);
 
   sessionStorage.removeItem(userSessionKey("active_task_id"));
@@ -6650,7 +6714,7 @@ async function sendPostCards() {
   try {
     const result = await portalFetch("/api/tasks/create", {
       method: "POST",
-      body: { cards }
+      body: { cards, region: state.region }
     });
 
     await runPostboxAnimation(cards);
@@ -6981,6 +7045,10 @@ async function saveFigmaRosterRow() {
     });
     document.getElementById('figmaRosterModal').hidden = true;
     await loadRoster(true);
+    // 直近の所属先を反映。現在表示中の地域は手動選択を維持。
+    if (String(email).toLowerCase() === userIdentity()) {
+      state.preferredRegion = group_name === '関西' ? 'kansai' : group_name === '関東' ? 'kanto' : null;
+    }
     showToast('名簿を更新しました');
   } catch (error) {
     showToast(error.message || '名簿の更新に失敗しました');
@@ -6994,7 +7062,7 @@ async function submitHpRequest() {
   const button = document.getElementById('hpRequestSubmit');
   button.disabled = true;
   try {
-    await portalFetch('/api/hp-requests', {method:'POST', body:{content}});
+    await portalFetch('/api/hp-requests', {method:'POST', body:{content,region:state.region}});
     textarea.value = '';
     showToast('要望を送信しました');
     showScreen('home');
@@ -7008,7 +7076,7 @@ async function loadHpRequests() {
   if (!box || !state.isDeveloper) return;
   box.innerHTML = '<p class="figma-hp-empty">読み込み中…</p>';
   try {
-    const data = await portalFetch('/api/hp-requests');
+    const data = await portalFetch('/api/hp-requests?region=' + encodeURIComponent(state.region));
     state.hpRequests = Array.isArray(data.requests) ? data.requests : [];
     if (!state.hpRequests.length) {
       box.innerHTML = '<p class="figma-hp-empty">届いた要望はまだありません。</p>';
@@ -7018,6 +7086,7 @@ async function loadHpRequests() {
       const date = String(item.created_at || '').replace('T',' ').slice(0,19);
       return `<article class="figma-hp-request-entry">
         <div class="figma-hp-request-meta"><span class="figma-hp-request-person">${escapeHtml(item.user_name || '氏名未登録')}</span>
+        <strong>${item.region === 'kansai' ? '関西' : '関東'}</strong>
         <span>${escapeHtml(item.user_email || '')}</span><time>${escapeHtml(date)} UTC</time></div>
         <p class="figma-hp-request-content">${escapeHtml(item.content || '')}</p>
       </article>`;
@@ -7192,17 +7261,20 @@ async function deleteRosterRow(id) {
 }
 
 async function refreshRemoteTasks() {
+  const requestedRegion = state.region;
   try {
     const { start, end } = weekBounds();
 
     const params = new URLSearchParams({
       start: start.toISOString(),
-      end: end.toISOString()
+      end: end.toISOString(),
+      region: requestedRegion
     });
 
     const data = await portalFetch(
       `/api/tasks/week?${params.toString()}`
     );
+    if (requestedRegion !== state.region) return;
 
     state.remoteTasks = (data.tasks || []).map((task) => ({
       id: `remote_${task.id}`,
@@ -7216,11 +7288,12 @@ async function refreshRemoteTasks() {
       requester: task.requester_name,
       recipient: task.recipient_name,
       deadline: task.deadline,
-      content: task.content
+      content: task.content,
+      region: task.region
     }));
   } catch (error) {
     console.warn("remote tasks unavailable", error);
-    state.remoteTasks = [];
+    if (requestedRegion === state.region) state.remoteTasks = [];
   }
 }
 
@@ -7823,6 +7896,7 @@ async function registerSchedulePlan() {
         taskType: title,
         startsAt: startsAt.toISOString(),
         endsAt: endsAt.toISOString(),
+        region: state.region,
         connectionIds
       }
     });
@@ -7891,7 +7965,8 @@ async function loadScheduleReview() {
     const params = new URLSearchParams({
       start: range.startIso,
       end: range.endIso,
-      scope: "all"
+      scope: "all",
+      region: state.region
     });
 
     const data = await portalFetch(
