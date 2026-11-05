@@ -3849,6 +3849,139 @@ a:active {
 .screen-hp-request .hp-request-actions {display:flex;justify-content:flex-end;}
 .screen-hp-request .hp-request-actions button {border:0;background:#3080ff;color:white;padding:14px 40px;font-size:31px;cursor:pointer;}
 
+
+/* v35：稼働時間登録 — Figmaの二段組を維持して操作性を調整 */
+.screen-schedule-hours .schedule-hours-panel {
+  background: #ffffff;
+  border: 2px solid #e3e7f6;
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(34, 49, 116, 0.07);
+  overflow: hidden;
+}
+.screen-schedule-hours .wh-page-head {
+  position: absolute; left: 45px; top: 31px; width: 1210px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.screen-schedule-hours .wh-page-head h1 {
+  margin: 0; font-size: 40px; line-height: 1.2; font-weight: 700; color: #15154d;
+}
+.screen-schedule-hours .wh-page-head p {
+  margin: 13px 0 0; font-size: 18px; color: #65708c;
+}
+.screen-schedule-hours .wh-page-note {
+  margin-top: 12px; padding: 12px 20px; border-radius: 999px;
+  background: #edf1ff; color: #3349a3; font-size: 18px; font-weight: 700;
+}
+.screen-schedule-hours .work-hour-day-list,
+.screen-schedule-hours .work-hour-editor {
+  position: absolute; top: 143px; height: 466px;
+  background: #f8f9fd; border: 2px solid #e4e8f5;
+  border-radius: 17px; box-shadow: none; overflow: hidden;
+}
+.screen-schedule-hours .work-hour-day-list { left: 44px; width: 583px; padding: 0; }
+.screen-schedule-hours .work-hour-editor { left: 651px; width: 605px; padding: 17px 23px; }
+.screen-schedule-hours .wh-list-head {
+  min-height: 73px; display: flex; justify-content: space-between; align-items: center;
+  padding: 13px 23px; border-bottom: 1px solid #e3e7f1;
+  background: #eef2ff;
+}
+.screen-schedule-hours .wh-list-head strong { font-size: 25px; color: #15154d; }
+.screen-schedule-hours .wh-list-head span { font-size: 15px; color: #66759c; }
+.screen-schedule-hours .wh-list-items { height: 389px; overflow-y: auto; padding: 4px 13px; }
+.screen-schedule-hours .work-hour-day-row {
+  display: grid; grid-template-columns: 15px 90px minmax(0,1fr) 18px;
+  min-height: 53px; gap: 11px; align-items: center;
+  width: 100%; padding: 8px 14px; font-size: 19px; color: #252e52;
+  background: transparent; border: 0; border-bottom: 1px solid #edf0f7;
+  border-radius: 8px; text-align: left; cursor: pointer;
+}
+.screen-schedule-hours .work-hour-day-row:hover { background: #eaf0ff; }
+.screen-schedule-hours .work-hour-day-row.is-selected {
+  background: #dfe8ff; box-shadow: inset 4px 0 #3080ff;
+}
+.screen-schedule-hours .work-hour-day-row strong { font-size: 21px; }
+.screen-schedule-hours .work-hour-status-dot { width: 12px; height: 12px; background: #2eaf77; }
+.screen-schedule-hours .work-hour-status-dot.off { background: #bac1d1; }
+.screen-schedule-hours .work-hour-summary {
+  text-align: right; font-size: 16px; font-weight: 500;
+  color: #53627f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.screen-schedule-hours .wh-row-chevron { font-size: 28px; font-weight: 700; color: #8ca1cb; line-height: 1; }
+.screen-schedule-hours .work-hour-editor-head {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 51px; padding-bottom: 10px;
+}
+.screen-schedule-hours .work-hour-editor-head strong { font-size: 26px; color: #15154d; }
+.screen-schedule-hours .work-hour-editor-x {
+  width: 31px; height: 31px; border-radius: 50%;
+  font-size: 18px; background: #eef1ff; color: #4f61a4; cursor: pointer;
+}
+.screen-schedule-hours .work-hour-enable-row {
+  height: 59px; padding: 0 18px; border: 1px solid #e4e8f2;
+  background: white; border-radius: 12px; font-size: 19px;
+}
+.screen-schedule-hours .work-hour-enable-row input {
+  appearance: none; position: relative; width: 51px; height: 29px;
+  background: #bac3d5; border-radius: 999px; cursor: pointer;
+  transition: background .15s;
+}
+.screen-schedule-hours .work-hour-enable-row input:checked { background: #2877e8; }
+.screen-schedule-hours .work-hour-enable-row input::after {
+  content: ''; position: absolute; left: 4px; top: 4px; width: 21px; height: 21px;
+  border-radius: 50%; background: white; transition: transform .15s;
+}
+.screen-schedule-hours .work-hour-enable-row input:checked::after { transform: translateX(22px); }
+.screen-schedule-hours .work-hour-slots-title {
+  display: flex; gap: 13px; align-items: baseline; margin: 16px 2px 10px;
+  color: #273762; font-size: 20px; font-weight: 700;
+}
+.screen-schedule-hours .work-hour-slots-title span { color: #78839b; font-size: 14px; font-weight: 400; }
+.screen-schedule-hours .work-hour-slots { max-height: 182px; min-height: 80px; overflow-y: auto; }
+.screen-schedule-hours .work-hour-slot-row {
+  grid-template-columns: 27px minmax(0,1fr) 22px minmax(0,1fr) 34px;
+  min-height: 85px; padding: 9px 12px; gap: 8px; align-items: center;
+  margin-bottom: 8px; background: #fff; border: 1px solid #e6eaf4; border-radius: 12px;
+}
+.screen-schedule-hours .wh-slot-index {
+  width: 25px; height: 25px; border-radius: 7px; display: grid; place-items: center;
+  background: #eef2ff; color: #4160a9; font-size: 13px; font-weight: 700;
+}
+.screen-schedule-hours .work-hour-slot-row label { display: grid; gap: 4px; font-size: 13px; color: #67728c; }
+.screen-schedule-hours .work-hour-slot-row input {
+  height: 40px; width: 100%; border: 1px solid #dbe2f0; border-radius: 8px;
+  padding: 4px 8px; font-size: 18px; color: #182a4b; background: #f8faff;
+}
+.screen-schedule-hours .work-hour-slot-separator { align-self: center; font-size: 19px; color: #647390; }
+.screen-schedule-hours .work-hour-slot-delete {
+  width: 32px; height: 32px; border-radius: 8px; font-size: 21px;
+  background: #fff1f1; color: #b63742;
+}
+.screen-schedule-hours .work-hour-slot-delete:hover { background: #ffe1e1; }
+.screen-schedule-hours .wh-disabled-hint {
+  padding: 15px; margin: 0; font-size: 16px; color: #6c7690;
+}
+.screen-schedule-hours .add-work-hour-slot {
+  height: 44px; margin-top: 7px; border: 1px dashed #adc1ea;
+  border-radius: 10px; color: #2163cd; background: #fff;
+  font-size: 18px; font-weight: 700;
+}
+.screen-schedule-hours .add-work-hour-slot:disabled {
+  opacity: .45; cursor: not-allowed;
+}
+.screen-schedule-hours .wh-editor-note { margin: 11px 0 0; font-size: 14px; color: #8490a7; }
+.screen-schedule-hours .wh-footer {
+  position: absolute; left: 46px; right: 46px; top: 638px;
+  height: 78px; display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid #edf0f8;
+}
+.screen-schedule-hours .wh-footer p { font-size: 17px; color: #69758d; }
+.screen-schedule-hours .work-hours-save-button {
+  position: static; width: 260px; height: 58px; border-radius: 11px;
+  background: #3080ff; color: white; font-size: 23px; font-weight: 700;
+  box-shadow: 0 5px 15px rgba(48,128,255,.2);
+}
+.screen-schedule-hours .work-hours-save-button:hover { background: #246fe7; }
+
 </style>
 </head>
 <body>
@@ -4464,33 +4597,35 @@ a:active {
           <div class="user-name" data-user-name>＜名前＞</div>
 
           <div class="schedule-hours-panel">
-            <div id="workHourDayList" class="work-hour-day-list"></div>
-
-            <div class="work-hour-editor">
-              <div class="work-hour-editor-head">
-                <button id="workHourEditorClose" type="button" class="work-hour-editor-x">×</button>
-                <strong id="workHourEditorDay">Sunday</strong>
-                <span class="work-hour-check">✓</span>
+            <div class="wh-page-head">
+              <div>
+                <h1>稼働時間の登録</h1>
+                <p>作業できる曜日と時間帯を設定してください。設定は週ごとに共通で適用されます。</p>
               </div>
-
-              <label class="work-hour-enable-row">
-                <span id="workHourEnableText">Available on Sunday</span>
-                <input id="workHourEnabled" type="checkbox" checked>
-              </label>
-
-              <div class="work-hour-slots-title">Time Slots</div>
-              <div id="workHourSlots" class="work-hour-slots"></div>
-
-              <button id="addWorkHourSlot" type="button" class="add-work-hour-slot">
-                ＋ Add Time Slot
-              </button>
+              <div class="wh-page-note">毎週の基本設定</div>
             </div>
 
-            <button
-              id="saveWorkHoursButton"
-              class="schedule-register-button work-hours-save-button"
-              type="button"
-            >登録</button>
+            <div class="work-hour-day-list" id="workHourDayList" aria-label="曜日別の稼働時間"></div>
+
+            <div class="work-hour-editor" aria-label="選択した曜日の時間帯編集">
+              <div class="work-hour-editor-head">
+                <strong id="workHourEditorDay">日曜日</strong>
+                <button id="workHourEditorClose" type="button" class="work-hour-editor-x" aria-label="設定の説明を見る" title="操作の説明">?</button>
+              </div>
+              <label class="work-hour-enable-row">
+                <span id="workHourEnableText">この曜日を稼働可能にする</span>
+                <input id="workHourEnabled" type="checkbox" checked>
+              </label>
+              <div class="work-hour-slots-title">時間帯 <span>開始時刻と終了時刻を入力</span></div>
+              <div id="workHourSlots" class="work-hour-slots"></div>
+              <button id="addWorkHourSlot" type="button" class="add-work-hour-slot">＋ 時間帯を追加</button>
+              <p class="wh-editor-note">休みにする曜日はスイッチをOFFにしてください。</p>
+            </div>
+
+            <div class="wh-footer">
+              <p>各曜日の設定内容を確認してから保存してください。</p>
+              <button id="saveWorkHoursButton" class="schedule-register-button work-hours-save-button" type="button">稼働時間を登録</button>
+            </div>
           </div>
         </section>
 
@@ -5270,7 +5405,7 @@ function wireActions() {
 
   document.getElementById("workHourEditorClose").addEventListener(
     "click",
-    goBackScreen
+    () => showToast("左の曜日を選び、稼働ON/OFFと時間帯を入力して『稼働時間を登録』を押してください")
   );
 
   document.getElementById("postFile").addEventListener("change", async (event) => {
@@ -7998,30 +8133,39 @@ function renderWorkHourDayList() {
   const root = document.getElementById("workHourDayList");
   if (!root) return;
 
-  root.innerHTML = state.calendar.workDays.map((day) => {
-    const summary = day.enabled
-      ? day.slots
-          .map((slot) => `${slot.start} – ${slot.end}`)
-          .join(", ")
-      : "利用しない";
-
-    return `
-      <button
-        type="button"
-        class="work-hour-day-row ${state.calendar.selectedWorkDay === day.dayOfWeek ? "is-selected" : ""}"
-        data-work-day="${day.dayOfWeek}"
-      >
-        <span class="work-hour-status-dot ${day.enabled ? "" : "off"}"></span>
-        <strong>${calendarDayNamesEn[day.dayOfWeek]}</strong>
-        <span class="work-hour-summary">${escapeHtml(summary)}</span>
-      </button>
-    `;
-  }).join("");
+  root.innerHTML = `
+    <div class="wh-list-head">
+      <strong>曜日別の稼働時間</strong>
+      <span>曜日をクリックして編集</span>
+    </div>
+    <div class="wh-list-items">
+      ${state.calendar.workDays.map((day) => {
+        const slots = Array.isArray(day.slots) ? day.slots : [];
+        const summary = day.enabled
+          ? (slots.length
+              ? slots.map((slot) => `${slot.start}〜${slot.end}`).join(" / ")
+              : "時間帯を設定してください")
+          : "お休み";
+        const selected = Number(state.calendar.selectedWorkDay) === Number(day.dayOfWeek);
+        return `
+          <button
+            type="button"
+            class="work-hour-day-row ${selected ? "is-selected" : ""}"
+            data-work-day="${day.dayOfWeek}"
+            aria-pressed="${selected}"
+          >
+            <span class="work-hour-status-dot ${day.enabled ? "" : "off"}"></span>
+            <strong>${escapeHtml(calendarDayNamesJa[day.dayOfWeek])}</strong>
+            <span class="work-hour-summary">${escapeHtml(summary)}</span>
+            <span class="wh-row-chevron" aria-hidden="true">›</span>
+          </button>`;
+      }).join("")}
+    </div>
+  `;
 
   root.querySelectorAll("[data-work-day]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.calendar.selectedWorkDay =
-        Number(button.dataset.workDay);
+      state.calendar.selectedWorkDay = Number(button.dataset.workDay);
       renderWorkHourDayList();
       renderWorkHourEditor();
     });
@@ -8041,75 +8185,55 @@ function renderWorkHourEditor() {
   if (!day) return;
 
   document.getElementById("workHourEditorDay").textContent =
-    calendarDayNamesEn[day.dayOfWeek];
-
+    `${calendarDayNamesJa[day.dayOfWeek]}の設定`;
   document.getElementById("workHourEnableText").textContent =
-    `Available on ${calendarDayNamesEn[day.dayOfWeek]}`;
-
-  document.getElementById("workHourEnabled").checked =
-    Boolean(day.enabled);
+    "この曜日を稼働可能にする";
+  document.getElementById("workHourEnabled").checked = Boolean(day.enabled);
 
   const root = document.getElementById("workHourSlots");
-
-  root.innerHTML = (day.slots || []).map((slot, index) => `
-    <div class="work-hour-slot-row">
-      <label>
-        <span>Start</span>
-        <input
-          type="time"
-          value="${escapeHtml(slot.start)}"
-          data-work-slot-start="${index}"
-          ${day.enabled ? "" : "disabled"}
-        >
-      </label>
-      <span class="work-hour-slot-separator">–</span>
-      <label>
-        <span>End</span>
-        <input
-          type="time"
-          value="${escapeHtml(slot.end)}"
-          data-work-slot-end="${index}"
-          ${day.enabled ? "" : "disabled"}
-        >
-      </label>
-      <button
-        type="button"
-        class="work-hour-slot-delete"
-        data-work-slot-delete="${index}"
-        ${day.enabled ? "" : "disabled"}
-      >×</button>
-    </div>
-  `).join("");
+  root.innerHTML = day.enabled
+    ? (day.slots || []).map((slot, index) => `
+      <div class="work-hour-slot-row">
+        <div class="wh-slot-index">${index + 1}</div>
+        <label>
+          <span>開始</span>
+          <input type="time" step="300" value="${escapeHtml(slot.start)}"
+            data-work-slot-start="${index}" aria-label="${index + 1}番目の開始時刻">
+        </label>
+        <span class="work-hour-slot-separator">〜</span>
+        <label>
+          <span>終了</span>
+          <input type="time" step="300" value="${escapeHtml(slot.end)}"
+            data-work-slot-end="${index}" aria-label="${index + 1}番目の終了時刻">
+        </label>
+        <button type="button" class="work-hour-slot-delete"
+          data-work-slot-delete="${index}" title="この時間帯を削除"
+          aria-label="${index + 1}番目の時間帯を削除">×</button>
+      </div>`).join("")
+    : '<p class="wh-disabled-hint">この曜日はお休みに設定されています。</p>';
 
   root.querySelectorAll("[data-work-slot-start]").forEach((input) => {
     input.addEventListener("change", () => {
-      const index = Number(input.dataset.workSlotStart);
-      day.slots[index].start = input.value;
+      day.slots[Number(input.dataset.workSlotStart)].start = input.value;
       renderWorkHourDayList();
     });
   });
-
   root.querySelectorAll("[data-work-slot-end]").forEach((input) => {
     input.addEventListener("change", () => {
-      const index = Number(input.dataset.workSlotEnd);
-      day.slots[index].end = input.value;
+      day.slots[Number(input.dataset.workSlotEnd)].end = input.value;
       renderWorkHourDayList();
     });
   });
-
   root.querySelectorAll("[data-work-slot-delete]").forEach((button) => {
     button.addEventListener("click", () => {
-      const index = Number(button.dataset.workSlotDelete);
-      day.slots.splice(index, 1);
-
-      if (!day.slots.length) {
-        day.enabled = false;
-      }
-
+      day.slots.splice(Number(button.dataset.workSlotDelete), 1);
+      if (!day.slots.length) day.enabled = false;
       renderWorkHourDayList();
       renderWorkHourEditor();
     });
   });
+  document.getElementById("addWorkHourSlot").disabled =
+    !day.enabled || (day.slots || []).length >= 8;
 }
 
 function onWorkHourEnabledChange() {
@@ -8133,40 +8257,46 @@ function onWorkHourEnabledChange() {
 function addWorkHourSlot() {
   const day = selectedWorkDay();
   if (!day) return;
-
-  day.enabled = true;
+  if (!day.enabled) {
+    showToast("まず、この曜日の稼働をONにしてください");
+    return;
+  }
+  if ((day.slots || []).length >= 8) {
+    showToast("1曜日に登録できる時間帯は8件までです");
+    return;
+  }
 
   const last = day.slots[day.slots.length - 1];
-
-  day.slots.push(
-    last
-      ? {
-          start: last.end,
-          end: "22:00"
-        }
-      : {
-          start: "09:00",
-          end: "22:00"
-        }
-  );
-
+  const candidateStart = last ? last.end : "09:00";
+  const [hour, minute] = candidateStart.split(":").map(Number);
+  const mins = hour * 60 + minute;
+  if (mins >= 23 * 60 + 29) {
+    showToast("最後の終了時刻を早めてから追加してください");
+    return;
+  }
+  const end = Math.min(mins + 60, 23 * 60 + 59);
+  day.slots.push({
+    start: candidateStart,
+    end: `${String(Math.floor(end / 60)).padStart(2, "0")}:${String(end % 60).padStart(2, "0")}`
+  });
   renderWorkHourDayList();
   renderWorkHourEditor();
 }
 
 async function saveWorkHours() {
-  const invalid = state.calendar.workDays.some((day) =>
-    day.enabled &&
-    day.slots.some(
-      (slot) =>
-        !slot.start ||
-        !slot.end ||
-        slot.start >= slot.end
-    )
-  );
+  const invalidDay = state.calendar.workDays.find((day) => {
+    if (!day.enabled) return false;
+    const slots = [...(day.slots || [])].sort((a, b) => a.start.localeCompare(b.start));
+    if (!slots.length) return true;
+    if (slots.some((slot) => !slot.start || !slot.end || slot.start >= slot.end)) return true;
+    return slots.some((slot, index) => index > 0 && slot.start < slots[index - 1].end);
+  });
 
-  if (invalid) {
-    showToast("開始時刻より後の終了時刻を指定してください");
+  if (invalidDay) {
+    state.calendar.selectedWorkDay = invalidDay.dayOfWeek;
+    renderWorkHourDayList();
+    renderWorkHourEditor();
+    showToast(`${calendarDayNamesJa[invalidDay.dayOfWeek]}の時間帯を確認してください（重複・未入力不可）`);
     return;
   }
 
