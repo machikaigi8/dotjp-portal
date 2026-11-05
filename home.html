@@ -3794,6 +3794,61 @@ a:active {
   -webkit-user-select: none;
 }
 
+
+/* v31: Figma 139:743 名簿 / 139:827 要望。1440×1024キャンバス基準 */
+.screen-hp-edit .figma-hp-topline {position:absolute;left:123px;top:83px;display:flex;align-items:center;gap:92px;height:69px;}
+.screen-hp-edit .figma-hp-tab {border:0;background:transparent;color:#111;font:400 40px/1.35 Arial,'Noto Sans JP',sans-serif;cursor:pointer;padding:4px 0;}
+.screen-hp-edit .figma-hp-tab.is-active {cursor:default;}
+.screen-hp-edit .figma-hp-main {position:absolute;left:123px;top:162px;width:1194px;height:700px;background:#fff;border:3px solid #000;box-sizing:border-box;overflow:hidden;}
+.screen-hp-edit .figma-hp-main[hidden] {display:none!important;}
+.screen-hp-edit [data-hp-view="roster"] {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}
+.screen-hp-edit .figma-hp-column {min-width:0;min-height:0;border-right:3px solid #000;display:flex;flex-direction:column;}
+.screen-hp-edit .figma-hp-column:last-child {border-right:0;}
+.screen-hp-edit .figma-hp-column-title {height:57px;min-height:57px;box-sizing:border-box;text-align:center;border-bottom:3px solid #000;font-size:39px;line-height:53px;color:#080808;}
+.screen-hp-edit .figma-hp-column-list {overflow:auto;padding:0 4px;flex:1;}
+.screen-hp-edit .figma-hp-roster-row {min-height:50px;display:flex;align-items:center;gap:7px;padding:0 5px;white-space:nowrap;font-size:28px;line-height:1.25;color:#080808;}
+.screen-hp-edit .figma-hp-roster-name {overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.screen-hp-edit .figma-hp-roster-role {font-size:26px;flex:none;color:#262626;}
+.screen-hp-edit .figma-hp-roster-change {background:transparent;border:0;padding:0;font-size:23px;flex:none;cursor:pointer;color:#202020;}
+.screen-hp-edit .figma-hp-back {position:absolute;left:128px;top:912px;width:140px;height:60px;background:#3080ff;color:white;border:0;font-size:39px;cursor:pointer;white-space:nowrap;}
+.screen-hp-edit .figma-hp-modal[hidden] {display:none!important;}
+.screen-hp-edit .figma-hp-modal {position:absolute;inset:0;z-index:30;background:rgba(20,30,60,.30);display:grid;place-items:center;}
+.screen-hp-edit .figma-hp-modal-dialog {width:550px;background:white;border:3px solid #1f3f78;padding:24px 32px;display:grid;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.15);font-size:22px;}
+.screen-hp-edit .figma-hp-modal-dialog h2 {font-size:32px;margin:0 0 8px;}
+.screen-hp-edit .figma-hp-modal-dialog label {display:grid;gap:4px;}
+.screen-hp-edit .figma-hp-modal-dialog input,.screen-hp-edit .figma-hp-modal-dialog select {width:100%;font-size:24px;padding:7px;border:2px solid #b5c2da;background:white;}
+.screen-hp-edit .figma-hp-modal-actions {display:flex;justify-content:flex-end;gap:10px;margin-top:10px;}
+.screen-hp-edit .figma-hp-modal-actions button {font-size:23px;padding:9px 24px;background:#e4ebfa;border:0;cursor:pointer;}
+.screen-hp-edit .figma-hp-modal-actions button:last-child {background:#3080ff;color:#fff;}
+
+/* v33: 代表とデベロッパーは独立した権限として付与する。 */
+.screen-hp-edit .figma-roster-privilege {display:grid;gap:10px;padding:12px;background:#eff3fc;border:1px solid #d0dbf0;font-size:18px;}
+.screen-hp-edit .figma-roster-privilege[hidden] {display:none!important;}
+.screen-hp-edit .figma-roster-privilege label {display:flex;flex-direction:row;align-items:center;gap:8px;}
+.screen-hp-edit .figma-roster-privilege input {width:22px;height:22px;flex:0 0 22px;}
+.screen-hp-edit .figma-hp-tab[hidden] {display:none!important;}
+.screen-hp-edit .figma-hp-modal-dialog {max-height:calc(100% - 80px);overflow-y:auto;}
+.screen-hp-edit .figma-roster-privilege input:disabled {opacity:.65;cursor:not-allowed;}
+
+/* v32: Figmaの要望白枠内部に受信一覧だけを追加。 */
+.screen-hp-edit .figma-hp-requests {display:block;}
+.screen-hp-edit .figma-hp-request-list {height:100%;overflow-y:auto;padding:12px 28px;box-sizing:border-box;}
+.screen-hp-edit .figma-hp-request-entry {padding:14px 12px;border-bottom:2px solid #d7d7dc;}
+.screen-hp-edit .figma-hp-request-meta {display:flex;align-items:center;gap:16px;font-size:23px;color:#5a5a69;}
+.screen-hp-edit .figma-hp-request-person {font-size:27px;font-weight:bold;color:#111;}
+.screen-hp-edit .figma-hp-request-content {margin:8px 0 0;font-size:26px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;color:#111;}
+.screen-hp-edit .figma-hp-empty {text-align:center;font-size:30px;color:#666;margin:80px 0;}
+.screen-hp-edit .figma-hp-modal-dialog label.figma-roster-chief {display:flex;align-items:center;gap:12px;}
+.screen-hp-edit .figma-roster-chief input {width:26px;height:26px;flex:none;}
+.screen-hp-edit .figma-roster-legacy {margin:0;color:#655a49;font-size:17px;line-height:1.5;}
+.screen-hp-request .hp-request-panel {position:absolute;left:120px;top:162px;width:1200px;height:700px;background:white;border:3px solid #000;padding:42px 58px;box-sizing:border-box;display:flex;flex-direction:column;gap:22px;}
+.screen-hp-request .hp-request-panel h2 {margin:0;font-size:46px;font-weight:500;}
+.screen-hp-request .hp-request-panel p {font-size:27px;margin:0;}
+.screen-hp-request .hp-request-panel label {font-size:30px;}
+.screen-hp-request .hp-request-panel textarea {flex:1;resize:none;font-size:28px;line-height:1.5;padding:18px;border:2px solid #b0b6c4;}
+.screen-hp-request .hp-request-actions {display:flex;justify-content:flex-end;}
+.screen-hp-request .hp-request-actions button {border:0;background:#3080ff;color:white;padding:14px 40px;font-size:31px;cursor:pointer;}
+
 </style>
 </head>
 <body>
@@ -4130,16 +4185,69 @@ a:active {
         <section class="screen screen-hp-edit" data-screen="hp-edit">
           <div class="user-name" data-user-name>＜名前＞</div>
 
-          <div class="hp-edit-panel">
-            <div class="portal-screen-title-row">
-              <div>
-                <h1>HP編集</h1>
-                <p>デベロッパー専用</p>
-              </div>
-              <button class="portal-back-button" type="button" data-route="home">← ホーム</button>
+          <div class="figma-hp-topline">
+            <button type="button" class="figma-hp-tab is-active" data-hp-tab="roster">関東・関西名簿</button>
+            <button type="button" class="figma-hp-tab" data-hp-tab="requests">要望</button>
+          </div>
+          <section class="figma-hp-main" data-hp-view="roster">
+            <div class="figma-hp-column" data-roster-column="関東">
+              <div class="figma-hp-column-title">関東</div>
+              <div class="figma-hp-column-list" id="figmaRosterKanto"></div>
             </div>
+            <div class="figma-hp-column" data-roster-column="関西">
+              <div class="figma-hp-column-title">関西</div>
+              <div class="figma-hp-column-list" id="figmaRosterKansai"></div>
+            </div>
+            <div class="figma-hp-column" data-roster-column="未振り分け">
+              <div class="figma-hp-column-title">未振り分け</div>
+              <div class="figma-hp-column-list" id="figmaRosterUnassigned"></div>
+            </div>
+          </section>
+          <section class="figma-hp-main figma-hp-requests" data-hp-view="requests" hidden>
+            <div class="figma-hp-request-list" id="figmaHpRequestsList">
+              <p class="figma-hp-empty">読み込み中…</p>
+            </div>
+          </section>
+          <button type="button" class="figma-hp-back" data-common-back="" data-route="home">←戻る</button>
 
-            <section class="roster-editor">
+          <div class="figma-hp-modal" id="figmaRosterModal" hidden>
+            <div class="figma-hp-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="figmaRosterModalTitle">
+              <h2 id="figmaRosterModalTitle">名簿の変更</h2>
+              <input type="hidden" id="figmaRosterEditId">
+              <label>氏名<input type="text" id="figmaRosterEditName"></label>
+              <label>メールアドレス<input type="email" id="figmaRosterEditEmail"></label>
+              <label>振り分け
+                <select id="figmaRosterEditGroup">
+                  <option value="関東">関東</option>
+                  <option value="関西">関西</option>
+                  <option value="未振り分け">未振り分け</option>
+                </select>
+              </label>
+              <label>部署
+                <select id="figmaRosterEditDepartment">
+                  <option value="">未設定</option>
+                  <option value="Cons">Cons</option>
+                  <option value="mark">mark</option>
+                  <option value="人事">人事</option>
+                  <option value="PG">PG</option>
+                  <option value="クラ">クラ</option>
+                  <option value="事務">事務</option>
+                </select>
+              </label>
+              <label class="figma-roster-chief"><input type="checkbox" id="figmaRosterEditChief">統括（部署名の末尾に「統」を付ける）</label>
+              <section id="figmaRosterPrivilegeEditor" class="figma-roster-privilege" hidden>
+                <label><input type="checkbox" id="figmaRosterEditRepresentative">代表（名簿編集権限あり）</label>
+                <label><input type="checkbox" id="figmaRosterEditDeveloper">デベロッパー（デベロッパーのみ指定・解除可能）</label>
+              </section>
+              <p class="figma-roster-legacy" id="figmaRosterLegacyRole" hidden></p>
+              <div class="figma-hp-modal-actions">
+                <button type="button" data-figma-roster-cancel>キャンセル</button>
+                <button type="button" data-figma-roster-save>保存</button>
+              </div>
+            </div>
+          </div>
+          <!-- 既存API/名簿編集関数との互換性維持用。通常画面には表示しない。 -->
+            <section class="roster-editor" hidden style="display:none">
               <h2>名簿管理</h2>
               <p class="roster-note">
                 AIはこの名簿の氏名と資料中の名前を照合します。名前指定がない依頼は「全員」になります。
@@ -4166,6 +4274,18 @@ a:active {
                 </table>
               </div>
             </section>
+        </section>
+
+        <section class="screen screen-hp-request" data-screen="hp-request">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="hp-request-panel">
+            <h2>HPへの要望</h2>
+            <p>サイトの改善案や不具合をデベロッパーに送信できます。</p>
+            <label for="hpRequestContent">要望の内容</label>
+            <textarea id="hpRequestContent" maxlength="4000" placeholder="改善してほしい点・気づいた不具合などを入力してください"></textarea>
+            <div class="hp-request-actions">
+              <button type="button" id="hpRequestSubmit">要望を送信</button>
+            </div>
           </div>
         </section>
 
@@ -4538,7 +4658,11 @@ const PORTAL_API_WORKER = "https://dotjp-portal-api.taka-souda516.workers.dev";
 const state = {
   user: null,
   isDeveloper: false,
+  isRepresentative: false,
+  canEditRoster: false,
   roster: [],
+  preferredRegion: null,
+  hpRequests: [],
   remoteTasks: [],
   postCards: [],
   postCardIndex: 0,
@@ -4589,6 +4713,7 @@ const screenNames = new Set([
   "client-contact",
   "client-send",
   "hp-edit",
+  "hp-request",
   "screen-share",
   "task-end"
 ]);
@@ -5044,14 +5169,18 @@ function wireActions() {
   document.querySelector('[data-action="delete-current-post"]').addEventListener("click", deleteCurrentPostCard);
 
   document.getElementById("hpEditButton").addEventListener("click", () => {
-    if (state.isDeveloper) {
-      showScreen("hp-edit");
-    } else {
-      showToast("HP編集はデベロッパー専用です");
-    }
+    showScreen(state.canEditRoster ? "hp-edit" : "hp-request");
   });
+  document.getElementById('hpRequestSubmit').addEventListener('click', submitHpRequest);
 
   document.querySelector('[data-action="roster-add"]').addEventListener("click", addRosterMember);
+  document.querySelectorAll('[data-hp-tab]').forEach(button => {
+    button.addEventListener('click', () => switchFigmaHpTab(button.dataset.hpTab));
+  });
+  document.querySelector('[data-figma-roster-cancel]').addEventListener('click', () => {
+    document.getElementById('figmaRosterModal').hidden = true;
+  });
+  document.querySelector('[data-figma-roster-save]').addEventListener('click', saveFigmaRosterRow);
 
   document.querySelector('[data-action="share-start"]').addEventListener("click", startScreenShare);
   document.querySelector('[data-action="share-stop"]').addEventListener("click", stopScreenShare);
@@ -5238,11 +5367,12 @@ if (name === "post-confirm") {
   }
 
   if (name === "hp-edit") {
-    if (!state.isDeveloper) {
-      showToast("デベロッパー専用です");
+    if (!state.canEditRoster) {
+      showToast("名簿は代表またはデベロッパーが編集できます");
       showScreen("home", updateHash);
       return;
     }
+    switchFigmaHpTab('roster');
     loadRoster(true);
   }
 
@@ -5760,6 +5890,7 @@ function logoutAfterReport() {
   leaveScreenViewer();
 
   sessionStorage.removeItem("dotjp_access_token");
+  sessionStorage.removeItem("dotjp_region_preference_applied_for");
   sessionStorage.removeItem("dotjp_2fa_ticket");
   sessionStorage.removeItem("dotjp_2fa_ticket_v1");
   sessionStorage.removeItem(userSessionKey("active_task_id"));
@@ -6474,19 +6605,31 @@ async function loadPortalProfile() {
   try {
     const data = await portalFetch("/api/me");
     state.isDeveloper = Boolean(data.developer);
+    state.isRepresentative = Boolean(data.representative);
+    state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
+    // 同じログイン中に手動で変えた地域は維持し、新規ログイン時は名簿を優先。
+    const email = userIdentity();
+    const regionSessionOwnerKey = 'dotjp_region_preference_applied_for';
+    if (sessionStorage.getItem(regionSessionOwnerKey) !== email) {
+      const preferred = data.preferred_region;
+      state.region = preferred === 'kanto' || preferred === 'kansai' ? preferred : 'kanto';
+      sessionStorage.setItem('dotjp_region', state.region);
+      sessionStorage.setItem(regionSessionOwnerKey, email);
+    }
+    state.preferredRegion = data.preferred_region || null;
+    updateRegion();
 
     const button = document.getElementById("hpEditButton");
 
-    if (state.isDeveloper) {
-      button.textContent = "HP編集";
-    } else {
-      button.textContent = "HPへの要望";
-    }
+    button.textContent = state.isDeveloper ? "HP編集"
+      : state.canEditRoster ? "名簿編集" : "HPへの要望";
 
     await loadRoster(false);
   } catch (error) {
     console.warn("Portal API profile unavailable", error);
     state.isDeveloper = false;
+    state.isRepresentative = false;
+    state.canEditRoster = false;
     document.getElementById("hpEditButton").textContent = "HPへの要望";
   }
 }
@@ -6505,11 +6648,171 @@ async function loadRoster(includeDisabled = false) {
 
     if (includeDisabled) {
       renderRosterTable();
+      renderFigmaRoster();
     }
   } catch (error) {
     if (includeDisabled) {
       showToast(error.message || "名簿を取得できませんでした");
     }
+  }
+}
+
+// Figmaの「関東・関西名簿」3列と、「要望」空枠を切り替える。
+function switchFigmaHpTab(tab) {
+  const active = (tab === 'requests' && state.isDeveloper) ? 'requests' : 'roster';
+  document.querySelectorAll('[data-hp-tab]').forEach(el => {
+    if (el.dataset.hpTab === 'requests') el.hidden = !state.isDeveloper;
+    el.classList.toggle('is-active', el.dataset.hpTab === active);
+  });
+  document.querySelectorAll('[data-hp-view]').forEach(el => {
+    el.hidden = el.dataset.hpView !== active;
+  });
+  if (active === 'requests' && state.isDeveloper) void loadHpRequests();
+}
+
+function renderFigmaRoster() {
+  const columns = {
+    '関東': document.getElementById('figmaRosterKanto'),
+    '関西': document.getElementById('figmaRosterKansai'),
+    '未振り分け': document.getElementById('figmaRosterUnassigned')
+  };
+  for (const el of Object.values(columns)) if (el) el.innerHTML = '';
+  const visible = (state.roster || []).filter(item => Number(item.enabled) !== 0);
+  const grouped = {'関東':[], '関西':[], '未振り分け':[]};
+  visible.forEach(item => {
+    const group = ['関東','関西'].includes(String(item.group_name || ''))
+      ? String(item.group_name) : '未振り分け';
+    grouped[group].push(item);
+  });
+  for (const [group,items] of Object.entries(grouped)) {
+    const el = columns[group];
+    if (!el) continue;
+    el.innerHTML = items.map(item => `
+      <div class="figma-hp-roster-row" title="${escapeHtml(item.name)}">
+        <span class="figma-hp-roster-name">${escapeHtml(item.name)}</span>
+        <span class="figma-hp-roster-role">${escapeHtml([
+          item.role === '代表' ? '' : (item.role || ''),
+          Number(item.is_representative) === 1 ? '代表' : '',
+          Number(item.is_developer) === 1 ? '開発' : ''
+        ].filter(Boolean).join('・'))}</span>
+        <button type="button" class="figma-hp-roster-change" data-figma-roster-change="${Number(item.id)}">[変更]</button>
+      </div>`).join('');
+  }
+  document.querySelectorAll('[data-figma-roster-change]').forEach(button => {
+    button.addEventListener('click', () => editFigmaRosterRow(Number(button.dataset.figmaRosterChange)));
+  });
+}
+
+function editFigmaRosterRow(id) {
+  if (!state.canEditRoster) return;
+  const item = (state.roster || []).find(row => Number(row.id) === id);
+  if (!item) return;
+  document.getElementById('figmaRosterEditId').value = String(id);
+  document.getElementById('figmaRosterEditName').value = item.name || '';
+  document.getElementById('figmaRosterEditEmail').value = item.email || '';
+  document.getElementById('figmaRosterEditEmail').readOnly = !state.isDeveloper;
+  document.getElementById('figmaRosterEditRepresentative').checked = Number(item.is_representative) === 1;
+  document.getElementById('figmaRosterEditDeveloper').checked = Number(item.is_developer) === 1;
+  document.getElementById('figmaRosterEditDeveloper').disabled = Number(item.is_bootstrap_developer) === 1;
+  document.getElementById('figmaRosterPrivilegeEditor').hidden = !state.isDeveloper;
+  document.getElementById('figmaRosterEditGroup').value =
+    ['関東','関西'].includes(item.group_name) ? item.group_name : '未振り分け';
+  const role = String(item.role || '');
+  const departments = ['Cons','mark','人事','PG','クラ','事務'];
+  const chief = role.endsWith('統');
+  const department = chief ? role.slice(0,-1) : role;
+  const select = document.getElementById('figmaRosterEditDepartment');
+  // 既存の「代表」等の値は変更操作まで保持する。
+  select.querySelector('[data-legacy-role]')?.remove();
+  if (role && !departments.includes(department)) {
+    const option = document.createElement('option');
+    option.value = '__legacy__'; option.dataset.legacyRole = '1';
+    option.textContent = '現在の設定を維持（' + role + '）';
+    select.appendChild(option);
+    select.value = '__legacy__';
+  } else select.value = department;
+  document.getElementById('figmaRosterEditChief').checked = chief && departments.includes(department);
+  const legacy = document.getElementById('figmaRosterLegacyRole');
+  legacy.hidden = !(role && !departments.includes(department));
+  legacy.textContent = legacy.hidden ? '' : '既存設定「' + role + '」は、部署を選択するまで維持されます。';
+  document.getElementById('figmaRosterModal').hidden = false;
+}
+
+async function saveFigmaRosterRow() {
+  if (!state.canEditRoster) return;
+  const id = Number(document.getElementById('figmaRosterEditId').value);
+  const old = (state.roster || []).find(row => Number(row.id) === id);
+  if (!old) return;
+  const name = document.getElementById('figmaRosterEditName').value.trim();
+  const email = document.getElementById('figmaRosterEditEmail').value.trim();
+  const group_name = document.getElementById('figmaRosterEditGroup').value;
+  const department = document.getElementById('figmaRosterEditDepartment').value;
+  const chief = document.getElementById('figmaRosterEditChief').checked;
+  let role = department === '__legacy__' ? String(old.role || '')
+    : department ? department + (chief ? '統' : '') : '';
+  if (state.isDeveloper && old.role === '代表' &&
+      !document.getElementById('figmaRosterEditRepresentative').checked && role === '代表') {
+    role = '';
+  }
+  const privilegedChanges = state.isDeveloper ? {
+    is_representative: document.getElementById('figmaRosterEditRepresentative').checked,
+    is_developer: document.getElementById('figmaRosterEditDeveloper').checked
+  } : {};
+  if (!name || !email.toLowerCase().endsWith('@dot-jp.or.jp')) {
+    showToast('氏名と組織メールアドレスを確認してください');
+    return;
+  }
+  try {
+    await portalFetch('/api/roster/save', {
+      method: 'POST', body: {id,name,email,group_name,role,enabled:Number(old.enabled)!==0,
+        ...privilegedChanges}
+    });
+    document.getElementById('figmaRosterModal').hidden = true;
+    await loadRoster(true);
+    showToast('名簿を更新しました');
+  } catch (error) {
+    showToast(error.message || '名簿の更新に失敗しました');
+  }
+}
+
+async function submitHpRequest() {
+  const textarea = document.getElementById('hpRequestContent');
+  const content = textarea.value.trim();
+  if (!content) { showToast('要望の内容を入力してください'); return; }
+  const button = document.getElementById('hpRequestSubmit');
+  button.disabled = true;
+  try {
+    await portalFetch('/api/hp-requests', {method:'POST', body:{content}});
+    textarea.value = '';
+    showToast('要望を送信しました');
+    showScreen('home');
+  } catch (error) {
+    showToast(error.message || '要望を送信できませんでした');
+  } finally { button.disabled = false; }
+}
+
+async function loadHpRequests() {
+  const box = document.getElementById('figmaHpRequestsList');
+  if (!box || !state.isDeveloper) return;
+  box.innerHTML = '<p class="figma-hp-empty">読み込み中…</p>';
+  try {
+    const data = await portalFetch('/api/hp-requests');
+    state.hpRequests = Array.isArray(data.requests) ? data.requests : [];
+    if (!state.hpRequests.length) {
+      box.innerHTML = '<p class="figma-hp-empty">届いた要望はまだありません。</p>';
+      return;
+    }
+    box.innerHTML = state.hpRequests.map(item => {
+      const date = String(item.created_at || '').replace('T',' ').slice(0,19);
+      return `<article class="figma-hp-request-entry">
+        <div class="figma-hp-request-meta"><span class="figma-hp-request-person">${escapeHtml(item.user_name || '氏名未登録')}</span>
+        <span>${escapeHtml(item.user_email || '')}</span><time>${escapeHtml(date)} UTC</time></div>
+        <p class="figma-hp-request-content">${escapeHtml(item.content || '')}</p>
+      </article>`;
+    }).join('');
+  } catch (error) {
+    box.innerHTML = '<p class="figma-hp-empty">要望を取得できませんでした。</p>';
+    showToast(error.message || '要望を取得できませんでした');
   }
 }
 
