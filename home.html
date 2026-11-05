@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
+  <!-- Version v36: 2026-11-05 Figma roles + department routes -->
   <style>
 * {
   box-sizing: border-box;
@@ -3982,6 +3983,25 @@ a:active {
 }
 .screen-schedule-hours .work-hours-save-button:hover { background: #246fe7; }
 
+
+/* v36 Figma 2026-11-05: Department / MTG empty canvases and representative request tabs */
+.screen-department-placeholder .department-placeholder-panel {
+  position:absolute;left:120px;top:162px;width:1200px;height:700px;
+  background:#fff;box-sizing:border-box;
+}
+.screen-hp-request .representative-request-tabs {
+  position:absolute;left:123px;top:83px;height:69px;display:flex;align-items:center;gap:92px;
+  font:400 40px/1.35 Arial,'Noto Sans JP',sans-serif;color:#111;z-index:3;
+}
+.screen-hp-request .representative-request-tabs[hidden] {display:none!important;}
+.screen-hp-request .representative-request-tabs button {
+  border:0;background:none;color:#111;cursor:pointer;font:inherit;padding:4px 0;
+}
+.screen-hp-request.is-representative-request .hp-request-panel {
+  position:absolute;left:123px;top:162px;width:1194px;height:700px;
+  margin:0;box-sizing:border-box;
+}
+
 </style>
 </head>
 <body>
@@ -4052,13 +4072,13 @@ a:active {
             </div>
 
             <div class="department-grid">
-              <button type="button" class="blue-menu" data-placeholder="コンス">コンス</button>
-              <button type="button" class="blue-menu" data-placeholder="マーケティング">マーケティング</button>
-              <button type="button" class="blue-menu" data-placeholder="人事局">人事局</button>
-              <button type="button" class="blue-menu" data-placeholder="プログラム">プログラム</button>
+              <button type="button" class="blue-menu" data-route="department-cons">コンス</button>
+              <button type="button" class="blue-menu" data-route="department-mark">マーケティング</button>
+              <button type="button" class="blue-menu" data-route="department-hr">人事局</button>
+              <button type="button" class="blue-menu" data-route="department-pg">プログラム</button>
               <button type="button" class="blue-menu" data-route="client">クライアント</button>
-              <button type="button" class="blue-menu" data-placeholder="事務局">事務局</button>
-              <button type="button" class="blue-menu" data-placeholder="MTG出欠登録">MTG出欠登録</button>
+              <button type="button" class="blue-menu" data-route="department-office">事務局</button>
+              <button type="button" class="blue-menu" data-route="meeting-attendance">MTG出欠登録</button>
               <button type="button" class="blue-menu" data-route="post">〒依頼出しPOST</button>
               <button type="button" class="blue-menu" data-route="schedule">スケジュール登録</button>
               <button id="hpEditButton" type="button" class="blue-menu">HPへの要望</button>
@@ -4079,6 +4099,37 @@ a:active {
 
 
         <!-- Figma 64:637: クライアント -->
+        <!-- Figma 2026-11-05: コンス / white placeholder -->
+        <section class="screen screen-department-placeholder" data-screen="department-cons" aria-label="コンス">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="department-placeholder-panel" aria-label="コンス：準備中"></div>
+        </section>
+        <!-- Figma 2026-11-05: マーケティング / white placeholder -->
+        <section class="screen screen-department-placeholder" data-screen="department-mark" aria-label="マーケティング">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="department-placeholder-panel" aria-label="マーケティング：準備中"></div>
+        </section>
+        <!-- Figma 2026-11-05: 人事局 / white placeholder -->
+        <section class="screen screen-department-placeholder" data-screen="department-hr" aria-label="人事局">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="department-placeholder-panel" aria-label="人事局：準備中"></div>
+        </section>
+        <!-- Figma 2026-11-05: プログラム / white placeholder -->
+        <section class="screen screen-department-placeholder" data-screen="department-pg" aria-label="プログラム">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="department-placeholder-panel" aria-label="プログラム：準備中"></div>
+        </section>
+        <!-- Figma 2026-11-05: 事務局 / white placeholder -->
+        <section class="screen screen-department-placeholder" data-screen="department-office" aria-label="事務局">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="department-placeholder-panel" aria-label="事務局：準備中"></div>
+        </section>
+        <!-- Figma 2026-11-05: MTG出欠登録 / white placeholder -->
+        <section class="screen screen-department-placeholder" data-screen="meeting-attendance" aria-label="MTG出欠登録">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="department-placeholder-panel" aria-label="MTG出欠登録：準備中"></div>
+        </section>
+
         <section class="screen screen-client" data-screen="client">
           <div class="user-name" data-user-name>＜名前＞</div>
 
@@ -4411,6 +4462,10 @@ a:active {
 
         <section class="screen screen-hp-request" data-screen="hp-request">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <nav id="representativeRequestTabs" class="representative-request-tabs" hidden aria-label="HP編集">
+            <button type="button" data-route="hp-edit">関東・関西名簿</button>
+            <span>要望送信</span>
+          </nav>
           <div class="hp-request-panel">
             <h2>HPへの要望</h2>
             <p>サイトの改善案や不具合をデベロッパーに送信できます。</p>
@@ -4849,6 +4904,12 @@ const screenNames = new Set([
   "client-send",
   "hp-edit",
   "hp-request",
+  "department-cons",
+  "department-mark",
+  "department-hr",
+  "department-pg",
+  "department-office",
+  "meeting-attendance",
   "screen-share",
   "task-end"
 ]);
@@ -5499,6 +5560,15 @@ if (name === "post-confirm") {
 
   if (name === "schedule-hours") {
     loadWorkHours();
+  }
+
+  if (name === "hp-request") {
+    const representativeView = Boolean(state.isRepresentative && !state.isDeveloper);
+    const requestScreen = document.querySelector('[data-screen="hp-request"]');
+    requestScreen.classList.toggle('is-representative-request', representativeView);
+    document.getElementById('representativeRequestTabs').hidden = !representativeView;
+    const title = requestScreen.querySelector('.hp-request-panel h2');
+    if (title) title.textContent = representativeView ? 'デベロッパーへの要望' : 'HPへの要望';
   }
 
   if (name === "hp-edit") {
@@ -6756,8 +6826,7 @@ async function loadPortalProfile() {
 
     const button = document.getElementById("hpEditButton");
 
-    button.textContent = state.isDeveloper ? "HP編集"
-      : state.canEditRoster ? "名簿編集" : "HPへの要望";
+    button.textContent = state.canEditRoster ? "HP編集" : "HPへの要望";
 
     await loadRoster(false);
   } catch (error) {
@@ -6794,9 +6863,17 @@ async function loadRoster(includeDisabled = false) {
 
 // Figmaの「関東・関西名簿」3列と、「要望」空枠を切り替える。
 function switchFigmaHpTab(tab) {
+  // v36: developer sees requests received; representative sees a request submission screen.
+  if (tab === 'requests' && !state.isDeveloper && state.isRepresentative) {
+    showScreen('hp-request');
+    return;
+  }
   const active = (tab === 'requests' && state.isDeveloper) ? 'requests' : 'roster';
   document.querySelectorAll('[data-hp-tab]').forEach(el => {
-    if (el.dataset.hpTab === 'requests') el.hidden = !state.isDeveloper;
+    if (el.dataset.hpTab === 'requests') {
+      el.hidden = !state.isDeveloper && !state.isRepresentative;
+      el.textContent = state.isDeveloper ? '要望' : '要望送信';
+    }
     el.classList.toggle('is-active', el.dataset.hpTab === active);
   });
   document.querySelectorAll('[data-hp-view]').forEach(el => {
