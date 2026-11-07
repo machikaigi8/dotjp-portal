@@ -4063,6 +4063,33 @@ a:active {
 .mtg-form-footer button:disabled { opacity:.55; cursor:wait; }
 .mtg-manager-unavailable { margin:55px auto; padding:30px; border-radius:16px; background:#f2f6ff; max-width:760px; text-align:center; font-size:22px; line-height:1.6; }
 
+/* v39 MTG: participant selection / recurrence / event deletion */
+.mtg-audience-grid { margin-top:18px; }
+.mtg-custom-participants { background:#f7f9ff; border:2px solid #d8e3fa; border-radius:13px; padding:13px; margin-top:15px; }
+.mtg-custom-head { display:flex; justify-content:space-between; gap:15px; font-size:20px; align-items:center; margin-bottom:11px; }
+.mtg-custom-head span { color:#3764a2; font-size:18px; }
+#mtgAudienceSearch { width:100%; height:46px; background:white; border:2px solid #cbd6eb; border-radius:10px; font-size:18px; padding:7px 12px; }
+.mtg-audience-roster { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px 12px; margin-top:10px; max-height:180px; overflow:auto; }
+.mtg-audience-choice { display:flex; align-items:center; gap:9px; padding:7px 10px; background:white; border:1px solid #e1e8f4; border-radius:8px; font-size:17px; font-weight:500; cursor:pointer; }
+.mtg-audience-choice input { width:22px; height:22px; flex-shrink:0; }
+.mtg-audience-choice span { min-width:0; overflow-wrap:anywhere; }
+.mtg-audience-choice small { color:#627087; font-size:14px; display:block; }
+.mtg-custom-participants p { margin:7px 3px 0; font-size:16px; color:#6c7588; }
+.mtg-repeat-until { display:flex; flex-direction:column; gap:7px; margin-top:15px; font-size:20px; font-weight:700; }
+#mtgNewUntil { width:100%; height:52px; border:2px solid #cad4ed; border-radius:10px; padding:8px 13px; font:inherit; font-size:20px; }
+.mtg-audience-tag { display:inline-block; margin-top:6px; font-size:15px; padding:4px 10px; border-radius:10px; background:#eef3ff; color:#334c7f; }
+.mtg-details-footer { grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding:10px 0 0; border-top:1px solid #dae3f1; }
+.mtg-details-footer .mtg-delete-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.mtg-delete-button { background:#fff2f2; border:2px solid #eaa1a8; color:#ad2d3d; font-size:17px; border-radius:9px; padding:9px 16px; cursor:pointer; font-weight:700; }
+.mtg-delete-button:hover { background:#ffe0e0; }
+.mtg-outside-audience { font-size:18px; color:#765a1b; padding:7px 10px; border-radius:10px; background:#fff6df; }
+.mtg-status:disabled:not(.is-selected) { opacity:.53; }
+@media(max-width:850px){
+  .mtg-audience-roster { grid-template-columns:1fr; }
+  .mtg-row { gap:8px; }
+  .mtg-details { grid-template-columns:1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -4174,8 +4201,8 @@ a:active {
         <section class="screen screen-department-placeholder" data-screen="department-hr" aria-label="人事局">
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="department-placeholder-panel mtg-staff-shell" aria-label="人事局のMTG登録">
-            <div class="mtg-staff-header"><h2>MTG登録</h2><p>人事局が登録したMTGは、所属地域の出欠登録画面に表示されます。</p></div>
-            <div id="mtgManagerUnavailable" class="mtg-manager-unavailable" hidden>MTGの登録は人事局の担当者のみ可能です。閲覧・出欠回答は「MTG出欠登録」から行えます。</div>
+            <div class="mtg-staff-header"><h2>MTG登録</h2><p>所属地域のMTGを登録できます。どのスタッフでも登録可能です。</p></div>
+            <div id="mtgManagerUnavailable" class="mtg-manager-unavailable" hidden>登録用APIに接続できません。Workerを更新してください。</div>
             <form id="mtgManagerForm" class="mtg-manager-form" hidden>
               <div class="mtg-manager-grid">
                 <label>日付 <input id="mtgNewDate" type="date" required></label>
@@ -4183,6 +4210,23 @@ a:active {
                 <label>開催方法 <select id="mtgNewMode"><option value="in_person">対面</option><option value="online">オンライン</option></select></label>
                 <label id="mtgPlaceField">場所（対面のみ） <input id="mtgNewPlace" type="text" maxlength="160" placeholder="＠会議室 IFs 西新宿" required></label>
               </div>
+              <div class="mtg-manager-grid mtg-audience-grid">
+                <label>参加者の範囲
+                  <select id="mtgNewAudience"><option value="all">全員</option><option value="custom">カスタム（複数選択）</option></select>
+                </label>
+                <label>繰り返し
+                  <select id="mtgNewRepeat"><option value="none">繰り返さない</option><option value="daily">毎日</option><option value="weekly">毎週</option><option value="monthly">毎月</option></select>
+                </label>
+              </div>
+              <div id="mtgAudienceCustomBox" class="mtg-custom-participants" hidden>
+                <div class="mtg-custom-head"><strong>参加者を選択</strong><span id="mtgAudienceCount">0名選択中</span></div>
+                <input id="mtgAudienceSearch" type="search" placeholder="氏名・メールアドレスで絞り込み" aria-label="参加者を検索">
+                <div id="mtgAudienceRoster" class="mtg-audience-roster" role="group" aria-label="MTG参加者の選択"></div>
+                <p>名簿に登録済みのスタッフから複数選択できます。</p>
+              </div>
+              <label id="mtgRepeatUntilField" class="mtg-repeat-until" hidden>繰り返し終了日（最長1年・最大60回）
+                <input id="mtgNewUntil" type="date">
+              </label>
               <label class="mtg-tt-label">TT（タイムテーブル） <textarea id="mtgNewTimetable" maxlength="8000" rows="8" placeholder="13:00　開会&#10;13:10　報告&#10;14:00　議題" required></textarea></label>
               <div class="mtg-form-footer"><span id="mtgManagerRegionInfo">所属地域に登録されます</span><button id="mtgCreateButton" type="submit">MTGを登録</button></div>
             </form>
@@ -4929,6 +4973,7 @@ const state = {
   isRepresentative: false,
   canEditRoster: false,
   canManageMeetings: false,
+  meetingParticipantEmails: new Set(),
   meetings: [],
   expandedMeetingId: null,
   meetingNoteDrafts: {},
@@ -5358,6 +5403,18 @@ function wireActions() {
   });
   document.getElementById('mtgRefreshButton').addEventListener('click', () => void loadMeetings());
   document.getElementById('mtgNewMode').addEventListener('change', updateMeetingModeField);
+  document.getElementById('mtgNewAudience').addEventListener('change', updateMeetingAudienceField);
+  document.getElementById('mtgNewRepeat').addEventListener('change', updateMeetingRepeatField);
+  document.getElementById('mtgNewDate').addEventListener('change', updateMeetingRepeatField);
+  document.getElementById('mtgAudienceSearch').addEventListener('input', renderMeetingAudienceChoices);
+  document.getElementById('mtgAudienceRoster').addEventListener('change', event => {
+    const box=event.target.closest('[data-mtg-participant-email]');
+    if(!box)return;
+    const email=box.dataset.mtgParticipantEmail;
+    if(box.checked)state.meetingParticipantEmails.add(email);
+    else state.meetingParticipantEmails.delete(email);
+    document.getElementById('mtgAudienceCount').textContent=state.meetingParticipantEmails.size+'名選択中';
+  });
   document.getElementById('mtgManagerForm').addEventListener('submit', createMeeting);
   document.querySelectorAll("[data-route]").forEach((element) => {
     element.addEventListener("click", () => {
@@ -7012,6 +7069,7 @@ async function loadRoster(includeDisabled = false) {
       : [];
 
     renderDestinationRosterOptions();
+    renderMeetingAudienceChoices();
 
     if (includeDisabled) {
       renderRosterTable();
@@ -9126,7 +9184,7 @@ function escapeHtml(value) {
 }
 
 
-/* MTG 出欠登録：Figma 151:39。開催登録は人事局、出欠回答はログイン済みスタッフ。 */
+/* MTG: 全スタッフが登録可能。参加対象者と繰り返しはWorkerでも検証する。 */
 function meetingFormatDate(date) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(date || ''));
   if (!m) return String(date || '');
@@ -9137,154 +9195,236 @@ function meetingFormatDate(date) {
 function meetingStatusLabel(status) {
   return ({in_person:'出席',absent:'欠席',online:'オンライン'})[status] || '未回答';
 }
-function setupMeetingManager() {
-  const allowed = !!state.canManageMeetings;
-  document.getElementById('mtgManagerForm').hidden = !allowed;
-  document.getElementById('mtgManagerUnavailable').hidden = allowed;
-  const dateInput = document.getElementById('mtgNewDate');
-  if (!dateInput.value) dateInput.value = localDateIso(new Date());
-  document.getElementById('mtgManagerRegionInfo').textContent =
-    '登録先：'+(state.preferredRegion === 'kansai' ? '関西' : '関東')+'（名簿の所属地域）';
+function setupMeetingManager(){
+  document.getElementById('mtgManagerForm').hidden=false;
+  document.getElementById('mtgManagerUnavailable').hidden=true;
+  const dateInput=document.getElementById('mtgNewDate');
+  if(!dateInput.value)dateInput.value=localDateIso(new Date());
+  document.getElementById('mtgManagerRegionInfo').textContent=
+    '登録先：'+(state.preferredRegion==='kansai'?'関西':'関東')+'（名簿の所属地域）';
   updateMeetingModeField();
+  updateMeetingAudienceField();
+  updateMeetingRepeatField();
 }
-function updateMeetingModeField() {
-  const online = document.getElementById('mtgNewMode').value === 'online';
-  document.getElementById('mtgPlaceField').hidden = online;
-  document.getElementById('mtgNewPlace').required = !online;
+function updateMeetingModeField(){
+  const online=document.getElementById('mtgNewMode').value==='online';
+  document.getElementById('mtgPlaceField').hidden=online;
+  document.getElementById('mtgNewPlace').required=!online;
 }
-async function createMeeting(event) {
+function updateMeetingAudienceField(){
+  const custom=document.getElementById('mtgNewAudience').value==='custom';
+  document.getElementById('mtgAudienceCustomBox').hidden=!custom;
+  if(custom)renderMeetingAudienceChoices();
+}
+function renderMeetingAudienceChoices(){
+  const root=document.getElementById('mtgAudienceRoster');
+  if(!root)return;
+  const rows=(state.roster||[]).filter(r=>Number(r.enabled)!==0 &&
+    String(r.email||'').toLowerCase().endsWith('@dot-jp.or.jp'));
+  const search=(document.getElementById('mtgAudienceSearch')?.value||'').trim().toLowerCase();
+  const filtered=rows.filter(r=>(r.name+' '+r.email).toLowerCase().includes(search));
+  root.innerHTML=filtered.map(r=>{
+    const email=String(r.email||'').trim().toLowerCase();
+    return `<label class="mtg-audience-choice"><input type="checkbox" data-mtg-participant-email="${escapeHtml(email)}"
+      ${state.meetingParticipantEmails.has(email)?'checked':''}>
+      <span>${escapeHtml(r.name||email)}<small>${escapeHtml(email)}　${escapeHtml(r.group_name||'')}</small></span></label>`;
+  }).join('')||'<div class="mtg-empty">該当するスタッフがいません。</div>';
+  document.getElementById('mtgAudienceCount').textContent=state.meetingParticipantEmails.size+'名選択中';
+}
+function updateMeetingRepeatField(){
+  const repeat=document.getElementById('mtgNewRepeat').value;
+  const field=document.getElementById('mtgRepeatUntilField');
+  const input=document.getElementById('mtgNewUntil');
+  const active=repeat!=='none';
+  field.hidden=!active;
+  input.required=active;
+  const start=document.getElementById('mtgNewDate').value;
+  if(start){
+    input.min=start;
+    const limit=new Date(start+'T00:00:00Z');
+    limit.setUTCDate(limit.getUTCDate()+366);
+    input.max=limit.toISOString().slice(0,10);
+    if(active && (!input.value || input.value<start || input.value>input.max)){
+      const date=new Date(start+'T00:00:00Z');
+      date.setUTCDate(date.getUTCDate()+(repeat==='daily'?14:repeat==='weekly'?56:180));
+      input.value=date.toISOString().slice(0,10);
+    }
+  }
+}
+async function createMeeting(event){
   event.preventDefault();
-  if (!state.canManageMeetings) { showToast('人事局のみ登録可能です'); return; }
-  const button = document.getElementById('mtgCreateButton');
-  const mode = document.getElementById('mtgNewMode').value;
-  const body = {
+  const button=document.getElementById('mtgCreateButton');
+  const mode=document.getElementById('mtgNewMode').value;
+  const audience=document.getElementById('mtgNewAudience').value;
+  const frequency=document.getElementById('mtgNewRepeat').value;
+  const body={
     date:document.getElementById('mtgNewDate').value,
     title:document.getElementById('mtgNewTitle').value.trim(),
     mode,
-    place:mode === 'online' ? '' : document.getElementById('mtgNewPlace').value.trim(),
-    timetable:document.getElementById('mtgNewTimetable').value.trim()
+    place:mode==='online'?'':document.getElementById('mtgNewPlace').value.trim(),
+    timetable:document.getElementById('mtgNewTimetable').value.trim(),
+    audience,
+    participants:audience==='custom'?[...state.meetingParticipantEmails]:[],
+    recurrence:{frequency,until:frequency==='none'?'':document.getElementById('mtgNewUntil').value}
   };
-  if (!body.date || !body.title || (mode === 'in_person' && !body.place) || !body.timetable) {
-    showToast('日付・項目・場所（対面のみ）・TTを入力してください'); return;
+  if(!body.date || !body.title || (mode==='in_person'&&!body.place)||!body.timetable){
+    showToast('日付・項目・場所（対面のみ）・TTを入力してください');return;
   }
-  button.disabled = true;
-  try {
-    const result = await portalFetch('/api/meetings',{method:'POST',body});
-    document.getElementById('mtgNewTimetable').value = '';
-    showToast((result.region === 'kansai' ? '関西' : '関東')+'のMTGを登録しました');
-    // 登録した地域が表示地域なら、MTG一覧を次回開いたときに反映される。
-    if (state.region === result.region) state.meetings = [];
-  } catch(error) { showToast(error.message || 'MTGを登録できませんでした'); }
-  finally { button.disabled = false; }
+  if(audience==='custom' && !body.participants.length){
+    showToast('参加者を1人以上選択してください');return;
+  }
+  if(frequency!=='none' && !body.recurrence.until){
+    showToast('繰り返しの終了日を指定してください');return;
+  }
+  button.disabled=true;
+  try{
+    const result=await portalFetch('/api/meetings',{method:'POST',body});
+    document.getElementById('mtgNewTimetable').value='';
+    showToast((result.region==='kansai'?'関西':'関東')+'に'+Number(result.count||1)+'件のMTGを登録しました');
+    if(state.region===result.region)state.meetings=[];
+  }catch(error){showToast(error.message||'MTGを登録できませんでした');}
+  finally{button.disabled=false;}
 }
-async function loadMeetings(preserveScroll = false) {
-  const region = state.region;
-  const current = ++state.meetingLoadingId;
-  const root = document.getElementById('mtgMeetingList');
-  document.getElementById('mtgRegionLabel').textContent = region === 'kansai' ? '関西' : '関東';
-  const savedScroll = preserveScroll ? root.scrollTop : 0;
-  if (!preserveScroll) root.innerHTML = '<div class="mtg-empty">MTGを読み込んでいます…</div>';
-  try {
-    const data = await portalFetch('/api/meetings?region='+encodeURIComponent(region));
-    if (current !== state.meetingLoadingId || state.region !== region) return;
-    state.meetings = Array.isArray(data.meetings) ? data.meetings : [];
-    // 別地域で展開したIDは閉じる。
-    if (!state.meetings.some(m=>m.id===state.expandedMeetingId)) state.expandedMeetingId = null;
+async function loadMeetings(preserveScroll=false){
+  const region=state.region;
+  const current=++state.meetingLoadingId;
+  const root=document.getElementById('mtgMeetingList');
+  document.getElementById('mtgRegionLabel').textContent=region==='kansai'?'関西':'関東';
+  const savedScroll=preserveScroll?root.scrollTop:0;
+  if(!preserveScroll)root.innerHTML='<div class="mtg-empty">MTGを読み込んでいます…</div>';
+  try{
+    const data=await portalFetch('/api/meetings?region='+encodeURIComponent(region));
+    if(current!==state.meetingLoadingId||state.region!==region)return;
+    state.meetings=Array.isArray(data.meetings)?data.meetings:[];
+    if(!state.meetings.some(m=>Number(m.id)===state.expandedMeetingId))state.expandedMeetingId=null;
     renderMeetings();
-    if (preserveScroll) root.scrollTop = savedScroll;
-  } catch(error) {
-    if (current !== state.meetingLoadingId) return;
-    root.innerHTML='<div class="mtg-empty">'+escapeHtml(error.message || 'MTGを取得できませんでした')+'</div>';
+    if(preserveScroll)root.scrollTop=savedScroll;
+  }catch(error){
+    if(current!==state.meetingLoadingId)return;
+    root.innerHTML='<div class="mtg-empty">'+escapeHtml(error.message||'MTGを取得できませんでした')+'</div>';
   }
 }
-function renderMeetings() {
-  const root = document.getElementById('mtgMeetingList');
-  if (!state.meetings.length) {
-    root.innerHTML = '<div class="mtg-empty">この地域には登録済みのMTGがありません。<br>人事局から新しいMTGを登録できます。</div>';
+function renderMeetings(){
+  const root=document.getElementById('mtgMeetingList');
+  if(!state.meetings.length){
+    root.innerHTML='<div class="mtg-empty">この地域に表示できるMTGはありません。<br>MTGの登録は「人事局」画面から行えます。</div>';
     return;
   }
-  root.innerHTML = state.meetings.map(meeting=>{
-    const id = Number(meeting.id);
-    const open = state.expandedMeetingId === id;
-    const mine = meeting.mine || null;
-    const selected = mine?.status || '';
-    const note = Object.prototype.hasOwnProperty.call(state.meetingNoteDrafts,id)
-      ? state.meetingNoteDrafts[id] : (mine?.remark || '');
-    const statuses = ['in_person','absent','online'].map(status=>{
-      const blocked = meeting.mode === 'online' && status === 'in_person';
+  root.innerHTML=state.meetings.map(meeting=>{
+    const id=Number(meeting.id);
+    const open=state.expandedMeetingId===id;
+    const mine=meeting.mine||null;
+    const selected=mine?.status||'';
+    const canAnswer=meeting.can_answer!==false;
+    const note=Object.prototype.hasOwnProperty.call(state.meetingNoteDrafts,id)?
+      state.meetingNoteDrafts[id]:(mine?.remark||'');
+    const statuses=['in_person','absent','online'].map(status=>{
+      const blocked=!canAnswer || (meeting.mode==='online'&&status==='in_person');
+      const reason=!canAnswer?'参加対象外':'オンライン開催のため対面出席は選択できません';
       return `<button type="button" class="mtg-status mtg-status-${status} ${selected===status?'is-selected':''}"
         data-mtg-status="${status}" data-mtg-id="${id}"
-        ${blocked?'disabled title="オンライン開催のため対面出席は選択できません"':''}
-        aria-pressed="${selected === status}">${meetingStatusLabel(status)}</button>`;
+        ${blocked?`disabled title="${reason}"`:''}
+        aria-pressed="${selected===status}">${meetingStatusLabel(status)}</button>`;
     }).join('');
-    const responses = (meeting.responses || []).map(ans=>`
+    const existing=new Map((meeting.responses||[]).map(r=>[String(r.user_email||'').toLowerCase(),r]));
+    const answerRows=meeting.audience==='custom'?
+      (meeting.invitees||[]).map(i=>existing.get(String(i.user_email).toLowerCase())||
+        {user_email:i.user_email,user_name:i.user_name,status:'',remark:''}):
+      (meeting.responses||[]);
+    const responses=answerRows.map(ans=>`
       <div class="mtg-answer-row"><div class="mtg-answer-top">
-        <strong>${escapeHtml(ans.user_name || ans.user_email)}</strong>
-        <span class="mtg-answer-chip is-${escapeHtml(ans.status)}">${meetingStatusLabel(ans.status)}</span></div>
+        <strong>${escapeHtml(ans.user_name||ans.user_email)}</strong>
+        <span class="mtg-answer-chip is-${escapeHtml(ans.status||'pending')}">${meetingStatusLabel(ans.status)}</span></div>
         ${ans.remark?`<div class="mtg-answer-remark">備考：${escapeHtml(ans.remark)}</div>`:''}
-      </div>`).join('') || '<p>まだ回答はありません。</p>';
+      </div>`).join('')||'<p>まだ回答はありません。</p>';
+    const audienceLabel=meeting.audience==='custom'?'カスタム '+(meeting.invitees||[]).length+'名':'全員';
+    const deleteActions=meeting.can_delete?`<div class="mtg-delete-actions">
+      <button type="button" class="mtg-delete-button" data-mtg-delete="${id}" data-mtg-delete-scope="single">このMTGを削除</button>
+      ${Number(meeting.series_count)>1?`<button type="button" class="mtg-delete-button" data-mtg-delete="${id}" data-mtg-delete-scope="series">繰り返しをすべて削除</button>`:''}
+      </div>`:'';
     return `<article class="mtg-item">
       <div class="mtg-row" tabindex="0" role="button" aria-expanded="${open}" data-mtg-toggle="${id}">
         <div class="mtg-day">${escapeHtml(meetingFormatDate(meeting.date))}</div>
         <div class="mtg-topic"><div class="mtg-title">${escapeHtml(meeting.title)}</div>
-          <div class="mtg-place">${meeting.mode==='online'?'オンライン':'＠'+escapeHtml(meeting.place).replace(/^＠/,'')}</div></div>
+          <div class="mtg-place">${meeting.mode==='online'?'オンライン':'＠'+escapeHtml(meeting.place).replace(/^＠/,'')}</div>
+          <span class="mtg-audience-tag">対象：${escapeHtml(audienceLabel)}</span></div>
         <div class="mtg-status-set">${statuses}</div>
         <div class="mtg-note-set"><input class="mtg-note" type="text" maxlength="1000" data-mtg-remark="${id}"
-          value="${escapeHtml(note)}" placeholder="備考（任意）" aria-label="${escapeHtml(meeting.title)}の備考">
-          <button type="button" class="mtg-save-note" data-mtg-save-note="${id}" title="備考を保存">保存</button></div>
+          value="${escapeHtml(note)}" placeholder="備考（任意）" aria-label="${escapeHtml(meeting.title)}の備考" ${canAnswer?'':'disabled'}>
+          <button type="button" class="mtg-save-note" data-mtg-save-note="${id}" title="備考を保存" ${canAnswer?'':'disabled'}>保存</button></div>
       </div>
       ${open?`<div class="mtg-details"><section><h3>TT（タイムテーブル）</h3><pre class="mtg-timetable">${escapeHtml(meeting.timetable)}</pre></section>
-        <section><h3>回答一覧（${(meeting.responses||[]).length}件）</h3><div class="mtg-answers">${responses}</div></section></div>`:''}
+        <section><h3>回答一覧（${answerRows.length}名）</h3><div class="mtg-answers">${responses}</div></section>
+        <div class="mtg-details-footer">${canAnswer?'':`<span class="mtg-outside-audience">あなたはこのMTGの参加対象外です。</span>`}${deleteActions}</div>
+      </div>`:''}
     </article>`;
   }).join('');
 }
-async function saveMeetingResponse(id,status) {
-  if (state.meetingSaving) return;
-  const meeting = state.meetings.find(item=>Number(item.id)===id);
-  if (!meeting) return;
-  if (!['in_person','absent','online'].includes(status)) return;
-  if (meeting.mode === 'online' && status === 'in_person') return;
-  const field = document.querySelector(`[data-mtg-remark="${id}"]`);
-  const remark = field?.value ?? state.meetingNoteDrafts[id] ?? meeting.mine?.remark ?? '';
-  if (remark.length > 1000) { showToast('備考は1000文字以内です'); return; }
-  state.meetingSaving = true;
-  try {
+async function saveMeetingResponse(id,status){
+  if(state.meetingSaving)return;
+  const meeting=state.meetings.find(item=>Number(item.id)===id);
+  if(!meeting||meeting.can_answer===false)return;
+  if(!['in_person','absent','online'].includes(status))return;
+  if(meeting.mode==='online'&&status==='in_person')return;
+  const field=document.querySelector(`[data-mtg-remark="${id}"]`);
+  const remark=field?.value??state.meetingNoteDrafts[id]??meeting.mine?.remark??'';
+  if(remark.length>1000){showToast('備考は1000文字以内です');return;}
+  state.meetingSaving=true;
+  try{
     await portalFetch('/api/meetings/respond',{method:'POST',body:{meeting_id:id,status,remark}});
-    // リクエスト成功後に再取得し、回答者一覧にも正しく反映する。
-    state.meetingNoteDrafts[id] = remark;
+    state.meetingNoteDrafts[id]=remark;
     await loadMeetings(true);
     showToast('出欠・備考を保存しました');
-  } catch(error) { showToast(error.message || '出欠を保存できませんでした'); }
-  finally { state.meetingSaving = false; }
+  }catch(error){showToast(error.message||'出欠を保存できませんでした');}
+  finally{state.meetingSaving=false;}
 }
-function handleMeetingListClick(event) {
-  const statusButton = event.target.closest('[data-mtg-status]');
-  if (statusButton) {
-    if (!statusButton.disabled) void saveMeetingResponse(Number(statusButton.dataset.mtgId),statusButton.dataset.mtgStatus);
+async function deleteMeeting(id,scope){
+  if(state.meetingSaving)return;
+  const meeting=state.meetings.find(item=>Number(item.id)===id);
+  if(!meeting?.can_delete)return;
+  const count=Number(meeting.series_count||1);
+  const msg=scope==='series'&&count>1?
+    `この繰り返しMTGを全${count}回削除します。すべての出欠回答も削除されます。よろしいですか？`:
+    `「${meetingFormatDate(meeting.date)} ${meeting.title}」を削除します。出欠回答も削除されます。よろしいですか？`;
+  if(!confirm(msg))return;
+  state.meetingSaving=true;
+  try{
+    await portalFetch('/api/meetings/delete',{method:'POST',body:{meeting_id:id,scope}});
+    state.expandedMeetingId=null;
+    await loadMeetings(true);
+    showToast('MTGを削除しました');
+  }catch(error){showToast(error.message||'MTGを削除できませんでした');}
+  finally{state.meetingSaving=false;}
+}
+function handleMeetingListClick(event){
+  const del=event.target.closest('[data-mtg-delete]');
+  if(del){void deleteMeeting(Number(del.dataset.mtgDelete),del.dataset.mtgDeleteScope);return;}
+  const statusButton=event.target.closest('[data-mtg-status]');
+  if(statusButton){
+    if(!statusButton.disabled)void saveMeetingResponse(Number(statusButton.dataset.mtgId),statusButton.dataset.mtgStatus);
     return;
   }
-  const noteSave = event.target.closest('[data-mtg-save-note]');
-  if (noteSave) {
-    const id = Number(noteSave.dataset.mtgSaveNote);
-    const meeting = state.meetings.find(item=>Number(item.id)===id);
-    if (!meeting?.mine?.status) {showToast('先に出欠を選択してください');return;}
+  const noteSave=event.target.closest('[data-mtg-save-note]');
+  if(noteSave){
+    const id=Number(noteSave.dataset.mtgSaveNote);
+    const meeting=state.meetings.find(item=>Number(item.id)===id);
+    if(!meeting?.mine?.status){showToast('先に出欠を選択してください');return;}
     void saveMeetingResponse(id,meeting.mine.status);
     return;
   }
-  if (event.target.closest('[data-mtg-remark]')) return;
-  const toggle = event.target.closest('[data-mtg-toggle]');
-  if (!toggle) return;
-  const id = Number(toggle.dataset.mtgToggle);
-  state.expandedMeetingId = state.expandedMeetingId === id ? null : id;
-  const scroll = document.getElementById('mtgMeetingList');
-  const pos = scroll.scrollTop;
+  if(event.target.closest('[data-mtg-remark]'))return;
+  const toggle=event.target.closest('[data-mtg-toggle]');
+  if(!toggle)return;
+  const id=Number(toggle.dataset.mtgToggle);
+  state.expandedMeetingId=state.expandedMeetingId===id?null:id;
+  const scroll=document.getElementById('mtgMeetingList');
+  const pos=scroll.scrollTop;
   renderMeetings();
-  scroll.scrollTop = pos;
+  scroll.scrollTop=pos;
 }
-
-document.addEventListener('keydown', event=>{
-  if (event.key !== 'Enter' && event.key !== ' ') return;
-  if (event.target?.matches?.('[data-mtg-toggle]')) {
+document.addEventListener('keydown',event=>{
+  if(event.key!=='Enter'&&event.key!==' ')return;
+  if(event.target?.matches?.('[data-mtg-toggle]')){
     event.preventDefault();
     const id=Number(event.target.dataset.mtgToggle);
     state.expandedMeetingId=state.expandedMeetingId===id?null:id;
