@@ -2554,6 +2554,59 @@ body {
 }
 
 /* Figma: 日時登録 */
+/* 予定確認：前週・今週・次週の移動（2026-11 v40） */
+.schedule-review-week-nav {
+  position: absolute;
+  left: 350px;
+  top: 36px;
+  width: 970px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 23px;
+  color: #282341;
+}
+.schedule-review-week-nav button {
+  flex: 0 0 auto;
+  height: 48px;
+  min-width: 135px;
+  padding: 0 14px;
+  border: 2px solid #6d3f88;
+  border-radius: 9px;
+  background: #fff;
+  color: #50306f;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.schedule-review-week-nav button:hover {
+  background: #f2eaff;
+}
+.schedule-review-week-nav button:focus-visible {
+  outline: 4px solid #3080ff;
+  outline-offset: 2px;
+}
+.schedule-review-week-nav button.is-current {
+  border-color: #3080ff;
+  background: #e9f1ff;
+  color: #1653b1;
+}
+.schedule-review-week-range {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: center;
+  font-weight: 650;
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.schedule-review-week-nav button.schedule-review-current-button {
+  min-width: 84px;
+}
+
 /* Figma: 予定確認 */
 .schedule-review-board {
   position: absolute;
@@ -4710,6 +4763,12 @@ a:active {
 
         <section class="screen screen-schedule-review" data-screen="schedule-review">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="schedule-review-week-nav" aria-label="予定確認の週を切り替える">
+            <button type="button" id="reviewPrevWeek" aria-label="前の週へ">← 前の週</button>
+            <span id="reviewWeekRangeLabel" class="schedule-review-week-range" aria-live="polite"></span>
+            <button type="button" id="reviewThisWeek" class="schedule-review-current-button">今週</button>
+            <button type="button" id="reviewNextWeek" aria-label="次の週へ">次の週 →</button>
+          </nav>
 
           <div id="scheduleReviewBoard" class="schedule-review-board">
             <div class="schedule-review-corner"></div>
@@ -5002,7 +5061,8 @@ const state = {
     weekOffset: 0,
     selectedAvailabilityDate: "",
     reviewPlans: [],
-    reviewAnchorDate: ""
+    reviewAnchorDate: "",
+    reviewLoadSeq: 0
   },
   share: {
     roomId: "",
@@ -5607,6 +5667,19 @@ function wireActions() {
     () => {
       state.calendar.weekOffset += 1;
       refreshCalendarAvailability();
+    }
+  );
+
+  document.getElementById("reviewPrevWeek").addEventListener(
+    "click", () => shiftReviewWeek(-1)
+  );
+  document.getElementById("reviewNextWeek").addEventListener(
+    "click", () => shiftReviewWeek(1)
+  );
+  document.getElementById("reviewThisWeek").addEventListener(
+    "click", () => {
+      state.calendar.reviewAnchorDate = "";
+      void loadScheduleReview();
     }
   );
 
@@ -8079,67 +8152,93 @@ async function registerSchedulePlan() {
   }
 }
 
+// 東京の日付を文字列として取得する。閲覧端末のタイムゾーンに依存しない。
+function todayTokyoDateIso() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(new Date());
+  const part = (name) => parts.find((item) => item.type === name)?.value || "";
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+function addReviewCalendarDays(dateIso, days) {
+  const [year, month, day] = dateIso.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day + days));
+  return date.toISOString().slice(0, 10);
+}
+
 function reviewWeekRange() {
-  const anchor = state.calendar.reviewAnchorDate
-    ? new Date(`${state.calendar.reviewAnchorDate}T00:00:00+09:00`)
-    : new Date(
-        new Date().toLocaleString("en-US", {
-          timeZone: "Asia/Tokyo"
-        })
-      );
-
-  anchor.setHours(0, 0, 0, 0);
-  anchor.setDate(anchor.getDate() - anchor.getDay());
-
-  const end = new Date(anchor);
-  end.setDate(end.getDate() + 7);
-
+  const anchorText = /^\d{4}-\d{2}-\d{2}$/.test(state.calendar.reviewAnchorDate || "")
+    ? state.calendar.reviewAnchorDate
+    : todayTokyoDateIso();
+  const [year, month, day] = anchorText.split("-").map(Number);
+  const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  const startDate = addReviewCalendarDays(anchorText, -weekday);
+  const endExclusive = addReviewCalendarDays(startDate, 7);
+  const endDate = addReviewCalendarDays(startDate, 6);
   return {
-    startDate: localDateIso(anchor),
-    endDate: localDateIso(new Date(end.getTime() - 86400000)),
-    startIso: new Date(`${localDateIso(anchor)}T00:00:00+09:00`).toISOString(),
-    endIso: new Date(`${localDateIso(end)}T00:00:00+09:00`).toISOString()
+    startDate,
+    endDate,
+    startIso: new Date(`${startDate}T00:00:00+09:00`).toISOString(),
+    endIso: new Date(`${endExclusive}T00:00:00+09:00`).toISOString()
   };
+}
+
+function renderReviewWeekNavigation(range) {
+  const label = document.getElementById("reviewWeekRangeLabel");
+  if (!label) return;
+  const [y, m, d] = range.startDate.split("-").map(Number);
+  const [, em, ed] = range.endDate.split("-").map(Number);
+  label.textContent = `${y}年${m}月${d}日(日) 〜 ${em}月${ed}日(土)`;
+  const currentButton = document.getElementById("reviewThisWeek");
+  if (currentButton) {
+    const today = todayTokyoDateIso();
+    const isCurrent = today >= range.startDate && today <= range.endDate;
+    currentButton.classList.toggle("is-current", isCurrent);
+    currentButton.setAttribute("aria-pressed", String(isCurrent));
+  }
+}
+
+function shiftReviewWeek(direction) {
+  const delta = Number(direction);
+  if (delta !== -1 && delta !== 1) return;
+  const range = reviewWeekRange();
+  state.calendar.reviewAnchorDate = addReviewCalendarDays(range.startDate, 7 * delta);
+  void loadScheduleReview();
 }
 
 async function loadScheduleReview() {
   const message = document.getElementById("scheduleReviewMessage");
   const eventsRoot = document.getElementById("scheduleReviewEvents");
+  const requestId = ++state.calendar.reviewLoadSeq;
+  const region = state.region;
+  const range = reviewWeekRange();
+  renderReviewWeekNavigation(range);
+  renderScheduleReviewGrid(range);
 
   if (message) {
     message.className = "schedule-review-empty";
     message.textContent = "予定を読み込んでいます…";
   }
-
-  if (eventsRoot) {
-    eventsRoot.innerHTML = "";
-  }
-
-  const range = reviewWeekRange();
-  renderScheduleReviewGrid(range);
+  if (eventsRoot) eventsRoot.innerHTML = "";
 
   try {
     const params = new URLSearchParams({
       start: range.startIso,
       end: range.endIso,
       scope: "all",
-      region: state.region
+      region
     });
-
-    const data = await portalFetch(
-      `/api/calendar/plans?${params.toString()}`
-    );
-
-    state.calendar.reviewPlans = Array.isArray(data.plans)
-      ? data.plans
-      : [];
-
+    const data = await portalFetch(`/api/calendar/plans?${params.toString()}`);
+    // 週や地域を素早く切り替えた場合、古いレスポンスで上書きしない。
+    if (requestId !== state.calendar.reviewLoadSeq || state.region !== region) return;
+    state.calendar.reviewPlans = Array.isArray(data.plans) ? data.plans : [];
     renderScheduleReviewEvents(range);
   } catch (error) {
+    if (requestId !== state.calendar.reviewLoadSeq || state.region !== region) return;
     if (message) {
       message.className = "schedule-review-error";
-      message.textContent =
-        error.message || "予定を取得できませんでした";
+      message.textContent = error.message || "予定を取得できませんでした";
     }
   }
 }
@@ -8150,15 +8249,14 @@ function renderScheduleReviewGrid(range) {
 
   if (!headersRoot || !gridRoot) return;
 
-  const start = new Date(`${range.startDate}T00:00:00+09:00`);
   const headers = [];
   const cells = [];
 
   for (let day = 0; day < 7; day += 1) {
-    const date = new Date(start);
-    date.setDate(date.getDate() + day);
-
-    const label = `${date.getMonth() + 1}/${date.getDate()}(${calendarDayNamesJa[day].replace("曜日", "")})`;
+    // Date#getDate() は閲覧端末の時間帯で日付がずれるため日付文字列から表示する。
+    const dateText = addReviewCalendarDays(range.startDate, day);
+    const [, month, date] = dateText.split("-").map(Number);
+    const label = `${month}/${date}(${calendarDayNamesJa[day].replace("曜日", "")})`;
 
     headers.push(`
       <div
