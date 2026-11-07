@@ -4143,6 +4143,90 @@ a:active {
   .mtg-details { grid-template-columns:1fr; }
 }
 
+/* v41: compact postcard, expanded content, recipient selector, staff activity status */
+.screen-postcard .postcard-card .postcard-confirm {top: 661px;}
+.screen-postcard .postcard-card .postcard-form-row,
+.screen-postcard .postcard-card .postcard-display-row {
+  left: 28px; right: 25px; grid-template-columns: 118px minmax(0,1fr);
+  gap: 3px; align-items: center; font-size: 22px; line-height:1.25;
+}
+.screen-postcard .postcard-card .row-requester { top: 208px; }
+.screen-postcard .postcard-card .row-destination { top: 258px; }
+.screen-postcard .postcard-card .row-deadline { top: 315px; }
+.screen-postcard .postcard-card .row-target { top: 370px; }
+.screen-postcard .postcard-card .row-content { top: 433px; align-items:start; }
+.screen-postcard .postcard-card .postcard-bottom {display:none;}
+.screen-postcard .postcard-card .postcard-form-row input,
+.screen-postcard .postcard-card .postcard-form-row select {min-width:0; width:100%;font-size:19px;height:38px;}
+.screen-postcard .postcard-card .postcard-form-row select {background:#fff;border:1px solid #b9c6d9;border-radius:6px;color:#192e57;}
+.screen-postcard .postcard-card .row-content textarea {
+  width:100%;height:216px;min-height:216px;max-height:216px;padding:10px;
+  font-size:19px;line-height:1.45;resize:none;border:2px solid #a9b9d8;
+  border-radius:8px;background:#fff;
+}
+.post-audience-compact{display:flex;gap:5px;align-items:center;min-width:0;}
+.post-audience-compact #destination{flex:1;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;min-width:0;}
+.post-audience-trigger{flex:none;background:#d8e5ff;color:#133d8a;border:1px solid #a7bff5;border-radius:6px;font-size:17px;font-weight:700;padding:5px 9px;cursor:pointer;}
+.post-confirm-shell .postcard-card .row-requester{top:171px;}
+.post-confirm-shell .postcard-card .row-destination{top:216px;}
+.post-confirm-shell .postcard-card .row-deadline{top:262px;}
+.post-confirm-shell .postcard-card .row-target{top:311px;}
+.post-confirm-shell .postcard-card .row-content{top:367px;}
+.post-confirm-shell .postcard-card .postcard-display-row{grid-template-columns:102px minmax(0,1fr);font-size:18px;line-height:1.28;}
+.post-confirm-shell .postcard-card .postcard-display-row span{font-size:17px;min-height:24px;overflow-wrap:anywhere;}
+.post-confirm-shell .postcard-card .row-destination span{display:block;max-height:42px;overflow:auto;}
+.post-confirm-shell .postcard-card .row-content span{display:block;height:237px;max-height:237px;overflow-y:auto;white-space:pre-wrap;font-size:18px;line-height:1.45;}
+.post-target-link{font-size:17px!important;color:#245bc4;text-decoration:underline!important;word-break:break-all;}
+.task-target-small{display:inline-block;margin-inline:4px;max-width:160px;white-space:nowrap;overflow:hidden;}
+.task-target-small .post-target-link{font-size:11px!important;}
+.post-audience-overlay[hidden]{display:none!important;}
+.post-audience-overlay{position:absolute;inset:0;z-index:90;background:rgba(19,32,72,.54);display:grid;place-items:center;}
+.post-audience-dialog{box-sizing:border-box;width:730px;max-height:815px;padding:25px 28px 22px;background:#fff;
+  box-shadow:0 18px 55px rgba(17,39,82,.36);border-radius:20px;border:3px solid #a3b7e8;display:flex;flex-direction:column;gap:14px;color:#1b315e;}
+.post-audience-dialog header,.post-audience-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:15px;}
+.post-audience-dialog h2{font-size:34px;margin:0;}
+.post-audience-dialog p{font-size:18px;line-height:1.5;margin:0;}
+.post-audience-dialog header button{font-size:37px;line-height:1;border:0;background:transparent;cursor:pointer;color:#59647c;}
+.post-audience-regions{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.post-audience-regions label{padding:15px;background:#e9f1ff;border:2px solid #bbcdf4;border-radius:12px;font-size:24px;cursor:pointer;}
+.post-audience-dialog input[type=checkbox]{width:22px;height:22px;accent-color:#2468df;}
+.post-audience-people-heading{display:flex;justify-content:space-between;font-size:23px;}
+#postAudienceCount{font-size:17px;color:#66788b;}
+#postAudienceSearch{width:100%;height:44px;border:2px solid #b2c4e5;border-radius:9px;padding:8px 12px;font-size:18px;}
+.post-audience-people{min-height:90px;max-height:308px;overflow-y:auto;border:1px solid #d5dded;border-radius:10px;padding:8px;}
+.post-audience-person{display:flex;align-items:center;gap:12px;cursor:pointer;padding:8px 10px;border-bottom:1px solid #e7ebf4;}
+.post-audience-person span{display:flex;flex-direction:column;gap:2px;}
+.post-audience-person strong{font-size:21px;}
+.post-audience-person small{font-size:15px;color:#62718a;}
+.post-audience-empty{padding:20px;color:#7a879e;}
+.post-audience-dialog footer{justify-content:flex-end;}
+.post-audience-dialog footer button{padding:12px 22px;border-radius:8px;font-size:23px;font-weight:700;cursor:pointer;border:1px solid #bdcae2;background:#e7ebf4;color:#20345a;}
+#postAudienceApply{background:#2b70e9;color:#fff;border-color:#2b70e9;}
+
+/* Figma 158:687 - 支部員タスク状況（1440×1024基準、ポータル共通の縮小表示） */
+.screen-client .client-staff-entry {position:absolute;top:330px;left:120px;background:#2fb000;color:white;border:0;cursor:pointer;font-size:27px;font-weight:700;padding:17px 24px;}
+.screen-client-staff-status .staff-status-tabs {position:absolute;top:110px;left:120px;right:120px;height:60px;display:grid;grid-template-columns:repeat(3,360px);gap:60px;}
+.screen-client-staff-status .staff-status-tabs button {background:#d4d5ff;color:#151b35;border:0;font-size:31px;cursor:pointer;white-space:nowrap;}
+.screen-client-staff-status .staff-status-panel {position:absolute;left:70px;top:208px;width:1300px;height:690px;display:grid;grid-template-columns:365px 1fr;gap:18px;padding:25px 25px 24px;box-sizing:border-box;background:#fff;overflow:hidden;}
+.screen-client-staff-status .staff-status-person-column {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:16px;overflow-y:auto;padding-right:10px;}
+.screen-client-staff-status .staff-status-person-column button {background:#2fb000;color:#fff;border:0;min-height:59px;font-size:29px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:3px 5px;}
+.screen-client-staff-status .staff-status-person-column button.is-selected {background:#1a5e01;box-shadow:inset 0 0 0 4px #0c4300;}
+.screen-client-staff-status .staff-status-content {min-width:0;display:flex;flex-direction:column;gap:18px;}
+.screen-client-staff-status .staff-status-heading {height:58px;display:flex;gap:12px;align-items:center;}
+.screen-client-staff-status .staff-status-heading h2 {font-size:28px;margin:0;padding:9px 12px;background:#d4d5ff;white-space:nowrap;}
+.screen-client-staff-status .staff-status-heading span {font-size:19px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.screen-client-staff-status .staff-status-heading button {border:1px solid #ccd6e4;background:#f5f7fb;padding:9px 15px;font-size:20px;cursor:pointer;}
+.screen-client-staff-status .staff-status-stat-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,239px);gap:24px;}
+.screen-client-staff-status .staff-status-stat-card {min-width:0;border:3px solid #000;background:#fff;padding:7px 12px;box-sizing:border-box;}
+.screen-client-staff-status .staff-status-card-header {display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.screen-client-staff-status .staff-status-card-header h3 {font-size:26px;margin:0;white-space:nowrap;}
+.screen-client-staff-status .staff-status-card-header input {font-size:15px;width:156px;max-width:48%;padding:5px 3px;border:1px solid #cdd4dd;border-radius:4px;background:#f7f9fc;}
+.screen-client-staff-status .staff-status-card-header span {font-size:16px;color:#617189;}
+.screen-client-staff-status .staff-status-metrics {font-size:26px;line-height:1.66;padding:7px 14px;}
+.screen-client-staff-status .staff-status-metric {display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.screen-client-staff-status .staff-status-metric strong {font-size:27px;min-width:55px;text-align:right;font-weight:600;}
+.screen-client-staff-status .staff-status-note {margin:0;color:#637087;font-size:16px;line-height:1.45;white-space:normal;}
+.screen-client-staff-status .staff-status-back {position:absolute;left:70px;top:898px;width:140px;height:60px;background:#3080ff;color:#fff;border:0;font-size:40px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -4313,6 +4397,7 @@ a:active {
             <button class="client-tab" type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
             <button class="client-tab" type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
           </nav>
+          <button class="client-staff-entry" type="button" data-route="client-staff-status">支部員タスク状況を見る ↗</button>
         </section>
 
         <!-- Figma 105:463: お問い合わせフォーム -->
@@ -4327,7 +4412,7 @@ a:active {
           </nav>
           <nav class="client-subtabs" aria-label="お問い合わせフォームの操作">
             <button class="client-subtab" type="button" data-route="client-send">フォームを送る</button>
-            <button class="client-subtab" type="button" data-placeholder="担当リスト（Figmaの遷移先未作成）">担当リストを見る</button>
+            <button class="client-subtab" type="button" data-route="client-staff-status">支部員タスク状況</button>
           </nav>
         </section>
 
@@ -4436,6 +4521,47 @@ a:active {
           <input id="clientHColumnUrl" type="hidden" value="">
         </section>
 
+
+        <!-- Figma 158:687: 支部員タスク状況／実際の所属者・送信履歴を表示 -->
+        <section class="screen screen-client-staff-status" data-screen="client-staff-status">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="staff-status-tabs" aria-label="クライアント画面の切り替え">
+            <button type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
+            <button type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
+          </nav>
+          <div class="staff-status-panel">
+            <div class="staff-status-person-column" id="staffStatusPeople" aria-label="スタッフを選択"></div>
+            <div class="staff-status-content">
+              <div class="staff-status-heading">
+                <h2>支部員タスク状況</h2>
+                <span id="staffStatusPersonLabel" aria-live="polite">スタッフを選択してください</span>
+                <button id="staffStatusReload" type="button">更新</button>
+              </div>
+              <div class="staff-status-stat-grid">
+                <section class="staff-status-stat-card" data-staff-period="day">
+                  <div class="staff-status-card-header"><h3>1日の行動量</h3><input id="staffStatusDay" type="date" aria-label="集計する日付"></div>
+                  <div class="staff-status-metrics" id="staffStatusDayMetrics"></div>
+                </section>
+                <section class="staff-status-stat-card" data-staff-period="week">
+                  <div class="staff-status-card-header"><h3>1週間の行動量</h3><input id="staffStatusWeek" type="date" aria-label="集計する週の基準日"></div>
+                  <div class="staff-status-metrics" id="staffStatusWeekMetrics"></div>
+                </section>
+                <section class="staff-status-stat-card" data-staff-period="month">
+                  <div class="staff-status-card-header"><h3>1ヶ月の行動量</h3><input id="staffStatusMonth" type="month" aria-label="集計する月"></div>
+                  <div class="staff-status-metrics" id="staffStatusMonthMetrics"></div>
+                </section>
+                <section class="staff-status-stat-card" data-staff-period="total">
+                  <div class="staff-status-card-header"><h3>累計の行動量</h3><span>現在までの累計</span></div>
+                  <div class="staff-status-metrics" id="staffStatusTotalMetrics"></div>
+                </section>
+              </div>
+              <p id="staffStatusNote" class="staff-status-note" role="status">実績を読み込んでいます…</p>
+            </div>
+          </div>
+          <button type="button" class="staff-status-back" data-common-back>←戻る</button>
+        </section>
+
         <section class="screen screen-post" data-screen="post">
           <div class="user-name" data-user-name>＜名前＞</div>
 
@@ -4491,18 +4617,25 @@ a:active {
 
             <div class="postcard-form-row row-destination">
               <label for="destination">宛先：</label>
-              <input id="destination" type="text" autocomplete="off" list="destinationRosterOptions">
-              <datalist id="destinationRosterOptions"></datalist>
+              <div class="post-audience-compact">
+                <input id="destination" type="text" readonly aria-label="選択中の宛先" placeholder="宛先を選択">
+                <button type="button" id="postOpenAudience" class="post-audience-trigger">選択</button>
+              </div>
             </div>
 
             <div class="postcard-form-row row-deadline">
               <label for="deadline">期限：</label>
-              <input id="deadline" type="text" autocomplete="off">
+              <input id="deadline" type="datetime-local" step="60" aria-label="期限（日付と時刻）">
+            </div>
+
+            <div class="postcard-form-row row-target">
+              <label for="postTargetLink">担当箇所：</label>
+              <select id="postTargetLink" aria-label="ポータル上の担当箇所（リンク）"></select>
             </div>
 
             <div class="postcard-form-row row-content">
               <label for="content">内容：</label>
-              <textarea id="content"></textarea>
+              <textarea id="content" placeholder="依頼する作業内容を入力してください"></textarea>
             </div>
 
             <div class="postcard-bottom">
@@ -4513,6 +4646,20 @@ a:active {
             </div>
 
             <button class="postcard-confirm" type="button" data-action="confirm-post">確認</button>
+          </div>
+          <div class="post-audience-overlay" id="postAudienceOverlay" hidden>
+            <div class="post-audience-dialog" role="dialog" aria-modal="true" aria-labelledby="postAudienceTitle">
+              <header><h2 id="postAudienceTitle">宛先を選択</h2><button type="button" id="postAudienceCancelTop" aria-label="閉じる">×</button></header>
+              <p>「地域全員」と「個人」を組み合わせて選べます。重複する人には1件だけ依頼します。</p>
+              <div class="post-audience-regions" role="group" aria-label="地域全員">
+                <label><input type="checkbox" data-post-region="kanto"> 関東全員</label>
+                <label><input type="checkbox" data-post-region="kansai"> 関西全員</label>
+              </div>
+              <div class="post-audience-people-heading"><strong>個人（複数選択可）</strong><span id="postAudienceCount"></span></div>
+              <input type="search" id="postAudienceSearch" placeholder="名前・メールアドレスで検索" aria-label="個人を検索">
+              <div id="postAudiencePeople" class="post-audience-people" role="group" aria-label="個人の宛先"></div>
+              <footer><button type="button" id="postAudienceCancel">キャンセル</button><button type="button" id="postAudienceApply">反映する</button></footer>
+            </div>
           </div>
         </section>
 
@@ -5039,12 +5186,15 @@ const state = {
   meetingLoadingId: 0,
   meetingSaving: false,
   roster: [],
+  clientStaffStatus: { members: [], email: "", day: "", week: "", month: "", requestSeq: 0, warning: "" },
   preferredRegion: null,
   regionWorkSessions: null,
   hpRequests: [],
   remoteTasks: [],
   postCards: [],
   postCardIndex: 0,
+  postAudience: {regions: [], emails: []},
+  postAudienceStaging: {regions: [], emails: []},
   region: sessionStorage.getItem("dotjp_region") || "kanto",
   currentScreen: null,
   timerId: null,
@@ -5092,6 +5242,7 @@ const screenNames = new Set([
   "client",
   "client-contact",
   "client-send",
+  "client-staff-status",
   "hp-edit",
   "hp-request",
   "department-cons",
@@ -5456,6 +5607,16 @@ function enableClientFieldCopying() {
 }
 
 function wireActions() {
+  for (const id of ['staffStatusDay','staffStatusWeek','staffStatusMonth']) {
+    document.getElementById(id).addEventListener('change', () => void loadClientStaffStatus());
+  }
+  document.getElementById('staffStatusReload').addEventListener('click', () => void loadClientStaffStatus());
+  document.getElementById('staffStatusPeople').addEventListener('click', (event) => {
+    const button=event.target.closest('button[data-staff-email]');
+    if (!button) return;
+    state.clientStaffStatus.email=button.dataset.staffEmail;
+    renderClientStaffStatus();
+  });
   document.getElementById('mtgMeetingList').addEventListener('click', handleMeetingListClick);
   document.getElementById('mtgMeetingList').addEventListener('input', event => {
     const field = event.target.closest('[data-mtg-remark]');
@@ -5511,6 +5672,7 @@ function wireActions() {
       if (state.currentScreen === 'schedule-review') void loadScheduleReview();
       if (state.currentScreen === 'meeting-attendance') void loadMeetings();
       if (state.currentScreen === 'department-hr') setupMeetingManager();
+      if (state.currentScreen === 'client-staff-status') void loadClientStaffStatus();
       if (state.currentScreen === 'hp-edit' && state.isDeveloper &&
           document.querySelector('[data-hp-tab="requests"]')?.classList.contains('is-active')) {
         void loadHpRequests();
@@ -5534,13 +5696,16 @@ function wireActions() {
   document.querySelector('[data-action="confirm-post"]').addEventListener("click", () => {
     const payload = {
       requester: currentRequesterName(),
-      destination: document.getElementById("destination").value.trim() || "全員",
+      ...postAudiencePayload(),
       deadline: document.getElementById("deadline").value.trim(),
+      targetLink: document.getElementById("postTargetLink").value,
+      targetLabel: postTargetLabel(document.getElementById("postTargetLink").value),
       content: document.getElementById("content").value.trim(),
       evidence: "",
       aiAnalyzed: false,
       sourceMode: sessionStorage.getItem("dotjp_post_source_mode") || "manual"
     };
+    if (!validatePostCard(payload)) return;
 
     const editingIndex = Number(
       sessionStorage.getItem("dotjp_editing_post_index")
@@ -5569,6 +5734,23 @@ function wireActions() {
     persistPostCards();
     renderPostConfirmation();
     showScreen("post-confirm");
+  });
+
+  document.getElementById('postOpenAudience').addEventListener('click', openPostAudience);
+  document.getElementById('postAudienceApply').addEventListener('click', applyPostAudience);
+  for (const id of ['postAudienceCancel','postAudienceCancelTop']) {
+    document.getElementById(id).addEventListener('click', closePostAudience);
+  }
+  document.querySelectorAll('[data-post-region]').forEach(input => input.addEventListener('change', updatePostAudienceStaging));
+  document.getElementById('postAudienceSearch').addEventListener('input', renderPostAudiencePeople);
+  document.getElementById('postAudiencePeople').addEventListener('change', event => {
+    const input=event.target.closest('[data-post-email]');
+    if(!input) return;
+    const selected=new Set(state.postAudienceStaging.emails);
+    if(input.checked) selected.add(input.dataset.postEmail);
+    else selected.delete(input.dataset.postEmail);
+    state.postAudienceStaging.emails=[...selected];
+    renderPostAudienceCount();
   });
 
   document.querySelector('[data-action="send-post"]').addEventListener("click", sendPostCards);
@@ -5783,6 +5965,9 @@ if (name === "post-confirm") {
 
   if (name === "client-send") {
     loadClientCompanies();
+  }
+  if (name === "client-staff-status") {
+    void loadClientStaffStatus();
   }
 
   if (name === "schedule") {
@@ -6156,6 +6341,7 @@ function taskSummaryHtml(tasks, activeId) {
     return `<div class="summary-task-row${active}" title="${escapeHtml(task.title)}">
       ${taskBadgeHtml(task.type)}
       <span class="summary-task-title">${escapeHtml(task.title)}</span>
+      ${task.targetLink ? `<span class="task-target-small">${postTargetLinkHtml({targetLink:task.targetLink,targetLabel:task.targetLabel})}</span>` : ''}
     </div>`;
   }).join("");
 }
@@ -6479,10 +6665,216 @@ async function finishTask() {
   setTimeout(logoutAfterReport, 550);
 }
 
+
+// Figma 158:687 / v41: データの出所を明示し、実測できないメール件数を捏造しない。
+function staffStatusToday() {
+  // ページ側も日本時間で日付を扱う。
+  const f=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'});
+  const p=f.formatToParts(new Date());
+  const get=k=>p.find(x=>x.type===k)?.value||'';
+  return `${get('year')}-${get('month')}-${get('day')}`;
+}
+function initStaffStatusDates() {
+  const data=state.clientStaffStatus;
+  const today=staffStatusToday();
+  for (const [key,id,value] of [['day','staffStatusDay',today],['week','staffStatusWeek',today],['month','staffStatusMonth',today.slice(0,7)]]) {
+    const el=document.getElementById(id);
+    if(!el.value) el.value=value;
+    data[key]=el.value;
+  }
+}
+async function loadClientStaffStatus() {
+  initStaffStatusDates();
+  const data=state.clientStaffStatus;
+  const seq=++data.requestSeq;
+  const query=new URLSearchParams({region:state.region,day:document.getElementById('staffStatusDay').value,
+    week:document.getElementById('staffStatusWeek').value,month:document.getElementById('staffStatusMonth').value});
+  document.getElementById('staffStatusNote').textContent='実績を読み込んでいます…';
+  try {
+    const response=await portalFetch('/api/client/staff-status?'+query.toString());
+    if (seq!==data.requestSeq || state.currentScreen!=='client-staff-status') return;
+    data.members=Array.isArray(response.members)?response.members:[];
+    data.warning=String(response.warning||'');
+    if(!data.members.some(p=>p.email===data.email)) {
+      const myEmail=userIdentity()?.toLowerCase()||'';
+      data.email=data.members.find(p=>p.email===myEmail)?.email||data.members[0]?.email||'';
+    }
+    renderClientStaffStatus();
+  } catch(e) {
+    if (seq!==data.requestSeq) return;
+    data.members=[];
+    document.getElementById('staffStatusPeople').innerHTML='';
+    for(const id of ['staffStatusDayMetrics','staffStatusWeekMetrics','staffStatusMonthMetrics','staffStatusTotalMetrics']){
+      document.getElementById(id).textContent='読み込めませんでした';
+    }
+    document.getElementById('staffStatusNote').textContent=e.message||'読み込みに失敗しました。';
+  }
+}
+function renderClientStaffStatus() {
+  const data=state.clientStaffStatus;
+  const personList=document.getElementById('staffStatusPeople');
+  personList.innerHTML=data.members.length?data.members.map(person=>
+    `<button type="button" data-staff-email="${escapeHtml(person.email)}" class="${data.email===person.email?'is-selected':''}" title="${escapeHtml(person.name)}" aria-pressed="${data.email===person.email}">${escapeHtml(person.name)}</button>`).join(''):
+    '<p style="font-size:24px">この地域には名簿登録者がいません。</p>';
+  const member=data.members.find(p=>p.email===data.email);
+  document.getElementById('staffStatusPersonLabel').textContent=member?member.name:'スタッフを選択してください';
+  const metrics=member?.periods||{};
+  const labels=[['pending','未送信'],['completed','完了'],['mail','内メール'],['form','内フォーム']];
+  for (const [period,id] of [['day','staffStatusDayMetrics'],['week','staffStatusWeekMetrics'],
+       ['month','staffStatusMonthMetrics'],['total','staffStatusTotalMetrics']]) {
+    const stats=metrics[period]||{};
+    document.getElementById(id).innerHTML=labels.map(([k,label])=>{
+      const n=stats[k];
+      return `<div class="staff-status-metric"><span>${label}：</span><strong title="${n==null?'対象期間の信頼できるデータがありません':'登録データに基づく件数'}">${Number.isFinite(n)?n.toLocaleString('ja-JP'):'—'}</strong></div>`;
+    }).join('');
+  }
+  document.getElementById('staffStatusNote').textContent=(data.warning?data.warning+'　':'')+
+    '期間別の完了・フォームはポータル経由で記録した送信件数。累計の完了・フォームと現在の未送信は企業リストから集計します。メールは送信種別の記録がないため未集計です。';
+}
+
 function updateRegion() {
   document.querySelectorAll("[data-region]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.region === state.region);
   });
+}
+
+// POST v41: 複数個人・関東全員・関西全員。過去のAIカードも誤配信しない。
+function normalizePostAudience(card={}) {
+  const incomingRegions = Array.isArray(card.recipientRegions) ? card.recipientRegions : (Array.isArray(card.regions) ? card.regions : []);
+  const incomingEmails = Array.isArray(card.recipientEmails) ? card.recipientEmails : (Array.isArray(card.emails) ? card.emails : []);
+  const regions = [...new Set(incomingRegions.filter(x => x === 'kanto' || x === 'kansai'))];
+  const emails = [...new Set(incomingEmails
+    .map(x => String(x || '').trim().toLowerCase()).filter(x => x.endsWith('@dot-jp.or.jp')))];
+  // 明示的に空の配列が設定されていれば未選択のまま扱う。勝手に関東全員を選択しない。
+  if (Array.isArray(card.recipientRegions) || Array.isArray(card.recipientEmails) ||
+      Array.isArray(card.regions) || Array.isArray(card.emails)) return {regions,emails};
+  const destination=String(card.destination || '').trim();
+  const namedEmail=String(card.recipientEmail || '').toLowerCase();
+  const member=state.roster.find(x=> Number(x.enabled)!==0 && (
+    String(x.email || '').toLowerCase()===namedEmail && namedEmail ||
+    String(x.name || '').normalize('NFKC').replace(/\s/g,'')===destination.normalize('NFKC').replace(/\s/g,'')
+  ));
+  if(member) return {regions:[],emails:[String(member.email).toLowerCase()]};
+  if (destination==='全員') return {regions:[state.region],emails:[]};
+  if (!destination) return {regions:[],emails:[]};
+  // 名前が名簿に存在しないAI抽出タスクは宛先を空にして手動選択を求める。
+  return {regions:[],emails:[]};
+}
+function postAudienceSummary(audience) {
+  const data=normalizePostAudience(audience);
+  const labels=data.regions.map(region=>region==='kansai'?'関西全員':'関東全員');
+  for(const email of data.emails){
+    const hit=state.roster.find(x=>String(x.email||'').toLowerCase()===email);
+    labels.push(hit?.name || email);
+  }
+  return labels.join('・') || '未選択';
+}
+function showPostAudienceSummary() {
+  const summary=postAudienceSummary(state.postAudience);
+  const input=document.getElementById('destination');
+  input.value=summary==='未選択'?'':summary;
+  input.title=summary;
+}
+function postAudiencePayload(card=null) {
+  const data=card ? normalizePostAudience(card) : state.postAudience;
+  return {destination:postAudienceSummary(data),recipientRegions:[...data.regions],recipientEmails:[...data.emails]};
+}
+function openPostAudience() {
+  state.postAudienceStaging={regions:[...state.postAudience.regions],emails:[...state.postAudience.emails]};
+  document.querySelectorAll('[data-post-region]').forEach(el=>el.checked=state.postAudienceStaging.regions.includes(el.dataset.postRegion));
+  document.getElementById('postAudienceSearch').value='';
+  renderPostAudiencePeople();
+  document.getElementById('postAudienceOverlay').hidden=false;
+  document.getElementById('postAudienceSearch').focus();
+}
+function closePostAudience() {document.getElementById('postAudienceOverlay').hidden=true;}
+function updatePostAudienceStaging() {
+  state.postAudienceStaging.regions=[...document.querySelectorAll('[data-post-region]:checked')].map(el=>el.dataset.postRegion);
+  renderPostAudienceCount();
+}
+function renderPostAudiencePeople() {
+  const container=document.getElementById('postAudiencePeople');
+  if(!container) return;
+  const search=String(document.getElementById('postAudienceSearch').value||'').trim().toLowerCase();
+  const people=state.roster.filter(x=>Number(x.enabled)!==0 && x.email && x.name)
+    .sort((a,b)=>String(a.name).localeCompare(String(b.name),'ja'))
+    .filter(x=>!search || (x.name+' '+x.email).toLowerCase().includes(search));
+  container.innerHTML=people.length ? people.map(person=>{
+    const email=String(person.email).toLowerCase();
+    return `<label class="post-audience-person"><input type="checkbox" data-post-email="${escapeHtml(email)}" ${state.postAudienceStaging.emails.includes(email)?'checked':''}><span><strong>${escapeHtml(person.name)}</strong><small>${escapeHtml(person.group_name||'未振り分け')} / ${escapeHtml(email)}</small></span></label>`;
+  }).join('') : '<p class="post-audience-empty">該当する人がいません。名簿を確認してください。</p>';
+  renderPostAudienceCount();
+}
+function renderPostAudienceCount() {
+  const r=state.postAudienceStaging.regions.length;
+  const p=state.postAudienceStaging.emails.length;
+  document.getElementById('postAudienceCount').textContent=`地域全員 ${r}件／個人 ${p}名`;
+}
+function applyPostAudience() {
+  if (!state.postAudienceStaging.regions.length && !state.postAudienceStaging.emails.length) {
+    showToast('地域全員か個人を1つ以上選択してください'); return;
+  }
+  state.postAudience={regions:[...state.postAudienceStaging.regions],emails:[...state.postAudienceStaging.emails]};
+  showPostAudienceSummary();
+  closePostAudience();
+}
+function toPostDatetimeInput(value) {
+  const text=String(value||'').trim();
+  // 時刻が書かれていない期限には推測の時刻を入れない。
+  const found=text.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})[T\s](\d{1,2}):(\d{2})/);
+  if(!found) return '';
+  return `${found[1]}-${found[2].padStart(2,'0')}-${found[3].padStart(2,'0')}T${found[4].padStart(2,'0')}:${found[5]}`;
+}
+function formatPostDatetime(value) {
+  const parsed=toPostDatetimeInput(value);
+  return parsed?`${parsed.slice(0,4)}/${parsed.slice(5,7)}/${parsed.slice(8,10)} ${parsed.slice(11,16)}`:(value||'未設定');
+}
+// 実際のホーム内のリンクから選択肢を生成する。任意URLを入力させない。
+function postTargetOptions() {
+  const options=[];
+  const seen=new Set();
+  const add=(link,label)=>{if(!link || seen.has(link))return;seen.add(link);options.push({link,label});};
+  document.querySelectorAll('.screen-home .department-grid [data-route], .screen-home .links-grid [data-route]')
+    .forEach(el=>add('route:'+el.dataset.route,el.textContent.trim().replace(/\s+/g,' ')));
+  document.querySelectorAll('.screen-home .links-grid a[href]')
+    .forEach(el=>add('url:'+el.href,el.textContent.trim().replace(/\s+/g,' ')));
+  add('route:client-send','お問い合わせフォーム');
+  add('route:schedule-hours','稼働時間登録');
+  add('route:schedule-review','予定確認');
+  add('route:hp-request','HPへの要望');
+  add('route:hp-edit','HP編集');
+  return options;
+}
+function postTargetLabel(link) {return postTargetOptions().find(x=>x.link===link)?.label||'';}
+function populatePostTargetOptions() {
+  const select=document.getElementById('postTargetLink');
+  if (!select) return;
+  select.innerHTML='<option value="">選択してください</option>'+postTargetOptions()
+    .map(x=>`<option value="${escapeHtml(x.link)}">${escapeHtml(x.label)}</option>`).join('');
+}
+function postTargetLinkHtml(card) {
+  const id=String(card.targetLink||'');
+  const label=String(card.targetLabel||postTargetLabel(id)||'未設定');
+  if (id.startsWith('route:') && screenNames.has(id.slice(6))) {
+    return `<a class="post-target-link" href="#${escapeHtml(id.slice(6))}">${escapeHtml(label)} ↗</a>`;
+  }
+  if(id.startsWith('url:') && postTargetOptions().some(x=>x.link===id)) {
+    return `<a class="post-target-link" href="${escapeHtml(id.slice(4))}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} ↗</a>`;
+  }
+  return `<span>${escapeHtml(label)}</span>`;
+}
+function validatePostCard(card,index=null) {
+  const prefix=index ? `${index}枚目：` : '';
+  if (!Array.isArray(card.recipientRegions) || !Array.isArray(card.recipientEmails) ||
+      !(card.recipientRegions.length+card.recipientEmails.length)) {
+    showToast(prefix+'宛先を選択してください');return false;
+  }
+  if (!toPostDatetimeInput(card.deadline)) {showToast(prefix+'期限を年月日と時刻で入力してください');return false;}
+  if (!String(card.targetLink||'') || !postTargetLabel(card.targetLink)) {
+    showToast(prefix+'担当箇所（ポータル上のリンク）を選択してください');return false;
+  }
+  if (!String(card.content||'').trim()) {showToast(prefix+'依頼内容を入力してください');return false;}
+  return true;
 }
 
 function hydratePostDraft() {
@@ -6496,15 +6888,15 @@ function hydratePostDraft() {
   document.getElementById("requester").value =
     currentRequesterName();
 
-  document.getElementById("destination").value =
-    draft.destination || "全員";
+  state.postAudience = normalizePostAudience(draft);
+  showPostAudienceSummary();
 
   document.getElementById("deadline").value =
-    draft.deadline || "";
+    toPostDatetimeInput(draft.deadline);
 
-  document.getElementById("content").value =
-    draft.content || "";
-
+  populatePostTargetOptions();
+  document.getElementById('postTargetLink').value = draft.targetLink || '';
+  document.getElementById("content").value = draft.content || "";
   renderDestinationRosterOptions();
 }
 
@@ -6565,7 +6957,9 @@ async function analyzePostFile(file) {
     requester: currentRequesterName(),
     destination: task.recipient || "全員",
     recipientEmail: task.recipientEmail || "",
-    deadline: task.deadline || "",
+    deadline: toPostDatetimeInput(task.deadline),
+    targetLink: '',
+    targetLabel: '',
     content: task.action || "",
     evidence: task.evidence || "",
     notes: task.notes || "",
@@ -6792,12 +7186,17 @@ function postcardInnerHtml(card) {
 
     <div class="postcard-display-row row-destination">
       <strong>宛先：</strong>
-      <span>${escapeHtml(card.destination || "全員")}</span>
+      <span title="${escapeHtml(postAudienceSummary(card))}">${escapeHtml(postAudienceSummary(card))}</span>
     </div>
 
     <div class="postcard-display-row row-deadline">
       <strong>期限：</strong>
-      <span>${escapeHtml(card.deadline || "")}</span>
+      <span>${escapeHtml(formatPostDatetime(card.deadline))}</span>
+    </div>
+
+    <div class="postcard-display-row row-target">
+      <strong>担当箇所：</strong>
+      ${postTargetLinkHtml(card)}
     </div>
 
     <div class="postcard-display-row row-content">
@@ -6874,8 +7273,11 @@ function editCurrentPostCard() {
   }
 
   document.getElementById("requester").value = currentRequesterName();
-  document.getElementById("destination").value = card.destination || "全員";
-  document.getElementById("deadline").value = card.deadline || "";
+  state.postAudience = normalizePostAudience(card);
+  showPostAudienceSummary();
+  document.getElementById("deadline").value = toPostDatetimeInput(card.deadline);
+  populatePostTargetOptions();
+  document.getElementById('postTargetLink').value = card.targetLink || '';
   document.getElementById("content").value = card.content || "";
 
   sessionStorage.setItem(
@@ -6931,12 +7333,21 @@ async function sendPostCards() {
 
   const cards = state.postCards.map((card) => ({
     requester: currentRequesterName(),
-    destination: card.destination || "全員",
+    ...postAudiencePayload(card),
     deadline: card.deadline || "",
+    targetLink: card.targetLink || '',
+    targetLabel: card.targetLabel || postTargetLabel(card.targetLink),
     content: card.content || "",
     evidence: card.evidence || "",
     sourceMode: card.sourceMode || (card.aiAnalyzed ? "ai" : "manual")
   }));
+  for (let i=0; i<cards.length; i++) {
+    if (!validatePostCard(cards[i],i+1)) {
+      state.postCardIndex=i;
+      renderPostConfirmation();
+      return;
+    }
+  }
 
   try {
     const result = await portalFetch("/api/tasks/create", {
@@ -7143,6 +7554,7 @@ async function loadRoster(includeDisabled = false) {
 
     renderDestinationRosterOptions();
     renderMeetingAudienceChoices();
+    if (!document.getElementById('postAudienceOverlay')?.hidden) renderPostAudiencePeople();
 
     if (includeDisabled) {
       renderRosterTable();
@@ -7510,8 +7922,9 @@ async function refreshRemoteTasks() {
       id: `remote_${task.id}`,
       remoteId: Number(task.id),
       title:
+        (task.target_label ? `【${task.target_label}】` : '') +
         `${task.content}` +
-        (task.deadline ? `（期限：${task.deadline}）` : ""),
+        (task.deadline ? `（期限：${formatPostDatetime(task.deadline)}）` : ""),
       type: "request",
       createdAt: task.created_at,
       completedAt: task.completed_at || null,
@@ -7519,6 +7932,8 @@ async function refreshRemoteTasks() {
       recipient: task.recipient_name,
       deadline: task.deadline,
       content: task.content,
+      targetLink: task.target_link || '',
+      targetLabel: task.target_label || '',
       region: task.region
     }));
   } catch (error) {
