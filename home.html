@@ -4259,6 +4259,35 @@ a:active {
 .schedule-plan-memo { position: absolute; left: 90px; top: 713px; display: flex; align-items: center; gap: 18px; font-size: 20px; }
 .schedule-plan-memo input { width: 390px; height: 34px; box-sizing: border-box; border: 1px solid #7e88a4; padding: 3px 8px; font: inherit; }
 
+/* v43: unfinished request rows are direct links to their designated work screens. */
+button.summary-task-row[data-open-request-task] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 3px 5px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+button.summary-task-row[data-open-request-task]:hover,
+button.summary-task-row[data-open-request-task]:focus-visible {
+  background: #e8efff;
+  border-color: #8eafe9;
+  outline: none;
+}
+button.summary-task-row[data-open-request-task] .summary-task-title::after {
+  content: "  ↗";
+  color: #2563ca;
+  font-weight: 800;
+}
+.screen-task-start .start-task-item[data-select-task][data-direct-task] .start-task-title::after {
+  content: "  ↗";
+  color: #2563ca;
+  font-weight: 800;
+}
 </style>
 </head>
 <body>
@@ -4661,8 +4690,8 @@ a:active {
             </div>
 
             <div class="postcard-form-row row-target">
-              <label for="postTargetLink">担当箇所：</label>
-              <select id="postTargetLink" aria-label="ポータル上の担当箇所（リンク）"></select>
+              <label for="postTargetLink" title="受取側が未完了タスクを押した際に開く画面です">担当箇所：</label>
+              <select id="postTargetLink" aria-label="未完了タスクを押した際に開く作業画面"></select>
             </div>
 
             <div class="postcard-form-row row-content">
@@ -5748,6 +5777,12 @@ function wireActions() {
   document.getElementById("clientSkipCompany").addEventListener("click", skipClientCompany);
 
   document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
+  // ホームの未完了タスクは、行全体を押すと指定された作業先へ遷移する。
+  document.getElementById("unfinishedTasks").addEventListener("click", (event) => {
+    const row = event.target.closest("[data-open-request-task]");
+    if (!row) return;
+    openUnfinishedRequestFromHome(row.dataset.openRequestTask);
+  });
 
   document.querySelector('[data-action="confirm-post"]').addEventListener("click", () => {
     const payload = {
@@ -6327,7 +6362,14 @@ function renderStartTasks() {
     list.querySelectorAll("[data-select-task]").forEach((button) => {
       button.addEventListener("click", () => {
         state.selectedTaskId = button.dataset.selectTask;
-        renderStartTasks();
+        // リンク付きの依頼は1クリックでタスク開始→担当画面へ。
+        // それ以外（部署タスク等）は従来の「スタート」ボタンを使用。
+        const task = tasks.find((item) => item.id === state.selectedTaskId);
+        if (task?.type === "request" && resolveRequestTaskTarget(task)) {
+          startSelectedTask();
+        } else {
+          renderStartTasks();
+        }
       });
     });
   }
@@ -6344,10 +6386,99 @@ function renderStartTasks() {
 
 function startTaskItemHtml(task) {
   const selected = task.id === state.selectedTaskId ? " is-selected" : "";
-  return `<button type="button" class="start-task-item${selected}" data-select-task="${escapeHtml(task.id)}">
+  const direct = task.type === "request" && resolveRequestTaskTarget(task);
+  return `<button type="button" class="start-task-item${selected}" data-select-task="${escapeHtml(task.id)}"${direct ? ' data-direct-task="1"' : ''}
+    title="${escapeHtml(direct ? 'クリックで依頼先の作業画面を開きます' : task.title)}">
     ${taskBadgeHtml(task.type)}
     <span class="start-task-title">${escapeHtml(task.title)}</span>
   </button>`;
+}
+
+/**
+ * v43: 依頼出し時に選択済みの担当箇所を、未完了タスクの実行先にする。
+ * Worker v19の portal_tasks.target_link をそのまま利用するためDB変更不要。
+ * URLは既存のポータルリンク一覧にあるHTTPSリンクだけを許可する。
+ */
+function resolveRequestTaskTarget(task) {
+  const link = String(task?.targetLink || "");
+  if (link.startsWith("route:")) {
+    const screen = link.slice(6);
+    if (screenNames.has(screen) && screen !== "task-start" && screen !== "task-end") {
+      return { kind: "screen", screen };
+    }
+  }
+  if (link.startsWith("url:")) {
+    const url = link.slice(4);
+    if (/^https:\/\//i.test(url) && postTargetOptions().some((entry) => entry.link === link)) {
+      return { kind: "external", url };
+    }
+  }
+  return null;
+}
+
+function openRequestTaskTarget(task) {
+  const target = resolveRequestTaskTarget(task);
+  if (!target) {
+    showScreen("home");
+    showToast("この依頼には開ける担当箇所が設定されていません");
+    return;
+  }
+  if (target.kind === "external") {
+    // Click handler / Start button内で同期的に開く（ポップアップブロック対策）。
+    // noopener指定ではタブが正常に開いても戻り値がnullになるため、戻り値で成否判定しない。
+    window.open(target.url, "_blank", "noopener,noreferrer");
+    showScreen("home");
+    return;
+  }
+  // タスク開始画面からはホームを履歴の基点として保持。
+  if (state.currentScreen === "task-start") showScreen("home");
+  showScreen(target.screen);
+}
+
+function openUnfinishedRequestFromHome(taskId) {
+  const task = currentWeekTasks().find(item =>
+    item.id === taskId && item.type === "request" && !item.completedAt
+  );
+  if (!task) {
+    showToast("この依頼が見つからないか、すでに完了しています");
+    return;
+  }
+  // 違う作業を開いた場合は実行中タスクを切り替える。
+  // それまでの作業時間は中断セグメントとして記録し、誤って別の依頼を完了させない。
+  const previousId = getActiveTaskId();
+  if (previousId !== task.id) {
+    const now = Date.now();
+    const previousStartedAt = getActiveStartedAt();
+    if (previousId && previousStartedAt > 0 && now > previousStartedAt) {
+      const interrupted = {
+        id: `task_switch_${now}_${Math.random().toString(36).slice(2, 8)}`,
+        taskId: previousId,
+        startedAt: new Date(previousStartedAt).toISOString(),
+        endedAt: new Date(now).toISOString(),
+        durationMs: now - previousStartedAt,
+        progress: {},
+        otherProgress: "",
+        reflection: "",
+        tomorrowGoal: "",
+        reportOnly: false,
+        region: state.preferredRegion || state.region
+      };
+      const sessions = loadSessions();
+      sessions.push(interrupted);
+      saveSessions(sessions);
+      // オフライン時はローカル記録を残し、次回ログイン時の既存同期処理で再送する。
+      void portalFetch("/api/work-sessions", {
+        method: "POST", body: { region: state.region, sessions: [interrupted] }
+      }).then(() => loadRegionalWorkSessions()).catch(error => {
+        console.warn("Task switch session sync postponed", error);
+      });
+    }
+    state.selectedTaskId = task.id;
+    sessionStorage.setItem(userSessionKey("active_task_id"), task.id);
+    sessionStorage.setItem(userSessionKey("task_started_at"), String(now));
+    refreshTaskUi();
+  }
+  openRequestTaskTarget(task);
 }
 
 function startSelectedTask() {
@@ -6376,7 +6507,11 @@ function startSelectedTask() {
   sessionStorage.setItem(userSessionKey("active_task_id"), task.id);
   sessionStorage.setItem(userSessionKey("task_started_at"), String(Date.now()));
   refreshTaskUi();
-  showScreen("home");
+  if (task.type === "request") {
+    openRequestTaskTarget(task);
+  } else {
+    showScreen("home");
+  }
 }
 
 function getActiveTaskId() {
@@ -6404,19 +6539,23 @@ function renderHomeTaskLists() {
 
   document.getElementById("unfinishedWeekLabel").textContent = weekLabel();
   document.getElementById("finishedWeekLabel").textContent = weekLabel();
-  document.getElementById("unfinishedTasks").innerHTML = taskSummaryHtml(unfinished, activeId);
-  document.getElementById("finishedTasks").innerHTML = taskSummaryHtml(finished, activeId);
+  document.getElementById("unfinishedTasks").innerHTML = taskSummaryHtml(unfinished, activeId, true);
+  document.getElementById("finishedTasks").innerHTML = taskSummaryHtml(finished, activeId, false);
 }
 
-function taskSummaryHtml(tasks, activeId) {
+function taskSummaryHtml(tasks, activeId, allowNavigation = false) {
   if (!tasks.length) return '<div class="summary-empty">なし</div>';
   return tasks.map((task) => {
     const active = task.id === activeId ? " is-active" : "";
-    return `<div class="summary-task-row${active}" title="${escapeHtml(task.title)}">
-      ${taskBadgeHtml(task.type)}
-      <span class="summary-task-title">${escapeHtml(task.title)}</span>
-      ${task.targetLink ? `<span class="task-target-small">${postTargetLinkHtml({targetLink:task.targetLink,targetLabel:task.targetLabel})}</span>` : ''}
-    </div>`;
+    const clickable = allowNavigation && task.type === "request" && Boolean(resolveRequestTaskTarget(task));
+    const title = clickable
+      ? `${task.title}｜クリックして${task.targetLabel || "担当箇所"}を開く`
+      : task.title;
+    const content = `${taskBadgeHtml(task.type)}<span class="summary-task-title">${escapeHtml(task.title)}</span>`;
+    if (clickable) {
+      return `<button type="button" class="summary-task-row${active}" data-open-request-task="${escapeHtml(task.id)}" title="${escapeHtml(title)}">${content}</button>`;
+    }
+    return `<div class="summary-task-row${active}" title="${escapeHtml(title)}">${content}${task.targetLink ? `<span class="task-target-small">${postTargetLinkHtml({targetLink:task.targetLink,targetLabel:task.targetLabel})}</span>` : ''}</div>`;
   }).join("");
 }
 
@@ -6924,7 +7063,7 @@ function postTargetLabel(link) {return postTargetOptions().find(x=>x.link===link
 function populatePostTargetOptions() {
   const select=document.getElementById('postTargetLink');
   if (!select) return;
-  select.innerHTML='<option value="">選択してください</option>'+postTargetOptions()
+  select.innerHTML='<option value="">タスクから開く画面を選択</option>'+postTargetOptions()
     .map(x=>`<option value="${escapeHtml(x.link)}">${escapeHtml(x.label)}</option>`).join('');
 }
 function postTargetLinkHtml(card) {
