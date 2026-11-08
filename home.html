@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
-  <!-- Version v38: 2026-11-07 Figma MTG attendance + HR meeting creation -->
+  <!-- Version v46: 2026-11-08 RP scheduling + safe bidirectional Sheets synchronization -->
   <style>
 * {
   box-sizing: border-box;
@@ -4330,6 +4330,71 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .pm-back {position:absolute;left:128px;top:916px;min-width:140px;height:60px;background:#3080ff;color:#fff;font-size:36px;cursor:pointer;}
 .pm-status {font-size:17px;color:#3f5579;min-height:28px;}
 
+
+/* v45: Schedule consolidated navigation, MTG date polls and representative dashboard */
+.schedule-hub-tabs{position:absolute;left:75px;top:82px;z-index:4;display:flex;gap:12px;align-items:center}
+.schedule-hub-tabs button{height:45px;padding:7px 22px;min-width:172px;background:#e4e8ff;border:2px solid #c3ccf8;border-radius:9px;color:#262e70;font-size:21px;font-weight:700;cursor:pointer}
+.schedule-hub-tabs button.is-active{background:#326dff;border-color:#326dff;color:#fff}
+.schedule-hub-tabs button:hover:not(.is-active){background:#d2dcff}
+.screen-schedule .schedule-figma-panel{top:143px;height:744px}
+.screen-schedule-review .schedule-review-week-nav{top:138px}
+.screen-schedule-review .schedule-review-board{top:215px;height:732px;overflow:auto}
+.schedule-hub-back,.candidate-page-back{position:absolute;left:50px;bottom:20px;background:#3080ff;color:#fff;border:0;min-width:140px;height:60px;font-size:34px;cursor:pointer;z-index:5}
+.screen-home [hidden],.screen-home #representativeDashboardEntry[hidden]{display:none!important}
+.candidate-shell,.representative-shell{position:absolute;left:70px;top:154px;width:1300px;height:752px;box-sizing:border-box;background:#fff;border:2px solid #dce4fa;border-radius:16px;padding:22px 26px;color:#182548;overflow:hidden}
+.candidate-shell-head,.representative-head{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:14px}
+.candidate-shell h1,.representative-shell h1{font-size:32px;margin:0 0 4px}.candidate-shell-head p,.representative-head p{margin:0;color:#6a7895;font-size:17px}
+.candidate-shell-head>button,.representative-head>button,.representative-list-head button{padding:9px 17px;border:1px solid #b4caff;border-radius:9px;background:#edf3ff;color:#264e9d;font-size:17px;cursor:pointer}
+.candidate-body{display:grid;grid-template-columns:0.95fr 1.05fr;gap:24px;height:617px;min-height:0}
+.candidate-create,.candidate-polls{overflow:auto;min-width:0;padding:15px 16px;background:#f8faff;border:1px solid #e1e7f7;border-radius:13px}
+.candidate-create h2,.candidate-polls h2,.representative-list-head h2{font-size:24px;margin:0 0 15px}
+.candidate-create label{display:flex;flex-direction:column;gap:6px;margin-bottom:13px;font-size:17px;font-weight:650}
+.candidate-create input,.candidate-create select,.candidate-create textarea{border:1.8px solid #c6d4f1;border-radius:8px;padding:9px 12px;font:inherit;font-size:18px;min-height:43px;background:#fff;color:#172c56;box-sizing:border-box;width:100%}
+.candidate-create textarea{resize:vertical;min-height:67px}
+.candidate-two-inputs{display:grid;grid-template-columns:1fr 1.6fr;gap:12px}
+.candidate-options-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:10px 0;font-size:19px}
+.candidate-options-head button{border:1px solid #a5bbf5;color:#164aa0;background:#edf3ff;border-radius:8px;padding:7px 12px;font-size:15px;cursor:pointer}
+.candidate-option-inputs{display:grid;gap:9px}
+.candidate-option-row{display:grid;grid-template-columns:27px 1fr 1fr 34px;align-items:center;gap:8px}
+.candidate-option-row input{padding:6px;font-size:15px;min-width:0;min-height:40px}.candidate-option-row>span{font-size:19px;font-weight:700}.candidate-option-row>button{border:0;background:#ffebeb;border-radius:7px;color:#b63145;font-size:22px;cursor:pointer}
+.candidate-submit{background:#3080ff;color:white;font-size:21px;border:0;border-radius:10px;padding:12px 28px;margin-top:16px;font-weight:750;cursor:pointer}
+.candidate-submit:disabled,.candidate-vote:disabled{opacity:.48;cursor:not-allowed}
+.candidate-guide{font-size:14px;color:#687790;line-height:1.45}
+.candidate-poll-list{display:grid;gap:12px}.candidate-poll{background:white;border:1.5px solid #d4dff4;border-radius:12px;padding:13px}
+.candidate-poll-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.candidate-poll-head strong{font-size:19px}.candidate-poll-head span{background:#edf3ff;color:#38528a;border-radius:13px;padding:5px 9px;font-size:13px;white-space:nowrap}
+.candidate-poll-meta{color:#66728c;font-size:14px;line-height:1.5;margin:6px 0 9px}.candidate-poll-note{font-size:15px;white-space:pre-wrap;color:#536381}
+.candidate-slot{background:#f7f9ff;border:1px solid #e7ebf8;border-radius:9px;margin:7px 0;padding:9px}
+.candidate-slot-main{font-weight:650;font-size:15px}.candidate-slot-stats{color:#5b6f91;font-size:14px;margin:4px 0 8px}
+.candidate-votes{display:flex;gap:6px;flex-wrap:wrap}.candidate-vote{padding:5px 8px;border:1px solid #b7c9e9;border-radius:8px;background:#fff;color:#27385d;font-size:14px;cursor:pointer}
+.candidate-vote.is-active{background:#dceaff;border-color:#326dff;color:#13489c;font-weight:700}
+.candidate-poll-actions{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}.candidate-confirm,.candidate-delete{padding:7px 12px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer}
+.candidate-confirm{background:#e5f5eb;border:1px solid #94d2a8;color:#126943}.candidate-delete{background:#ffeded;border:1px solid #f1b1ba;color:#a52a3f}
+.candidate-poll.is-confirmed{border-color:#6cb893}.candidate-poll.is-confirmed .candidate-poll-head span{background:#d9f4e3;color:#147149}
+.representative-shell{padding:24px 30px}.representative-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:19px;margin:16px 0 26px}
+.representative-stat-grid>div{background:#f1f5ff;border:1px solid #d9e4ff;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:7px}.representative-stat-grid strong{font-size:45px;color:#2761cf}.representative-stat-grid span{font-size:17px;color:#53688c}
+.representative-list-head{display:flex;align-items:center;justify-content:space-between}.representative-poll-list{height:366px;overflow:auto;display:grid;align-content:start;gap:10px}
+.representative-poll-item{padding:16px;border:1px solid #dce6f6;border-radius:11px;background:#fbfcff;display:flex;justify-content:space-between;gap:16px}
+.representative-poll-item strong{font-size:19px}.representative-poll-item p{font-size:15px;margin:6px 0 0;color:#586b8c}
+.representative-poll-status{white-space:nowrap;color:#40619c;font-size:16px}.representative-info{font-size:14px;color:#6c7791;margin:13px 0}
+
+
+/* v46: sheet sync status and RP scheduling */
+.review-sheet-status{position:absolute;left:600px;top:8px;width:760px;z-index:3;background:#edf4ff;border:1px solid #c4daf5;border-radius:8px;padding:5px 12px;color:#31517d;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:29px}
+.review-sheet-status.is-warning{background:#fff3ed;border-color:#f0c1aa;color:#994c22}
+.review-rp-assignments{position:absolute;left:600px;top:45px;width:760px;z-index:3;color:#2a4777;font-size:13px;display:flex;gap:6px;flex-wrap:wrap;max-height:31px;overflow:auto}
+.schedule-review-time-label,.schedule-review-cell{height:40px;line-height:40px}
+.schedule-review-time-label{font-size:19px}
+.review-rp-assignments span{padding:4px 9px;background:#e7f3e9;border-radius:10px}
+.rep-view-tabs{display:flex;gap:12px;margin:8px 0 17px}.rep-view-tabs button{border:1px solid #a7c0ee;background:#edf2ff;color:#285a9b;padding:10px 26px;border-radius:10px;font-size:20px;cursor:pointer}.rep-view-tabs button.is-active{background:#2b70de;color:white}
+#repMtgPanel[hidden],#repRpPanel[hidden]{display:none!important}
+#repRpPanel{height:560px;overflow-y:auto}.rp-panel-head h2{font-size:25px;margin:0}.rp-panel-head p{font-size:15px;color:#60708c;margin:5px 0 10px}
+.rp-controls{display:flex;align-items:end;gap:15px}.rp-controls label{display:grid;gap:4px;font-size:16px;color:#344b73}.rp-controls select{padding:8px;border:1px solid #c5d3ec;background:white;border-radius:8px;font-size:17px;min-width:150px}
+.rp-primary{padding:10px 24px;border:0;border-radius:9px;background:#286edd;color:white;font-size:18px;cursor:pointer}
+.rp-people-head{display:flex;justify-content:space-between;align-items:center;margin:15px 0 8px;font-size:18px}.rp-people-head button{border:1px solid #b8c8e6;border-radius:7px;background:#f2f6ff;padding:6px 10px;cursor:pointer}
+.rp-trainers{display:flex;gap:10px;flex-wrap:wrap;max-height:85px;overflow:auto;background:#f8faff;padding:10px;border-radius:10px;border:1px solid #e0e8f8;font-size:17px}.rp-trainers label{display:flex;gap:5px;align-items:center}
+.rp-hint{margin:10px 0;color:#5c6d84;font-size:14px;line-height:1.5}
+.rp-results-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}.rp-results-grid h3{margin:8px 0;font-size:20px}.rp-match-list{max-height:245px;overflow:auto;display:grid;align-content:start;gap:8px}.rp-match-row{background:white;border:1px solid #d8e2f5;padding:10px;border-radius:9px;font-size:15px}.rp-match-row strong{display:block;margin-bottom:4px;font-size:17px}.rp-match-row small{display:block;color:#5d7192;font-size:13px}.rp-match-row button{margin-top:5px;border:0;background:#2a70db;color:white;padding:6px 14px;border-radius:7px;cursor:pointer}.rp-match-row button.is-delete{background:#be4158}
+
 </style>
 </head>
 <body>
@@ -4408,9 +4473,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <button type="button" class="blue-menu" data-route="department-office">事務局</button>
               <button type="button" class="blue-menu" data-route="meeting-attendance">MTG出欠登録</button>
               <button type="button" class="blue-menu" data-route="post">〒依頼出しPOST</button>
-              <button type="button" class="blue-menu" data-route="schedule">スケジュール登録</button>
+              <button type="button" class="blue-menu" data-route="schedule">スケジュール管理</button>
               <button id="hpEditButton" type="button" class="blue-menu">HPへの要望</button>
-              <button type="button" class="blue-menu schedule-button" data-route="schedule-review" data-review-current="1">予定確認</button>
+              <button type="button" id="representativeDashboardEntry" class="blue-menu schedule-button" data-route="representative-dashboard" hidden>代表画面</button>
             </div>
           </section>
 
@@ -4500,7 +4565,6 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button class="client-tab" type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
             <button class="client-tab" type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
           </nav>
-          <button class="client-staff-entry" type="button" data-route="client-staff-status">支部員タスク状況を見る ↗</button>
         </section>
 
         <!-- Figma 105:463: お問い合わせフォーム -->
@@ -4976,6 +5040,12 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
         <section class="screen screen-schedule" data-screen="schedule">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
+            <button type="button" data-route="schedule">空き時間・登録</button>
+            <button type="button" data-route="schedule-review">予定確認・編集</button>
+            <button type="button" data-route="schedule-candidates">MTG候補日調整</button>
+          </nav>
+          <button type="button" class="schedule-hub-back" data-common-back>←戻る</button>
 
           <div class="schedule-figma-panel">
             <section class="calendar-provider-group provider-google">
@@ -5040,13 +5110,21 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
         <section class="screen screen-schedule-review" data-screen="schedule-review">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
+            <button type="button" data-route="schedule">空き時間・登録</button>
+            <button type="button" data-route="schedule-review">予定確認・編集</button>
+            <button type="button" data-route="schedule-candidates">MTG候補日調整</button>
+          </nav>
           <nav class="schedule-review-week-nav" aria-label="予定確認の週を切り替える">
             <button type="button" id="reviewPrevWeek" aria-label="前の週へ">← 前の週</button>
             <span id="reviewWeekRangeLabel" class="schedule-review-week-range" aria-live="polite"></span>
             <button type="button" id="reviewThisWeek" class="schedule-review-current-button">今週</button>
+            <button type="button" id="reviewSheetSync" class="schedule-review-current-button">スプシと同期</button>
             <button type="button" id="reviewNextWeek" aria-label="次の週へ">次の週 →</button>
           </nav>
 
+          <div id="reviewSheetStatus" class="review-sheet-status" aria-live="polite">スプレッドシートの状況を確認しています…</div>
+          <div id="reviewMyRpAssignments" class="review-rp-assignments" aria-live="polite"></div>
           <div id="scheduleReviewBoard" class="schedule-review-board">
             <div class="schedule-review-corner"></div>
             <div id="scheduleReviewHeaders"></div>
@@ -5081,6 +5159,83 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             class="schedule-review-back"
             data-common-back
           >←戻る</button>
+        </section>
+
+
+        <!-- v45: 統合スケジュール管理のMTG候補日調整 -->
+        <section class="screen screen-schedule-candidates" data-screen="schedule-candidates">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
+            <button type="button" data-route="schedule">空き時間・登録</button>
+            <button type="button" data-route="schedule-review">予定確認・編集</button>
+            <button type="button" data-route="schedule-candidates">MTG候補日調整</button>
+          </nav>
+          <div class="candidate-shell">
+            <header class="candidate-shell-head"><div><h1>MTG候補日調整</h1><p>候補日を提示し、参加可否を集めて日程を決定します。</p></div>
+              <button type="button" id="candidateRefresh">最新の回答を取得</button></header>
+            <div class="candidate-body">
+              <section class="candidate-create">
+                <h2>新しい候補日調整</h2>
+                <form id="candidateCreateForm">
+                  <label>MTG名<input id="candidateTitle" maxlength="100" placeholder="支部ミーティング" required></label>
+                  <div class="candidate-two-inputs">
+                    <label>開催方法<select id="candidateMode"><option value="in_person">対面</option><option value="online">オンライン</option></select></label>
+                    <label id="candidatePlaceLabel">場所<input id="candidatePlace" maxlength="160" placeholder="＠会議室 IFs 西新宿" required></label>
+                  </div>
+                  <label>補足（任意）<textarea id="candidateNote" rows="2" maxlength="2000" placeholder="候補日・予定内容など"></textarea></label>
+                  <div class="candidate-options-head"><strong>候補の日時（2〜8件）</strong><button type="button" id="candidateAddOption">＋候補を追加</button></div>
+                  <div id="candidateOptionInputs" class="candidate-option-inputs"></div>
+                  <button type="submit" class="candidate-submit" id="candidateCreateButton">候補日を登録</button>
+                  <p class="candidate-guide">登録した地域の支部員が回答できます。回答は「参加可能／調整中／参加不可」から選択します。</p>
+                </form>
+              </section>
+              <section class="candidate-polls">
+                <h2>候補日一覧 <span id="candidateRegionLabel"></span></h2>
+                <div id="candidatePollList" class="candidate-poll-list"><p>読み込み中…</p></div>
+              </section>
+            </div>
+          </div>
+          <button type="button" class="candidate-page-back" data-common-back>←戻る</button>
+        </section>
+
+        <!-- v45: 代表・デベロッパーが状況を把握する専用画面 -->
+        <section class="screen screen-representative" data-screen="representative-dashboard">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="representative-shell">
+            <header class="representative-head"><div><h1>代表画面</h1><p>MTG候補日とRPのマッチングをまとめて管理</p></div>
+              <button type="button" id="repRefresh">更新</button></header>
+            <nav class="rep-view-tabs" aria-label="代表画面の切り替え">
+              <button type="button" id="repTabMtg" class="is-active">MTG候補日</button>
+              <button type="button" id="repTabRp">RP割り振り</button>
+            </nav>
+            <section id="repMtgPanel">
+            <div class="representative-stat-grid">
+              <div><strong id="repPollOpen">—</strong><span>調整中のMTG</span></div>
+              <div><strong id="repPollConfirmed">—</strong><span>日程確定済み</span></div>
+              <div><strong id="repPollUnanswered">—</strong><span>自分が未回答の調整</span></div>
+            </div>
+            <div class="representative-list-head"><h2>候補日・回答状況</h2>
+               <button type="button" id="repOpenCandidates">候補日を開く・回答する</button></div>
+            <div id="representativePollList" class="representative-poll-list"><p>読み込み中…</p></div>
+            <p class="representative-info">確定した候補日は、必要なTTなどを整えたうえで「人事局」のMTG登録から確定MTGとして登録してください。自動登録は行いません。</p>
+            </section>
+            <section id="repRpPanel" hidden>
+              <div class="rp-panel-head"><div><h2>RPの自動マッチング</h2><p>支部員の「RP受講希望」と、指定担当者の「RP担当可能」の重なる時間を探します。</p></div></div>
+              <div class="rp-controls">
+                <label>実施時間<select id="rpDuration"><option value="30">30分</option><option value="60" selected>60分</option><option value="90">90分</option></select></label>
+                <label>候補期間<select id="rpDays"><option value="7">今後7日</option><option value="14" selected>今後14日</option><option value="28">今後28日</option></select></label>
+                <button type="button" id="rpFindMatches" class="rp-primary">候補を自動検索</button>
+              </div>
+              <div class="rp-people-head"><strong>RP担当者を選択（複数可）</strong><button type="button" id="rpSelectAllTrainers">すべて選択</button></div>
+              <div id="rpTrainerChoices" class="rp-trainers">読み込み中…</div>
+              <p class="rp-hint">通常の架電・リストアップ予定は「空き時間」とみなしません。受講者は予定登録で「RP受講希望」、担当者は「RP担当可能」を選択してください。候補は自動提示のみで、確定は代表が行います。</p>
+              <div class="rp-results-grid">
+                <div><h3>マッチング候補</h3><div id="rpMatchSuggestions" class="rp-match-list">担当者を選択して候補を検索</div></div>
+                <div><h3>確定済みRP</h3><div id="rpConfirmedAssignments" class="rp-match-list">読み込み中…</div></div>
+              </div>
+            </section>
+          </div>
+          <button type="button" class="candidate-page-back" data-common-back>←戻る</button>
         </section>
 
         <section class="screen screen-schedule-plan" data-screen="schedule-plan">
@@ -5399,6 +5554,8 @@ const screenNames = new Set([
   "schedule",
   "schedule-plan",
   "schedule-review",
+  "schedule-candidates",
+  "representative-dashboard",
   "schedule-hours",
   "client",
   "client-contact",
@@ -5831,6 +5988,7 @@ function wireActions() {
       void refreshRemoteTasks().then(refreshTaskUi);
       void loadRegionalWorkSessions();
       if (state.currentScreen === 'schedule-review') void loadScheduleReview();
+      if (state.currentScreen === 'schedule-candidates' || state.currentScreen === 'representative-dashboard') void loadMeetingCandidatePolls();
       if (state.currentScreen === 'meeting-attendance') void loadMeetings();
       if (state.currentScreen === 'department-hr') setupMeetingManager();
       if (state.currentScreen === 'client-staff-status') void loadClientStaffStatus();
@@ -6116,6 +6274,10 @@ function wireActions() {
 
 function showScreen(name, updateHash = true, recordHistory = true) {
   if (!screenNames.has(name)) return;
+  if (name === "representative-dashboard" && !(state.isDeveloper || state.isRepresentative)) {
+    showToast("代表またはデベロッパーだけが開ける画面です");
+    name = "home";
+  }
 
   const previousScreen = state.currentScreen;
 
@@ -6167,8 +6329,12 @@ if (name === "post-confirm") {
     void loadClientStaffStatus();
   }
 
+  updateScheduleHubTabs(name);
   if (name === "schedule") {
     refreshCalendarSchedule();
+  }
+  if (name === "schedule-candidates" || name === "representative-dashboard") {
+    void loadMeetingCandidatePolls();
   }
 
   if (name === "schedule-plan") {
@@ -7999,6 +8165,7 @@ async function loadPortalProfile() {
     state.isRepresentative = Boolean(data.representative);
     state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
     state.canManageMeetings = Boolean(data.can_manage_meetings);
+    document.getElementById("representativeDashboardEntry").hidden = !(state.isRepresentative || state.isDeveloper);
     // 同じログイン中に手動で変えた地域は維持し、新規ログイン時は名簿を優先。
     const email = userIdentity();
     const regionSessionOwnerKey = 'dotjp_region_preference_applied_for';
@@ -8022,6 +8189,7 @@ async function loadPortalProfile() {
     state.isRepresentative = false;
     state.canEditRoster = false;
     state.canManageMeetings = false;
+    document.getElementById("representativeDashboardEntry").hidden = true;
     document.getElementById("hpEditButton").textContent = "HPへの要望";
   }
 }
@@ -8457,6 +8625,8 @@ const scheduleTaskChoices = [
   "通電",
   "リストアップ",
   "お問い合わせフォーム送信",
+  "RP受講希望",
+  "RP担当可能",
   "MTG",
   "資料作成",
   "事務作業",
@@ -9135,6 +9305,12 @@ async function loadScheduleReview() {
     // 週や地域を素早く切り替えた場合、古いレスポンスで上書きしない。
     if (requestId !== state.calendar.reviewLoadSeq || state.region !== region) return;
     state.calendar.reviewPlans = Array.isArray(data.plans) ? data.plans : [];
+    const note=document.getElementById('reviewSheetStatus');
+    if(note){const s=data.sheetSync||{};note.className='review-sheet-status'+(s.ok===false?' is-warning':'');
+      note.textContent=s.ok===false?'スプシの取得に失敗：'+(s.error||'権限を確認してください'):
+        s.skipped?'スプシと照合済み（'+s.updated+'件更新・'+s.added+'件取込・'+s.skipped+'件は確認待ち）':
+        'スプシと照合済み（既存行の追加 '+(s.added||0)+'件・更新 '+(s.updated||0)+'件）';}
+    void loadMyRpAssignments();
     renderScheduleReviewEvents(range);
   } catch (error) {
     if (requestId !== state.calendar.reviewLoadSeq || state.region !== region) return;
@@ -10503,6 +10679,212 @@ document.addEventListener('keydown',event=>{
     renderMeetings();
     document.querySelector(`[data-mtg-toggle="${id}"]`)?.focus();
   }
+});
+
+
+/* v45: MTG候補日調整。所属地域の投票、代表画面の状況把握 */
+state.meetingCandidatePolls = [];
+state.meetingCandidateLoadSequence = 0;
+state.meetingCandidateCreating = false;
+function updateScheduleHubTabs(screen) {
+  document.querySelectorAll('.schedule-hub-tabs [data-route]').forEach(button => {
+    const active = button.dataset.route === screen;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-current', active ? 'page' : 'false');
+  });
+}
+function candidateFormatJst(iso) {
+  const date = new Date(iso);
+  if (!Number.isFinite(date.getTime())) return '日時不明';
+  return new Intl.DateTimeFormat('ja-JP', {timeZone:'Asia/Tokyo',year:'numeric',month:'numeric',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).format(date);
+}
+function candidateLocalToIso(value) {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return '';
+  const date = new Date(value + ':00+09:00');
+  if (!Number.isFinite(date.getTime())) return '';
+  if (new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(date).replace(' ','T') !== value) return '';
+  return date.toISOString();
+}
+function candidateAddOptionRow() {
+  const root=document.getElementById('candidateOptionInputs');
+  if (root.children.length >= 8) {showToast('候補日は最大8件です');return;}
+  const row=document.createElement('div');row.className='candidate-option-row';
+  row.innerHTML='<span></span><input type="datetime-local" aria-label="候補の開始日時" required><input type="datetime-local" aria-label="候補の終了日時" required><button type="button" aria-label="この候補を削除">×</button>';
+  row.querySelector('button').addEventListener('click',()=>{if(root.children.length<=2){showToast('候補日は2件以上必要です');return;}row.remove();candidateRenumberOptions();});
+  root.appendChild(row);candidateRenumberOptions();
+}
+function candidateRenumberOptions(){document.querySelectorAll('#candidateOptionInputs .candidate-option-row>span').forEach((el,i)=>el.textContent=String(i+1));}
+function candidateModeChange(){
+  const online=document.getElementById('candidateMode').value==='online';
+  const label=document.getElementById('candidatePlaceLabel');
+  label.hidden=online;label.querySelector('input').required=!online;
+}
+async function createMeetingCandidatePoll(event) {
+  event.preventDefault();if(state.meetingCandidateCreating)return;
+  const inputs=[...document.querySelectorAll('#candidateOptionInputs .candidate-option-row')];
+  const options=inputs.map(row=>({starts_at:candidateLocalToIso(row.querySelectorAll('input')[0].value),ends_at:candidateLocalToIso(row.querySelectorAll('input')[1].value)}));
+  if(options.some(item=>!item.starts_at||!item.ends_at)){showToast('候補の開始・終了日時を確認してください');return;}
+  const mode=document.getElementById('candidateMode').value;
+  const body={title:document.getElementById('candidateTitle').value.trim(),mode,
+    place:mode==='online'?'オンライン':document.getElementById('candidatePlace').value.trim(),
+    note:document.getElementById('candidateNote').value.trim(),options};
+  const btn=document.getElementById('candidateCreateButton');
+  state.meetingCandidateCreating=true;btn.disabled=true;
+  try{
+    await portalFetch('/api/meeting-candidates',{method:'POST',body});
+    document.getElementById('candidateCreateForm').reset();
+    document.getElementById('candidateOptionInputs').innerHTML='';
+    candidateAddOptionRow();candidateAddOptionRow();candidateModeChange();
+    showToast('MTG候補日を登録しました');await loadMeetingCandidatePolls();
+  }catch(error){showToast(error.message||'候補日の登録に失敗しました');}
+  finally{state.meetingCandidateCreating=false;btn.disabled=false;}
+}
+async function loadMeetingCandidatePolls(){
+  const seq=++state.meetingCandidateLoadSequence,region=state.region;
+  const list=document.getElementById('candidatePollList');
+  if(list&&state.currentScreen==='schedule-candidates')list.textContent='読み込んでいます…';
+  try{
+    const result=await portalFetch('/api/meeting-candidates?region='+encodeURIComponent(region));
+    if(seq!==state.meetingCandidateLoadSequence||region!==state.region)return;
+    state.meetingCandidatePolls=Array.isArray(result.polls)?result.polls:[];
+    renderMeetingCandidatePolls();renderRepresentativePolls();
+  }catch(error){
+    if(seq!==state.meetingCandidateLoadSequence)return;
+    if(list)list.textContent=error.message||'候補日を取得できませんでした';
+    const rep=document.getElementById('representativePollList');if(rep)rep.textContent=error.message||'候補日の取得に失敗しました';
+  }
+}
+function renderMeetingCandidatePolls(){
+  const list=document.getElementById('candidatePollList');
+  document.getElementById('candidateRegionLabel').textContent=state.region==='kansai'?'関西':'関東';
+  if(!list)return;
+  if(!state.meetingCandidatePolls.length){list.innerHTML='<p class="candidate-guide">候補日調整はまだありません。</p>';return;}
+  list.innerHTML=state.meetingCandidatePolls.map(poll=>{
+    const open=poll.status==='open';
+    const options=(poll.options||[]).map(option=>{
+      const votes=['available','maybe','unavailable'].map((status,i)=>{
+        const labels=['参加可能','調整中','参加不可'];
+        return `<button type="button" class="candidate-vote ${option.mine===status?'is-active':''}" data-candidate-vote="${option.id}" data-candidate-status="${status}" ${open?'':'disabled'}>${labels[i]}</button>`;
+      }).join('');
+      const confirmed=Number(poll.confirmed_option_id)===Number(option.id);
+      const totals=`参加可能 ${Number(option.available||0)} ／ 調整中 ${Number(option.maybe||0)} ／ 参加不可 ${Number(option.unavailable||0)}`;
+      const control=open&&poll.can_manage?`<button type="button" class="candidate-confirm" data-candidate-confirm="${poll.id}" data-candidate-option="${option.id}">この日時で確定</button>`:'';
+      return `<div class="candidate-slot"><div class="candidate-slot-main">${confirmed?'✓ 確定：':''}${escapeHtml(candidateFormatJst(option.starts_at))} 〜 ${escapeHtml(candidateFormatJst(option.ends_at).split(' ').pop())}</div><div class="candidate-slot-stats">${totals}</div><div class="candidate-votes">${votes}${control}</div></div>`;
+    }).join('');
+    const deleteButton=poll.can_manage?`<button type="button" class="candidate-delete" data-candidate-delete="${poll.id}">調整を削除</button>`:'';
+    return `<article class="candidate-poll ${open?'':'is-confirmed'}"><div class="candidate-poll-head"><strong>${escapeHtml(poll.title)}</strong><span>${open?'回答受付中':poll.status==='confirmed'?'日程確定':'終了'}</span></div>
+      <div class="candidate-poll-meta">${poll.mode==='online'?'オンライン':escapeHtml(poll.place||'場所未設定')} ／ ${escapeHtml(poll.creator_name||poll.creator_email||'')}</div>
+      ${poll.note?`<p class="candidate-poll-note">${escapeHtml(poll.note)}</p>`:''}${options}<div class="candidate-poll-actions">${deleteButton}</div></article>`;
+  }).join('');
+}
+function renderRepresentativePolls(){
+  const polls=state.meetingCandidatePolls||[];
+  document.getElementById('repPollOpen').textContent=String(polls.filter(p=>p.status==='open').length);
+  document.getElementById('repPollConfirmed').textContent=String(polls.filter(p=>p.status==='confirmed').length);
+  document.getElementById('repPollUnanswered').textContent=String(polls.filter(p=>p.status==='open'&&(p.options||[]).every(opt=>!opt.mine)).length);
+  const root=document.getElementById('representativePollList');
+  if(!polls.length){root.innerHTML='<p>現在、MTG候補日の調整はありません。</p>';return;}
+  root.innerHTML=polls.map(p=>{
+    const options=(p.options||[]),sorted=options.slice().sort((a,b)=>Number(b.available||0)-Number(a.available||0));
+    const best=sorted[0];
+    return `<div class="representative-poll-item"><div><strong>${escapeHtml(p.title)}</strong><p>${p.status==='confirmed'?'確定済み':'調整中'} ／ 候補${options.length}件 ／ ${escapeHtml(p.mode==='online'?'オンライン':p.place||'対面')}</p></div><div class="representative-poll-status">${best?`最多参加可能 ${Number(best.available||0)}人`:''}</div></div>`;
+  }).join('');
+}
+async function candidateVoteClick(optionId,status){
+  try{await portalFetch('/api/meeting-candidates/vote',{method:'POST',body:{option_id:optionId,status}});await loadMeetingCandidatePolls();showToast('参加可否を保存しました');}
+  catch(error){showToast(error.message||'回答の保存に失敗しました');}
+}
+async function candidateConfirmClick(pollId,optionId){
+  if(!confirm('この候補日時でMTGの日程を確定しますか？（MTG出欠登録への自動追加は行いません）'))return;
+  try{await portalFetch('/api/meeting-candidates/confirm',{method:'POST',body:{poll_id:pollId,option_id:optionId}});await loadMeetingCandidatePolls();showToast('候補日を確定しました');}
+  catch(error){showToast(error.message||'確定に失敗しました');}
+}
+async function candidateDeleteClick(id){
+  if(!confirm('この候補日調整と回答をすべて削除します。よろしいですか？'))return;
+  try{await portalFetch('/api/meeting-candidates/delete',{method:'POST',body:{poll_id:id}});await loadMeetingCandidatePolls();showToast('候補日調整を削除しました');}
+  catch(error){showToast(error.message||'削除に失敗しました');}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  candidateAddOptionRow();candidateAddOptionRow();candidateModeChange();
+  document.getElementById('candidateMode').addEventListener('change',candidateModeChange);
+  document.getElementById('candidateAddOption').addEventListener('click',candidateAddOptionRow);
+  document.getElementById('candidateCreateForm').addEventListener('submit',createMeetingCandidatePoll);
+  document.getElementById('candidateRefresh').addEventListener('click',()=>void loadMeetingCandidatePolls());
+  document.getElementById('repRefresh').addEventListener('click',()=>void loadMeetingCandidatePolls());
+  document.getElementById('repOpenCandidates').addEventListener('click',()=>showScreen('schedule-candidates'));
+  document.getElementById('candidatePollList').addEventListener('click',event=>{
+    const vote=event.target.closest('[data-candidate-vote]');
+    if(vote&&!vote.disabled){void candidateVoteClick(Number(vote.dataset.candidateVote),vote.dataset.candidateStatus);return;}
+    const confirmButton=event.target.closest('[data-candidate-confirm]');
+    if(confirmButton){void candidateConfirmClick(Number(confirmButton.dataset.candidateConfirm),Number(confirmButton.dataset.candidateOption));return;}
+    const del=event.target.closest('[data-candidate-delete]');if(del)void candidateDeleteClick(Number(del.dataset.candidateDelete));
+  });
+});
+
+
+// v46 representative RP planning + Sheets synchronization controls
+let rpRoster=[],rpMatches=[];
+function rpSetTab(which){
+  document.getElementById('repMtgPanel').hidden=which!=='mtg';
+  document.getElementById('repRpPanel').hidden=which!=='rp';
+  document.getElementById('repTabMtg').classList.toggle('is-active',which==='mtg');
+  document.getElementById('repTabRp').classList.toggle('is-active',which==='rp');
+  if(which==='rp')void rpLoadPeople();
+}
+async function rpLoadPeople(){
+  const root=document.getElementById('rpTrainerChoices');
+  try{
+    const data=await portalFetch('/api/rp/roster?region='+encodeURIComponent(state.region));
+    rpRoster=Array.isArray(data.people)?data.people:[];
+    const selected=new Set(Array.from(root.querySelectorAll('input:checked')).map(x=>x.value));
+    root.innerHTML=rpRoster.length?rpRoster.map(p=>`<label><input type="checkbox" value="${escapeHtml(p.email)}" ${selected.has(p.email)?'checked':''}>${escapeHtml(p.name)}</label>`).join(''):'この地域の名簿にスタッフがいません。';
+    void rpLoadAssignments();
+  }catch(e){root.textContent=e.message||'名簿を取得できませんでした';}
+}
+function rpSelectedTrainers(){return Array.from(document.querySelectorAll('#rpTrainerChoices input:checked')).map(e=>e.value);}
+function rpLocal(iso){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(iso));}
+async function rpFindCandidates(){
+  const trainers=rpSelectedTrainers();if(!trainers.length){showToast('RP担当者を選択してください');return;}
+  const el=document.getElementById('rpMatchSuggestions');el.textContent='候補を照合しています…';
+  const p=new URLSearchParams({region:state.region,days:document.getElementById('rpDays').value,duration:document.getElementById('rpDuration').value,trainers:trainers.join(',')});
+  try{const d=await portalFetch('/api/rp/matches?'+p.toString());rpMatches=d.matches||[];
+    el.innerHTML=rpMatches.length?rpMatches.map((m,i)=>`<div class="rp-match-row"><strong>${escapeHtml(m.trainee_name)} × ${escapeHtml(m.trainer_name)}</strong><small>${rpLocal(m.starts_at)} ～ ${rpLocal(m.ends_at)} ／ ${m.duration}分</small><button type="button" data-rp-assign="${i}">この組合せを確定</button></div>`).join(''):'指定期間に一致する空き時間がありません。RP受講希望／RP担当可能の登録状況を確認してください。';
+  }catch(e){el.textContent=e.message||'検索に失敗しました';}
+}
+async function rpAssign(index){const m=rpMatches[index];if(!m)return;
+  if(!confirm(`${m.trainee_name} さんと ${m.trainer_name} さんを ${rpLocal(m.starts_at)} に割り振りますか？`))return;
+  try{await portalFetch('/api/rp/assignments',{method:'POST',body:{region:state.region,trainee:m.trainee_email,trainer:m.trainer_email,starts_at:m.starts_at,ends_at:m.ends_at}});
+    showToast('RPを割り振りました');await rpLoadAssignments();await rpFindCandidates();}
+  catch(e){showToast(e.message||'割り振りに失敗しました');}
+}
+async function rpLoadAssignments(){const box=document.getElementById('rpConfirmedAssignments');
+  try{const d=await portalFetch('/api/rp/assignments?region='+encodeURIComponent(state.region));
+    const rows=d.assignments||[];
+    box.innerHTML=rows.length?rows.map(a=>`<div class="rp-match-row"><strong>${escapeHtml(a.trainee_name)} × ${escapeHtml(a.trainer_name)}</strong><small>${rpLocal(a.starts_at)} ～ ${rpLocal(a.ends_at)}</small><button type="button" class="is-delete" data-rp-delete="${Number(a.id)}">取り消す</button></div>`).join(''):'まだ割り振りはありません';
+  }catch(e){box.textContent=e.message||'取得できませんでした';}
+}
+async function rpDelete(id){if(!confirm('このRP割り振りを取り消しますか？'))return;
+  try{await portalFetch('/api/rp/assignments/delete',{method:'POST',body:{id}});showToast('取り消しました');await rpLoadAssignments();}
+  catch(e){showToast(e.message||'取り消しに失敗しました');}
+}
+async function loadMyRpAssignments(){const root=document.getElementById('reviewMyRpAssignments');
+  try{const d=await portalFetch('/api/rp/my-assignments?region='+encodeURIComponent(state.region));const a=d.assignments||[];
+    root.innerHTML=a.map(x=>`<span>RP：${escapeHtml(x.trainee_name)} ／ ${escapeHtml(x.trainer_name)}　${escapeHtml(rpLocal(x.starts_at))}</span>`).join('');
+  }catch(e){root.textContent='';}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('repTabMtg').addEventListener('click',()=>rpSetTab('mtg'));
+  document.getElementById('repTabRp').addEventListener('click',()=>rpSetTab('rp'));
+  document.getElementById('rpFindMatches').addEventListener('click',()=>void rpFindCandidates());
+  document.getElementById('rpSelectAllTrainers').addEventListener('click',()=>document.querySelectorAll('#rpTrainerChoices input').forEach(e=>e.checked=true));
+  document.getElementById('rpMatchSuggestions').addEventListener('click',e=>{const b=e.target.closest('[data-rp-assign]');if(b)void rpAssign(Number(b.dataset.rpAssign));});
+  document.getElementById('rpConfirmedAssignments').addEventListener('click',e=>{const b=e.target.closest('[data-rp-delete]');if(b)void rpDelete(Number(b.dataset.rpDelete));});
+  document.getElementById('reviewSheetSync').addEventListener('click',async()=>{const b=document.getElementById('reviewSheetSync');b.disabled=true;
+    const status=document.getElementById('reviewSheetStatus');status.textContent='既存行も含めて同期しています…';
+    try{const s=await portalFetch('/api/calendar/sheet-sync',{method:'POST',body:{}});status.textContent=`スプシ同期完了：新規${s.added||0}件／更新${s.updated||0}件／確認待ち${s.skipped||0}件`;await loadScheduleReview();}
+    catch(e){status.textContent='スプシ同期失敗：'+e.message;status.classList.add('is-warning');}
+    finally{b.disabled=false;}
+  });
 });
 
   </script>
