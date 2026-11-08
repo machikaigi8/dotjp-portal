@@ -4288,6 +4288,48 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   color: #2563ca;
   font-weight: 800;
 }
+
+/* v44 依頼管理：POSTのポスト型レイアウトを残し、編集は読みやすい2カラム */
+.post-manage-entry {
+  position:absolute; right:72px; top:35px; width:232px; height:55px;
+  border:2px solid #a02c22; border-radius:10px; background:#fff;
+  color:#7b2318; font-size:25px; font-weight:700; z-index:6; cursor:pointer;
+  box-shadow:0 3px 9px rgba(93,24,12,.12);
+}
+.post-manage-entry:focus-visible,.post-manage-item:focus-visible {outline:4px solid #3080ff;outline-offset:2px;}
+.screen-post-manage .pm-heading {position:absolute;left:112px;top:91px;font-size:42px;font-weight:700;margin:0;}
+.screen-post-manage .pm-guide {position:absolute;left:114px;top:151px;font-size:21px;color:#526079;margin:0;}
+.pm-shell {
+ position:absolute;left:98px;top:211px;width:1244px;height:673px;
+ display:grid;grid-template-columns:490px minmax(0,1fr);gap:22px;
+}
+.pm-left,.pm-right {background:white;border:3px solid #c9cdea;border-radius:13px;min-width:0;overflow:hidden;}
+.pm-left {padding:21px;display:flex;flex-direction:column;gap:13px;}
+.pm-list-top {display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.pm-list-top strong {font-size:25px;color:#202b50;}
+.pm-list-top button {background:#d4d5ff;padding:9px 15px;border-radius:7px;font-size:17px;cursor:pointer;}
+.pm-search {width:100%;height:46px;border:2px solid #d6def0;border-radius:7px;padding:8px 12px;font-size:19px;}
+.pm-list {flex:1;min-height:0;overflow-y:auto;padding:4px 2px;display:flex;flex-direction:column;gap:9px;}
+.pm-item {display:block;text-align:left;border:2px solid #d6deed;border-radius:10px;background:#fafbff;color:#202b50;padding:12px 15px;cursor:pointer;width:100%;}
+.pm-item.is-selected {border-color:#3080ff;background:#edf3ff;}
+.pm-item-title {font-size:21px;line-height:1.4;font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pm-item-sub {font-size:16px;color:#546581;line-height:1.6;display:block;}
+.pm-load-more {padding:11px;background:#f0f2ff;font-size:18px;border-radius:8px;cursor:pointer;}
+.pm-empty {padding:26px 15px;color:#536380;font-size:19px;line-height:1.6;}
+.pm-right {padding:18px 26px;display:flex;flex-direction:column;gap:10px;}
+.pm-right h2 {font-size:30px;margin:0;color:#162d5a;}
+.pm-meta {font-size:16px;line-height:1.6;color:#526079;min-height:50px;margin:0;}
+.pm-field {display:flex;flex-direction:column;gap:6px;font-size:21px;font-weight:600;color:#1b2f53;}
+.pm-field select,.pm-field input,.pm-field textarea {width:100%;background:#fff;border:2px solid #c8d3e5;border-radius:8px;color:#17264b;padding:10px 13px;font-size:21px;}
+.pm-field select,.pm-field input {height:50px;}
+.pm-field textarea {min-height:148px;max-height:180px;resize:vertical;font-size:21px;line-height:1.5;}
+.pm-hint {font-size:15px;line-height:1.45;color:#627087;margin:0;}
+.pm-actions {display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:auto;}
+.pm-save {padding:10px 26px;background:#3080ff;border-radius:8px;color:#fff;font-size:24px;cursor:pointer;}
+.pm-save:disabled {background:#a5b3d4;cursor:not-allowed;}
+.pm-back {position:absolute;left:128px;top:916px;min-width:140px;height:60px;background:#3080ff;color:#fff;font-size:36px;cursor:pointer;}
+.pm-status {font-size:17px;color:#3f5579;min-height:28px;}
+
 </style>
 </head>
 <body>
@@ -4625,6 +4667,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
         <section class="screen screen-post" data-screen="post">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <button type="button" class="post-manage-entry" data-route="post-manage" title="過去に出した依頼の内容・期限・担当箇所を編集">依頼管理・編集</button>
+
 
           <div class="post-machine">
             <div class="post-input-box">
@@ -4651,6 +4695,31 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
             <div class="post-machine-leg"></div>
           </div>
+        </section>
+
+
+        <section class="screen screen-post-manage" data-screen="post-manage">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <h1 class="pm-heading">依頼管理</h1>
+          <p class="pm-guide">投函済みの依頼を選択し、担当箇所・期限・内容を編集できます。宛先や完了状況は変更しません。</p>
+          <div class="pm-shell">
+            <aside class="pm-left" aria-label="登録済み依頼一覧">
+              <div class="pm-list-top"><strong>登録済み依頼</strong><button id="pmReload" type="button">更新</button></div>
+              <input id="pmSearch" class="pm-search" type="search" placeholder="内容・宛先・依頼者で検索" aria-label="登録済み依頼を検索">
+              <div id="pmList" class="pm-list" role="list" aria-live="polite"><p class="pm-empty">依頼を読み込んでいます…</p></div>
+              <button id="pmLoadMore" class="pm-load-more" type="button" hidden>過去の依頼をさらに表示</button>
+            </aside>
+            <form id="pmForm" class="pm-right">
+              <h2>依頼内容の編集</h2>
+              <p id="pmMeta" class="pm-meta">左側から編集する依頼を選択してください。</p>
+              <label class="pm-field">担当箇所<select id="pmTarget" required disabled></select></label>
+              <label class="pm-field">期限（日付・時刻）<input id="pmDeadline" type="datetime-local" step="60" required disabled></label>
+              <label class="pm-field">内容<textarea id="pmContent" maxlength="16000" required disabled placeholder="依頼内容を入力"></textarea></label>
+              <p class="pm-hint">同じ投函で複数宛先に送られた依頼は、まとめて更新されます。既存の完了記録は保持されます。</p>
+              <div class="pm-actions"><span id="pmStatus" class="pm-status" role="status"></span><button id="pmSave" class="pm-save" type="submit" disabled>変更を保存</button></div>
+            </form>
+          </div>
+          <button type="button" class="pm-back" data-common-back>←戻る</button>
         </section>
 
         <section class="screen screen-postcard" data-screen="post-manual">
@@ -5278,6 +5347,12 @@ const state = {
   remoteTasks: [],
   postCards: [],
   postCardIndex: 0,
+  managedTaskRows: [],
+  managedSelectedTaskId: 0,
+  managedBeforeId: 0,
+  managedHasMore: false,
+  managedLoading: false,
+  managedLoadSeq: 0,
   postAudience: {regions: [], emails: []},
   postAudienceStaging: {regions: [], emails: []},
   region: sessionStorage.getItem("dotjp_region") || "kanto",
@@ -5318,6 +5393,7 @@ const screenNames = new Set([
   "task-start",
   "home",
   "post",
+  "post-manage",
   "post-manual",
   "post-confirm",
   "schedule",
@@ -5844,6 +5920,17 @@ function wireActions() {
     renderPostAudienceCount();
   });
 
+  document.getElementById('pmReload').addEventListener('click', () => void loadManagedRequests(false));
+  document.getElementById('pmLoadMore').addEventListener('click', () => void loadManagedRequests(true));
+  document.getElementById('pmSearch').addEventListener('input', renderManagedRequests);
+  document.getElementById('pmList').addEventListener('click', event => {
+    const row = event.target.closest('[data-pm-task]');
+    if (!row) return;
+    state.managedSelectedTaskId = Number(row.dataset.pmTask);
+    renderManagedRequests();
+  });
+  document.getElementById('pmForm').addEventListener('submit', saveManagedRequest);
+
   document.querySelector('[data-action="send-post"]').addEventListener("click", sendPostCards);
 
   document.querySelector('[data-action="post-prev"]').addEventListener("click", () => {
@@ -6066,6 +6153,7 @@ function showScreen(name, updateHash = true, recordHistory = true) {
     sessionStorage.removeItem("dotjp_post_source_mode");
   }
 
+  if (name === "post-manage") void loadManagedRequests(false);
   if (name === "post-manual") hydratePostDraft();
 if (name === "post-confirm") {
     restorePostCards();
@@ -7571,6 +7659,153 @@ function deleteCurrentPostCard() {
   showToast(`AI生成の${currentNumber}枚目を削除しました`);
 }
 
+
+
+// v44: 投函済み依頼の編集。サーバーは依頼者メールかデベロッパー権限を再検証する。
+function managedRequestKey(row) {
+  return [String(row.requester_email||'').toLowerCase(),row.created_at||'',
+    row.content||'',row.deadline||'',row.target_link||''].map(x=>JSON.stringify(x)).join('|');
+}
+function groupManagedRequests(rows) {
+  const groups = new Map();
+  for (const row of rows) {
+    const key = managedRequestKey(row);
+    if (!groups.has(key)) groups.set(key,{...row,recipientLabels:[],rowCount:0});
+    const group = groups.get(key);
+    const label = row.recipient_type==='region'
+      ? (row.region==='kansai'?'関西全員':'関東全員')
+      : row.recipient_type==='all' ? '全員' : (row.recipient_name||row.recipient_email||'個人');
+    if(!group.recipientLabels.includes(label))group.recipientLabels.push(label);
+    group.rowCount++;
+  }
+  return [...groups.values()].sort((a,b)=>Number(b.id)-Number(a.id));
+}
+function managedRequestById(id) {
+  return groupManagedRequests(state.managedTaskRows).find(g=>Number(g.id)===Number(id) ||
+    state.managedTaskRows.some(r=>Number(r.id)===Number(id) && managedRequestKey(r)===managedRequestKey(g)));
+}
+async function loadManagedRequests(append=false) {
+  if (state.managedLoading) return;
+  const status = document.getElementById('pmStatus');
+  const before = append?state.managedBeforeId:0;
+  state.managedLoading=true;
+  if (!append) {
+    state.managedTaskRows=[];
+    state.managedBeforeId=0;
+    state.managedHasMore=false;
+  }
+  document.getElementById('pmLoadMore').disabled=true;
+  status.textContent='依頼を読み込み中…';
+  try {
+    const params=new URLSearchParams({limit:'100'});
+    if(before>0)params.set('before',String(before));
+    const data=await portalFetch('/api/tasks/manage?'+params.toString());
+    const known=new Set(state.managedTaskRows.map(r=>Number(r.id)));
+    for(const row of data.tasks||[])if(!known.has(Number(row.id)))state.managedTaskRows.push(row);
+    state.managedHasMore=Boolean(data.has_more);
+    state.managedBeforeId=Number(data.next_before||0);
+    status.textContent='';
+    renderManagedRequests();
+  } catch (error) {
+    status.textContent=error.message||'依頼を読み込めませんでした';
+    renderManagedRequests();
+  } finally {
+    state.managedLoading=false;
+    document.getElementById('pmLoadMore').disabled=false;
+  }
+}
+function renderManagedRequests() {
+  const list=document.getElementById('pmList');
+  const query=String(document.getElementById('pmSearch').value||'').trim().toLowerCase();
+  const groups=groupManagedRequests(state.managedTaskRows);
+  const visible=groups.filter(g=>!query || [g.content,g.requester_name,g.target_label,
+    ...g.recipientLabels].join(' ').toLowerCase().includes(query));
+  if(!visible.length) {
+    list.innerHTML='<p class="pm-empty">'+(query?'一致する依頼はありません。':
+      '登録済みの依頼がありません。')+'</p>';
+  } else {
+    list.innerHTML=visible.map(g=>{
+      const selected=managedRequestById(state.managedSelectedTaskId);
+      const active=selected && managedRequestKey(selected)===managedRequestKey(g);
+      const heading=String(g.content||'').replace(/\s+/g,' ').slice(0,65);
+      const where=g.target_label||postTargetLabel(g.target_link)||'担当箇所 未設定';
+      return `<button type="button" class="pm-item${active?' is-selected':''}" data-pm-task="${Number(g.id)}" role="listitem" aria-pressed="${active?'true':'false'}">
+          <span class="pm-item-title">${escapeHtml(heading)}</span>
+          <span class="pm-item-sub">宛先：${escapeHtml(g.recipientLabels.join('・')||'—')}</span>
+          <span class="pm-item-sub">期限：${escapeHtml(formatPostDatetime(g.deadline))} ／ ${escapeHtml(where)}</span>
+          ${state.isDeveloper?`<span class="pm-item-sub">依頼元：${escapeHtml(g.requester_name||g.requester_email)}</span>`:''}
+        </button>`;
+    }).join('');
+  }
+  const more=document.getElementById('pmLoadMore');
+  more.hidden=!state.managedHasMore;
+  if(!state.managedSelectedTaskId && visible.length) state.managedSelectedTaskId=Number(visible[0].id);
+  renderManagedRequestForm();
+}
+function renderManagedRequestForm() {
+  const selected=managedRequestById(state.managedSelectedTaskId);
+  const form=document.getElementById('pmForm');
+  const target=document.getElementById('pmTarget');
+  const deadline=document.getElementById('pmDeadline');
+  const content=document.getElementById('pmContent');
+  const meta=document.getElementById('pmMeta');
+  const save=document.getElementById('pmSave');
+  const enabled=Boolean(selected);
+  for(const el of [target,deadline,content,save])el.disabled=!enabled;
+  target.innerHTML='<option value="">担当箇所を選択してください</option>'+postTargetOptions()
+    .map(x=>`<option value="${escapeHtml(x.link)}">${escapeHtml(x.label)}</option>`).join('');
+  if(!selected){
+    meta.textContent='左の一覧から依頼を選んでください。';
+    target.value='';deadline.value='';content.value='';
+    return;
+  }
+  // 現在のリンクが削除済みでも編集内容を失わないよう既存値を表示する。
+  if(selected.target_link && !postTargetOptions().some(x=>x.link===selected.target_link)){
+    target.insertAdjacentHTML('beforeend',`<option value="${escapeHtml(selected.target_link)}" disabled>${escapeHtml(selected.target_label||'以前の担当箇所（再選択してください）')}</option>`);
+  }
+  target.value=selected.target_link||'';
+  deadline.value=toPostDatetimeInput(selected.deadline);
+  content.value=selected.content||'';
+  meta.textContent=`依頼元：${selected.requester_name||selected.requester_email||'—'} ／ 宛先：${selected.recipientLabels.join('・')||'—'} ／ 投函日：${(selected.created_at||'').slice(0,16).replace('T',' ')}`;
+  form.dataset.originalContent=selected.content||'';
+  form.dataset.originalDeadline=selected.deadline||'';
+  form.dataset.originalTarget=selected.target_link||'';
+}
+async function saveManagedRequest(event) {
+  event.preventDefault();
+  const selected=managedRequestById(state.managedSelectedTaskId);
+  if(!selected) return;
+  const target=document.getElementById('pmTarget').value;
+  const deadline=document.getElementById('pmDeadline').value;
+  const content=document.getElementById('pmContent').value.trim();
+  if(!postTargetOptions().some(x=>x.link===target)){
+    showToast('担当箇所を選択してください');return;
+  }
+  if(!toPostDatetimeInput(deadline)){
+    showToast('期限を日付と時刻で指定してください');return;
+  }
+  if(!content){showToast('依頼内容を入力してください');return;}
+  const button=document.getElementById('pmSave');
+  const status=document.getElementById('pmStatus');
+  button.disabled=true;
+  status.textContent='保存中…';
+  try {
+    const data=await portalFetch('/api/tasks/manage/update',{
+      method:'POST',body:{
+        id:Number(selected.id),targetLink:target,deadline,content,
+        expected:{content:selected.content||'',deadline:selected.deadline||'',targetLink:selected.target_link||''}
+      }
+    });
+    status.textContent=`${data.updated||1}件に変更を反映しました`;
+    await loadManagedRequests(false);
+    await refreshRemoteTasks();
+    refreshTaskUi();
+    showToast('依頼を更新しました。受取側にも反映されます');
+  } catch(error) {
+    status.textContent=error.message||'保存できませんでした';
+    showToast(status.textContent);
+  } finally {button.disabled=false;}
+}
 
 async function sendPostCards() {
   restorePostCards();
