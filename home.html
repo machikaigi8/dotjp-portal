@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
-  <!-- Version v46: 2026-11-08 RP scheduling + safe bidirectional Sheets synchronization -->
+  <!-- Version v48: 2026-11-08 RP program settings + role-aware scheduling -->
   <style>
 * {
   box-sizing: border-box;
@@ -4395,6 +4395,86 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .rp-hint{margin:10px 0;color:#5c6d84;font-size:14px;line-height:1.5}
 .rp-results-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}.rp-results-grid h3{margin:8px 0;font-size:20px}.rp-match-list{max-height:245px;overflow:auto;display:grid;align-content:start;gap:8px}.rp-match-row{background:white;border:1px solid #d8e2f5;padding:10px;border-radius:9px;font-size:15px}.rp-match-row strong{display:block;margin-bottom:4px;font-size:17px}.rp-match-row small{display:block;color:#5d7192;font-size:13px}.rp-match-row button{margin-top:5px;border:0;background:#2a70db;color:white;padding:6px 14px;border-radius:7px;cursor:pointer}.rp-match-row button.is-delete{background:#be4158}
 
+
+/* v47: Figmaクライアントの位置・配色を変更しない。テーブルだけ白枠内に表示。 */
+.screen-client-won,.screen-client-deals{background:#f2f2ff}
+.screen-client-won .client-panel,.screen-client-deals .client-panel{box-sizing:border-box;padding:20px 26px 28px;overflow:hidden}
+.client-sheet-toolbar{display:flex;align-items:center;gap:14px;margin:0 0 14px;min-height:47px;font-size:21px;color:#26334f}
+.client-sheet-toolbar h2{font-size:28px;margin:0 auto 0 0}
+.client-sheet-toolbar select,.client-sheet-toolbar input{font-size:20px;padding:7px 10px;border:1px solid #bfcae1;border-radius:6px;max-width:230px}
+.client-sheet-toolbar button,.client-sheet-editor-actions button{font-size:20px;padding:9px 18px;background:#d4d5ff;border:1px solid #bcc6ee;cursor:pointer}
+.client-sheet-toolbar .client-region-pill{background:#f2f4fe;padding:9px 14px;border:1px solid #e0e4f4;font-size:19px}
+.client-sheet-note{font-size:17px;color:#58677b;margin:0 0 14px;min-height:24px}
+.client-sheet-table-scroll{height:540px;overflow:auto;border:1px solid #d5dcea;background:#fff}
+.client-sheet-table{border-collapse:collapse;min-width:1220px;width:100%;table-layout:fixed;font-size:19px}
+.client-sheet-table th{position:sticky;top:0;background:#e3e9ff;border-bottom:2px solid #c5d2ee;color:#213252;text-align:left;padding:13px 10px;z-index:2;white-space:nowrap}
+.client-sheet-table td{border-bottom:1px solid #e4eaf5;vertical-align:top;padding:12px 10px;word-break:break-word;white-space:pre-wrap;line-height:1.35}
+.client-sheet-table tr:nth-child(even) td{background:#f8faff}
+.client-sheet-table tr:hover td{background:#eef3ff}
+.client-sheet-table button{background:#e4efff;border:1px solid #a5bdf0;color:#1b4fa3;padding:6px 10px;cursor:pointer;font-size:18px;white-space:nowrap}
+.client-sheet-table button[disabled]{background:#f0f1f4;border-color:#ddd;color:#777;cursor:not-allowed}
+.client-sheet-muted{color:#7a8699;font-size:17px}
+.client-sheet-editor{position:absolute;inset:20px 24px;z-index:8;background:rgba(255,255,255,.98);border:2px solid #c7d5f3;box-shadow:0 8px 24px rgba(23,45,91,.15);padding:25px 30px;overflow:auto;box-sizing:border-box}
+.client-sheet-editor[hidden]{display:none!important}
+.client-sheet-editor h3{margin:0 0 8px;font-size:29px}
+.client-sheet-editor p{font-size:18px;color:#52627a;margin:3px 0 15px}
+.client-sheet-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.client-sheet-editor-grid label{display:grid;gap:6px;font-size:21px;font-weight:600}
+.client-sheet-editor-grid label:nth-child(3){grid-column:1/-1}
+.client-sheet-editor-grid textarea,.client-sheet-editor-grid input{font:20px/1.5 Arial,'Noto Sans JP',sans-serif;padding:11px 12px;border:1px solid #aab7cd;border-radius:4px;resize:vertical;min-height:45px;box-sizing:border-box;width:100%}
+.client-sheet-editor-grid textarea{min-height:78px}
+.client-sheet-editor-actions{display:flex;justify-content:flex-end;gap:18px;margin-top:20px}
+.client-sheet-editor-actions button:last-child{background:#3080ff;border-color:#3080ff;color:#fff}
+/* 事務局：Figmaの白枠と戻るボタンの位置は維持 */
+.screen-department-office .department-placeholder-panel{overflow:hidden;box-sizing:border-box;padding:22px 26px}
+.office-expense-top{display:flex;align-items:center;gap:15px}
+.office-expense-top h2{font-size:30px;margin:0 auto 0 0}
+.office-expense-top select,.office-expense-top button{font-size:19px;padding:8px 13px;border:1px solid #c8d3e8;background:#eff3ff;cursor:pointer}
+.office-expense-summary{display:flex;gap:12px;margin:15px 0;font-size:19px}
+.office-expense-summary span{padding:8px 12px;background:#f1f4ff;border-radius:7px}
+.office-expense-description{font-size:17px;color:#5a6880;margin:0 0 12px}
+.office-expense-table-wrap{height:490px;overflow:auto;border:1px solid #d9dfec}
+.office-expense-table{width:100%;border-collapse:collapse;font-size:18px;table-layout:fixed}
+.office-expense-table th{position:sticky;top:0;background:#e5eaff;color:#2b3958;text-align:left;padding:11px 9px;z-index:2}
+.office-expense-table td{padding:11px 9px;border-bottom:1px solid #e0e7f3;vertical-align:top;word-break:break-word;line-height:1.4}
+.office-expense-table tr:nth-child(even) td{background:#f9faff}
+.office-expense-table a{color:#1d61b6;text-decoration:underline}
+.office-expense-table button{font-size:16px;padding:6px 9px;border:1px solid #aec2e8;background:#e7f0ff;cursor:pointer}
+.office-expense-table button:disabled{color:#7d8796;cursor:not-allowed;background:#eee}
+.office-expense-flag{color:#9d3b1d;font-weight:600}
+.office-expense-pending{color:#8e5b0a;font-weight:600}
+.office-expense-ok{color:#0b784b;font-weight:600}
+
+
+/* v48 RP setting + scheduling: keep original Figma background and navigation geometry. */
+.screen-schedule-candidates .candidate-shell{display:none!important}
+.screen-representative .rep-view-tabs,.screen-representative #repMtgPanel,.screen-representative #repRpPanel{display:none!important}
+.screen-representative .representative-shell{overflow:auto}
+.screen-schedule-candidates .rp-adjust-shell{position:absolute;left:70px;top:154px;width:1300px;height:752px;box-sizing:border-box;background:#fff;border:2px solid #dce4fa;border-radius:16px;padding:24px;overflow:auto;color:#182548}
+.rp-adjust-shell h1{margin:0 0 7px;font-size:32px}
+.rp-adjust-shell p{font-size:16px;margin:5px 0;color:#66748b}
+.rp-adjust-columns{display:grid;grid-template-columns:0.85fr 1.15fr;gap:20px;margin-top:17px}
+.rp-box{border:1px solid #dce6f6;border-radius:12px;background:#f8faff;padding:15px;min-height:480px;max-height:600px;overflow-y:auto}
+.rp-box h2{margin:0 0 10px;font-size:23px}
+.rp-list{display:grid;gap:9px}
+.rp-card{background:#fff;border:1px solid #cfdaef;border-radius:9px;padding:12px;display:grid;gap:5px;font-size:16px}
+.rp-card strong{font-size:18px}
+.rp-card small{color:#697a97;font-size:13px}
+.rp-card button,.rp-config-save,.rp-adjust-btn{cursor:pointer;background:#3080ff;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:16px}
+.rp-card button:disabled,.rp-adjust-btn:disabled{opacity:.5;cursor:default}
+.rp-role-review{color:#9b6628;background:#fff4dd;border-radius:6px;padding:4px 7px}
+.rp-panel-form{display:grid;grid-template-columns:1fr 180px;gap:14px;align-items:end}
+.rp-panel-form label{display:grid;gap:6px;font-size:18px}
+.rp-panel-form input,.rp-panel-form select{border:1px solid #bfceea;border-radius:8px;padding:10px;font-size:18px;width:100%;box-sizing:border-box}
+.rp-settings-people{display:flex;flex-wrap:wrap;gap:12px;max-height:130px;overflow:auto;background:#f8faff;padding:15px;border-radius:10px;font-size:17px;margin:12px 0}
+.rp-settings-people label{display:flex;gap:5px;align-items:center}
+.rp-program-list{display:grid;gap:9px;margin-top:12px}
+.rp-program-item{border:1px solid #d9e2f2;background:#f8faff;border-radius:9px;padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.rp-program-item small{display:block;color:#5f6f8b;margin-top:5px}
+.rp-program-item button{background:#fbe6e9;color:#a53249;border:1px solid #edc2cc;padding:7px 12px;border-radius:8px;cursor:pointer}
+.rp-mini-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.rp-mini-controls select{padding:7px;border:1px solid #afc2e8;border-radius:8px;font-size:17px}
+
 </style>
 </head>
 <body>
@@ -4545,7 +4625,12 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <!-- Figma 2026-11-05: 事務局 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-office" aria-label="事務局">
           <div class="user-name" data-user-name>＜名前＞</div>
-          <div class="department-placeholder-panel" aria-label="事務局：準備中"></div>
+          <div class="department-placeholder-panel" aria-label="事務局の経費記入チェック">
+            <div class="office-expense-top"><h2>経費記入ミス・確認待ち</h2><select id="officeExpenseFilter" aria-label="チェック対象の絞り込み"><option value="open">未解決・未確認</option><option value="error">自動チェックで指摘</option><option value="pending">目視確認待ち</option><option value="all">すべて</option></select><button id="officeExpenseRefresh" type="button">スプシを再確認</button></div>
+            <div class="office-expense-summary" id="officeExpenseSummary"><span>チェック待機中</span></div>
+            <p class="office-expense-description" id="officeExpenseNote">正式な支払先の表記は「補足シート」の一覧と照合します。領収書と実際の経路は人の確認が必要です。</p>
+            <div class="office-expense-table-wrap"><table class="office-expense-table" aria-label="経費の自動検査と目視確認"><colgroup><col style="width:14%"><col style="width:9%"><col style="width:17%"><col style="width:28%"><col style="width:14%"><col style="width:18%"></colgroup><thead><tr><th>入力者</th><th>行番号</th><th>支払先</th><th>自動チェック結果</th><th>目視確認</th><th>操作</th></tr></thead><tbody id="officeExpenseBody"><tr><td colspan="6">読み込み中…</td></tr></tbody></table></div>
+          </div>
         </section>
         <!-- Figma 2026-11-05: MTG出欠登録 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="meeting-attendance" aria-label="MTG出欠登録">
@@ -4562,9 +4647,50 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
           <nav class="client-tabs" aria-label="クライアントメニュー">
             <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
-            <button class="client-tab" type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
-            <button class="client-tab" type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
           </nav>
+        </section>
+
+
+        <!-- v47: 03B企業インターン企業管理 E=受注 / B=企業名 / M:Q=詳細 -->
+        <section class="screen screen-client-won" data-screen="client-won" aria-label="獲得企業一覧">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
+          </nav>
+          <div class="client-panel">
+            <div class="client-sheet-toolbar"><h2>獲得企業一覧</h2><span id="clientWonRegion" class="client-region-pill">地域</span><input id="clientWonSearch" type="search" placeholder="企業名で検索" aria-label="獲得企業を検索"><button type="button" id="clientWonRefresh">更新</button></div>
+            <p class="client-sheet-note" id="clientWonNote">受注企業の情報を読み込んでいます…</p>
+            <div class="client-sheet-table-scroll"><table class="client-sheet-table" aria-label="受注企業の表"><colgroup><col style="width:19%"><col style="width:17%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:12%"><col style="width:8%"></colgroup><thead><tr><th>企業名</th><th>事業内容（M）</th><th>求める人材像（N）</th><th>その他条件（O）</th><th>希望人数（P）</th><th>活動頻度（Q）</th><th>操作</th></tr></thead><tbody id="clientWonBody"><tr><td colspan="7">読み込み中…</td></tr></tbody></table></div>
+            <div class="client-sheet-editor" id="clientWonEditor" hidden>
+              <h3 id="clientWonEditorTitle">受注企業の情報を編集</h3><p id="clientWonEditorHelp">M～Q列を更新します。受注企業の他の列は変更しません。</p>
+              <div class="client-sheet-editor-grid">
+                <label>事業内容（M）<textarea id="clientWonM" maxlength="4000" rows="3"></textarea></label>
+                <label>求める人材像（N）<textarea id="clientWonN" maxlength="4000" rows="3"></textarea></label>
+                <label>その他条件（O）<textarea id="clientWonO" maxlength="4000" rows="3"></textarea></label>
+                <label>受入希望人数（P）<input id="clientWonP" inputmode="numeric" maxlength="16"></label>
+                <label>活動頻度（Q）<textarea id="clientWonQ" maxlength="1000" rows="2"></textarea></label>
+              </div>
+              <div class="client-sheet-editor-actions"><button type="button" id="clientWonCancel">キャンセル</button><button type="button" id="clientWonSave">スプレッドシートに保存</button></div>
+            </div>
+          </div>
+        </section>
+        <!-- v47: 03B企業インターン企業管理 E=商談 / B,D,K表示のみ -->
+        <section class="screen screen-client-deals" data-screen="client-deals" aria-label="商談予定企業">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
+          </nav>
+          <div class="client-panel">
+            <div class="client-sheet-toolbar"><h2>商談予定企業</h2><span id="clientDealsRegion" class="client-region-pill">地域</span><button type="button" id="clientDealsRefresh">更新</button></div>
+            <p class="client-sheet-note" id="clientDealsNote">商談企業の情報を読み込んでいます…</p>
+            <div class="client-sheet-table-scroll"><table class="client-sheet-table" aria-label="商談予定企業の表" style="min-width:100%"><colgroup><col style="width:38%"><col style="width:18%"><col style="width:44%"></colgroup><thead><tr><th>企業名（B）</th><th>ヨミ（D）</th><th>営業日・予定（K）</th></tr></thead><tbody id="clientDealsBody"><tr><td colspan="3">読み込み中…</td></tr></tbody></table></div>
+          </div>
         </section>
 
         <!-- Figma 105:463: お問い合わせフォーム -->
@@ -4574,8 +4700,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
           <nav class="client-tabs" aria-label="クライアントメニュー">
             <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
-            <button class="client-tab" type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
-            <button class="client-tab" type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
           </nav>
           <nav class="client-subtabs" aria-label="お問い合わせフォームの操作">
             <button class="client-subtab" type="button" data-route="client-send">フォームを送る</button>
@@ -4590,8 +4716,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
           <nav class="client-tabs" aria-label="クライアントメニュー">
             <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
-            <button class="client-tab" type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
-            <button class="client-tab" type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
           </nav>
           <nav class="client-subtabs" aria-label="お問い合わせフォームの操作">
             <button class="client-subtab" type="button" data-route="client-send">フォームを送る</button>
@@ -4694,8 +4820,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="staff-status-tabs" aria-label="クライアント画面の切り替え">
             <button type="button" data-route="client-contact">お問い合わせフォーム</button>
-            <button type="button" data-placeholder="獲得企業一覧（Figmaの遷移先未作成）">獲得企業一覧</button>
-            <button type="button" data-placeholder="商談予定企業（Figmaの遷移先未作成）">商談予定企業</button>
+            <button type="button" data-route="client-won">獲得企業一覧</button>
+            <button type="button" data-route="client-deals">商談予定企業</button>
           </nav>
           <div class="staff-status-panel">
             <div class="staff-status-person-column" id="staffStatusPeople" aria-label="スタッフを選択"></div>
@@ -5043,7 +5169,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
             <button type="button" data-route="schedule">空き時間・登録</button>
             <button type="button" data-route="schedule-review">予定確認・編集</button>
-            <button type="button" data-route="schedule-candidates">MTG候補日調整</button>
+            <button type="button" data-route="schedule-candidates">RP調整</button>
           </nav>
           <button type="button" class="schedule-hub-back" data-common-back>←戻る</button>
 
@@ -5113,7 +5239,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
             <button type="button" data-route="schedule">空き時間・登録</button>
             <button type="button" data-route="schedule-review">予定確認・編集</button>
-            <button type="button" data-route="schedule-candidates">MTG候補日調整</button>
+            <button type="button" data-route="schedule-candidates">RP調整</button>
           </nav>
           <nav class="schedule-review-week-nav" aria-label="予定確認の週を切り替える">
             <button type="button" id="reviewPrevWeek" aria-label="前の週へ">← 前の週</button>
@@ -5162,16 +5288,16 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         </section>
 
 
-        <!-- v45: 統合スケジュール管理のMTG候補日調整 -->
+        <!-- v45: 統合スケジュール管理のRP調整 -->
         <section class="screen screen-schedule-candidates" data-screen="schedule-candidates">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
             <button type="button" data-route="schedule">空き時間・登録</button>
             <button type="button" data-route="schedule-review">予定確認・編集</button>
-            <button type="button" data-route="schedule-candidates">MTG候補日調整</button>
+            <button type="button" data-route="schedule-candidates">RP調整</button>
           </nav>
           <div class="candidate-shell">
-            <header class="candidate-shell-head"><div><h1>MTG候補日調整</h1><p>候補日を提示し、参加可否を集めて日程を決定します。</p></div>
+            <header class="candidate-shell-head"><div><h1>RP調整</h1><p>候補日を提示し、参加可否を集めて日程を決定します。</p></div>
               <button type="button" id="candidateRefresh">最新の回答を取得</button></header>
             <div class="candidate-body">
               <section class="candidate-create">
@@ -5195,6 +5321,18 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               </section>
             </div>
           </div>
+          <div class="rp-adjust-shell">
+            <h1>RP調整</h1>
+            <p>代表が設定したRPと担当者を参照し、既存の「RP」「ロープレ」予定を候補として取り込みます。</p>
+            <div class="rp-mini-controls"><label>RPの種類 <select id="rpAdjustProgram"><option value="">すべて</option></select></label>
+              <button type="button" class="rp-adjust-btn" id="rpAdjustReload">最新の予定を取得</button>
+              <button type="button" class="rp-adjust-btn" id="rpAdjustAuto" hidden>候補を自動振り分け</button></div>
+            <div class="rp-adjust-columns">
+              <section class="rp-box"><h2>RP日調候補（既存予定を含む）</h2><div id="rpAdjustCandidates" class="rp-list">読み込み中…</div></section>
+              <section class="rp-box"><h2>担当者とのマッチング・確定済み</h2><div id="rpAdjustMatches" class="rp-list">RPを選択してください。</div>
+                <div id="rpAdjustAssigned" class="rp-list" style="margin-top:12px"></div></section>
+            </div>
+          </div>
           <button type="button" class="candidate-page-back" data-common-back>←戻る</button>
         </section>
 
@@ -5202,7 +5340,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <section class="screen screen-representative" data-screen="representative-dashboard">
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="representative-shell">
-            <header class="representative-head"><div><h1>代表画面</h1><p>MTG候補日とRPのマッチングをまとめて管理</p></div>
+            <header class="representative-head"><div><h1>代表画面｜RP設定</h1><p>RPの種類と担当者を登録します。日付の調整は「スケジュール管理 → RP調整」で行います。</p></div>
               <button type="button" id="repRefresh">更新</button></header>
             <nav class="rep-view-tabs" aria-label="代表画面の切り替え">
               <button type="button" id="repTabMtg" class="is-active">MTG候補日</button>
@@ -5233,6 +5371,20 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div><h3>マッチング候補</h3><div id="rpMatchSuggestions" class="rp-match-list">担当者を選択して候補を検索</div></div>
                 <div><h3>確定済みRP</h3><div id="rpConfirmedAssignments" class="rp-match-list">読み込み中…</div></div>
               </div>
+            </section>
+            <section id="rpConfigPanel">
+              <h2 style="font-size:26px;margin:10px 0">RPの種類・担当者を設定</h2>
+              <form id="rpConfigForm">
+                <div class="rp-panel-form">
+                  <label>RPの種類<input id="rpConfigTitle" maxlength="75" placeholder="例：営業RP／コンスRP" required></label>
+                  <label>所要時間<select id="rpConfigDuration"><option value="30">30分</option><option value="60" selected>60分</option><option value="90">90分</option></select></label>
+                </div>
+                <h3 style="font-size:19px;margin:17px 0 6px">担当者（複数選択可）</h3>
+                <div id="rpConfigTrainers" class="rp-settings-people">読み込み中…</div>
+                <button type="submit" class="rp-config-save">このRPを登録・更新</button>
+              </form>
+              <h3 style="font-size:21px;margin:16px 0 7px">登録済みRP</h3>
+              <div id="rpConfigList" class="rp-program-list">読み込み中…</div>
             </section>
           </div>
           <button type="button" class="candidate-page-back" data-common-back>←戻る</button>
@@ -5495,6 +5647,8 @@ const state = {
   meetingLoadingId: 0,
   meetingSaving: false,
   roster: [],
+  clientBusiness: {won:[],deals:[],region:"",loadingSeq:0,editing:null},
+  officeExpenses: {rows:[],canReview:false,loadingSeq:0},
   clientStaffStatus: { members: [], email: "", day: "", week: "", month: "", requestSeq: 0, warning: "" },
   preferredRegion: null,
   regionWorkSessions: null,
@@ -5559,6 +5713,8 @@ const screenNames = new Set([
   "schedule-hours",
   "client",
   "client-contact",
+  "client-won",
+  "client-deals",
   "client-send",
   "client-staff-status",
   "hp-edit",
@@ -5988,10 +6144,13 @@ function wireActions() {
       void refreshRemoteTasks().then(refreshTaskUi);
       void loadRegionalWorkSessions();
       if (state.currentScreen === 'schedule-review') void loadScheduleReview();
-      if (state.currentScreen === 'schedule-candidates' || state.currentScreen === 'representative-dashboard') void loadMeetingCandidatePolls();
+      if (state.currentScreen === 'schedule-candidates') void rpAdjustLoad();
+      if (state.currentScreen === 'representative-dashboard') void rpConfigLoad();
       if (state.currentScreen === 'meeting-attendance') void loadMeetings();
       if (state.currentScreen === 'department-hr') setupMeetingManager();
       if (state.currentScreen === 'client-staff-status') void loadClientStaffStatus();
+      if (state.currentScreen === 'client-won') void loadClientBusiness('won');
+      if (state.currentScreen === 'client-deals') void loadClientBusiness('deals');
       if (state.currentScreen === 'hp-edit' && state.isDeveloper &&
           document.querySelector('[data-hp-tab="requests"]')?.classList.contains('is-active')) {
         void loadHpRequests();
@@ -6007,6 +6166,19 @@ function wireActions() {
 
 
   enableClientFieldCopying();
+  document.getElementById('clientWonRefresh').addEventListener('click',()=>void loadClientBusiness('won'));
+  document.getElementById('clientDealsRefresh').addEventListener('click',()=>void loadClientBusiness('deals'));
+  document.getElementById('clientWonSearch').addEventListener('input',()=>renderClientBusiness('won'));
+  document.getElementById('clientWonBody').addEventListener('click',e=>{
+    const b=e.target.closest('[data-edit-corporate-row]');if(b)openClientBusinessEditor(Number(b.dataset.editCorporateRow));
+  });
+  document.getElementById('clientWonCancel').addEventListener('click',()=>closeClientBusinessEditor());
+  document.getElementById('clientWonSave').addEventListener('click',()=>void saveClientBusinessEditor());
+  document.getElementById('officeExpenseRefresh').addEventListener('click',()=>void loadOfficeExpenses());
+  document.getElementById('officeExpenseFilter').addEventListener('change',renderOfficeExpenses);
+  document.getElementById('officeExpenseBody').addEventListener('click',e=>{
+    const b=e.target.closest('[data-expense-review]');if(b)void setOfficeExpenseReviewed(b.dataset.expenseTab,Number(b.dataset.expenseRow),b.dataset.expenseReview==='yes');
+  });
   document.getElementById("clientMarkSent").addEventListener("click", markClientCompanySent);
   document.getElementById("clientSkipCompany").addEventListener("click", skipClientCompany);
 
@@ -6325,6 +6497,9 @@ if (name === "post-confirm") {
   if (name === "client-send") {
     loadClientCompanies();
   }
+  if (name === 'client-won') void loadClientBusiness('won');
+  if (name === 'client-deals') void loadClientBusiness('deals');
+  if (name === 'department-office') void loadOfficeExpenses();
   if (name === "client-staff-status") {
     void loadClientStaffStatus();
   }
@@ -6333,9 +6508,8 @@ if (name === "post-confirm") {
   if (name === "schedule") {
     refreshCalendarSchedule();
   }
-  if (name === "schedule-candidates" || name === "representative-dashboard") {
-    void loadMeetingCandidatePolls();
-  }
+  if (name === "schedule-candidates") void rpAdjustLoad();
+  if (name === "representative-dashboard") void rpConfigLoad();
 
   if (name === "schedule-plan") {
     renderSchedulePlanScreen();
@@ -10682,7 +10856,7 @@ document.addEventListener('keydown',event=>{
 });
 
 
-/* v45: MTG候補日調整。所属地域の投票、代表画面の状況把握 */
+/* v45: RP調整。所属地域の投票、代表画面の状況把握 */
 state.meetingCandidatePolls = [];
 state.meetingCandidateLoadSequence = 0;
 state.meetingCandidateCreating = false;
@@ -10886,6 +11060,218 @@ document.addEventListener('DOMContentLoaded',()=>{
     finally{b.disabled=false;}
   });
 });
+
+
+
+// v48: RP configuration in representative view and date-candidate adjustment in schedule view.
+let rpV48Programs=[], rpV48Roster=[], rpV48Candidates=[], rpV48ConfigEditId=0, rpV48LastRegion='';
+function rpV48Manager(){return Boolean(state.isDeveloper||state.isRepresentative)}
+function rpV48ActiveProgram(){return rpV48Programs.find(p=>String(p.id)===document.getElementById('rpAdjustProgram').value)}
+function rpV48NormalizeTime(value){try{return candidateFormatJst(value)}catch{return String(value||'')}}
+async function rpConfigLoad(){
+  const region=state.region,rosterBox=document.getElementById('rpConfigTrainers');
+  try{
+    const [roster,progs]=await Promise.all([
+      portalFetch('/api/rp/roster?region='+encodeURIComponent(region)),
+      portalFetch('/api/rp/programs?region='+encodeURIComponent(region))]);
+    if(region!==state.region)return;
+    rpV48Roster=roster.people||[];rpV48Programs=progs.programs||[];
+    if(rpV48LastRegion!==region){rpV48ConfigEditId=0;rpV48LastRegion=region;}
+    const editing=rpV48Programs.find(p=>p.id===rpV48ConfigEditId);
+    const selected=new Set(editing?editing.trainers:[]);
+    rosterBox.innerHTML=rpV48Roster.length?rpV48Roster.map(p=>`<label><input type="checkbox" value="${escapeHtml(p.email)}" ${selected.has(p.email)?'checked':''}>${escapeHtml(p.name)}</label>`).join(''):'所属地域の名簿にスタッフがいません。';
+    document.getElementById('rpConfigList').innerHTML=rpV48Programs.length?rpV48Programs.map(p=>{
+      const names=(p.trainers||[]).map(e=>rpV48Roster.find(r=>r.email.toLowerCase()===e.toLowerCase())?.name||e).join('、');
+      return `<div class="rp-program-item"><div><strong>${escapeHtml(p.title)}（${Number(p.minutes)}分）</strong><small>担当：${escapeHtml(names)}</small></div><div><button type="button" data-rp-config-edit="${p.id}">編集</button> <button type="button" data-rp-config-delete="${p.id}">削除</button></div></div>`;
+    }).join(''):'まだRPの設定はありません。';
+  }catch(e){rosterBox.textContent='読み込めませんでした：'+(e.message||'');}
+}
+async function rpConfigSave(event){event.preventDefault();
+  const title=document.getElementById('rpConfigTitle').value.trim(),minutes=Number(document.getElementById('rpConfigDuration').value);
+  const trainers=[...document.querySelectorAll('#rpConfigTrainers input:checked')].map(x=>x.value);
+  if(!trainers.length){showToast('担当者を1名以上選択してください');return;}
+  try{
+    await portalFetch('/api/rp/programs',{method:'POST',body:{region:state.region,id:rpV48ConfigEditId||undefined,title,minutes,trainers}});
+    showToast('RPの設定を保存しました');rpV48ConfigEditId=0;document.getElementById('rpConfigForm').reset();await rpConfigLoad();
+  }catch(e){showToast(e.message||'保存できませんでした');}
+}
+function rpConfigEdit(id){
+  const p=rpV48Programs.find(x=>Number(x.id)===id);if(!p)return;
+  rpV48ConfigEditId=id;
+  document.getElementById('rpConfigTitle').value=p.title;
+  document.getElementById('rpConfigDuration').value=String(p.minutes);
+  document.querySelectorAll('#rpConfigTrainers input').forEach(x=>x.checked=(p.trainers||[]).includes(x.value));
+}
+async function rpConfigDelete(id){
+  if(!confirm('このRP設定を削除しますか？既に確定したRPや過去の予定は削除しません。'))return;
+  try{await portalFetch('/api/rp/programs/delete',{method:'POST',body:{id,region:state.region}});if(rpV48ConfigEditId===id)rpV48ConfigEditId=0;await rpConfigLoad();showToast('RP設定を削除しました');}
+  catch(e){showToast(e.message||'削除できませんでした');}
+}
+async function rpAdjustLoad(){
+  const region=state.region,box=document.getElementById('rpAdjustCandidates');box.textContent='候補を読み込んでいます…';
+  try{
+    const [p,slots]=await Promise.all([
+      portalFetch('/api/rp/programs?region='+encodeURIComponent(region)),
+      portalFetch('/api/rp/date-candidates?region='+encodeURIComponent(region))]);
+    if(region!==state.region)return;
+    rpV48Programs=p.programs||[];rpV48Candidates=slots.candidates||[];
+    const selector=document.getElementById('rpAdjustProgram');const value=selector.value;
+    selector.innerHTML='<option value="">すべてのRP</option>'+rpV48Programs.map(p=>`<option value="${p.id}">${escapeHtml(p.title)}</option>`).join('');
+    if(rpV48Programs.some(x=>String(x.id)===value))selector.value=value;
+    rpAdjustRender();
+    if(slots.sheet_sync_ok===false)showToast('スプシの再取得に失敗。D1に保存済みのRP候補を表示しています');
+  }catch(e){box.textContent='候補を取得できませんでした：'+(e.message||'');}
+}
+function rpAdjustRender(){
+  const box=document.getElementById('rpAdjustCandidates'),program=rpV48ActiveProgram();
+  const rows=rpV48Candidates.filter(x=>!program||
+    String([x.title,x.task_type,x.memo].join(' ')).includes(program.title.replace(/RP|ロープレ/gi,''))||
+    String(x.task_type)==='RP受講希望'||String(x.task_type)==='RP担当可能');
+  const label={trainer:'RP担当可能',trainee:'RP受講希望',review:'役割を確認'};
+  box.innerHTML=rows.length?rows.map(x=>`<div class="rp-card"><strong>${escapeHtml(x.user_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(x.starts_at))} ～ ${escapeHtml(rpV48NormalizeTime(x.ends_at))}</small><div>${escapeHtml(x.title)}</div><small class="${x.role==='review'?'rp-role-review':''}">${label[x.role]||'要確認'}${x.role==='review'?'：本人の予定確認・編集で役割を指定してください':''}</small></div>`).join(''):'RPが含まれる予定はまだありません。';
+  const auto=document.getElementById('rpAdjustAuto');auto.hidden=!rpV48Manager()||!program;
+  if(!program){document.getElementById('rpAdjustMatches').textContent='代表画面で設定したRPを選択すると、担当者とのマッチング候補が表示されます。';document.getElementById('rpAdjustAssigned').textContent='';return;}
+  void rpAdjustMatches(program);
+}
+async function rpAdjustMatches(program){
+  const matches=document.getElementById('rpAdjustMatches'),done=document.getElementById('rpAdjustAssigned');
+  if(!rpV48Manager()){matches.innerHTML='<p>代表がRPの担当者と受講者を照合・確定します。日調候補は左に表示しています。</p>';done.textContent='';return;}
+  matches.textContent='照合しています…';
+  try{
+    const [data,assigned]=await Promise.all([
+      portalFetch('/api/rp/program-matches?region='+encodeURIComponent(state.region)+'&program_id='+program.id+'&days=28'),
+      portalFetch('/api/rp/assignments?region='+encodeURIComponent(state.region))]);
+    if(String(rpV48ActiveProgram()?.id)!==String(program.id))return;
+    const ms=data.matches||[];
+    matches.innerHTML='<h3 style="font-size:18px;margin:4px 0">候補 '+ms.length+'件（今後28日）</h3>'+(ms.length?ms.slice(0,35).map(m=>`<div class="rp-card"><strong>${escapeHtml(m.trainee_name)} × ${escapeHtml(m.trainer_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(m.starts_at))} ～ ${escapeHtml(rpV48NormalizeTime(m.ends_at))}</small></div>`).join(''):'候補なし。役割未設定の予定は照合対象外です。');
+    const rows=(assigned.assignments||[]).filter(x=>Number(x.program_id)===Number(program.id));
+    done.innerHTML='<h3 style="font-size:18px;margin:12px 0 5px">確定済み '+rows.length+'件</h3>'+(rows.length?rows.map(a=>`<div class="rp-card"><strong>${escapeHtml(a.trainee_name)} × ${escapeHtml(a.trainer_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(a.starts_at))}</small></div>`).join(''):'まだ割り振りはありません。');
+  }catch(e){matches.textContent='照合できませんでした：'+(e.message||'');}
+}
+async function rpAdjustAutoAssign(){
+  const p=rpV48ActiveProgram();if(!p)return;
+  if(!confirm(`${p.title} の候補を自動振り分けしますか？\n候補にある時間のみ確定し、同じ人の重複割り当ては避けます。`))return;
+  const button=document.getElementById('rpAdjustAuto');button.disabled=true;
+  try{
+    const result=await portalFetch('/api/rp/program-auto-assign',{method:'POST',body:{program_id:p.id,region:state.region,days:28}});
+    showToast(`${result.created||0}件のRPを確定しました`);await rpAdjustMatches(p);
+  }catch(e){showToast(e.message||'自動振り分けに失敗しました');}
+  finally{button.disabled=false;}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('rpConfigForm').addEventListener('submit',rpConfigSave);
+  document.getElementById('rpConfigList').addEventListener('click',e=>{
+    const edit=e.target.closest('[data-rp-config-edit]'),del=e.target.closest('[data-rp-config-delete]');
+    if(edit)rpConfigEdit(Number(edit.dataset.rpConfigEdit));if(del)void rpConfigDelete(Number(del.dataset.rpConfigDelete));
+  });
+  document.getElementById('repRefresh').addEventListener('click',()=>void rpConfigLoad());
+  document.getElementById('rpAdjustProgram').addEventListener('change',rpAdjustRender);
+  document.getElementById('rpAdjustReload').addEventListener('click',()=>void rpAdjustLoad());
+  document.getElementById('rpAdjustAuto').addEventListener('click',()=>void rpAdjustAutoAssign());
+});
+
+// v47: 03B企業管理 B列が企業名（A列はNo）、E列が営業フェーズ。
+// 編集は表示中の地域ではなく、名簿で確認したログイン者の所属地域に基づく。
+function clientBusinessRegionLabel(){return state.region==='kansai'?'関西':'関東';}
+async function loadClientBusiness(type){
+  const seq=++state.clientBusiness.loadingSeq;
+  const region=state.region;
+  document.getElementById(type==='won'?'clientWonNote':'clientDealsNote').textContent='Googleスプレッドシートを読み込んでいます…';
+  if(type==='won')closeClientBusinessEditor();
+  try{
+    const query=new URLSearchParams({type,region});
+    const data=await portalFetch('/api/client/business?'+query.toString());
+    if(seq!==state.clientBusiness.loadingSeq || state.region!==region)return;
+    state.clientBusiness[type]=Array.isArray(data.companies)?data.companies:[];
+    state.clientBusiness.region=region;
+    renderClientBusiness(type);
+  }catch(e){
+    if(seq!==state.clientBusiness.loadingSeq)return;
+    document.getElementById(type==='won'?'clientWonNote':'clientDealsNote').textContent='取得できませんでした：'+(e.message||e);
+    document.getElementById(type==='won'?'clientWonBody':'clientDealsBody').innerHTML='<tr><td colspan="7">スプレッドシートへの接続権限・サービスアカウント設定を確認してください。</td></tr>';
+  }
+}
+function renderClientBusiness(type){
+  const isWon=type==='won';
+  const selected=state.clientBusiness[type]||[];
+  const search=isWon?document.getElementById('clientWonSearch').value.trim().toLowerCase():'';
+  const rows=selected.filter(x=>!search||String(x.name).toLowerCase().includes(search));
+  document.getElementById(isWon?'clientWonRegion':'clientDealsRegion').textContent=clientBusinessRegionLabel();
+  document.getElementById(isWon?'clientWonNote':'clientDealsNote').textContent=`${clientBusinessRegionLabel()}の対象企業：${rows.length}件`+(isWon?' ／ 所属を判定できない行は閲覧のみ。保存先はM～Q列。':' ／ B・D・K列を表示しています。');
+  const body=document.getElementById(isWon?'clientWonBody':'clientDealsBody');
+  if(!rows.length){body.innerHTML=`<tr><td colspan="${isWon?7:3}">該当する企業はありません。</td></tr>`;return;}
+  if(isWon){
+    body.innerHTML=rows.map(x=>`<tr>
+      <td><strong>${escapeHtml(x.name)}</strong><div class="client-sheet-muted">${escapeHtml(x.assignee||'担当者未設定')}${x.region_unknown?'・所属未判定':''}</div></td>
+      ${[...x.details].map(v=>`<td>${escapeHtml(v||'—')}</td>`).join('')}
+      <td><button type="button" data-edit-corporate-row="${Number(x.row)}" ${x.can_edit?'':'disabled title="本人の所属地域と企業担当者の所属地域が一致しないため編集できません"'}>${x.can_edit?'編集':'閲覧のみ'}</button></td></tr>`).join('');
+  }else{
+    body.innerHTML=rows.map(x=>`<tr><td><strong>${escapeHtml(x.name)}</strong></td><td>${escapeHtml(x.reading||'—')}</td><td>${escapeHtml(x.meeting_at||'—')}</td></tr>`).join('');
+  }
+}
+function openClientBusinessEditor(row){
+  const x=state.clientBusiness.won.find(x=>x.row===row);
+  if(!x?.can_edit)return showToast('この企業の編集権限がありません');
+  state.clientBusiness.editing={...x,details:[...x.details]};
+  document.getElementById('clientWonEditorTitle').textContent=x.name+' の受注情報を編集';
+  ['M','N','O','P','Q'].forEach((key,i)=>document.getElementById('clientWon'+key).value=x.details[i]||'');
+  document.getElementById('clientWonEditor').hidden=false;
+}
+function closeClientBusinessEditor(){
+  const editor=document.getElementById('clientWonEditor');if(editor)editor.hidden=true;
+  if(state?.clientBusiness)state.clientBusiness.editing=null;
+}
+async function saveClientBusinessEditor(){
+  const x=state.clientBusiness.editing;if(!x)return;
+  const btn=document.getElementById('clientWonSave');btn.disabled=true;
+  try{
+    const details=['M','N','O','P','Q'].map(k=>document.getElementById('clientWon'+k).value.trim());
+    await portalFetch('/api/client/business/update',{method:'POST',body:{row:x.row,name:x.name,expected:x.details,details}});
+    closeClientBusinessEditor();
+    showToast('M～Q列をスプレッドシートに保存しました');
+    await loadClientBusiness('won');
+  }catch(e){showToast('保存できませんでした：'+e.message);}
+  finally{btn.disabled=false;}
+}
+async function loadOfficeExpenses(){
+  const seq=++state.officeExpenses.loadingSeq;
+  document.getElementById('officeExpenseNote').textContent='経費シートと正式名称一覧を読み込んでいます…';
+  try{
+    const data=await portalFetch('/api/office/expense-check');
+    if(seq!==state.officeExpenses.loadingSeq)return;
+    state.officeExpenses.rows=Array.isArray(data.rows)?data.rows:[];
+    state.officeExpenses.canReview=Boolean(data.can_review);
+    state.officeExpenses.warning=data.warning||'';
+    renderOfficeExpenses();
+  }catch(e){
+    if(seq!==state.officeExpenses.loadingSeq)return;
+    document.getElementById('officeExpenseNote').textContent='経費チェックに失敗：'+e.message+'。経費スプシをGoogleサービスアカウントと共有できているか確認してください。';
+    document.getElementById('officeExpenseBody').innerHTML='<tr><td colspan="6">読み込みできませんでした。</td></tr>';
+  }
+}
+function renderOfficeExpenses(){
+  const all=state.officeExpenses.rows||[];
+  const filter=document.getElementById('officeExpenseFilter').value;
+  const visible=all.filter(x=>filter==='all'||filter==='error'&&x.flags.length||filter==='pending'&&!x.reviewed||filter==='open'&&(x.flags.length||!x.reviewed));
+  const issues=all.filter(x=>x.flags.length).length;
+  const pending=all.filter(x=>!x.reviewed).length;
+  document.getElementById('officeExpenseSummary').innerHTML=`<span>検査対象 ${all.length}件</span><span>自動指摘 ${issues}件</span><span>目視未確認 ${pending}件</span><span>${state.officeExpenses.canReview?'事務局担当者は確認済みを記録できます':'確認状態の更新は事務局担当者のみ'}</span>`;
+  document.getElementById('officeExpenseNote').textContent=(state.officeExpenses.warning||'')+' 交通機関の支払先は補足シートの正式名称と照合します。経路・実費・領収書の一致は必ず人が確認してください。';
+  const body=document.getElementById('officeExpenseBody');
+  body.innerHTML=visible.length?visible.map(x=>`<tr>
+    <td>${escapeHtml(x.person)}</td><td><a target="_blank" rel="noopener noreferrer" href="${escapeHtml(x.sheet_url)}">${Number(x.row)}行目 ↗</a></td>
+    <td>${escapeHtml(x.payee||'—')}</td><td class="${x.flags.length?'office-expense-flag':'office-expense-ok'}">${x.flags.length?x.flags.map(escapeHtml).join('／'):'自動チェックで不整合なし'}</td>
+    <td class="${x.reviewed?'office-expense-ok':'office-expense-pending'}">${x.reviewed?'確認済み':'未確認'}</td>
+    <td><button type="button" data-expense-review="${x.reviewed?'no':'yes'}" data-expense-tab="${escapeHtml(x.tab)}" data-expense-row="${Number(x.row)}" ${state.officeExpenses.canReview?'':'disabled'}>${x.reviewed?'未確認に戻す':'目視確認済みにする'}</button></td>
+  </tr>`).join(''):'<tr><td colspan="6">この条件に該当する経費はありません。</td></tr>';
+}
+async function setOfficeExpenseReviewed(tab,row,reviewed){
+  if(!state.officeExpenses.canReview)return;
+  if(!confirm(`${tab}の${row}行目を${reviewed?'目視確認済み':'未確認'}にしますか？\n※自動チェックの指摘は消えません。`))return;
+  try{await portalFetch('/api/office/expense-review',{method:'POST',body:{tab,row,reviewed}});
+    showToast('目視確認ステータスを更新しました');await loadOfficeExpenses();
+  }catch(e){showToast('更新できませんでした：'+e.message);}
+}
 
   </script>
 </body>
