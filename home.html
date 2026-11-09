@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
   <!-- dotjp-v54-rp-registration-meeting-auto-task -->
-  <!-- Version v48: 2026-11-08 RP program settings + role-aware scheduling -->
+  <!-- Version v55: 2026-11-09 Figma calendar layouts + universal home back -->
   <style>
 * {
   box-sizing: border-box;
@@ -4572,6 +4572,144 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .rp-availability-dialog .rp-availability-close{background:#eee;color:#222;justify-self:end}
 @media(max-width:960px){.rp-availability-dialog{right:20px;top:185px}.rp-availability-dialog form{grid-template-columns:1fr 1fr}.rp-availability-toolbar{right:35px;top:103px}}
 
+
+/* =========================================================
+   v55: Figma スケジュール確認（95:164 / 172:52）再現
+   基準キャンバス1440x1024、時間表 40,115 / 1360x842
+   ========================================================= */
+.screen-schedule .schedule-figma-panel {
+  left: 70px !important; top: 137px !important;
+  width: 1300px !important; height: 750px !important;
+}
+.screen-schedule .schedule-hub-back {
+  left: 128px !important; top: 912px !important; bottom: auto !important;
+  width: 140px !important; min-width: 140px !important; height: 60px !important;
+  font-size: 40px !important; font-weight: 400; line-height: 60px;
+}
+/* 選択された画面のタブだけサーモン色、非選択は薄紫。 */
+.screen .schedule-hub-tabs {
+  position: absolute; left: 242px; top: 35px;
+  display: flex; align-items: center; gap: 23px; z-index: 12;
+}
+.screen .schedule-hub-tabs button,
+.screen .schedule-hub-tabs button[data-route] {
+  box-sizing: border-box;
+  width: 190px !important; min-width: 190px !important;
+  height: 55px !important; padding: 0 !important;
+  border: none !important; border-radius: 10px !important;
+  background: #f4a9ff !important; color: #000 !important;
+  font: 400 27px/55px Inter, 'Noto Sans JP', sans-serif !important;
+  white-space: nowrap; text-align: center;
+}
+.screen .schedule-hub-tabs button.is-active,
+.screen .schedule-hub-tabs button[data-route].is-active {
+  background: #ffa9b1 !important; color: #000 !important;
+}
+.screen .schedule-hub-tabs button:hover:not(.is-active),
+.screen .schedule-hub-tabs button[data-route]:hover:not(.is-active) {
+  background: #ed9df5 !important;
+}
+/* Figma右上：x1138/1234/1330, y46。表示は3ボタンのみ。 */
+.screen-schedule-review .schedule-review-week-nav,
+.screen-schedule-candidates .rp-week-nav {
+  position: absolute !important;
+  left: 1138px !important; right: auto !important;
+  top: 46px !important; width: 262px !important;
+  height: 44px !important; min-height: 44px !important;
+  display: flex !important; gap: 26px !important;
+  align-items: stretch !important; justify-content: flex-start !important;
+  flex-wrap: nowrap !important; padding: 0 !important; margin: 0 !important;
+  z-index: 16 !important;
+}
+.screen-schedule-review .schedule-review-week-nav button,
+.screen-schedule-candidates .rp-week-nav button {
+  flex: 0 0 70px !important;
+  box-sizing: border-box !important;
+  width: 70px !important; min-width: 70px !important;
+  height: 44px !important; padding: 0 !important;
+  border: 0 !important; border-radius: 0 !important;
+  background: #40ccff !important; color: #000 !important;
+  font: 400 30px/44px Inter, 'Noto Sans JP', sans-serif !important;
+  box-shadow: none !important;
+  text-align: center; cursor: pointer;
+}
+.screen-schedule-review .schedule-review-week-nav button.is-current,
+.screen-schedule-candidates .rp-week-nav button#rpWeekToday {
+  background: #40ccff !important; color: #000 !important;
+  border: 0 !important;
+}
+/* 保存済みのラベルと手動同期処理は残すが、Figmaにない操作パネルは表示しない。 */
+.screen-schedule-review #reviewWeekRangeLabel,
+.screen-schedule-candidates #rpWeekRangeLabel,
+.screen-schedule-review #reviewSheetSync,
+.screen-schedule-candidates #rpWeekReload {
+  display: none !important;
+}
+.screen-schedule-review .review-sheet-status,
+.screen-schedule-review .review-rp-assignments { display: none !important; }
+/* v45の古い40px行高指定を解除し、Figmaの56px間隔へ復元。 */
+.screen-schedule-review .schedule-review-time-label,
+.screen-schedule-review .schedule-review-cell,
+.screen-schedule-candidates .schedule-review-time-label,
+.screen-schedule-candidates .schedule-review-cell {
+  height: 56px !important;
+  line-height: 56px !important;
+}
+/* Figma一面の7日×14時間：ヘッダー58px + 14行×56px */
+.screen-schedule-review .schedule-review-board,
+.screen-schedule-candidates .rp-week-board {
+  position: absolute !important;
+  left: 40px !important; top: 115px !important;
+  width: 1360px !important; height: 842px !important;
+  border: 0 !important; border-radius: 0 !important;
+  box-shadow: inset 0 0 0 3px #67005e;
+  background: #fff !important; overflow: hidden !important;
+  margin: 0 !important; padding: 0 !important;
+  z-index: 1;
+}
+.screen-schedule-review .schedule-review-day-header,
+.screen-schedule-candidates .schedule-review-day-header {
+  font-size: 30px !important;
+  font-weight: 400 !important;
+}
+.screen-schedule-review .schedule-review-time-label,
+.screen-schedule-candidates .schedule-review-time-label {
+  font-size: 27px !important;
+  font-weight: 400 !important;
+}
+.screen-schedule-review .schedule-review-back,
+.screen-schedule-candidates .candidate-page-back {
+  position: absolute !important;
+  left: 40px !important; top: 957px !important;
+  bottom: auto !important;
+  width: 140px !important; min-width: 140px !important;
+  height: 60px !important; padding: 0 !important;
+  border: 0 !important; border-radius: 0 !important;
+  background: #3080ff !important; color: #fff !important;
+  font: 400 40px/60px Inter, 'Noto Sans JP', sans-serif !important;
+  z-index: 18 !important;
+}
+/* RP可能時間の登録だけ、Figma上部の空白領域に置いてカレンダーには重ねない。 */
+.screen-schedule-candidates .rp-availability-toolbar {
+  position: absolute !important; left: 880px !important;
+  right: auto !important; top: 46px !important;
+  width: 240px !important; height: 44px !important;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 17 !important;
+}
+.screen-schedule-candidates .rp-availability-toolbar button {
+  width: 100%; height: 44px !important; padding: 0 8px !important;
+  border: 1px solid #67005e !important; border-radius: 8px !important;
+  background: #fcf4ff !important; color: #67005e !important;
+  font: 500 19px/42px Inter, 'Noto Sans JP', sans-serif !important;
+}
+.screen-schedule-candidates .rp-week-legend { display: none !important; }
+.screen-schedule-candidates .rp-availability-dialog {
+  position: absolute !important; z-index: 100 !important;
+  right: 55px !important; top: 100px !important;
+}
+/* 元コードのグリッドクリック・RP登録・編集はそのまま保持。 */
+
 </style>
 </head>
 <body>
@@ -5338,11 +5476,11 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button type="button" data-route="schedule-candidates">RP時間確認</button>
           </nav>
           <nav class="schedule-review-week-nav" aria-label="予定確認の週を切り替える">
-            <button type="button" id="reviewPrevWeek" aria-label="前の週へ">← 前の週</button>
+            <button type="button" id="reviewPrevWeek" aria-label="前の週へ">前週</button>
             <span id="reviewWeekRangeLabel" class="schedule-review-week-range" aria-live="polite"></span>
             <button type="button" id="reviewThisWeek" class="schedule-review-current-button">今週</button>
             <button type="button" id="reviewSheetSync" class="schedule-review-current-button">スプシと同期</button>
-            <button type="button" id="reviewNextWeek" aria-label="次の週へ">次の週 →</button>
+            <button type="button" id="reviewNextWeek" aria-label="次の週へ">次週</button>
           </nav>
 
           <div id="rpTempMoveHint" class="rp-transfer-note" hidden>一時RP転記モード（本人限定）</div>
@@ -5453,10 +5591,10 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </div>
 
           <nav class="rp-week-nav" aria-label="RP調整の週切り替え">
-            <button type="button" id="rpWeekPrev">← 前の週</button>
+            <button type="button" id="rpWeekPrev">前週</button>
             <span id="rpWeekRangeLabel" aria-live="polite"></span>
             <button type="button" id="rpWeekToday">今週</button>
-            <button type="button" id="rpWeekNext">次の週 →</button>
+            <button type="button" id="rpWeekNext">次週</button>
             <button type="button" id="rpWeekReload">更新</button>
           </nav>
           <div class="rp-week-legend" aria-label="RP希望日時の凡例">
@@ -6732,30 +6870,12 @@ if (name === "post-confirm") {
 }
 
 
-function goBackScreen() {
-  let target = "";
-
-  while (state.screenHistory.length) {
-    const candidate = state.screenHistory.pop();
-
-    if (
-      candidate &&
-      candidate !== state.currentScreen &&
-      screenNames.has(candidate)
-    ) {
-      target = candidate;
-      break;
-    }
-  }
-
-  if (!target) {
-    target =
-      state.currentScreen === "post-manual" ||
-      state.currentScreen === "post-confirm"
-        ? "post"
-        : "home";
-  }
-
+function goBackScreen(event) {
+  // v55: 戻るは原則トップ画面。個別指定のみ data-back-route で例外を許可。
+  const explicitlySpecified = event?.currentTarget?.dataset?.backRoute || '';
+  const target = explicitlySpecified && screenNames.has(explicitlySpecified)
+    ? explicitlySpecified : 'home';
+  state.screenHistory.length = 0;
   showScreen(target, true, false);
 }
 
