@@ -167,6 +167,8 @@ button {
   position: relative;
   padding: 8px 10px;
   border-right: 2px solid var(--navy);
+  display: flex;
+  flex-direction: column;
 }
 
 .summary-cell:last-child {
@@ -180,9 +182,11 @@ button {
 }
 
 .summary-value {
-  padding-top: 22px;
+  padding-top: 10px;
   font-size: 24px;
   white-space: pre-line;
+  flex: 1;
+  min-height: 0;
 }
 
 .timer-value {
@@ -1191,40 +1195,109 @@ height: 315px;
 
 .task-summary-list {
   height: 137px;
-  padding-top: 4px;
+  padding-top: 2px;
   overflow-y: auto;
   white-space: normal;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .summary-task-row {
-  min-height: 30px;
-  margin-bottom: 3px;
-  display: grid;
-  grid-template-columns: 70px 1fr;
+  min-height: 52px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
   gap: 5px;
-  align-items: center;
-  font-size: 16px;
+  align-items: stretch;
+  box-sizing: border-box;
+  position: relative;
+  border: 1px solid #d4ddf6;
+  border-radius: 10px;
+  background: #f8faff;
+  font-size: 15px;
+  text-align: left;
+}
+
+button.summary-task-row {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+button.summary-task-row:hover {
+  background: #eef4ff;
+  border-color: #9fb6f5;
+}
+
+.summary-task-row.is-clickable::after {
+  content: "タップで開く";
+  position: absolute;
+  right: 14px;
+  top: 10px;
+  font-size: 11px;
+  color: #4e6ec5;
+  font-weight: 700;
+}
+
+.summary-task-row.is-active {
+  background: #fff7f7;
+  border-color: #ef8e8e;
 }
 
 .summary-task-row .task-type-badge {
   min-width: 64px;
   height: 24px;
-  padding: 0 6px;
-  border-radius: 12px;
+  padding: 0 8px;
+  border-radius: 999px;
   font-size: 12px;
+  flex: 0 0 auto;
+}
+
+.summary-task-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
 }
 
 .summary-task-title {
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.35;
+  font-weight: 700;
+  color: #1a2555;
+  word-break: break-word;
 }
 
-.summary-task-row.is-active .summary-task-title::after {
-  content: "  実行中";
-  color: var(--red);
-  font-size: 12px;
+.summary-task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.summary-task-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #eaf0ff;
+  color: #4a5a86;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.summary-task-meta-chip.is-active {
+  background: #ffe0e0;
+  color: #b12828;
   font-weight: 700;
 }
 
@@ -4219,8 +4292,8 @@ display: flex; gap: 13px; align-items: baseline; margin: 16px 2px 10px;
 .post-confirm-shell .postcard-card .row-destination span{display:block;max-height:42px;overflow:auto;}
 .post-confirm-shell .postcard-card .row-content span{display:block;height:237px;max-height:237px;overflow-y:auto;white-space:pre-wrap;font-size:18px;line-height:1.45;}
 .post-target-link{font-size:17px!important;color:#245bc4;text-decoration:underline!important;word-break:break-all;}
-.task-target-small{display:inline-block;margin-inline:4px;max-width:160px;white-space:nowrap;overflow:hidden;}
-.task-target-small .post-target-link{font-size:11px!important;}
+.task-target-small{display:inline-flex;max-width:220px;min-width:0;}
+.task-target-small .post-target-link{font-size:11px!important;line-height:1.2!important;text-decoration:none!important;color:#4a5a86!important;}
 .post-audience-overlay[hidden]{display:none!important;}
 .post-audience-overlay{position:absolute;inset:0;z-index:90;background:rgba(19,32,72,.54);display:grid;place-items:center;}
 .post-audience-dialog{box-sizing:border-box;width:730px;max-height:815px;padding:25px 28px 22px;background:#fff;
@@ -4300,6 +4373,13 @@ display: flex; gap: 13px; align-items: baseline; margin: 16px 2px 10px;
 #reviewEditWarning { margin: 0; font-size: 18px; color: #ae3c19; }
 .schedule-plan-memo { position: absolute; left: 90px; top: 713px; display: flex; align-items: center; gap: 18px; font-size: 20px; }
 .schedule-plan-memo input { width: 390px; height: 34px; box-sizing: border-box; border: 1px solid #7e88a4; padding: 3px 8px; font: inherit; }
+.schedule-rp-shortcuts { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 12px 0 16px; }
+.schedule-rp-shortcuts strong { font-size: 16px; color:#3d3d67; }
+.schedule-rp-shortcuts button { height:38px; padding:0 14px; border-radius:999px; border:1px solid #8d52c7; background:#fcf1ff; color:#6f2ca9; font-size:15px; font-weight:700; cursor:pointer; }
+.schedule-rp-shortcuts button[data-rp-quick-role="trainer"] { border-color:#1f78b4; background:#eef7ff; color:#12527b; }
+.schedule-rp-shortcuts small { color:#6f7893; font-size:13px; }
+.plan-rp-note { margin-top: 6px; font-size: 15px; line-height: 1.5; color:#6b5174; }
+.plan-rp-note strong { color:#7c2ba6; }
 
 /* v43: unfinished request rows are direct links to their designated work screens. */
 button.summary-task-row[data-open-request-task] {
@@ -5515,6 +5595,13 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 </div>
               </div>
 
+              <div class="schedule-rp-shortcuts">
+                <strong>RP登録：</strong>
+                <button type="button" data-rp-quick-role="trainee">RP受講希望</button>
+                <button type="button" data-rp-quick-role="trainer">RP担当可能</button>
+                <small>先に役割を選び、空き時間をクリックして登録できます。</small>
+              </div>
+
               <div id="availableTimeContent" class="figma-week-host"></div>
 
               <button
@@ -5770,6 +5857,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               </label>
 
               <div class="plan-task-label">やること：</div>
+              <div class="plan-rp-note">RP登録は <strong>「RP受講希望」</strong> または <strong>「RP担当可能」</strong> を選んで登録してください。</div>
             </div>
 
             <div id="scheduleTaskChoiceGrid" class="schedule-task-choice-grid"></div>
@@ -6500,6 +6588,15 @@ function wireActions() {
 
   document.querySelectorAll("[data-common-back]").forEach((element) => {
     element.addEventListener("click", goBackScreen);
+  });
+
+  document.querySelectorAll("[data-rp-quick-role]").forEach((element) => {
+    element.addEventListener("click", () => {
+      const role = element.dataset.rpQuickRole === "trainer" ? "RP担当可能" : "RP受講希望";
+      state.calendar.selectedTaskTitle = role;
+      showToast(`${role} を選択しました。空き時間をクリックして、そのまま登録してください`);
+      if (state.currentScreen === "schedule-plan") renderScheduleTaskChoices();
+    });
   });
 
   document.querySelectorAll("[data-region]").forEach((element) => {
@@ -7354,16 +7451,32 @@ function renderHomeTaskLists() {
 function taskSummaryHtml(tasks, activeId, allowNavigation = false) {
   if (!tasks.length) return '<div class="summary-empty">なし</div>';
   return tasks.map((task) => {
-    const active = task.id === activeId ? " is-active" : "";
+    const active = task.id === activeId;
+    const activeClass = active ? " is-active" : "";
     const clickable = allowNavigation && task.type === "request" && Boolean(resolveRequestTaskTarget(task));
+    const rowClass = `summary-task-row${activeClass}${clickable ? " is-clickable" : ""}`;
     const title = clickable
       ? `${task.title}｜クリックして${task.targetLabel || "担当箇所"}を開く`
       : task.title;
-    const content = `${allowNavigation && task.type === "request" ? "" : taskBadgeHtml(task.type)}<span class="summary-task-title">${escapeHtml(task.title)}</span>`;
-    if (clickable) {
-      return `<button type="button" class="summary-task-row${active}" data-open-request-task="${escapeHtml(task.id)}" title="${escapeHtml(title)}">${content}</button>`;
+    const metaParts = [];
+    if (task.targetLabel) {
+      metaParts.push(`<span class="summary-task-meta-chip">担当：${escapeHtml(task.targetLabel)}</span>`);
+    } else if (task.targetLink) {
+      metaParts.push(`<span class="summary-task-meta-chip">${postTargetLinkHtml({targetLink:task.targetLink,targetLabel:task.targetLabel})}</span>`);
     }
-    return `<div class="summary-task-row${active}" title="${escapeHtml(title)}">${content}${task.targetLink ? `<span class="task-target-small">${postTargetLinkHtml({targetLink:task.targetLink,targetLabel:task.targetLabel})}</span>` : ''}</div>`;
+    if (clickable) metaParts.push('<span class="summary-task-meta-chip">クリックで開く</span>');
+    if (active) metaParts.push('<span class="summary-task-meta-chip is-active">実行中</span>');
+    const content = `
+      <span class="summary-task-head">
+        ${taskBadgeHtml(task.type)}
+        <span class="summary-task-title">${escapeHtml(task.title)}</span>
+      </span>
+      <span class="summary-task-meta">${metaParts.join("")}</span>
+    `;
+    if (clickable) {
+      return `<button type="button" class="${rowClass}" data-open-request-task="${escapeHtml(task.id)}" title="${escapeHtml(title)}">${content}</button>`;
+    }
+    return `<div class="${rowClass}" title="${escapeHtml(title)}">${content}</div>`;
   }).join("");
 }
 
@@ -9181,13 +9294,13 @@ const calendarDayNamesEn = [
 ];
 
 const scheduleTaskChoices = [
+  "RP受講希望",
+  "RP担当可能",
   "声掛け",
   "架電",
   "通電",
   "リストアップ",
   "お問い合わせフォーム送信",
-  "RP受講希望",
-  "RP担当可能",
   "MTG",
   "資料作成",
   "事務作業",
@@ -9639,6 +9752,10 @@ function renderSchedulePlanScreen() {
 
   document.getElementById("planStartTime").value =
     formatTokyoClock(startDate);
+
+  if (!state.calendar.selectedTaskTitle) {
+    state.calendar.selectedTaskTitle = "";
+  }
 
   renderScheduleTaskChoices();
   renderSchedulePlanCalendarTargets();
