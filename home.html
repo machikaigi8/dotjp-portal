@@ -4819,6 +4819,152 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 }
 /* 元コードのグリッドクリック・RP登録・編集はそのまま保持。 */
 
+
+/* v58: ホームのタスクは1行1件・タイトルだけ。以前のカード/CSS上書きを解除。 */
+.screen-home .home-summary {
+  grid-template-columns: 500px 305px 264px !important;
+}
+.screen-home .home-summary .summary-cell {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0;
+  overflow: hidden;
+  padding: 7px 9px !important;
+}
+.screen-home .home-summary .summary-title {
+  flex: none;
+  font-size: 27px;
+  line-height: 35px;
+  font-weight: 600;
+}
+.screen-home #unfinishedWeekLabel { display: none !important; }
+.screen-home .home-summary .task-summary-list {
+  height: auto !important;
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  padding: 4px 3px 4px 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 4px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+.screen-home .task-summary-list .summary-task-row,
+.screen-home .task-summary-list button.summary-task-row {
+  flex: none !important;
+  display: block !important;
+  width: 100% !important;
+  height: 31px !important;
+  min-height: 31px !important;
+  max-height: 31px !important;
+  margin: 0 !important;
+  padding: 2px 10px !important;
+  box-sizing: border-box !important;
+  border: 1px solid #dbe1f2 !important;
+  border-radius: 5px !important;
+  background: #f8f9ff !important;
+  color: #162552 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  font-size: 17px !important;
+  font-weight: 500 !important;
+  line-height: 25px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  position: relative !important;
+}
+.screen-home .task-summary-list button.summary-task-row:hover,
+.screen-home .task-summary-list button.summary-task-row:focus-visible {
+  background: #eaf1ff !important;
+  border-color: #88a8ec !important;
+  outline: 1px solid #417af0 !important;
+  outline-offset: -1px !important;
+}
+.screen-home .task-summary-list .summary-task-row .summary-task-title {
+  all: unset !important;
+  display: inline !important;
+  font: inherit !important;
+  white-space: inherit !important;
+}
+.screen-home .task-summary-list .summary-task-row .summary-task-title::after,
+.screen-home .task-summary-list .summary-task-row::after,
+.screen-home .task-summary-list .summary-task-meta,
+.screen-home .task-summary-list .task-type-badge {
+  display: none !important;
+  content: none !important;
+}
+.screen-home .task-summary-list .summary-task-row.is-active {
+  background: #fff3f0 !important;
+  border-color: #f4ad96 !important;
+}
+/* 詳細は一覧の外側にオーバーレイし、元のホーム画面配置を崩さない。 */
+.screen-home .home-task-detail-backdrop {
+  position: absolute !important;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  box-sizing: border-box;
+  background: rgba(19, 25, 65, .38);
+}
+.screen-home .home-task-detail-panel {
+  width: 780px;
+  max-height: 790px;
+  overflow-y: auto;
+  padding: 32px 35px;
+  box-sizing: border-box;
+  background: #fff;
+  border: 3px solid #182974;
+  border-radius: 16px;
+  box-shadow: 0 15px 48px rgba(0,0,0,.22);
+  font-size: 22px;
+}
+.screen-home .home-task-detail-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.screen-home .home-task-detail-heading h2 {
+  margin: 0;
+  font-size: 31px;
+  font-weight: 700;
+  color: #17256a;
+}
+.screen-home .home-task-detail-close {
+  flex: none;
+  border: 0;
+  border-radius: 9px;
+  width: 50px;
+  height: 48px;
+  font-size: 29px;
+  background: #eef0fb;
+  cursor: pointer;
+}
+.screen-home .home-task-detail-title {
+  margin: 0 0 21px;
+  color: #142153;
+  font-size: 29px;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.screen-home .home-task-detail-fields { margin: 0; display: grid; gap: 13px; }
+.screen-home .home-task-detail-field { display: grid; grid-template-columns: 125px 1fr; gap: 16px; align-items: start; }
+.screen-home .home-task-detail-field dt { color: #65708e; font-size: 19px; }
+.screen-home .home-task-detail-field dd { margin: 0; color: #25335d; font-size: 21px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-wrap; }
+.screen-home .home-task-detail-actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 30px; }
+.screen-home .home-task-detail-actions button { padding: 12px 26px; border: 0; border-radius: 8px; font-size: 22px; cursor: pointer; }
+.screen-home .home-task-detail-actions .home-task-detail-dismiss { background: #e9edfa; color: #1b2753; }
+.screen-home .home-task-detail-actions .home-task-detail-open { background: #2c57e4; color: #fff; }
+
 </style>
 </head>
 <body>
@@ -4879,6 +5025,21 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <span>タスク</span>
             <span>終了</span>
           </button>
+
+          <div id="homeTaskDetailDialog" class="home-task-detail-backdrop" role="dialog" aria-modal="true" aria-labelledby="homeTaskDetailHeading" hidden>
+            <div class="home-task-detail-panel" tabindex="-1">
+              <div class="home-task-detail-heading">
+                <h2 id="homeTaskDetailHeading">タスク詳細</h2>
+                <button type="button" class="home-task-detail-close" id="homeTaskDetailClose" aria-label="詳細を閉じる">×</button>
+              </div>
+              <p class="home-task-detail-title" id="homeTaskDetailTitle"></p>
+              <dl class="home-task-detail-fields" id="homeTaskDetailFields"></dl>
+              <div class="home-task-detail-actions">
+                <button type="button" class="home-task-detail-dismiss" id="homeTaskDetailDismiss">閉じる</button>
+                <button type="button" class="home-task-detail-open" id="homeTaskDetailOpen" hidden>担当画面を開く</button>
+              </div>
+            </div>
+          </div>
 
           <section class="department-panel">
             <h2>部署関連</h2>
@@ -6651,15 +6812,32 @@ function wireActions() {
   document.getElementById("clientSkipCompany").addEventListener("click", skipClientCompany);
 
   document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
-  // ホームの未完了タスクは、行全体を押すと指定された作業先へ遷移する。
+  // v58: 未完了一覧のクリックでは作業を開始せず、まず詳細のみを表示する。
   document.getElementById("unfinishedTasks").addEventListener("click", (event) => {
     if (event.target.closest('[data-retry-tasks]')) {
       void refreshRemoteTasks().then(refreshTaskUi);
       return;
     }
-    const row = event.target.closest("[data-open-request-task]");
-    if (!row) return;
-    openUnfinishedRequestFromHome(row.dataset.openRequestTask);
+    const row = event.target.closest("[data-home-task-detail]");
+    if (row) openHomeTaskDetail(row.dataset.homeTaskDetail);
+  });
+  document.getElementById("finishedTasks").addEventListener("click", event => {
+    const row = event.target.closest("[data-home-task-detail]");
+    if (row) openHomeTaskDetail(row.dataset.homeTaskDetail);
+  });
+  const homeDetailDialog = document.getElementById("homeTaskDetailDialog");
+  document.getElementById("homeTaskDetailClose").addEventListener("click", closeHomeTaskDetail);
+  document.getElementById("homeTaskDetailDismiss").addEventListener("click", closeHomeTaskDetail);
+  homeDetailDialog.addEventListener("click", event => {
+    if (event.target === homeDetailDialog) closeHomeTaskDetail();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !homeDetailDialog.hidden) closeHomeTaskDetail();
+  });
+  document.getElementById("homeTaskDetailOpen").addEventListener("click", () => {
+    const taskId = homeDetailDialog.dataset.taskId;
+    closeHomeTaskDetail();
+    openUnfinishedRequestFromHome(taskId);
   });
 
   document.querySelector('[data-action="confirm-post"]').addEventListener("click", () => {
@@ -7439,7 +7617,7 @@ function renderHomeTaskLists() {
     .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
 
   document.getElementById("unfinishedWeekLabel").textContent = state.remoteTasksError
-    ? '全期間の未完了依頼／取得エラー' : '未完了の依頼は全期間表示';
+    ? 'タスク取得エラー' : '';
   document.getElementById("finishedWeekLabel").textContent = weekLabel();
   document.getElementById("unfinishedTasks").innerHTML =
     (state.remoteTasksError && !state.remoteTasks.length && !unfinished.length)
@@ -7448,36 +7626,57 @@ function renderHomeTaskLists() {
   document.getElementById("finishedTasks").innerHTML = taskSummaryHtml(finished, activeId, false);
 }
 
+function taskTitleForSummary(task) {
+  // Worker提供のcontentがタスク本文（タイトル）。titleの【担当画面】と期限は表示しない。
+  const source = String(task?.content || task?.title || "").trim();
+  const result = source
+    .replace(/^(?:(?:【[^】]*】|\[[^\]]*\])\s*)+/g, "")
+    .replace(/\s*[（(]\s*期限\s*[:：][^）)]*[）)]\s*$/g, "")
+    .replace(/\s+/g, " ").trim();
+  return result || "タイトル未設定";
+}
+
 function taskSummaryHtml(tasks, activeId, allowNavigation = false) {
   if (!tasks.length) return '<div class="summary-empty">なし</div>';
-  return tasks.map((task) => {
-    const active = task.id === activeId;
-    const activeClass = active ? " is-active" : "";
-    const clickable = allowNavigation && task.type === "request" && Boolean(resolveRequestTaskTarget(task));
-    const rowClass = `summary-task-row${activeClass}${clickable ? " is-clickable" : ""}`;
-    const title = clickable
-      ? `${task.title}｜クリックして${task.targetLabel || "担当箇所"}を開く`
-      : task.title;
-    const metaParts = [];
-    if (task.targetLabel) {
-      metaParts.push(`<span class="summary-task-meta-chip">担当：${escapeHtml(task.targetLabel)}</span>`);
-    } else if (task.targetLink) {
-      metaParts.push(`<span class="summary-task-meta-chip">${postTargetLinkHtml({targetLink:task.targetLink,targetLabel:task.targetLabel})}</span>`);
-    }
-    if (clickable) metaParts.push('<span class="summary-task-meta-chip">クリックで開く</span>');
-    if (active) metaParts.push('<span class="summary-task-meta-chip is-active">実行中</span>');
-    const content = `
-      <span class="summary-task-head">
-        ${taskBadgeHtml(task.type)}
-        <span class="summary-task-title">${escapeHtml(task.title)}</span>
-      </span>
-      <span class="summary-task-meta">${metaParts.join("")}</span>
-    `;
-    if (clickable) {
-      return `<button type="button" class="${rowClass}" data-open-request-task="${escapeHtml(task.id)}" title="${escapeHtml(title)}">${content}</button>`;
-    }
-    return `<div class="${rowClass}" title="${escapeHtml(title)}">${content}</div>`;
+  return tasks.map(task => {
+    const title = taskTitleForSummary(task);
+    const activeClass = task.id === activeId ? " is-active" : "";
+    return `<button type="button" class="summary-task-row${activeClass}" data-home-task-detail="${escapeHtml(task.id)}" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)} の詳細を開く"><span class="summary-task-title">${escapeHtml(title)}</span></button>`;
   }).join("");
+}
+
+function closeHomeTaskDetail() {
+  const modal = document.getElementById("homeTaskDetailDialog");
+  if (!modal || modal.hidden) return;
+  modal.hidden = true;
+  delete modal.dataset.taskId;
+  document.getElementById("unfinishedTasks").focus?.();
+}
+
+function openHomeTaskDetail(taskId) {
+  const task = currentWeekTasks().find(item => item.id === taskId);
+  if (!task) {
+    showToast("タスクの情報を取得できませんでした");
+    return;
+  }
+  const modal = document.getElementById("homeTaskDetailDialog");
+  const title = taskTitleForSummary(task);
+  document.getElementById("homeTaskDetailTitle").textContent = title;
+  const metadata = [
+    ["依頼元", task.requester],
+    ["担当", task.recipient],
+    ["期限", task.deadline ? formatPostDatetime(task.deadline) : ""],
+    ["担当画面", task.targetLabel],
+    ["内容", task.content && task.content.trim() !== title ? task.content : ""]
+  ].filter(([,value]) => String(value || "").trim());
+  document.getElementById("homeTaskDetailFields").innerHTML = metadata.map(([name, value]) =>
+    `<div class="home-task-detail-field"><dt>${escapeHtml(name)}</dt><dd>${escapeHtml(String(value))}</dd></div>`
+  ).join("");
+  const canOpen = !task.completedAt && task.type === "request" && Boolean(resolveRequestTaskTarget(task));
+  document.getElementById("homeTaskDetailOpen").hidden = !canOpen;
+  modal.dataset.taskId = task.id;
+  modal.hidden = false;
+  modal.querySelector(".home-task-detail-panel")?.focus();
 }
 
 function taskBadgeHtml(type) {
