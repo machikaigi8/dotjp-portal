@@ -4965,6 +4965,158 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-home .home-task-detail-actions .home-task-detail-dismiss { background: #e9edfa; color: #1b2753; }
 .screen-home .home-task-detail-actions .home-task-detail-open { background: #2c57e4; color: #fff; }
 
+
+/* ============================================================
+   v59 | Figma 48:601 スケジュール登録 — 1440×1024 原寸再現
+   Figmaに存在しない追加UIを常時表示しない。各操作は維持する。
+   ============================================================ */
+.screen-schedule .schedule-figma-panel {
+  position:absolute !important;
+  left:70px !important; top:137px !important;
+  width:1300px !important; height:750px !important;
+  border:0 !important; border-radius:0 !important;
+  background:#fff !important;
+}
+.screen-schedule .calendar-provider-group {
+  left:78px !important;
+  width:560px !important;
+}
+.screen-schedule .provider-google { top:117px !important; }
+.screen-schedule .provider-apple { top:349px !important; }
+.screen-schedule .provider-microsoft { top:581px !important; }
+.screen-schedule .calendar-provider-heading { position:relative; width:560px; height:52px; }
+.screen-schedule .calendar-provider-heading h2 {
+  position:relative; margin:0 !important;
+  font:500 40px/52px Inter,'Noto Sans JP',sans-serif !important;
+  white-space:nowrap;
+}
+/* Figmaの文字列ごとの中央寄せ位置に合わせる */
+.screen-schedule .provider-apple .calendar-provider-heading h2 { left:13px; }
+.screen-schedule .provider-microsoft .calendar-provider-heading h2 { left:-6px; }
+/* Figmaでは見出しのみ。見出しをクリックすると元の連携動作が実行される。 */
+.screen-schedule .calendar-provider-heading .calendar-connect-button {
+  position:absolute !important; z-index:2;
+  left:0 !important; top:0 !important;
+  width:490px !important; height:52px !important;
+  margin:0 !important; padding:0 !important;
+  border:0 !important; opacity:0 !important;
+  cursor:pointer;
+}
+.screen-schedule .calendar-provider-note,
+.screen-schedule .calendar-empty-account { display:none !important; }
+.screen-schedule .calendar-account-list {
+  left:0 !important; top:67px !important;
+  width:500px !important; max-height:130px !important;
+  overflow-y:auto; padding:0 !important;
+}
+.screen-schedule .calendar-account-row {
+  position:relative;
+  display:grid !important;
+  grid-template-columns:50px minmax(0,1fr) !important;
+  column-gap:8px !important;
+  align-items:center !important;
+  width:471px !important; min-height:69px !important;
+  height:69px !important; margin:0 0 7px !important;
+  padding:5px 10px !important;
+  border:5px solid #0000ff !important;
+  border-radius:22px !important;
+  background:#fff !important;
+  font:500 30px/1.2 Inter,'Noto Sans JP',sans-serif !important;
+}
+.screen-schedule .calendar-provider-icon {
+  box-sizing:border-box;
+  width:50px !important; height:50px !important;
+  border:3px solid #000 !important;
+  border-radius:50% !important;
+  background:#fff !important;
+  color:transparent !important;
+  font-size:0 !important;
+}
+.screen-schedule .calendar-account-email {
+  min-width:0; overflow:hidden; white-space:nowrap;
+  text-overflow:clip; letter-spacing:-.65px;
+  font:500 29px/1.2 Inter,'Noto Sans JP',sans-serif !important;
+}
+/* 元の切替APIは維持し、表示上はFigmaの丸い領域をクリック対象にする。 */
+.screen-schedule .calendar-account-toggle {
+  position:absolute !important; z-index:3;
+  left:10px !important; top:5px !important;
+  display:block !important;
+  width:50px !important; height:50px !important;
+  margin:0 !important; opacity:0 !important;
+  cursor:pointer;
+}
+.screen-schedule .calendar-disconnect-button {
+  position:absolute !important; z-index:4;
+  right:4px !important; top:3px !important;
+  width:26px !important; height:26px !important;
+  opacity:0 !important;
+  pointer-events:none;
+}
+.screen-schedule .calendar-account-row:hover .calendar-disconnect-button,
+.screen-schedule .calendar-disconnect-button:focus-visible {
+  opacity:1 !important; pointer-events:auto;
+  background:#fff;
+}
+.screen-schedule .available-times {
+  position:absolute !important;
+  left:746px !important; top:25px !important;
+  width:529px !important; height:700px !important;
+  padding:0 !important; border:5px solid #000 !important;
+  border-radius:0 !important; box-shadow:none !important;
+  background:#fff !important;
+  overflow:hidden !important;
+}
+.screen-schedule .available-times-heading h2 {
+  left:15px !important; top:24px !important;
+  font:500 40px/48px Inter,'Noto Sans JP',sans-serif !important;
+}
+.screen-schedule .availability-week-nav {
+  left:331px !important; top:37px !important;
+  gap:13px !important;
+}
+.screen-schedule .availability-week-nav button {
+  width:51px !important; min-width:51px !important;
+  height:30px !important;
+  border:0 !important; border-radius:0 !important;
+  background:#d9d9d9 !important;
+  color:#000 !important;
+  font:400 20px/30px Inter,'Noto Sans JP',sans-serif !important;
+  box-shadow:none !important;
+}
+.screen-schedule .availability-week-nav button.is-current {
+  font-weight:400 !important;
+  box-shadow:none !important;
+}
+.screen-schedule .figma-week-host {
+  position:absolute !important;
+  left:15px !important; top:92px !important;
+  width:490px !important; height:500px !important;
+}
+.screen-schedule .figma-week-list {
+  padding-top:24px !important;
+}
+.screen-schedule .figma-week-slot {
+  margin-bottom:18px !important;
+  font:400 30px/36px Inter,'Noto Sans JP',sans-serif !important;
+}
+.screen-schedule .figma-week-day {
+  font:400 24px/29px Inter,'Noto Sans JP',sans-serif !important;
+}
+.screen-schedule .schedule-rp-shortcuts { display:none !important; }
+.screen-schedule .work-hours-open-button {
+  left:58px !important; bottom:10px !important;
+  font:400 30px/42px Inter,'Noto Sans JP',sans-serif !important;
+}
+.screen-schedule .schedule-hub-back {
+  position:absolute !important;
+  left:128px !important; top:912px !important;
+  width:140px !important; height:60px !important;
+  border:0 !important; border-radius:0 !important;
+  background:#3080ff !important; color:#fff !important;
+  font:400 40px/60px Inter,'Noto Sans JP',sans-serif !important;
+}
+
 </style>
 </head>
 <body>
@@ -5060,7 +5212,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <button type="button" class="blue-menu" data-route="post">〒依頼出しPOST</button>
               <button type="button" class="blue-menu" data-route="schedule">スケジュール管理</button>
               <button id="hpEditButton" type="button" class="blue-menu">HPへの要望</button>
-              <button type="button" id="representativeDashboardEntry" class="blue-menu schedule-button" data-route="representative-dashboard" hidden>代表画面</button>
+              <button type="button" id="representativeDashboardEntry" class="blue-menu schedule-button" data-route="representative-dashboard" hidden>代表</button>
             </div>
           </section>
 
@@ -5710,7 +5862,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <section class="calendar-provider-group provider-google">
               <div class="calendar-provider-heading">
                 <h2>Googleカレンダー</h2>
-                <button type="button" class="calendar-connect-button" data-calendar-connect="google">＋連携</button>
+                <button type="button" class="calendar-connect-button" data-calendar-connect="google" aria-label="Googleカレンダーを連携">＋連携</button>
               </div>
               <div id="calendarAccountsGoogle" class="calendar-account-list"></div>
             </section>
@@ -5718,7 +5870,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <section class="calendar-provider-group provider-apple">
               <div class="calendar-provider-heading">
                 <h2>Appleカレンダー</h2>
-                <button type="button" class="calendar-connect-button" data-calendar-connect="apple">＋連携</button>
+                <button type="button" class="calendar-connect-button" data-calendar-connect="apple" aria-label="Appleカレンダーを連携">＋連携</button>
               </div>
               <div id="calendarAccountsApple" class="calendar-account-list"></div>
               <div class="calendar-provider-note">iCloud / CalDAV（アプリ用パスワード）</div>
@@ -5727,7 +5879,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <section class="calendar-provider-group provider-microsoft">
               <div class="calendar-provider-heading">
                 <h2>Outlookカレンダー</h2>
-                <button type="button" class="calendar-connect-button" data-calendar-connect="microsoft">＋連携</button>
+                <button type="button" class="calendar-connect-button" data-calendar-connect="microsoft" aria-label="Outlookカレンダーを連携">＋連携</button>
               </div>
               <div id="calendarAccountsMicrosoft" class="calendar-account-list"></div>
             </section>
@@ -5754,13 +5906,6 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                   <button id="availabilityNextWeek" type="button">次週</button>
                   <span id="availabilityWeekText"></span>
                 </div>
-              </div>
-
-              <div class="schedule-rp-shortcuts">
-                <strong>RP登録：</strong>
-                <button type="button" data-rp-quick-role="trainee">RP受講希望</button>
-                <button type="button" data-rp-quick-role="trainer">RP担当可能</button>
-                <small>先に役割を選び、空き時間をクリックして登録できます。</small>
               </div>
 
               <div id="availableTimeContent" class="figma-week-host"></div>
@@ -5828,7 +5973,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <p id="rpTransferSource">選択した予定</p>
               <p style="font-size:15px;color:#60738f;margin:0">元のスプシ・通常の予定データは削除しません。希望日時は未確定（赤）で表示し、代表の承認後だけ確定します。</p>
               <label>対象者 <select id="rpTransferPerson" required></select></label>
-              <p class="rp-transfer-simple-note">RP調整には希望者と日時だけを登録します。RPの種類と担当者は代表画面で設定します。</p>
+              <p class="rp-transfer-simple-note">RP調整には希望者と日時だけを登録します。RPの種類と担当者は代表で設定します。</p>
               <input id="rpTransferProgram" type="hidden" value="0">
               <input id="rpTransferRole" type="hidden" value="trainee">
               <p id="rpTransferError" class="rp-transfer-error" role="status"></p>
@@ -5934,9 +6079,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <section class="screen screen-representative" data-screen="representative-dashboard">
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="representative-shell">
-            <header class="representative-head"><div><h1>代表画面｜RP設定・マッチング</h1><p>RPの種類・担当者を登録し、登録済みRPの「編集」から希望日時を照合して承認します。</p></div>
+            <header class="representative-head"><div><h1>代表｜RP設定・マッチング</h1><p>RPの種類・担当者を登録し、登録済みRPの「編集」から希望日時を照合して承認します。</p></div>
               <button type="button" id="repRefresh">更新</button></header>
-            <nav class="rep-view-tabs" aria-label="代表画面の切り替え">
+            <nav class="rep-view-tabs" aria-label="代表の切り替え">
               <button type="button" id="repTabMtg" class="is-active">MTG候補日</button>
               <button type="button" id="repTabRp">RP割り振り</button>
             </nav>
@@ -9557,22 +9702,9 @@ root.innerHTML =
     }
 
     root.innerHTML = items.map((item) => {
-      const icon =
-        provider === "google"
-          ? "G"
-          : provider === "microsoft"
-            ? "M"
-            : "A";
-
-      const accountIcon =
-        item.account_picture
-          ? `<img
-               class="calendar-account-avatar"
-               src="${escapeHtml(item.account_picture)}"
-               alt=""
-               referrerpolicy="no-referrer"
-             >`
-          : `<span class="calendar-provider-icon ${provider}">${icon}</span>`;
+      // Figma (48:601): outline circle, not a provider logo or avatar.
+      // The checkbox below still controls whether the calendar is used.
+      const accountIcon = `<span class="calendar-provider-icon ${provider}" aria-hidden="true"></span>`;
 
       return `
         <div class="calendar-account-row ${Number(item.enabled) ? "" : "is-off"}">
@@ -10448,7 +10580,7 @@ function renderScheduleReviewEvents(range) {
 let rpTransferRoster=[],rpTransferCurrentId=0,rpTransferCurrentPlan=null;
 function closeRpTransfer(){document.getElementById('rpTransferOverlay').hidden=true;rpTransferCurrentId=0;rpTransferCurrentPlan=null;}
 async function refreshRpTransferPrograms(){
-  // RP候補には種類を付けない。代表画面で種類・担当者を設定する。
+  // RP候補には種類を付けない。代表で種類・担当者を設定する。
   const el=document.getElementById('rpTransferProgram');
   if(el)el.value='0';
 }
@@ -11726,7 +11858,7 @@ document.addEventListener('keydown',event=>{
 });
 
 
-/* v45: RP調整。所属地域の投票、代表画面の状況把握 */
+/* v45: RP調整。所属地域の投票、代表の状況把握 */
 state.meetingCandidatePolls = [];
 state.meetingCandidateLoadSequence = 0;
 state.meetingCandidateCreating = false;
@@ -12005,7 +12137,7 @@ function rpAdjustRender(){
   const label={trainer:'RP担当可能',trainee:'RP受講希望',review:'役割を確認'};
   box.innerHTML=rows.length?rows.map(x=>`<div class="rp-card"><strong>${escapeHtml(x.user_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(x.starts_at))} ～ ${escapeHtml(rpV48NormalizeTime(x.ends_at))}</small><div>${escapeHtml(x.title)}</div><small class="${x.role==='review'?'rp-role-review':''}">${label[x.role]||'要確認'}${x.role==='review'?'：本人の予定確認・編集で役割を指定してください':''}</small></div>`).join(''):'RPが含まれる予定はまだありません。';
   const auto=document.getElementById('rpAdjustAuto');auto.hidden=true;auto.disabled=true;
-  if(!program){document.getElementById('rpAdjustMatches').textContent='代表画面で設定したRPを選択すると、担当者とのマッチング候補が表示されます。';document.getElementById('rpAdjustAssigned').textContent='';return;}
+  if(!program){document.getElementById('rpAdjustMatches').textContent='代表で設定したRPを選択すると、担当者とのマッチング候補が表示されます。';document.getElementById('rpAdjustAssigned').textContent='';return;}
   void rpAdjustMatches(program);
 }
 async function rpAdjustMatches(program){
@@ -12045,7 +12177,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('repRefresh').addEventListener('click',()=>void rpConfigLoad());
   document.getElementById('rpAdjustProgram').addEventListener('change',rpAdjustRender);
   document.getElementById('rpAdjustReload').addEventListener('click',()=>void rpAdjustLoad());
-  // 一括確定は廃止。代表画面の手動承認のみ有効。
+  // 一括確定は廃止。代表の手動承認のみ有効。
 });
 
 // v47: 03B企業管理 B列が企業名（A列はNo）、E列が営業フェーズ。
