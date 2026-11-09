@@ -6907,7 +6907,7 @@ function startTaskItemHtml(task) {
   const direct = task.type === "request" && resolveRequestTaskTarget(task);
   return `<button type="button" class="start-task-item${selected}" data-select-task="${escapeHtml(task.id)}"${direct ? ' data-direct-task="1"' : ''}
     title="${escapeHtml(direct ? 'クリックで依頼先の作業画面を開きます' : task.title)}">
-    ${taskBadgeHtml(task.type)}
+    ${task.type === "request" ? "" : taskBadgeHtml(task.type)}
     <span class="start-task-title">${escapeHtml(task.title)}</span>
   </button>`;
 }
@@ -7073,7 +7073,7 @@ function taskSummaryHtml(tasks, activeId, allowNavigation = false) {
     const title = clickable
       ? `${task.title}｜クリックして${task.targetLabel || "担当箇所"}を開く`
       : task.title;
-    const content = `${taskBadgeHtml(task.type)}<span class="summary-task-title">${escapeHtml(task.title)}</span>`;
+    const content = `${allowNavigation && task.type === "request" ? "" : taskBadgeHtml(task.type)}<span class="summary-task-title">${escapeHtml(task.title)}</span>`;
     if (clickable) {
       return `<button type="button" class="summary-task-row${active}" data-open-request-task="${escapeHtml(task.id)}" title="${escapeHtml(title)}">${content}</button>`;
     }
