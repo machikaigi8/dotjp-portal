@@ -4487,6 +4487,44 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .rp-mini-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0}
 .rp-mini-controls select{padding:7px;border:1px solid #afc2e8;border-radius:8px;font-size:17px}
 
+
+
+/* v50: RP calendar follows the Figma 7-day x time layout; red=pending, blue=confirmed. */
+.screen-schedule-candidates .rp-adjust-shell{display:none!important}
+.screen-schedule-candidates .rp-week-nav{position:absolute;left:355px;right:40px;top:136px;display:flex;align-items:center;justify-content:center;gap:14px;min-height:45px;z-index:4;flex-wrap:wrap}
+.rp-week-nav button{font-size:21px;cursor:pointer;padding:7px 15px;border:2px solid #7563ac;background:white;border-radius:9px;color:#473a84;white-space:nowrap}
+.rp-week-nav button:focus-visible{outline:3px solid #2e6cf7;outline-offset:2px}
+.rp-week-nav #rpWeekToday{border-color:#3080ff;color:#195cd3;background:#edf4ff}
+.rp-week-nav #rpWeekRangeLabel{font-size:23px;font-weight:700;color:#161b35;min-width:330px;text-align:center}
+.rp-week-legend{position:absolute;top:187px;left:250px;display:flex;gap:14px;align-items:center;z-index:4;font-size:17px;color:#203354}
+.rp-week-legend b{display:inline-block;width:22px;height:17px;border:1px solid #8a9abc;margin-right:6px;vertical-align:middle}
+.rp-week-legend .pending{background:#ffbcc1}.rp-week-legend .confirmed{background:#b3d5ff}
+.screen-schedule-candidates .rp-week-board{position:absolute;left:40px;top:222px;width:1360px;height:715px;overflow:auto;z-index:1}
+.rp-week-board .schedule-review-day-header{font-size:26px}
+.rp-week-board .schedule-review-event{cursor:default;min-height:18px;white-space:normal}
+.rp-week-board .rp-event-pending{background:#ffbfc3;border:2px solid #bd3f50;color:#4a1218}
+.rp-week-board .rp-event-confirmed{background:#aed4ff;border:2px solid #1d60cf;color:#0f346f;font-weight:600}
+.rp-week-board .schedule-review-event-title{font-size:12px;margin-top:2px}
+.rp-week-board .rp-week-assigned-name{display:block;font-size:12px;font-weight:800}
+.rp-week-board #rpWeekMessage{pointer-events:none}
+.rp-config-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.rp-program-item .rp-config-actions button{font-size:15px;padding:8px 11px;color:#214e9f;background:#e8f1ff;border:1px solid #abc3ec}
+.rp-program-item .rp-config-actions button[data-rp-config-delete]{color:#a53249;background:#fbe6e9;border-color:#edc2cc}
+.rp-program-item .rp-config-actions button[data-rp-match-edit]{background:#3080ff;color:white;border-color:#3080ff}
+#rpConfigMatching{background:#f5f8ff;border:2px solid #a7bfeb;border-radius:13px;padding:18px;margin-top:20px}
+#rpConfigMatching[hidden]{display:none!important}
+.rp-v50-match-head{display:flex;align-items:center;justify-content:space-between;gap:15px}
+.rp-v50-match-head h3{font-size:23px;margin:0}
+.rp-v50-match-head button{font-size:16px;padding:8px 17px;border:1px solid #bdd0f0;border-radius:9px;background:white;cursor:pointer}
+#rpConfigMatchStatus{font-size:15px;line-height:1.5;color:#466084;margin:9px 0}
+.rp-v50-match-list{display:grid;gap:10px;max-height:260px;overflow-y:auto}
+.rp-v50-match-row{background:white;border:1px solid #d7e3f8;border-radius:9px;padding:12px;display:flex;justify-content:space-between;gap:13px;align-items:center}
+.rp-v50-match-row strong{display:block;font-size:17px}.rp-v50-match-row small{display:block;font-size:14px;color:#677a98;margin-top:4px}
+.rp-v50-match-row button{background:#285fee;border:0;border-radius:8px;color:white;padding:10px 14px;font-size:16px;cursor:pointer;white-space:nowrap}
+.rp-v50-match-row button:disabled{opacity:.55;cursor:default}
+.rp-v50-match-row .rp-v50-match-reopen{background:#fff4ed;color:#a54620;border:1px solid #e4aa8b}
+.rp-v50-match-approved{color:#14509c;font-weight:700}
+
 </style>
 </head>
 <body>
@@ -5333,12 +5371,31 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               </section>
             </div>
           </div>
+          <!-- v50: Figma準拠の週間RP調整表。既存の候補と確定RPは、スプシ/D1から読み込みます。 -->
+          <nav class="rp-week-nav" aria-label="RP調整の週切り替え">
+            <button type="button" id="rpWeekPrev">← 前の週</button>
+            <span id="rpWeekRangeLabel" aria-live="polite"></span>
+            <button type="button" id="rpWeekToday">今週</button>
+            <button type="button" id="rpWeekNext">次の週 →</button>
+            <button type="button" id="rpWeekReload">更新</button>
+          </nav>
+          <div class="rp-week-legend" aria-label="RP予定の凡例">
+            <span><b class="pending"></b>未確定</span>
+            <span><b class="confirmed"></b>確定済み（担当者名を表示）</span>
+          </div>
+          <div id="rpWeekBoard" class="schedule-review-board rp-week-board">
+            <div class="schedule-review-corner"></div>
+            <div id="rpWeekHeaders"></div>
+            <div id="rpWeekGrid"></div>
+            <div id="rpWeekEvents"></div>
+            <div id="rpWeekMessage" class="schedule-review-empty" aria-live="polite"></div>
+          </div>
           <div class="rp-adjust-shell">
             <h1>RP調整</h1>
             <p>代表が設定したRPと担当者を参照し、既存の「RP」「ロープレ」予定を候補として取り込みます。</p>
             <div class="rp-mini-controls"><label>RPの種類 <select id="rpAdjustProgram"><option value="">すべて</option></select></label>
               <button type="button" class="rp-adjust-btn" id="rpAdjustReload">最新の予定を取得</button>
-              <button type="button" class="rp-adjust-btn" id="rpAdjustAuto" hidden>候補を自動振り分け</button></div>
+              <button type="button" class="rp-adjust-btn" id="rpAdjustAuto" hidden disabled>候補提示のみ</button></div>
             <div class="rp-adjust-columns">
               <section class="rp-box"><h2>RP日調候補（既存予定を含む）</h2><div id="rpAdjustCandidates" class="rp-list">読み込み中…</div></section>
               <section class="rp-box"><h2>担当者とのマッチング・確定済み</h2><div id="rpAdjustMatches" class="rp-list">RPを選択してください。</div>
@@ -5397,6 +5454,13 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               </form>
               <h3 style="font-size:21px;margin:16px 0 7px">登録済みRP</h3>
               <div id="rpConfigList" class="rp-program-list">読み込み中…</div>
+              <section id="rpConfigMatching" hidden aria-label="RPの自動照合候補と手動承認">
+                <div class="rp-v50-match-head"><h3 id="rpConfigMatchTitle">RPの候補</h3><button id="rpConfigMatchClose" type="button">閉じる</button></div>
+                <p id="rpConfigMatchStatus">候補は自動で提示されます。代表が承認するまで確定されません。</p>
+                <div id="rpConfigMatchCandidates" class="rp-v50-match-list"></div>
+                <h3 style="font-size:19px;margin:17px 0 10px">確定済みの担当者</h3>
+                <div id="rpConfigMatchConfirmed" class="rp-v50-match-list"></div>
+              </section>
             </section>
           </div>
           <button type="button" class="candidate-page-back" data-common-back>←戻る</button>
@@ -6158,7 +6222,7 @@ function wireActions() {
       void refreshRemoteTasks().then(refreshTaskUi);
       void loadRegionalWorkSessions();
       if (state.currentScreen === 'schedule-review') void loadScheduleReview();
-      if (state.currentScreen === 'schedule-candidates') void rpAdjustLoad();
+      if (state.currentScreen === 'schedule-candidates') void rpWeekLoad();
       if (state.currentScreen === 'representative-dashboard') void rpConfigLoad();
       if (state.currentScreen === 'meeting-attendance') void loadMeetings();
       if (state.currentScreen === 'department-hr') setupMeetingManager();
@@ -6526,7 +6590,7 @@ if (name === "post-confirm") {
   if (name === "schedule") {
     refreshCalendarSchedule();
   }
-  if (name === "schedule-candidates") void rpAdjustLoad();
+  if (name === "schedule-candidates") void rpWeekLoad();
   if (name === "representative-dashboard") void rpConfigLoad();
 
   if (name === "schedule-plan") {
@@ -9512,13 +9576,18 @@ async function loadScheduleReview() {
     const data = await portalFetch(`/api/calendar/plans?${params.toString()}`);
     // 週や地域を素早く切り替えた場合、古いレスポンスで上書きしない。
     if (requestId !== state.calendar.reviewLoadSeq || state.region !== region) return;
-    state.calendar.reviewPlans = Array.isArray(data.plans) ? data.plans : [];
+    // v50: RP関連予定はD1/シートから削除せず、予定確認だけから除外。
+    // 元データはRP調整（週間表）の候補として保持される。
+    state.calendar.reviewPlans = (Array.isArray(data.plans) ? data.plans : []).filter(plan =>
+      !/(?:RP|ロープレ)/i.test([plan.title,plan.task_type,plan.memo].filter(Boolean).join(' '))
+    );
     const note=document.getElementById('reviewSheetStatus');
     if(note){const s=data.sheetSync||{};note.className='review-sheet-status'+(s.ok===false?' is-warning':'');
       note.textContent=s.ok===false?'スプシの取得に失敗：'+(s.error||'権限を確認してください'):
         s.skipped?'スプシと照合済み（'+s.updated+'件更新・'+s.added+'件取込・'+s.skipped+'件は確認待ち）':
         'スプシと照合済み（既存行の追加 '+(s.added||0)+'件・更新 '+(s.updated||0)+'件）';}
-    void loadMyRpAssignments();
+    // v50: 確定済みRPはRP調整へ集約。予定確認には再掲しない。
+    document.getElementById('reviewMyRpAssignments').textContent='';
     renderScheduleReviewEvents(range);
   } catch (error) {
     if (requestId !== state.calendar.reviewLoadSeq || state.region !== region) return;
@@ -11110,13 +11179,14 @@ async function rpConfigLoad(){
       portalFetch('/api/rp/programs?region='+encodeURIComponent(region))]);
     if(region!==state.region)return;
     rpV48Roster=roster.people||[];rpV48Programs=progs.programs||[];
-    if(rpV48LastRegion!==region){rpV48ConfigEditId=0;rpV48LastRegion=region;}
+    if(rpV48LastRegion!==region){rpV48ConfigEditId=0;rpV48LastRegion=region;
+      rpV50EditingProgramId=0;rpV50MatchLoadSequence++;document.getElementById('rpConfigMatching').hidden=true;}
     const editing=rpV48Programs.find(p=>p.id===rpV48ConfigEditId);
     const selected=new Set(editing?editing.trainers:[]);
     rosterBox.innerHTML=rpV48Roster.length?rpV48Roster.map(p=>`<label><input type="checkbox" value="${escapeHtml(p.email)}" ${selected.has(p.email)?'checked':''}>${escapeHtml(p.name)}</label>`).join(''):'所属地域の名簿にスタッフがいません。';
     document.getElementById('rpConfigList').innerHTML=rpV48Programs.length?rpV48Programs.map(p=>{
       const names=(p.trainers||[]).map(e=>rpV48Roster.find(r=>r.email.toLowerCase()===e.toLowerCase())?.name||e).join('、');
-      return `<div class="rp-program-item"><div><strong>${escapeHtml(p.title)}（${Number(p.minutes)}分）</strong><small>担当：${escapeHtml(names)}</small></div><div><button type="button" data-rp-config-edit="${p.id}">編集</button> <button type="button" data-rp-config-delete="${p.id}">削除</button></div></div>`;
+      return `<div class="rp-program-item"><div><strong>${escapeHtml(p.title)}（${Number(p.minutes)}分）</strong><small>担当：${escapeHtml(names)}</small></div><div class="rp-config-actions"><button type="button" data-rp-match-edit="${p.id}">編集</button><button type="button" data-rp-config-edit="${p.id}">設定変更</button><button type="button" data-rp-config-delete="${p.id}">削除</button></div></div>`;
     }).join(''):'まだRPの設定はありません。';
   }catch(e){rosterBox.textContent='読み込めませんでした：'+(e.message||'');}
 }
@@ -11126,7 +11196,9 @@ async function rpConfigSave(event){event.preventDefault();
   if(!trainers.length){showToast('担当者を1名以上選択してください');return;}
   try{
     await portalFetch('/api/rp/programs',{method:'POST',body:{region:state.region,id:rpV48ConfigEditId||undefined,title,minutes,trainers}});
+    const lastEditId=rpV48ConfigEditId;
     showToast('RPの設定を保存しました');rpV48ConfigEditId=0;document.getElementById('rpConfigForm').reset();await rpConfigLoad();
+    if(lastEditId)void rpV50OpenMatch(lastEditId);
   }catch(e){showToast(e.message||'保存できませんでした');}
 }
 function rpConfigEdit(id){
@@ -11138,7 +11210,9 @@ function rpConfigEdit(id){
 }
 async function rpConfigDelete(id){
   if(!confirm('このRP設定を削除しますか？既に確定したRPや過去の予定は削除しません。'))return;
-  try{await portalFetch('/api/rp/programs/delete',{method:'POST',body:{id,region:state.region}});if(rpV48ConfigEditId===id)rpV48ConfigEditId=0;await rpConfigLoad();showToast('RP設定を削除しました');}
+  try{await portalFetch('/api/rp/programs/delete',{method:'POST',body:{id,region:state.region}});if(rpV48ConfigEditId===id)rpV48ConfigEditId=0;
+    if(rpV50EditingProgramId===id){rpV50EditingProgramId=0;document.getElementById('rpConfigMatching').hidden=true;}
+    await rpConfigLoad();showToast('RP設定を削除しました');}
   catch(e){showToast(e.message||'削除できませんでした');}
 }
 async function rpAdjustLoad(){
@@ -11163,7 +11237,7 @@ function rpAdjustRender(){
     String(x.task_type)==='RP受講希望'||String(x.task_type)==='RP担当可能');
   const label={trainer:'RP担当可能',trainee:'RP受講希望',review:'役割を確認'};
   box.innerHTML=rows.length?rows.map(x=>`<div class="rp-card"><strong>${escapeHtml(x.user_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(x.starts_at))} ～ ${escapeHtml(rpV48NormalizeTime(x.ends_at))}</small><div>${escapeHtml(x.title)}</div><small class="${x.role==='review'?'rp-role-review':''}">${label[x.role]||'要確認'}${x.role==='review'?'：本人の予定確認・編集で役割を指定してください':''}</small></div>`).join(''):'RPが含まれる予定はまだありません。';
-  const auto=document.getElementById('rpAdjustAuto');auto.hidden=!rpV48Manager()||!program;
+  const auto=document.getElementById('rpAdjustAuto');auto.hidden=true;auto.disabled=true;
   if(!program){document.getElementById('rpAdjustMatches').textContent='代表画面で設定したRPを選択すると、担当者とのマッチング候補が表示されます。';document.getElementById('rpAdjustAssigned').textContent='';return;}
   void rpAdjustMatches(program);
 }
@@ -11196,12 +11270,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('rpConfigForm').addEventListener('submit',rpConfigSave);
   document.getElementById('rpConfigList').addEventListener('click',e=>{
     const edit=e.target.closest('[data-rp-config-edit]'),del=e.target.closest('[data-rp-config-delete]');
-    if(edit)rpConfigEdit(Number(edit.dataset.rpConfigEdit));if(del)void rpConfigDelete(Number(del.dataset.rpConfigDelete));
+    const match=e.target.closest('[data-rp-match-edit]');
+    if(match)void rpV50OpenMatch(Number(match.dataset.rpMatchEdit));
+    if(edit)rpConfigEdit(Number(edit.dataset.rpConfigEdit));
+    if(del)void rpConfigDelete(Number(del.dataset.rpConfigDelete));
   });
   document.getElementById('repRefresh').addEventListener('click',()=>void rpConfigLoad());
   document.getElementById('rpAdjustProgram').addEventListener('change',rpAdjustRender);
   document.getElementById('rpAdjustReload').addEventListener('click',()=>void rpAdjustLoad());
-  document.getElementById('rpAdjustAuto').addEventListener('click',()=>void rpAdjustAutoAssign());
+  // 一括確定は廃止。代表画面の手動承認のみ有効。
 });
 
 // v47: 03B企業管理 B列が企業名（A列はNo）、E列が営業フェーズ。
@@ -11307,6 +11384,176 @@ async function setOfficeExpenseReviewed(tab,row,reviewed){
   }catch(e){showToast('更新できませんでした：'+e.message);}
 }
 
-  </script>
+  
+// v50: RP-specific Figma weekly calendar and approval-based matching.
+// The underlying calendar_task_plans and spreadsheet rows are never deleted.
+let rpWeekAnchorDate = '', rpWeekLoadSequence = 0, rpWeekAssignments = [], rpWeekCandidatePlans = [];
+let rpV50EditingProgramId = 0, rpV50SuggestedMatches = [], rpV50MatchLoadSequence = 0;
+
+function rpWeekRange(){
+  const anchor = /^\d{4}-\d{2}-\d{2}$/.test(rpWeekAnchorDate) ? rpWeekAnchorDate : todayTokyoDateIso();
+  const [y,m,d]=anchor.split('-').map(Number);
+  const weekday = new Date(Date.UTC(y,m-1,d)).getUTCDay();
+  const startDate = addReviewCalendarDays(anchor,-weekday);
+  const endExclusive=addReviewCalendarDays(startDate,7);
+  return {startDate, endDate:addReviewCalendarDays(startDate,6),
+    startIso:new Date(startDate+'T00:00:00+09:00').toISOString(),
+    endIso:new Date(endExclusive+'T00:00:00+09:00').toISOString()};
+}
+function rpWeekShift(direction){
+  const range=rpWeekRange();
+  rpWeekAnchorDate=direction===0?todayTokyoDateIso():addReviewCalendarDays(range.startDate,7*direction);
+  void rpWeekLoad();
+}
+function rpWeekDrawGrid(range){
+  // Reuse the Figma timetable geometry (170px per day, 56px per hour).
+  const headers=document.getElementById('rpWeekHeaders');
+  const grid=document.getElementById('rpWeekGrid');
+  if(!headers||!grid)return;
+  const hs=[],cells=[];
+  for(let day=0;day<7;day++){
+    const date=addReviewCalendarDays(range.startDate,day);
+    const [,m,d]=date.split('-').map(Number);
+    hs.push(`<div class="schedule-review-day-header" style="left:${170+day*170}px">${m}/${d}(${['日','月','火','水','木','金','土'][day]})</div>`);
+  }
+  for(let i=0;i<14;i++){
+    const hour=i+9, top=58+i*56;
+    cells.push(`<div class="schedule-review-time-label" style="top:${top}px">${hour}:00-${hour+1}:00</div>`);
+    for(let day=0;day<7;day++)cells.push(`<div class="schedule-review-cell" style="left:${170+day*170}px;top:${top}px"></div>`);
+  }
+  headers.innerHTML=hs.join('');grid.innerHTML=cells.join('');
+}
+function rpWeekDrawEvents(range){
+  const root=document.getElementById('rpWeekEvents');
+  const msg=document.getElementById('rpWeekMessage');
+  if(!root||!msg)return;
+  const items=[];
+  // Pending entries are original RP-containing plans; suppress only fully used intervals.
+  for(const p of rpWeekCandidatePlans){
+    const fullyAssigned=rpWeekAssignments.some(a=>
+      (String(a.trainee_email).toLowerCase()===String(p.user_email).toLowerCase()||
+       String(a.trainer_email).toLowerCase()===String(p.user_email).toLowerCase()) &&
+      Date.parse(a.starts_at)<=Date.parse(p.starts_at)&&Date.parse(a.ends_at)>=Date.parse(p.ends_at));
+    if(fullyAssigned)continue;
+    items.push({starts_at:p.starts_at,ends_at:p.ends_at,user_email:p.user_email,
+      label:p.user_name||p.user_email, text:(p.title||p.task_type||'RP')+(p.role==='review'?'（役割確認待ち）':''),
+      status:'pending',tooltip:`未確定｜${p.user_name||''}｜${p.title||''}｜${p.role==='review'?'役割確認待ち':p.role==='trainer'?'担当側の候補':'受講側の候補'}`});
+  }
+  for(const a of rpWeekAssignments){
+    items.push({starts_at:a.starts_at,ends_at:a.ends_at,
+      user_email:a.trainee_email,label:a.trainee_name||a.trainee_email,
+      text:'RP確定',trainer:a.trainer_name||a.trainer_email,status:'confirmed',
+      tooltip:`確定済み｜受講：${a.trainee_name||a.trainee_email}｜担当：${a.trainer_name||a.trainer_email}`});
+  }
+  const byDay=new Map();
+  for(const item of items){
+    const day=reviewDayIndex(item.starts_at,range.startDate);
+    const start=reviewMinutesFromMidnight(item.starts_at),end=reviewMinutesFromMidnight(item.ends_at);
+    if(day<0||day>=7||end<=540||start>=1380)continue;
+    if(!byDay.has(day))byDay.set(day,[]);
+    byDay.get(day).push(item);
+  }
+  const placed=[];
+  for(const [day, plans] of byDay)for(const plan of assignReviewLanes(plans))placed.push({...plan,__day:day});
+  root.innerHTML=placed.map(p=>{
+    const start=Math.max(540,reviewMinutesFromMidnight(p.starts_at));
+    const end=Math.min(1380,reviewMinutesFromMidnight(p.ends_at));
+    const width=170/p.__laneCount;
+    const left=170+p.__day*170+p.__lane*width;
+    const top=58+(start-540)/60*56;
+    const height=Math.max(18,(end-start)/60*56);
+    const cls=p.status==='confirmed'?'rp-event-confirmed':'rp-event-pending';
+    return `<div class="schedule-review-event ${cls}" style="left:${left}px;top:${top}px;width:${width}px;height:${height}px" title="${escapeHtml(p.tooltip)}" aria-label="${escapeHtml(p.tooltip)}"><div><span class="schedule-review-event-name">${escapeHtml(p.label)}</span><span class="schedule-review-event-title">${escapeHtml(p.text)}</span>${p.trainer?`<span class="rp-week-assigned-name">担当：${escapeHtml(p.trainer)}</span>`:''}</div></div>`;
+  }).join('');
+  msg.textContent=placed.length?'':'この週のRP候補・確定済みRPはありません。';
+}
+async function rpWeekLoad(){
+  const root=document.getElementById('rpWeekMessage');if(!root)return;
+  const seq=++rpWeekLoadSequence,region=state.region,range=rpWeekRange();
+  const [y,m,d]=range.startDate.split('-').map(Number);const [,endM,endD]=range.endDate.split('-').map(Number);
+  document.getElementById('rpWeekRangeLabel').textContent=`${y}年${m}月${d}日(日) ～ ${endM}月${endD}日(土)`;
+  rpWeekDrawGrid(range);
+  root.textContent='RP候補を読み込んでいます…';
+  document.getElementById('rpWeekEvents').innerHTML='';
+  try{
+    const query=new URLSearchParams({region,start:range.startIso,end:range.endIso});
+    const data=await portalFetch('/api/rp/week?'+query.toString());
+    if(seq!==rpWeekLoadSequence||region!==state.region)return;
+    rpWeekCandidatePlans=Array.isArray(data.candidates)?data.candidates:[];
+    rpWeekAssignments=Array.isArray(data.assignments)?data.assignments:[];
+    rpWeekDrawEvents(range);
+    if(data.sheet_sync_ok===false)showToast('スプシの取得に失敗。D1に保存されたRPだけ表示しています');
+  }catch(e){
+    if(seq!==rpWeekLoadSequence||region!==state.region)return;
+    root.textContent='RP調整を取得できませんでした：'+(e.message||'接続を確認してください');
+  }
+}
+async function rpV50OpenMatch(id){
+  if(!rpV48Manager())return;
+  const program=rpV48Programs.find(p=>Number(p.id)===Number(id));if(!program)return;
+  rpV50EditingProgramId=Number(id);
+  document.getElementById('rpConfigMatching').hidden=false;
+  document.getElementById('rpConfigMatchTitle').textContent=`${program.title}｜担当者マッチング`;
+  await rpV50LoadMatches();
+  document.getElementById('rpConfigMatching').scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+async function rpV50LoadMatches(){
+  const id=rpV50EditingProgramId,seq=++rpV50MatchLoadSequence,region=state.region;
+  if(!id)return;
+  const status=document.getElementById('rpConfigMatchStatus');
+  const candidates=document.getElementById('rpConfigMatchCandidates');
+  const confirmed=document.getElementById('rpConfigMatchConfirmed');
+  status.textContent='自動で候補を探しています。候補を提示するだけで確定はしません。';
+  candidates.textContent='照合中…';confirmed.innerHTML='';
+  try{
+    const [m,a]=await Promise.all([
+      portalFetch('/api/rp/program-matches?'+new URLSearchParams({region,program_id:id,days:28})),
+      portalFetch('/api/rp/assignments?region='+encodeURIComponent(region))]);
+    if(seq!==rpV50MatchLoadSequence||id!==rpV50EditingProgramId||region!==state.region)return;
+    rpV50SuggestedMatches=Array.isArray(m.matches)?m.matches:[];
+    status.textContent=`自動候補 ${rpV50SuggestedMatches.length}件。承認ボタンを押したものだけ確定します。`;
+    candidates.innerHTML=rpV50SuggestedMatches.length?rpV50SuggestedMatches.map((x,index)=>
+      `<div class="rp-v50-match-row"><div><strong>${escapeHtml(x.trainee_name)} → ${escapeHtml(x.trainer_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(x.starts_at))} ～ ${escapeHtml(rpV48NormalizeTime(x.ends_at))} ／ ${Number(x.duration)}分</small></div><button type="button" data-rp-manual-approve="${index}">承認して確定</button></div>`).join(''):
+      '<p>該当する候補はありません。受講希望・担当可能の日時と役割を確認してください。</p>';
+    const confirmedRows=(a.assignments||[]).filter(x=>Number(x.program_id)===id);
+    confirmed.innerHTML=confirmedRows.length?confirmedRows.map(x=>
+      `<div class="rp-v50-match-row"><div><strong class="rp-v50-match-approved">${escapeHtml(x.trainee_name)} → ${escapeHtml(x.trainer_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(x.starts_at))}</small></div><button type="button" class="rp-v50-match-reopen" data-rp-match-reopen="${Number(x.id)}">確定解除・再調整</button></div>`).join(''):'<p>このRPはまだ確定されていません。</p>';
+  }catch(e){if(seq===rpV50MatchLoadSequence)status.textContent='照合できませんでした：'+(e.message||'通信エラー');}
+}
+async function rpV50Approve(index,btn){
+  const match=rpV50SuggestedMatches[index];if(!match||!rpV50EditingProgramId)return;
+  if(!confirm(`${match.trainee_name}さんのRPを${match.trainer_name}さんに割り振りますか？\n${rpV48NormalizeTime(match.starts_at)} ～ ${rpV48NormalizeTime(match.ends_at)}\n\n承認した場合のみ確定します。`))return;
+  btn.disabled=true;
+  try{
+    await portalFetch('/api/rp/program-confirm',{method:'POST',body:{
+      region:state.region,program_id:rpV50EditingProgramId,
+      trainee:match.trainee_email,trainer:match.trainer_email,
+      starts_at:match.starts_at,ends_at:match.ends_at}});
+    showToast('代表の承認によりRPを確定しました');
+    await rpV50LoadMatches();
+  }catch(e){showToast(e.message||'確定できませんでした。候補を更新してください');btn.disabled=false;}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  for(const [id,fn] of [['rpWeekPrev',()=>rpWeekShift(-1)],['rpWeekToday',()=>rpWeekShift(0)],
+                        ['rpWeekNext',()=>rpWeekShift(1)],['rpWeekReload',()=>rpWeekLoad()]]){
+    document.getElementById(id)?.addEventListener('click',fn);
+  }
+  document.getElementById('rpConfigMatchClose')?.addEventListener('click',()=>{
+    document.getElementById('rpConfigMatching').hidden=true;rpV50EditingProgramId=0;rpV50MatchLoadSequence++;
+  });
+  document.getElementById('rpConfigMatchCandidates')?.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-rp-manual-approve]');if(btn)void rpV50Approve(Number(btn.dataset.rpManualApprove),btn);
+  });
+  document.getElementById('rpConfigMatchConfirmed')?.addEventListener('click',async e=>{
+    const btn=e.target.closest('[data-rp-match-reopen]');if(!btn)return;
+    if(!confirm('このRPの確定を解除して、候補の再照合を行いますか？'))return;
+    btn.disabled=true;
+    try{await portalFetch('/api/rp/assignments/delete',{method:'POST',body:{id:Number(btn.dataset.rpMatchReopen)}});
+      showToast('確定を解除しました。候補を再照合します');await rpV50LoadMatches();}
+    catch(error){showToast(error.message||'解除できませんでした');btn.disabled=false;}
+  });
+});
+
+</script>
 </body>
 </html>
