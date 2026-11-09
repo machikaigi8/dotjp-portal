@@ -1,3 +1,4 @@
+<!-- v64: LINE日次@Allと日曜個人メンションのON/OFFを区別して表示 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -5473,7 +5474,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <section class="line-settings-panel">
               <button type="button" id="lineSettingsClose" class="secondary line-close" aria-label="閉じる">×</button>
               <h2 id="lineSettingsTitle">LINE通知・アカウント連携</h2>
-              <p>毎朝8:30に今日のタスク予定を時刻順で配信（@all）。毎週日曜8:30は、今週（日曜〜土曜）のタスク時間が未登録の支部員だけにメンションします。</p>
+              <p>毎朝8:30に今日のタスク予定を時刻順で配信（@All）。日曜8:30の未登録者メンションは、個人のLINE連携後に別途有効化できます。</p>
               <div id="lineLinkStatus" class="line-link-status" role="status">連携状況を確認中…</div>
               <div class="line-row">
                 <button type="button" id="lineLinkStart">LINEアカウントを連携</button>
@@ -9475,7 +9476,7 @@ async function refreshLineSettings(){
         option.disabled=!group.active;option.selected=group.id===data.selected_group_id;
         picker.appendChild(option);
       }
-      document.getElementById('lineGroupStatus').textContent=`通知先：${data.selected_group_id?'選択済み':'未設定'}\nLINE連携済み支部員：${data.linked_count??0}人\n毎朝8:30（@all）・日曜の未登録者メンション：${data.group_enabled?'ON':'OFF（Cloudflareで有効化が必要）'}`;
+      document.getElementById('lineGroupStatus').textContent=`通知先：${data.selected_group_id?'選択済み':'未設定'}\nLINE連携済み支部員：${data.linked_count??0}人\n毎朝8:30（@All）：${data.group_enabled?'ON':'OFF（Cloudflareで有効化が必要）'}\n日曜の未登録者メンション：${data.sunday_reminder_enabled?'ON':'OFF（後から有効化可能）'}`;
       document.getElementById('lineGroupConfirm').checked=false;
     }
   }catch(error){box.textContent='LINE設定を取得できません：'+(error.message||error);area.hidden=true;}
