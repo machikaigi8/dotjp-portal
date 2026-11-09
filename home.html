@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
+  <!-- dotjp-v54-rp-registration-meeting-auto-task -->
   <!-- Version v48: 2026-11-08 RP program settings + role-aware scheduling -->
   <style>
 * {
@@ -998,7 +999,7 @@ button.file-choice-button {
 }
 .start-task-board {
   margin-top: 18px;
-  height: 315px;
+height: 315px;
   border: 3px solid var(--navy);
   background: #fff;
 }
@@ -3998,7 +3999,7 @@ a:active {
 }
 .screen-schedule-hours .work-hour-enable-row input:checked::after { transform: translateX(22px); }
 .screen-schedule-hours .work-hour-slots-title {
-  display: flex; gap: 13px; align-items: baseline; margin: 16px 2px 10px;
+display: flex; gap: 13px; align-items: baseline; margin: 16px 2px 10px;
   color: #273762; font-size: 20px; font-weight: 700;
 }
 .screen-schedule-hours .work-hour-slots-title span { color: #78839b; font-size: 14px; font-weight: 400; }
@@ -4544,6 +4545,33 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 #reviewOwnTempRpTransfer[hidden]{display:none!important}
 #reviewOwnTempRpTransfer{background:#e9f1ff;color:#164baa}
 .rp-week-board .rp-temp-revert{position:absolute;right:2px;bottom:2px;background:white;border:1px solid #a94152;color:#92222b;border-radius:4px;font-size:12px;cursor:pointer;z-index:10;padding:1px 3px}
+
+/* v54 / Figma 48:601・172:52 / RP登録と表示 */
+.schedule-hub-tabs{position:absolute;top:35px;left:242px;display:flex;gap:23px;z-index:10}
+.schedule-hub-tabs button{width:190px;height:55px;border:0;border-radius:10px;background:#f4a9ff;color:#111;
+  font-family:Inter,'Noto Sans JP',sans-serif;font-size:27px;font-weight:400;cursor:pointer}
+.schedule-hub-tabs button[data-route="schedule"],
+[data-screen="schedule"] .schedule-hub-tabs button[data-route="schedule"],
+[data-screen="schedule-review"] .schedule-hub-tabs button[data-route="schedule-review"],
+[data-screen="schedule-candidates"] .schedule-hub-tabs button[data-route="schedule-candidates"]{background:#ffa9b1}
+.rp-availability-toolbar{position:absolute;right:67px;top:99px;z-index:18;display:flex;align-items:center;gap:12px}
+.rp-availability-toolbar button{border:2px solid #67005e;background:#fff;color:#67005e;border-radius:9px;
+  padding:9px 17px;font-size:18px;font-weight:650;cursor:pointer}
+.rp-availability-dialog[hidden]{display:none!important}
+.rp-availability-dialog{position:absolute;z-index:101;right:55px;top:154px;width:min(600px,90%);padding:23px;
+  background:#fff;border:3px solid #67005e;box-shadow:0 16px 40px #0003;border-radius:12px;display:grid;gap:12px}
+.rp-availability-dialog h2{font-size:26px;margin:0}
+.rp-availability-dialog p{font-size:15px;margin:0;line-height:1.5;color:#565065}
+.rp-availability-dialog form{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:9px;align-items:end}
+.rp-availability-dialog label{display:grid;gap:5px;font-size:16px}
+.rp-availability-dialog input{width:100%;min-width:0;padding:9px;border:1px solid #957b98;border-radius:6px;font-size:15px}
+.rp-availability-dialog form button,.rp-availability-dialog .rp-availability-close{padding:9px;border:0;border-radius:6px;background:#67005e;color:#fff;cursor:pointer}
+.rp-availability-mine{max-height:160px;overflow:auto;display:grid;gap:5px}
+.rp-availability-mine-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;background:#fcf5fc;border-radius:6px;font-size:16px}
+.rp-availability-mine-row button{border:1px solid #bb4242;border-radius:5px;background:#fff;color:#a21b1b;cursor:pointer;padding:6px}
+.rp-availability-dialog .rp-availability-close{background:#eee;color:#222;justify-self:end}
+@media(max-width:960px){.rp-availability-dialog{right:20px;top:185px}.rp-availability-dialog form{grid-template-columns:1fr 1fr}.rp-availability-toolbar{right:35px;top:103px}}
+
 </style>
 </head>
 <body>
@@ -4998,8 +5026,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 </div>
               </div>
             </div>
-
-            <div class="postcard-form-row row-requester">
+<div class="postcard-form-row row-requester">
               <label for="requester">依頼元：</label>
               <input id="requester" type="text" autocomplete="off" readonly aria-readonly="true">
             </div>
@@ -5236,9 +5263,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <section class="screen screen-schedule" data-screen="schedule">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
-            <button type="button" data-route="schedule">空き時間・登録</button>
-            <button type="button" data-route="schedule-review">予定確認・編集</button>
-            <button type="button" data-route="schedule-candidates">RP調整</button>
+            <button type="button" data-route="schedule">予定登録</button>
+            <button type="button" data-route="schedule-review">タスク時間確認</button>
+            <button type="button" data-route="schedule-candidates">RP時間確認</button>
           </nav>
           <button type="button" class="schedule-hub-back" data-common-back>←戻る</button>
 
@@ -5306,9 +5333,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <section class="screen screen-schedule-review" data-screen="schedule-review">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
-            <button type="button" data-route="schedule">空き時間・登録</button>
-            <button type="button" data-route="schedule-review">予定確認・編集</button>
-            <button type="button" data-route="schedule-candidates">RP調整</button>
+            <button type="button" data-route="schedule">予定登録</button>
+            <button type="button" data-route="schedule-review">タスク時間確認</button>
+            <button type="button" data-route="schedule-candidates">RP時間確認</button>
           </nav>
           <nav class="schedule-review-week-nav" aria-label="予定確認の週を切り替える">
             <button type="button" id="reviewPrevWeek" aria-label="前の週へ">← 前の週</button>
@@ -5376,9 +5403,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <section class="screen screen-schedule-candidates" data-screen="schedule-candidates">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
-            <button type="button" data-route="schedule">空き時間・登録</button>
-            <button type="button" data-route="schedule-review">予定確認・編集</button>
-            <button type="button" data-route="schedule-candidates">RP調整</button>
+            <button type="button" data-route="schedule">予定登録</button>
+            <button type="button" data-route="schedule-review">タスク時間確認</button>
+            <button type="button" data-route="schedule-candidates">RP時間確認</button>
           </nav>
           <div class="candidate-shell">
             <header class="candidate-shell-head"><div><h1>RP調整</h1><p>候補日を提示し、参加可否を集めて日程を決定します。</p></div>
@@ -5406,6 +5433,25 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             </div>
           </div>
           <!-- v50: Figma準拠の週間RP調整表。既存の候補と確定RPは、スプシ/D1から読み込みます。 -->
+
+          <!-- v54: Figma「RP時間確認」の週表示は維持し、希望時間を誰でも登録可能にする。 -->
+          <div class="rp-availability-toolbar">
+            <button type="button" id="rpAvailabilityOpen">＋ RP希望時間を登録</button>
+          </div>
+          <div class="rp-availability-dialog" id="rpAvailabilityDialog" hidden>
+            <h2>ロープレ可能時間の登録</h2>
+            <p>全員が希望日時を登録できます。代表がRP担当者に指定した人は、登録した同じ時間を受講・担当の両方に利用できます。確定は代表が行います。</p>
+            <form id="rpAvailabilityForm">
+              <label>希望日<input type="date" id="rpAvailabilityDate" required></label>
+              <label>開始<input type="time" id="rpAvailabilityStart" required value="18:00" step="900"></label>
+              <label>終了<input type="time" id="rpAvailabilityEnd" required value="19:00" step="900"></label>
+              <button type="submit" id="rpAvailabilitySubmit">登録</button>
+            </form>
+            <strong>登録済みの希望時間</strong>
+            <div class="rp-availability-mine" id="rpAvailabilityMine">取得中…</div>
+            <button type="button" class="rp-availability-close" id="rpAvailabilityClose">閉じる</button>
+          </div>
+
           <nav class="rp-week-nav" aria-label="RP調整の週切り替え">
             <button type="button" id="rpWeekPrev">← 前の週</button>
             <span id="rpWeekRangeLabel" aria-live="polite"></span>
@@ -5998,6 +6044,7 @@ function clientExternalTargetUrl(company = selectedClientCompany()) {
   } catch (_) { /* Google fallback */ }
   return `https://search.brave.com/search?q=${encodeURIComponent(company.name + " お問い合わせフォーム")}`;
 }
+
 
 function clientGoogleFallback(company = selectedClientCompany()) {
   if (!company?.name) return false;
@@ -7998,7 +8045,7 @@ function postcardInnerHtml(card) {
     </div>
 
     <div class="postcard-display-row row-requester">
-      <strong>依頼元：</strong>
+<strong>依頼元：</strong>
       <span>${escapeHtml(currentRequesterName())}</span>
     </div>
 
@@ -8998,7 +9045,7 @@ function renderCalendarConnections() {
     );
 
     if (!items.length) {
-      root.innerHTML =
+root.innerHTML =
         provider === "apple"
           ? '<div class="calendar-empty-account">未連携</div>'
           : '<div class="calendar-empty-account">連携アカウントなし</div>';
@@ -9998,7 +10045,7 @@ async function saveReviewPlanEdit(event) {
       showToast('ポータルは更新しましたが、スプレッドシート反映に失敗しました：'+(data.sheetSync.error||''));
     } else if ((data.externalResults||[]).some(x=>!x.ok)) {
       showToast('ポータルとシートは更新しました。連携カレンダーに未反映の予定があります。');
-    } else {
+} else {
       showToast('自分の予定とスプレッドシートを更新しました');
     }
   } catch(error) {
@@ -10998,11 +11045,13 @@ async function saveMeetingResponse(id,status){
   const remark=field?.value??state.meetingNoteDrafts[id]??meeting.mine?.remark??'';
   if(remark.length>1000){showToast('備考は1000文字以内です');return;}
   state.meetingSaving=true;
-  try{
+try{
     await portalFetch('/api/meetings/respond',{method:'POST',body:{meeting_id:id,status,remark}});
     state.meetingNoteDrafts[id]=remark;
     await loadMeetings(true);
-    showToast('出欠・備考を保存しました');
+    await refreshRemoteTasks();
+    refreshTaskUi();
+    showToast('出欠・備考を保存しました（MTG出欠タスク完了）');
   }catch(error){showToast(error.message||'出欠を保存できませんでした');}
   finally{state.meetingSaving=false;}
 }
@@ -11662,5 +11711,89 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 </script>
+
+<!-- v54: RP時間登録 / Figma 172:52. Source-of-truth is Worker D1. -->
+<script>
+(function(){
+  'use strict';
+  let latestSlots=[];
+  const $=id=>document.getElementById(id);
+  function dateJP(iso){
+    return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(iso));
+  }
+  function startOfLocal(date,clock){return new Date(date+'T'+clock+':00+09:00').toISOString()}
+  async function loadSlots(){
+    const region=state.region,range=rpWeekRange();
+    const params=new URLSearchParams({region,start:range.startIso,end:range.endIso});
+    const data=await portalFetch('/api/rp/availability?'+params.toString());
+    if(region!==state.region)return [];
+    latestSlots=Array.isArray(data.slots)?data.slots:[];
+    const mail=String(state.user?.email||'').toLowerCase();
+    const own=latestSlots.filter(p=>p.user_email.toLowerCase()===mail);
+    const root=$('rpAvailabilityMine');
+    if(root){
+      root.textContent='';
+      if(!own.length)root.textContent='この週に登録済みの希望時間はありません。';
+      else for(const p of own){
+        const item=document.createElement('div');item.className='rp-availability-mine-row';
+        const span=document.createElement('span');
+        span.textContent=dateJP(p.starts_at)+' ～ '+new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit'}).format(new Date(p.ends_at));
+        const del=document.createElement('button');del.type='button';del.textContent='削除';del.dataset.rpAvailabilityDelete=String(p.id);
+        item.append(span,del);root.append(item);
+      }
+    }
+    return latestSlots;
+  }
+  function mount(){
+    const open=$('rpAvailabilityOpen'),close=$('rpAvailabilityClose'),dialog=$('rpAvailabilityDialog');
+    if(!open||!dialog||open.dataset.bound)return;
+    open.dataset.bound='1';
+    open.addEventListener('click',()=>{dialog.hidden=false;void loadSlots().catch(e=>showToast(e.message));});
+    close?.addEventListener('click',()=>{dialog.hidden=true});
+    dialog.addEventListener('click',async e=>{
+      const btn=e.target.closest('[data-rp-availability-delete]');
+      if(!btn)return;
+      if(!window.confirm('このRP希望時間を削除しますか？'))return;
+      btn.disabled=true;
+      try{
+        await portalFetch('/api/rp/availability/delete',{method:'POST',body:{id:Number(btn.dataset.rpAvailabilityDelete)}});
+        showToast('RP希望時間を削除しました');await rpWeekLoad();
+      }catch(err){showToast(err.message||'削除できませんでした')}finally{btn.disabled=false}
+    });
+    $('rpAvailabilityForm')?.addEventListener('submit',async e=>{
+      e.preventDefault();const button=$('rpAvailabilitySubmit');button.disabled=true;
+      try{
+        const date=$('rpAvailabilityDate').value,from=$('rpAvailabilityStart').value,to=$('rpAvailabilityEnd').value;
+        if(!date||!from||!to||to<=from)throw new Error('日時の前後関係を確認してください。');
+        await portalFetch('/api/rp/availability',{method:'POST',body:{starts_at:startOfLocal(date,from),ends_at:startOfLocal(date,to)}});
+        showToast('RP希望時間を登録しました');await rpWeekLoad();
+      }catch(err){showToast(err.message||'登録できませんでした')}finally{button.disabled=false}
+    });
+    const d=$('rpAvailabilityDate');if(d&&!d.value){
+      d.value=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    }
+  }
+  // RP調整の週カレンダーに新規登録日時を合わせて表示する。元のRP・スプシ候補も保持。
+  if(typeof rpWeekLoad==='function'){
+    const baseRpWeekLoad=rpWeekLoad;
+    rpWeekLoad=async function(){
+      await baseRpWeekLoad();
+      const region=state.region,range=rpWeekRange();
+      try{
+        const slots=await loadSlots();
+        if(region!==state.region)return;
+        rpWeekCandidatePlans=[...rpWeekCandidatePlans,...slots.map(s=>({
+          id:0,availability_id:Number(s.id),user_email:s.user_email,user_name:s.user_name,
+          starts_at:s.starts_at,ends_at:s.ends_at,role:'trainee',task_type:'RP受講希望',title:'ロープレ希望',memo:''
+        }))];
+        rpWeekDrawEvents(range);
+      }catch(err){console.warn('RP availability',err);}
+    };
+  }
+  const init=()=>{mount()};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
 </body>
 </html>
