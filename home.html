@@ -5186,8 +5186,39 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   outline: 2px solid #466bca;
 }
 .screen-schedule-plan .sp-duration-display {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
   white-space: nowrap;
   font-size: 32px;
+}
+/* v61: Figmaの時間表記を保ちつつ、所要時間の時・分だけ編集可能にする。 */
+.screen-schedule-plan .sp-duration-unit {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 0;
+  white-space: nowrap;
+}
+.screen-schedule-plan .sp-duration-unit input {
+  width: 38px;
+  min-width: 0;
+  height: 46px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #000;
+  font: 400 31px/45px Inter, sans-serif;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.screen-schedule-plan .sp-duration-unit input:focus-visible {
+  border-bottom-color: #303b92;
+  outline: 2px solid #466bca;
+  outline-offset: -2px;
 }
 .screen-schedule-plan .sp-task-caption {
   position: absolute;
@@ -6336,7 +6367,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <span>～</span>
               <label class="sp-time-unit"><input id="planEndHour" type="text" inputmode="numeric" maxlength="2" aria-label="終了・時" autocomplete="off"><span>時</span></label>
               <label class="sp-time-unit"><input id="planEndMinute" type="text" inputmode="numeric" maxlength="2" aria-label="終了・分" autocomplete="off"><span>分</span></label>
-              <span class="sp-duration-display">（<span id="planDurationDisplay">　時間　分間</span>）</span>
+              <span class="sp-duration-display">（<label class="sp-duration-unit"><input id="planDurationHour" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="所要時間・時間"><span>時間</span></label><label class="sp-duration-unit"><input id="planDurationMinute" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="所要時間・分"><span>分間</span></label>）</span>
             </div>
 
             <div class="sp-task-caption">やること：</div>
@@ -7366,8 +7397,14 @@ function wireActions() {
     "click",
     registerSchedulePlan
   );
+  // 開始・終了時刻を編集したときは、終了時刻を保持して所要時間を更新。
   ["planStartHour", "planStartMinute", "planEndHour", "planEndMinute"].forEach(id => {
     document.getElementById(id)?.addEventListener("input", updateSchedulePlanDuration);
+  });
+  // 所要時間を編集したときは、開始時刻を保持して終了時刻を更新。
+  ["planDurationHour", "planDurationMinute"].forEach(id => {
+    document.getElementById(id)?.addEventListener("input", updateSchedulePlanEndFromDuration);
+    document.getElementById(id)?.addEventListener("change", updateSchedulePlanEndFromDuration);
   });
   document.getElementById("planOtherText")?.addEventListener("input", () => {
     if (document.getElementById("planOtherText").value.trim()) {
@@ -10275,12 +10312,48 @@ function schedulePlanDatetimeRange() {
   return { date, startsAt, endsAt, durationMinutes: (endsAt - startsAt) / 60000 };
 }
 
+// v61: 終了時刻 -> 所要時間（時・分）と、所要時間 -> 終了時刻の双方向連動。
+// どちらも同じFigmaの一行に収め、元の登録APIへは計算後の開始・終了日時を送信する。
 function updateSchedulePlanDuration() {
-  const output = document.getElementById("planDurationDisplay");
-  if (!output) return;
+  const hourInput = document.getElementById("planDurationHour");
+  const minuteInput = document.getElementById("planDurationMinute");
+  if (!hourInput || !minuteInput) return;
   const range = schedulePlanDatetimeRange();
-  if (!range) { output.textContent = "　時間　分間"; return; }
-  output.textContent = `${Math.floor(range.durationMinutes / 60)}時間${range.durationMinutes % 60}分間`;
+  if (!range) {
+    hourInput.value = "";
+    minuteInput.value = "";
+    return;
+  }
+  hourInput.value = String(Math.floor(range.durationMinutes / 60));
+  minuteInput.value = String(range.durationMinutes % 60);
+}
+
+function updateSchedulePlanEndFromDuration() {
+  const startClock = schedulePlanClock("planStartHour", "planStartMinute");
+  const hoursText = document.getElementById("planDurationHour")?.value.trim() || "";
+  const minutesText = document.getElementById("planDurationMinute")?.value.trim() || "";
+  // 入力途中の空欄・数値エラーは時刻を変更しない。
+  if (!startClock || !/^\d{1,2}$/.test(hoursText) || !/^\d{1,2}$/.test(minutesText)) return;
+  const hours = Number(hoursText), minutes = Number(minutesText);
+  if (hours > 23 || minutes > 59) return;
+  const slot = state.calendar.selectedSlot;
+  if (!slot) return;
+  const date = tokyoDateFromIso(slot.start);
+  const startsAt = new Date(`${date}T${startClock}:00+09:00`);
+  if (!Number.isFinite(startsAt.getTime())) return;
+  const totalMinutes = hours * 60 + minutes;
+  const requestedEnd = new Date(startsAt.getTime() + totalMinutes * 60000);
+  // 空き時間の枠を超える値はその枠内の最大時間に調整する。
+  // 0分は入力途中の状態として扱い、登録時の元のバリデーションで防ぐ。
+  const latestEnd = new Date(slot.end);
+  const actualEnd = requestedEnd > latestEnd ? latestEnd : requestedEnd;
+  const parts = schedulePlanTimeParts(actualEnd);
+  document.getElementById("planEndHour").value = parts.hour;
+  document.getElementById("planEndMinute").value = parts.minute;
+  if (requestedEnd > latestEnd) {
+    // 上限調整後もフォームに表示されている所要時間と終了時刻を一致させる。
+    updateSchedulePlanDuration();
+  }
 }
 
 function renderSchedulePlanScreen() {
