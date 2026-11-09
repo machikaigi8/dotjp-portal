@@ -5117,6 +5117,193 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   font:400 40px/60px Inter,'Noto Sans JP',sans-serif !important;
 }
 
+
+/* v60: Figma node 78:27 「タスク時間登録」 pixel-aligned 1440 x 1024. */
+.screen-schedule-plan .schedule-plan-panel {
+  position: absolute !important;
+  left: 70px !important;
+  top: 137px !important;
+  width: 1300px !important;
+  height: 750px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  overflow: hidden !important;
+}
+.screen-schedule-plan .selected-availability-label {
+  position: absolute !important;
+  left: 128px !important;
+  top: 57px !important;
+  font: 400 40px/50px Inter, 'Noto Sans JP', sans-serif !important;
+  color: #000 !important;
+  white-space: nowrap;
+}
+.screen-schedule-plan .sp-time-row {
+  position: absolute;
+  left: 175px;
+  top: 164px;
+  height: 70px;
+  width: 1006px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  color: #000;
+  white-space: nowrap;
+  font: 400 37px/70px Inter, 'Noto Sans JP', sans-serif;
+}
+.screen-schedule-plan .sp-time-caption {
+  display: inline-block;
+  font-size: 40px;
+  flex: 0 0 auto;
+}
+.screen-schedule-plan .sp-time-unit {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  flex: 0 0 auto;
+}
+.screen-schedule-plan .sp-time-unit input {
+  display: inline-block;
+  width: 57px;
+  min-width: 0;
+  height: 48px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  outline-offset: -2px;
+  background: transparent;
+  color: #000;
+  padding: 0;
+  margin: 0;
+  font: 400 33px/45px Inter, sans-serif;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.screen-schedule-plan .sp-time-unit input:focus-visible {
+  border-bottom-color: #303b92;
+  outline: 2px solid #466bca;
+}
+.screen-schedule-plan .sp-duration-display {
+  white-space: nowrap;
+  font-size: 32px;
+}
+.screen-schedule-plan .sp-task-caption {
+  position: absolute;
+  left: 295px;
+  top: 240px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  font: 400 40px/64px Inter, 'Noto Sans JP', sans-serif;
+  color: #000;
+  white-space: nowrap;
+}
+.screen-schedule-plan .schedule-task-choice-grid {
+  position: absolute !important;
+  left: 499px !important;
+  top: 240px !important;
+  width: 654px !important;
+  height: 272px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 190px) !important;
+  grid-template-rows: repeat(3, 64px) !important;
+  column-gap: 42px !important;
+  row-gap: 40px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+.screen-schedule-plan .schedule-task-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 190px;
+  height: 64px;
+  padding: 2px 4px;
+  margin: 0;
+  border: 3px solid #000;
+  border-radius: 0;
+  box-shadow: none;
+  background: #ffa5a5;
+  color: #000;
+  font: 400 30px/40px Inter, 'Noto Sans JP', sans-serif;
+  text-align: center;
+  white-space: normal;
+  cursor: pointer;
+}
+.screen-schedule-plan .schedule-task-choice[data-schedule-task="声掛け"],
+.screen-schedule-plan .schedule-task-choice[data-schedule-task="学生架電"],
+.screen-schedule-plan .schedule-task-choice[data-schedule-task="通電"],
+.screen-schedule-plan .schedule-task-choice[data-schedule-task="口コミ"] { background: #7dc9ff; }
+.screen-schedule-plan .schedule-task-choice[data-schedule-task="リストアップ"] { font-size: 28px; white-space: nowrap; }
+.screen-schedule-plan .schedule-task-choice[data-schedule-task="お問い合わせフォーム送信"] {
+  font-size: 20px;
+  line-height: 25px;
+}
+.screen-schedule-plan .schedule-task-choice[data-schedule-task="その他"] {
+  background: #7294ac;
+  color: #fff;
+}
+.screen-schedule-plan .schedule-task-choice.is-selected {
+  outline: 3px solid #383838;
+  outline-offset: -8px;
+}
+.screen-schedule-plan .schedule-task-choice:focus-visible,
+.screen-schedule-plan .sp-rp-button:focus-visible,
+.screen-schedule-plan .schedule-register-button:focus-visible { outline: 3px solid #385ad6; outline-offset: 3px; }
+.screen-schedule-plan .sp-other-input {
+  position: absolute;
+  left: 132px;
+  top: 538px;
+  width: 789px;
+  height: 85px;
+  border: 4px solid #000;
+  border-radius: 0;
+  background: #fff;
+  padding: 4px 8px;
+  color: #000;
+  font: 400 40px/60px Inter, 'Noto Sans JP', sans-serif;
+}
+.screen-schedule-plan .sp-other-input::placeholder { color: #000; opacity: 1; }
+.screen-schedule-plan .sp-rp-button {
+  position: absolute;
+  left: 963px;
+  top: 549px;
+  width: 190px;
+  height: 64px;
+  border: 3px solid #000;
+  border-radius: 30px;
+  background: #fff;
+  color: #000;
+  font: 400 30px/40px Inter, 'Noto Sans JP', sans-serif;
+  padding: 0 6px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.screen-schedule-plan .sp-rp-button[aria-pressed="true"] { box-shadow: inset 0 0 0 4px #c6d6f9; }
+.screen-schedule-plan .schedule-register-button {
+  position: absolute !important;
+  left: 553px !important;
+  top: 649px !important;
+  width: 195px !important;
+  height: 61px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #d4d5ff !important;
+  color: #000 !important;
+  font: 500 30px/61px Inter, 'Noto Sans JP', sans-serif !important;
+  text-align: center !important;
+  cursor: pointer;
+}
+.screen-schedule-plan .schedule-register-button:disabled { opacity: .65; cursor: progress; }
+/* Schedule-plan uses the common back button (128,912) to return to home. */
+
 </style>
 </head>
 <body>
@@ -6097,7 +6284,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <p class="representative-info">確定した候補日は、必要なTTなどを整えたうえで「人事局」のMTG登録から確定MTGとして登録してください。自動登録は行いません。</p>
             </section>
             <section id="repRpPanel" hidden>
-              <div class="rp-panel-head"><div><h2>RPの自動マッチング</h2><p>支部員の「RP受講希望」と、指定担当者の「RP担当可能」の重なる時間を探します。</p></div></div>
+              <div class="rp-panel-head"><div><h2>RPの自動マッチング</h2><p>支部員が「RP可能時間」で登録した希望時間から、代表が指定した担当者との重なりを探します。</p></div></div>
               <div class="rp-controls">
                 <label>実施時間<select id="rpDuration"><option value="30">30分</option><option value="60" selected>60分</option><option value="90">90分</option></select></label>
                 <label>候補期間<select id="rpDays"><option value="7">今後7日</option><option value="14" selected>今後14日</option><option value="28">今後28日</option></select></label>
@@ -6105,7 +6292,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               </div>
               <div class="rp-people-head"><strong>RP担当者を選択（複数可）</strong><button type="button" id="rpSelectAllTrainers">すべて選択</button></div>
               <div id="rpTrainerChoices" class="rp-trainers">読み込み中…</div>
-              <p class="rp-hint">通常の架電・リストアップ予定は「空き時間」とみなしません。受講者は予定登録で「RP受講希望」、担当者は「RP担当可能」を選択してください。候補は自動提示のみで、確定は代表が行います。</p>
+              <p class="rp-hint">通常の架電・リストアップ予定は「空き時間」とみなしません。全員が予定登録で「RP可能時間」を登録します。代表に担当者として指定された人は同じ時間を受講・担当の両方に利用できます。候補は自動提示のみで、確定は代表が行います。</p>
               <div class="rp-results-grid">
                 <div><h3>マッチング候補</h3><div id="rpMatchSuggestions" class="rp-match-list">担当者を選択して候補を検索</div></div>
                 <div><h3>確定済みRP</h3><div id="rpConfirmedAssignments" class="rp-match-list">読み込み中…</div></div>
@@ -6140,47 +6327,25 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="user-name" data-user-name>＜名前＞</div>
 
           <div class="schedule-plan-panel">
-            <div id="selectedAvailabilityLabel" class="selected-availability-label">
-              11/4(水)10:00～16:00
+            <div id="selectedAvailabilityLabel" class="selected-availability-label">11/4(水)10:00～16:00</div>
+
+            <div class="sp-time-row" aria-label="タスク開始時刻・終了時刻">
+              <span class="sp-time-caption">タスク開始時間：</span>
+              <label class="sp-time-unit"><input id="planStartHour" type="text" inputmode="numeric" maxlength="2" aria-label="開始・時" autocomplete="off"><span>時</span></label>
+              <label class="sp-time-unit"><input id="planStartMinute" type="text" inputmode="numeric" maxlength="2" aria-label="開始・分" autocomplete="off"><span>分</span></label>
+              <span>～</span>
+              <label class="sp-time-unit"><input id="planEndHour" type="text" inputmode="numeric" maxlength="2" aria-label="終了・時" autocomplete="off"><span>時</span></label>
+              <label class="sp-time-unit"><input id="planEndMinute" type="text" inputmode="numeric" maxlength="2" aria-label="終了・分" autocomplete="off"><span>分</span></label>
+              <span class="sp-duration-display">（<span id="planDurationDisplay">　時間　分間</span>）</span>
             </div>
 
-            <div class="schedule-plan-fields">
-              <label class="plan-field-row">
-                <span>タスク開始時間：</span>
-                <input id="planStartTime" type="time">
-              </label>
+            <div class="sp-task-caption">やること：</div>
+            <div id="scheduleTaskChoiceGrid" class="schedule-task-choice-grid" role="group" aria-label="登録するタスクを選択"></div>
 
-              <label class="plan-field-row">
-                <span>タスク時間：</span>
-                <select id="planDurationMinutes">
-                  <option value="30">30分</option>
-                  <option value="60">1時間</option>
-                  <option value="90">1時間30分</option>
-                  <option value="120">2時間</option>
-                  <option value="180">3時間</option>
-                  <option value="240">4時間</option>
-                </select>
-              </label>
+            <input id="planOtherText" class="sp-other-input" type="text" maxlength="120" placeholder="その他" aria-label="その他のタスク名を入力" autocomplete="off">
+            <button id="planRpAvailabilityButton" class="sp-rp-button" type="button" aria-pressed="false">RP可能時間</button>
 
-              <div class="plan-task-label">やること：</div>
-              <div class="plan-rp-note">RP登録は <strong>「RP受講希望」</strong> または <strong>「RP担当可能」</strong> を選んで登録してください。</div>
-            </div>
-
-            <div id="scheduleTaskChoiceGrid" class="schedule-task-choice-grid"></div>
-
-            <label class="schedule-plan-memo" for="planMemo">メモ（任意）
-              <input id="planMemo" type="text" maxlength="1000" placeholder="架電内容・補足など">
-            </label>
-            <div class="schedule-plan-calendar-targets">
-              <div class="schedule-plan-calendar-title">外部カレンダーにも登録</div>
-              <div id="schedulePlanCalendarTargets" class="schedule-plan-calendar-list"></div>
-            </div>
-
-            <button
-              id="schedulePlanRegisterButton"
-              class="schedule-register-button"
-              type="button"
-            >登録</button>
+            <button id="schedulePlanRegisterButton" class="schedule-register-button" type="button">登録</button>
           </div>
         </section>
 
@@ -7201,6 +7366,21 @@ function wireActions() {
     "click",
     registerSchedulePlan
   );
+  ["planStartHour", "planStartMinute", "planEndHour", "planEndMinute"].forEach(id => {
+    document.getElementById(id)?.addEventListener("input", updateSchedulePlanDuration);
+  });
+  document.getElementById("planOtherText")?.addEventListener("input", () => {
+    if (document.getElementById("planOtherText").value.trim()) {
+      schedulePlanRpMode = false;
+      state.calendar.selectedTaskTitle = "その他";
+      renderScheduleTaskChoices();
+    }
+  });
+  document.getElementById("planRpAvailabilityButton")?.addEventListener("click", () => {
+    schedulePlanRpMode = !schedulePlanRpMode;
+    if (schedulePlanRpMode) state.calendar.selectedTaskTitle = "";
+    renderScheduleTaskChoices();
+  });
 
   document.getElementById("saveWorkHoursButton").addEventListener(
     "click",
@@ -9638,18 +9818,18 @@ const calendarDayNamesEn = [
 ];
 
 const scheduleTaskChoices = [
-  "RP受講希望",
-  "RP担当可能",
   "声掛け",
-  "架電",
+  "学生架電",
   "通電",
+  "口コミ",
   "リストアップ",
   "お問い合わせフォーム送信",
-  "MTG",
-  "資料作成",
-  "事務作業",
+  "企業架電",
+  "メール送信",
   "その他"
 ];
+// 代表画面が指定した担当者は、同じRP可能時間を受講者・担当者の両方に利用できる。
+let schedulePlanRpMode = false;
 
 async function refreshCalendarSchedule() {
   await Promise.all([
@@ -10067,169 +10247,147 @@ function formatShortDate(isoDate) {
   return `${Number(month)}/${Number(day)}`;
 }
 
+function schedulePlanTimeParts(date) {
+  const s = formatTokyoClock(date);
+  const [hour, minute] = s.split(":");
+  return { hour, minute };
+}
+
+function schedulePlanClock(hourId, minuteId) {
+  const hourRaw = document.getElementById(hourId)?.value?.trim() || "";
+  const minuteRaw = document.getElementById(minuteId)?.value?.trim() || "";
+  if (!/^\d{1,2}$/.test(hourRaw) || !/^\d{1,2}$/.test(minuteRaw)) return "";
+  const hh = Number(hourRaw), mm = Number(minuteRaw);
+  if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return "";
+  return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+}
+
+function schedulePlanDatetimeRange() {
+  const slot = state.calendar.selectedSlot;
+  if (!slot) return null;
+  const date = tokyoDateFromIso(slot.start);
+  const startTime = schedulePlanClock("planStartHour", "planStartMinute");
+  const endTime = schedulePlanClock("planEndHour", "planEndMinute");
+  if (!startTime || !endTime) return null;
+  const startsAt = new Date(`${date}T${startTime}:00+09:00`);
+  const endsAt = new Date(`${date}T${endTime}:00+09:00`);
+  if (!Number.isFinite(startsAt.valueOf()) || !Number.isFinite(endsAt.valueOf()) || endsAt <= startsAt) return null;
+  return { date, startsAt, endsAt, durationMinutes: (endsAt - startsAt) / 60000 };
+}
+
+function updateSchedulePlanDuration() {
+  const output = document.getElementById("planDurationDisplay");
+  if (!output) return;
+  const range = schedulePlanDatetimeRange();
+  if (!range) { output.textContent = "　時間　分間"; return; }
+  output.textContent = `${Math.floor(range.durationMinutes / 60)}時間${range.durationMinutes % 60}分間`;
+}
+
 function renderSchedulePlanScreen() {
   const slot = state.calendar.selectedSlot;
-
   if (!slot) {
     showToast("空き時間を選択してください");
     showScreen("schedule", true, false);
     return;
   }
-
-  document.getElementById("selectedAvailabilityLabel").textContent =
-    slot.label;
-
-  const startDate = new Date(slot.start);
-
-  document.getElementById("planStartTime").value =
-    formatTokyoClock(startDate);
-
-  if (!state.calendar.selectedTaskTitle) {
-    state.calendar.selectedTaskTitle = "";
-  }
-
+  document.getElementById("selectedAvailabilityLabel").textContent = slot.label;
+  const begin = new Date(slot.start);
+  // 選択済みの空き時間に収まるように、初期終了時刻は60分後または空き時間の末尾。
+  const finish = new Date(Math.min(new Date(slot.end).getTime(), begin.getTime() + 60 * 60000));
+  const startParts = schedulePlanTimeParts(begin);
+  const endParts = schedulePlanTimeParts(finish);
+  document.getElementById("planStartHour").value = startParts.hour;
+  document.getElementById("planStartMinute").value = startParts.minute;
+  document.getElementById("planEndHour").value = endParts.hour;
+  document.getElementById("planEndMinute").value = endParts.minute;
+  document.getElementById("planOtherText").value = "";
+  state.calendar.selectedTaskTitle = "";
+  schedulePlanRpMode = false;
   renderScheduleTaskChoices();
-  renderSchedulePlanCalendarTargets();
+  updateSchedulePlanDuration();
 }
 
 function renderScheduleTaskChoices() {
   const root = document.getElementById("scheduleTaskChoiceGrid");
   if (!root) return;
-
-  root.innerHTML = scheduleTaskChoices.map((title) => `
-    <button
-      type="button"
-      class="schedule-task-choice ${state.calendar.selectedTaskTitle === title ? "is-selected" : ""}"
-      data-schedule-task="${escapeHtml(title)}"
-    >${escapeHtml(title)}</button>
+  root.innerHTML = scheduleTaskChoices.map(title => `
+    <button type="button" class="schedule-task-choice ${!schedulePlanRpMode && state.calendar.selectedTaskTitle === title ? "is-selected" : ""}"
+            data-schedule-task="${escapeHtml(title)}" aria-pressed="${!schedulePlanRpMode && state.calendar.selectedTaskTitle === title}">${escapeHtml(title === "お問い合わせフォーム送信" ? "お問い合わせ\nフォーム送信" : title).replace(/\n/g, "<br>")}</button>
   `).join("");
-
-  root.querySelectorAll("[data-schedule-task]").forEach((button) => {
+  const rpButton = document.getElementById("planRpAvailabilityButton");
+  if (rpButton) rpButton.setAttribute("aria-pressed", String(schedulePlanRpMode));
+  root.querySelectorAll("[data-schedule-task]").forEach(button => {
     button.addEventListener("click", () => {
-      const title = button.dataset.scheduleTask;
-
-      if (title === "その他") {
-        const custom = prompt("やることを入力してください");
-        if (!custom?.trim()) return;
-        state.calendar.selectedTaskTitle = custom.trim();
-      } else {
-        state.calendar.selectedTaskTitle = title;
-      }
-
+      schedulePlanRpMode = false;
+      state.calendar.selectedTaskTitle = button.dataset.scheduleTask;
       renderScheduleTaskChoices();
+      if (button.dataset.scheduleTask === "その他") document.getElementById("planOtherText")?.focus();
     });
   });
 }
 
-function renderSchedulePlanCalendarTargets() {
-  const root = document.getElementById("schedulePlanCalendarTargets");
-  if (!root) return;
-
-  const connections = state.calendar.connections.filter(
-(item) => Number(item.enabled)
-  );
-
-  if (!connections.length) {
-    root.innerHTML =
-      '<span style="color:#777;font-size:14px">ポータル内の予定として登録</span>';
-    return;
-  }
-
-  root.innerHTML = connections.map((item) => `
-    <label class="schedule-plan-calendar-option">
-      <input
-        type="checkbox"
-        data-plan-calendar-id="${item.id}"
-      >
-      <span>${escapeHtml(item.account_email)}</span>
-    </label>
-  `).join("");
-}
+// Figmaの登録画面では外部カレンダー選択欄は表示しない。
+// 通常予定のポータル／スプレッドシート同期と、RP可能時間のD1保存を分離する。
+function renderSchedulePlanCalendarTargets() {}
 
 async function registerSchedulePlan() {
   const slot = state.calendar.selectedSlot;
-
-  if (!slot) {
-    showToast("空き時間を選択してください");
-    return;
+  if (!slot) { showToast("空き時間を選択してください"); return; }
+  const range = schedulePlanDatetimeRange();
+  if (!range) { showToast("開始・終了の時刻を正しく入力してください"); return; }
+  if (range.startsAt < new Date(slot.start) || range.endsAt > new Date(slot.end)) {
+    showToast("選択した空き時間の範囲内で登録してください"); return;
   }
-
-  const title = state.calendar.selectedTaskTitle;
-
-  if (!title) {
-    showToast("やることを選択してください");
-    return;
+  const rpMode = schedulePlanRpMode;
+  let title = state.calendar.selectedTaskTitle;
+  if (!rpMode && title === "その他") {
+    title = document.getElementById("planOtherText")?.value.trim() || "";
+    if (!title) { showToast("その他のタスク名を入力してください"); return; }
   }
+  if (!rpMode && !title) { showToast("やることを選択してください"); return; }
 
-  const time = document.getElementById("planStartTime").value;
-  const durationMinutes = Number(
-    document.getElementById("planDurationMinutes").value || 60
-  );
-
-  if (!time) {
-    showToast("開始時間を入力してください");
-    return;
-  }
-
-  const slotStart = new Date(slot.start);
-  const slotEnd = new Date(slot.end);
-
-  const date = tokyoDateFromIso(slot.start);
-  const startsAt = new Date(
-    `${date}T${time}:00+09:00`
-  );
-
-  const endsAt = new Date(
-    startsAt.getTime() + durationMinutes * 60000
-  );
-
-  if (
-    startsAt < slotStart ||
-    endsAt > slotEnd ||
-    endsAt <= startsAt
-  ) {
-    showToast("選択した空き時間の範囲内で時間を指定してください");
-    return;
-  }
-
-  const connectionIds = Array.from(
-    document.querySelectorAll("[data-plan-calendar-id]:checked")
-  ).map((input) => Number(input.dataset.planCalendarId));
-
+  const submitButton = document.getElementById("schedulePlanRegisterButton");
+  if (submitButton) submitButton.disabled = true;
   try {
+    if (rpMode) {
+      await portalFetch("/api/rp/availability", {
+        method: "POST",
+        body: { starts_at: range.startsAt.toISOString(), ends_at: range.endsAt.toISOString() }
+      });
+      showToast("RP可能時間を登録しました");
+      rpWeekAnchorDate = range.date;
+      state.calendar.selectedSlot = null;
+      state.calendar.selectedTaskTitle = "";
+      schedulePlanRpMode = false;
+      showScreen("schedule-candidates");
+      return;
+    }
+
     const data = await portalFetch("/api/calendar/plans", {
       method: "POST",
       body: {
         title,
         taskType: title,
-        startsAt: startsAt.toISOString(),
-        endsAt: endsAt.toISOString(),
-        memo: document.getElementById("planMemo").value.trim(),
+        startsAt: range.startsAt.toISOString(),
+        endsAt: range.endsAt.toISOString(),
+        memo: "",
         region: state.region,
-        connectionIds
+        connectionIds: []
       }
     });
-
-    document.getElementById("planMemo").value = "";
     if (data.sheetSync && !data.sheetSync.ok) {
-      showToast("予定は保存しましたが、スプレッドシート反映に失敗しました：" + (data.sheetSync.error || "接続設定を確認してください"));
+      showToast("予定は保存しましたが、スプレッドシート反映に失敗しました：" + (data.sheetSync.error || "接続設定をご確認ください"));
+    } else {
+      showToast("タスク予定を登録しました");
     }
-    const failed =
-      (data.externalResults || []).filter((item) => !item.ok);
-
-    if (failed.length) {
-      showToast(`ポータルには登録しました。外部カレンダー${failed.length}件は登録に失敗しました`);
-    } else if (!data.sheetSync || data.sheetSync.ok) {
-      showToast("タスク予定を登録し、スプレッドシートへ反映しました");
-    }
-
-    state.calendar.reviewAnchorDate = date;
+    state.calendar.reviewAnchorDate = range.date;
     state.calendar.selectedSlot = null;
     state.calendar.selectedTaskTitle = "";
-
     showScreen("schedule-review");
   } catch (error) {
-    showToast(error.message || "タスク実施計画を登録できませんでした");
+    showToast(error.message || (rpMode ? "RP可能時間を登録できませんでした" : "タスク予定を登録できませんでした"));
+  } finally {
+    if (submitButton) submitButton.disabled = false;
   }
 }
 
