@@ -4525,6 +4525,25 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .rp-v50-match-row .rp-v50-match-reopen{background:#fff4ed;color:#a54620;border:1px solid #e4aa8b}
 .rp-v50-match-approved{color:#14509c;font-weight:700}
 
+
+/* v52: Temporary personal-only RP transfer, no change to original schedule or Sheets. */
+.rp-transfer-note{position:absolute;right:52px;top:116px;font-size:14px;color:#3155a6;background:#e5efff;padding:7px 12px;border-radius:8px;z-index:5}
+.schedule-review-event.is-temp-rp-transfer{cursor:pointer;outline-offset:-3px}
+.schedule-review-event.is-temp-rp-transfer:hover{outline:3px solid #bd3e9c;z-index:10}
+.rp-transfer-overlay[hidden]{display:none!important}
+.rp-transfer-overlay{position:absolute;inset:0;background:rgba(20,23,50,.45);z-index:95;display:flex;justify-content:center;align-items:center;padding:24px;box-sizing:border-box}
+.rp-transfer-dialog{width:min(620px,100%);max-height:85vh;overflow:auto;background:#fff;box-shadow:0 20px 60px #15204c55;border-radius:16px;padding:22px 26px;display:grid;gap:13px;font-size:17px;color:#152149}
+.rp-transfer-dialog h2{font-size:26px;margin:0}
+.rp-transfer-dialog label{display:grid;gap:5px;font-weight:600}
+.rp-transfer-dialog select{height:45px;padding:6px 10px;border:1px solid #afbcd8;background:#fff;border-radius:8px;font-size:17px;width:100%}
+.rp-transfer-dialog button{cursor:pointer;border:1px solid #a8bde0;border-radius:8px;background:#f4f7ff;padding:10px 17px;font-size:17px}
+.rp-transfer-dialog .rp-transfer-confirm{background:#306ef2;color:#fff;font-weight:700}
+.rp-transfer-dialog .rp-transfer-actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap}
+.rp-transfer-dialog .rp-transfer-error{font-size:14px;color:#b03136;min-height:18px}
+.rp-transfer-actions button:disabled{opacity:.55;cursor:wait}
+#reviewOwnTempRpTransfer[hidden]{display:none!important}
+#reviewOwnTempRpTransfer{background:#e9f1ff;color:#164baa}
+.rp-week-board .rp-temp-revert{position:absolute;right:2px;bottom:2px;background:white;border:1px solid #a94152;color:#92222b;border-radius:4px;font-size:12px;cursor:pointer;z-index:10;padding:1px 3px}
 </style>
 </head>
 <body>
@@ -5299,6 +5318,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button type="button" id="reviewNextWeek" aria-label="次の週へ">次の週 →</button>
           </nav>
 
+          <div id="rpTempMoveHint" class="rp-transfer-note" hidden>一時RP転記モード（本人限定）</div>
           <div id="reviewSheetStatus" class="review-sheet-status" aria-live="polite">スプレッドシートの状況を確認しています…</div>
           <div id="reviewMyRpAssignments" class="review-rp-assignments" aria-live="polite"></div>
           <div id="scheduleReviewBoard" class="schedule-review-board">
@@ -5325,9 +5345,22 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <label>メモ（任意） <textarea id="reviewEditMemo" maxlength="1000" rows="3" placeholder="作業に関する補足"></textarea></label>
               <div class="review-edit-actions">
                 <button type="button" id="reviewEditCancel">キャンセル</button>
+                <button type="button" id="reviewOwnTempRpTransfer" hidden>RPに写す</button>
                 <button type="submit" id="reviewEditSave">変更を保存</button>
               </div>
               <p id="reviewEditWarning" aria-live="polite"></p>
+            </form>
+          </div>
+          <div id="rpTransferOverlay" class="rp-transfer-overlay" hidden>
+            <form id="rpTransferForm" class="rp-transfer-dialog" aria-labelledby="rpTransferTitle">
+              <h2 id="rpTransferTitle">RP調整に予定を写す</h2>
+              <p id="rpTransferSource">選択した予定</p>
+              <p style="font-size:15px;color:#60738f;margin:0">元のスプシ・通常の予定データは削除しません。RPでは未確定（赤）として表示され、代表の承認まで確定しません。</p>
+              <label>対象者 <select id="rpTransferPerson" required></select></label>
+              <label>RPの種類 <select id="rpTransferProgram" required></select></label>
+              <label>本人の役割 <select id="rpTransferRole" required><option value="trainee">RPを受ける側（受講希望）</option><option value="trainer">RP担当側（対応可能）</option></select></label>
+              <p id="rpTransferError" class="rp-transfer-error" role="status"></p>
+              <div class="rp-transfer-actions"><button id="rpTransferCancel" type="button">戻る</button><button id="rpTransferSubmit" class="rp-transfer-confirm" type="submit">RP調整へ写す</button></div>
             </form>
           </div>
           <button
@@ -5714,6 +5747,7 @@ const state = {
   user: null,
   isDeveloper: false,
   isRepresentative: false,
+  canTempRpTransfer: false,
   canEditRoster: false,
   canManageMeetings: false,
   meetingParticipantEmails: new Set(),
@@ -6458,13 +6492,16 @@ function wireActions() {
   document.getElementById("scheduleReviewEvents").addEventListener("click", (event) => {
     const item=event.target.closest('[data-own-plan-id]');
     if (item) openReviewPlanEdit(Number(item.dataset.ownPlanId));
+    else { const other=event.target.closest('[data-rp-transfer-plan]');if(other)void openRpTransfer(Number(other.dataset.rpTransferPlan)); }
   });
   document.getElementById("scheduleReviewEvents").addEventListener("keydown", (event) => {
     if (event.key!=="Enter" && event.key!==" ") return;
     const item=event.target.closest('[data-own-plan-id]');
-    if (!item) return;
+    const other=event.target.closest('[data-rp-transfer-plan]');
+    if (!item&&!other) return;
     event.preventDefault();
-    openReviewPlanEdit(Number(item.dataset.ownPlanId));
+    if(item)openReviewPlanEdit(Number(item.dataset.ownPlanId));
+    else void openRpTransfer(Number(other.dataset.rpTransferPlan));
   });
   document.getElementById("reviewEditClose").addEventListener("click", closeReviewPlanEdit);
   document.getElementById("reviewEditCancel").addEventListener("click", closeReviewPlanEdit);
@@ -6472,6 +6509,14 @@ function wireActions() {
     if (event.target.id === "scheduleReviewEditOverlay") closeReviewPlanEdit();
   });
   document.getElementById("scheduleReviewEditForm").addEventListener("submit", saveReviewPlanEdit);
+  document.getElementById('reviewOwnTempRpTransfer').addEventListener('click',()=>{
+    const id=Number(document.getElementById('scheduleReviewEditOverlay').dataset.planId);
+    closeReviewPlanEdit();void openRpTransfer(id);
+  });
+  document.getElementById('rpTransferCancel').addEventListener('click',closeRpTransfer);
+  document.getElementById('rpTransferOverlay').addEventListener('click',e=>{if(e.target.id==='rpTransferOverlay')closeRpTransfer();});
+  document.getElementById('rpTransferPerson').addEventListener('change',()=>void refreshRpTransferPrograms());
+  document.getElementById('rpTransferForm').addEventListener('submit',submitRpTransfer);
 
   document.getElementById("schedulePlanRegisterButton").addEventListener(
     "click",
@@ -8431,6 +8476,9 @@ async function loadPortalProfile() {
     const data = await portalFetch("/api/me");
     state.isDeveloper = Boolean(data.developer);
     state.isRepresentative = Boolean(data.representative);
+    state.canTempRpTransfer = Boolean(data.can_temporarily_move_rp);
+    document.getElementById("rpTempMoveHint").hidden = !state.canTempRpTransfer;
+    document.getElementById("reviewOwnTempRpTransfer").hidden = !state.canTempRpTransfer;
     state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
     state.canManageMeetings = Boolean(data.can_manage_meetings);
     document.getElementById("representativeDashboardEntry").hidden = !(state.isRepresentative || state.isDeveloper);
@@ -9579,7 +9627,7 @@ async function loadScheduleReview() {
     // v50: RP関連予定はD1/シートから削除せず、予定確認だけから除外。
     // 元データはRP調整（週間表）の候補として保持される。
     state.calendar.reviewPlans = (Array.isArray(data.plans) ? data.plans : []).filter(plan =>
-      !/(?:RP|ロープレ)/i.test([plan.title,plan.task_type,plan.memo].filter(Boolean).join(' '))
+      !plan.rp_manual_id && !/(?:RP|ロープレ)/i.test([plan.title,plan.task_type,plan.memo].filter(Boolean).join(' '))
     );
     const note=document.getElementById('reviewSheetStatus');
     if(note){const s=data.sheetSync||{};note.className='review-sheet-status'+(s.ok===false?' is-warning':'');
@@ -9811,13 +9859,14 @@ function renderScheduleReviewEvents(range) {
       "";
     const isMine = String(plan.user_email || "").toLowerCase() ===
       String(state.user?.email || "").toLowerCase();
+    const canTransfer=Boolean(state.canTempRpTransfer);
     const ownAttrs = isMine
       ? ` data-own-plan-id="${Number(plan.id)}" role="button" tabindex="0" aria-label="${escapeHtml(`${displayName} の予定を編集`)}"`
-      : '';
+      : canTransfer ? ` data-rp-transfer-plan="${Number(plan.id)}" role="button" tabindex="0" aria-label="${escapeHtml(`${displayName} の予定をRPへ写す`)}"` : '';
 
     return `
       <div
-        class="schedule-review-event${isMine ? ' is-own-plan' : ''}"${ownAttrs}
+        class="schedule-review-event${isMine ? ' is-own-plan' : ''}${(!isMine&&state.canTempRpTransfer)?' is-temp-rp-transfer':''}"${ownAttrs}
         style="
           left:${left}px;
           top:${top}px;
@@ -9836,6 +9885,66 @@ function renderScheduleReviewEvents(range) {
   }).join("");
 }
 
+
+// v52: One-person, time-bounded manual copy of any existing calendar row to RP.
+// A separate D1 mapping marks RP display; original calendar and Sheets A-E remain untouched.
+let rpTransferRoster=[],rpTransferCurrentId=0,rpTransferCurrentPlan=null;
+function closeRpTransfer(){document.getElementById('rpTransferOverlay').hidden=true;rpTransferCurrentId=0;rpTransferCurrentPlan=null;}
+async function refreshRpTransferPrograms(){
+  const who=document.getElementById('rpTransferPerson').value;
+  const person=rpTransferRoster.find(x=>x.email===who);
+  const prog=document.getElementById('rpTransferProgram');
+  prog.innerHTML='<option value="">RP設定を取得しています…</option>';
+  if(!person)return;
+  const region=person.group_name==='関西'?'kansai':'kanto';
+  try{
+    const data=await portalFetch('/api/rp/programs?region='+region);
+    prog.innerHTML='<option value="">RPの種類を選択</option>'+(data.programs||[]).map(p=>`<option value="${Number(p.id)}">${escapeHtml(p.title)}</option>`).join('');
+    document.getElementById('rpTransferError').textContent=(data.programs||[]).length?'':'代表画面でこの地域のRP設定を登録してください。';
+  }catch(e){prog.innerHTML='<option value="">取得失敗</option>';document.getElementById('rpTransferError').textContent=e.message||'RP設定が取得できません';}
+}
+async function openRpTransfer(planId,sourceCandidate=null){
+  if(!state.canTempRpTransfer){showToast('この機能は一時的に許可したログイン者だけが利用できます');return;}
+  const plan=sourceCandidate||(state.calendar.reviewPlans||[]).find(x=>Number(x.id)===Number(planId));
+  if(!plan){showToast('元の予定を読み込めません。更新してください');return;}
+  rpTransferCurrentId=planId;rpTransferCurrentPlan=plan;
+  const o=document.getElementById('rpTransferOverlay');o.hidden=false;
+  const isUnknown=String(plan.user_email||'').startsWith('sheet:unknown:');
+  document.getElementById('rpTransferSource').textContent=`${plan.user_name||'氏名未確定'}｜${tokyoDateFromIso(plan.starts_at)} ${formatTokyoClock(new Date(plan.starts_at))}～${formatTokyoClock(new Date(plan.ends_at))}｜${plan.title||''}`;
+  document.getElementById('rpTransferError').textContent=isUnknown?'この行は氏名を確定できていません。元シートを確認し、正しい対象者を選択してください。':'';
+  const sel=document.getElementById('rpTransferPerson');sel.disabled=true;
+  sel.innerHTML='<option value="">名簿を読み込んでいます…</option>';
+  try{
+    const data=await portalFetch('/api/roster');
+    rpTransferRoster=(data.roster||[]).filter(x=>x.enabled!==0 && ['関東','関西'].includes(x.group_name)).map(x=>({email:String(x.email||'').toLowerCase(),name:x.name,group_name:x.group_name}));
+    sel.innerHTML='<option value="">対象者を選択してください</option>'+rpTransferRoster.map(p=>`<option value="${escapeHtml(p.email)}">${escapeHtml(p.name)}（${escapeHtml(p.group_name)}）</option>`).join('');
+    const owner=String(plan.user_email||'').toLowerCase();
+    if(!isUnknown&&rpTransferRoster.some(x=>x.email===owner)){sel.value=owner;sel.disabled=true;}
+    else sel.disabled=false;
+    document.getElementById('rpTransferRole').value=/担当可能|RP担当|講師|対応可/i.test([plan.title,plan.memo].join(' '))?'trainer':'trainee';
+    await refreshRpTransferPrograms();
+  }catch(e){document.getElementById('rpTransferError').textContent=e.message||'名簿を取得できません';}
+}
+async function submitRpTransfer(e){
+  e.preventDefault();
+  if(!state.canTempRpTransfer||!rpTransferCurrentId)return;
+  const b=document.getElementById('rpTransferSubmit');b.disabled=true;
+  try{
+    const body={plan_id:rpTransferCurrentId,person_email:document.getElementById('rpTransferPerson').value,
+      program_id:Number(document.getElementById('rpTransferProgram').value),role:document.getElementById('rpTransferRole').value};
+    if(!body.person_email||!body.program_id)throw new Error('対象者とRPの種類を選んでください');
+    await portalFetch('/api/rp/manual-move',{method:'POST',body});
+    closeRpTransfer();await loadScheduleReview();
+    showToast('RP調整へ写しました。未確定の赤い候補として表示されます');
+  }catch(e){document.getElementById('rpTransferError').textContent=e.message||'RPに写せませんでした';}
+  finally{b.disabled=false;}
+}
+async function revertRpTransfer(id){
+  if(!state.canTempRpTransfer||!Number.isSafeInteger(id)||id<1)return;
+  if(!confirm('このRP候補を通常の予定確認へ戻しますか？元の予定・スプシは変更しません。'))return;
+  try{await portalFetch('/api/rp/manual-unmove',{method:'POST',body:{plan_id:id}});showToast('通常の予定確認へ戻しました');await rpWeekLoad();}
+  catch(e){showToast(e.message||'元に戻せませんでした');}
+}
 
 // v42: 所有者以外の予定はクリック不可。編集権限はWorker側でも検査。
 function closeReviewPlanEdit() {
@@ -11437,7 +11546,7 @@ function rpWeekDrawEvents(range){
     if(fullyAssigned)continue;
     items.push({starts_at:p.starts_at,ends_at:p.ends_at,user_email:p.user_email,
       label:p.user_name||p.user_email, text:(p.title||p.task_type||'RP')+(p.role==='review'?'（役割確認待ち）':''),
-      status:'pending',tooltip:`未確定｜${p.user_name||''}｜${p.title||''}｜${p.role==='review'?'役割確認待ち':p.role==='trainer'?'担当側の候補':'受講側の候補'}`});
+      status:'pending',manual_plan_id:Number(p.manual_plan_id||0),source_plan_id:Number(p.id||0),tooltip:`未確定｜${p.user_name||''}｜${p.title||''}｜${p.role==='review'?'役割確認待ち':p.role==='trainer'?'担当側の候補':'受講側の候補'}`});
   }
   for(const a of rpWeekAssignments){
     items.push({starts_at:a.starts_at,ends_at:a.ends_at,
@@ -11463,7 +11572,7 @@ function rpWeekDrawEvents(range){
     const top=58+(start-540)/60*56;
     const height=Math.max(18,(end-start)/60*56);
     const cls=p.status==='confirmed'?'rp-event-confirmed':'rp-event-pending';
-    return `<div class="schedule-review-event ${cls}" style="left:${left}px;top:${top}px;width:${width}px;height:${height}px" title="${escapeHtml(p.tooltip)}" aria-label="${escapeHtml(p.tooltip)}"><div><span class="schedule-review-event-name">${escapeHtml(p.label)}</span><span class="schedule-review-event-title">${escapeHtml(p.text)}</span>${p.trainer?`<span class="rp-week-assigned-name">担当：${escapeHtml(p.trainer)}</span>`:''}</div></div>`;
+    return `<div class="schedule-review-event ${cls}" style="left:${left}px;top:${top}px;width:${width}px;height:${height}px" title="${escapeHtml(p.tooltip)}" aria-label="${escapeHtml(p.tooltip)}"><div><span class="schedule-review-event-name">${escapeHtml(p.label)}</span><span class="schedule-review-event-title">${escapeHtml(p.text)}</span>${p.trainer?`<span class="rp-week-assigned-name">担当：${escapeHtml(p.trainer)}</span>`:''}</div>${state.canTempRpTransfer && p.manual_plan_id ? `<button type="button" class="rp-temp-revert" data-rp-revert="${p.manual_plan_id}" title="元の予定確認へ戻す">戻す</button>` : state.canTempRpTransfer && p.source_plan_id ? `<button type="button" class="rp-temp-revert" data-rp-reclass="${p.source_plan_id}" title="RPの対象者と役割を手動設定">役割設定</button>` : ''}</div>`;
   }).join('');
   msg.textContent=placed.length?'':'この週のRP候補・確定済みRPはありません。';
 }
@@ -11534,6 +11643,10 @@ async function rpV50Approve(index,btn){
   }catch(e){showToast(e.message||'確定できませんでした。候補を更新してください');btn.disabled=false;}
 }
 document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('rpWeekEvents').addEventListener('click',e=>{
+    const b=e.target.closest('[data-rp-revert]');if(b){void revertRpTransfer(Number(b.dataset.rpRevert));return;}
+    const c=e.target.closest('[data-rp-reclass]');if(c){const plan=rpWeekCandidatePlans.find(x=>Number(x.id)===Number(c.dataset.rpReclass));if(plan)void openRpTransfer(Number(c.dataset.rpReclass),plan);}
+  });
   for(const [id,fn] of [['rpWeekPrev',()=>rpWeekShift(-1)],['rpWeekToday',()=>rpWeekShift(0)],
                         ['rpWeekNext',()=>rpWeekShift(1)],['rpWeekReload',()=>rpWeekLoad()]]){
     document.getElementById(id)?.addEventListener('click',fn);
