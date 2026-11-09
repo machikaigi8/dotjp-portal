@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
   <!-- dotjp-v54-rp-registration-meeting-auto-task -->
-  <!-- Version v55: 2026-11-09 Figma calendar layouts + universal home back -->
+  <!-- Version v56: 2026-11-09 recurring MTG optional place + per-occurrence editing -->
   <style>
 * {
   box-sizing: border-box;
@@ -4129,6 +4129,35 @@ display: flex; gap: 13px; align-items: baseline; margin: 16px 2px 10px;
 .mtg-form-footer button:disabled { opacity:.55; cursor:wait; }
 .mtg-manager-unavailable { margin:55px auto; padding:30px; border-radius:16px; background:#f2f6ff; max-width:760px; text-align:center; font-size:22px; line-height:1.6; }
 
+/* v56 MTG: repeated events can be created without a venue and edited separately. */
+.mtg-manager-tabs { display:flex; gap:12px; margin:-6px 0 14px; }
+.mtg-manager-tabs button { border:2px solid #afbfe5; border-radius:11px; background:#eef2ff; color:#24304b; font-size:19px; font-weight:750; padding:11px 20px; cursor:pointer; }
+.mtg-manager-tabs button.is-active { background:#3080ff; color:#fff; border-color:#3080ff; }
+#mtgManagerCreatePanel[hidden],#mtgManagerEditPanel[hidden],#mtgEditForm[hidden] {display:none!important;}
+.mtg-manager-form { max-height:475px; }
+.mtg-manager-edit-panel { height:495px; overflow-y:auto; padding:0 5px 10px; }
+.mtg-manager-edit-head { display:flex; align-items:center; gap:15px; justify-content:space-between; margin:0 0 12px; }
+.mtg-manager-edit-head p { font-size:17px; margin:0; line-height:1.5; }
+.mtg-manager-edit-head button,.mtg-manage-row button { background:#edf3ff; border:1px solid #9cb7e9; border-radius:9px; padding:9px 15px; color:#164c9e; font-size:17px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.mtg-manage-list { max-height:380px; overflow-y:auto; border:1px solid #d5ddec; border-radius:12px; }
+.mtg-manage-row { display:flex; align-items:center; justify-content:space-between; gap:15px; padding:12px 15px; border-bottom:1px solid #e0e7f4; }
+.mtg-manage-row:last-child { border-bottom:0; }
+.mtg-manage-info { min-width:0; overflow-wrap:anywhere; line-height:1.5; font-size:17px; }
+.mtg-manage-info strong { font-size:19px; }
+.mtg-manage-info small { display:block; color:#66718d; font-size:15px; }
+.mtg-edit-form { border:2px solid #8bb0e8; background:#f8faff; border-radius:12px; padding:15px; margin:12px 0 0; }
+.mtg-edit-form h3 { font-size:22px; margin:0 0 10px; }
+.mtg-edit-form .mtg-manager-grid { gap:10px 20px; }
+.mtg-edit-form .mtg-manager-grid label,.mtg-edit-form .mtg-tt-label { font-size:17px; }
+.mtg-edit-form .mtg-manager-grid input,.mtg-edit-form .mtg-manager-grid select { min-height:43px; font-size:18px; }
+.mtg-edit-form .mtg-tt-label { margin-top:12px; }
+.mtg-edit-form .mtg-tt-label textarea { height:90px; min-height:72px; font-size:18px; }
+.mtg-edit-note { font-size:15px; color:#65718b; margin:8px 0; }
+.mtg-edit-actions { display:flex; justify-content:flex-end; gap:10px; }
+.mtg-edit-actions button { padding:10px 21px; border:1px solid #96acd3; border-radius:9px; font-size:17px; cursor:pointer; background:#fff; }
+#mtgEditSave { color:#fff; background:#3080ff; border-color:#3080ff; font-weight:750; }
+.mtg-edit-actions button:disabled { opacity:.6; cursor:wait; }
+
 /* v39 MTG: participant selection / recurrence / event deletion */
 .mtg-audience-grid { margin-top:18px; }
 .mtg-custom-participants { background:#f7f9ff; border:2px solid #d8e3fa; border-radius:13px; padding:13px; margin-top:15px; }
@@ -4823,12 +4852,17 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="department-placeholder-panel mtg-staff-shell" aria-label="人事局のMTG登録">
             <div class="mtg-staff-header"><h2>MTG登録</h2><p>所属地域のMTGを登録できます。どのスタッフでも登録可能です。</p></div>
             <div id="mtgManagerUnavailable" class="mtg-manager-unavailable" hidden>登録用APIに接続できません。Workerを更新してください。</div>
+            <nav class="mtg-manager-tabs" aria-label="MTG管理メニュー">
+              <button type="button" id="mtgManagerCreateTab" class="is-active" aria-pressed="true">新規登録</button>
+              <button type="button" id="mtgManagerEditTab" aria-pressed="false">登録済みMTGを編集</button>
+            </nav>
+            <div id="mtgManagerCreatePanel">
             <form id="mtgManagerForm" class="mtg-manager-form" hidden>
               <div class="mtg-manager-grid">
                 <label>日付 <input id="mtgNewDate" type="date" required></label>
                 <label>項目 <input id="mtgNewTitle" type="text" maxlength="100" value="支部ミーティング" placeholder="支部ミーティング" required></label>
                 <label>開催方法 <select id="mtgNewMode"><option value="in_person">対面</option><option value="online">オンライン</option></select></label>
-                <label id="mtgPlaceField">場所（対面のみ） <input id="mtgNewPlace" type="text" maxlength="160" placeholder="＠会議室 IFs 西新宿" required></label>
+                <label id="mtgPlaceField">場所（対面・繰り返し時は任意） <input id="mtgNewPlace" type="text" maxlength="160" placeholder="会場が決まり次第、各回の編集から登録できます" required></label>
               </div>
               <div class="mtg-manager-grid mtg-audience-grid">
                 <label>参加者の範囲
@@ -4850,6 +4884,30 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <label class="mtg-tt-label">TT（タイムテーブル） <textarea id="mtgNewTimetable" maxlength="8000" rows="8" placeholder="13:00　開会&#10;13:10　報告&#10;14:00　議題" required></textarea></label>
               <div class="mtg-form-footer"><span id="mtgManagerRegionInfo">所属地域に登録されます</span><button id="mtgCreateButton" type="submit">MTGを登録</button></div>
             </form>
+            </div>
+            <section id="mtgManagerEditPanel" class="mtg-manager-edit-panel" hidden>
+              <div class="mtg-manager-edit-head">
+                <p>登録済みのMTGは<strong>1回ずつ</strong>変更できます。繰り返しの他の日程には影響しません。</p>
+                <button type="button" id="mtgManageRefresh">一覧更新</button>
+              </div>
+              <div id="mtgManageList" class="mtg-manage-list" aria-live="polite"></div>
+              <form id="mtgEditForm" class="mtg-edit-form" hidden>
+                <h3 id="mtgEditHeading">MTGを個別に編集</h3>
+                <input type="hidden" id="mtgEditId">
+                <div class="mtg-manager-grid">
+                  <label>日付 <input id="mtgEditDate" type="date" required></label>
+                  <label>項目 <input id="mtgEditTitle" type="text" maxlength="100" required></label>
+                  <label>開催方法 <select id="mtgEditMode"><option value="in_person">対面</option><option value="online">オンライン</option></select></label>
+                  <label id="mtgEditPlaceField">場所（未定の場合は空欄可） <input id="mtgEditPlace" type="text" maxlength="160" placeholder="会場未定"></label>
+                </div>
+                <label class="mtg-tt-label">TT（タイムテーブル）<textarea id="mtgEditTimetable" maxlength="8000" rows="4" required></textarea></label>
+                <p class="mtg-edit-note">この回のみ変更します。参加対象者と既存の出欠回答は引き継ぎます。</p>
+                <div class="mtg-edit-actions">
+                  <button type="button" id="mtgEditCancel">キャンセル</button>
+                  <button type="submit" id="mtgEditSave">このMTGを保存</button>
+                </div>
+              </form>
+            </section>
           </div>
         </section>
         <!-- Figma 2026-11-05: プログラム / white placeholder -->
@@ -5942,6 +6000,10 @@ const state = {
   meetingNoteDrafts: {},
   meetingLoadingId: 0,
   meetingSaving: false,
+  mtgManagerTab: 'create',
+  mtgManagedMeetings: [],
+  mtgManageLoadSequence: 0,
+  mtgEditSaving: false,
   roster: [],
   clientBusiness: {won:[],deals:[],region:"",loadingSeq:0,editing:null},
   officeExpenses: {rows:[],canReview:false,loadingSeq:0},
@@ -6409,6 +6471,16 @@ function wireActions() {
     document.getElementById('mtgAudienceCount').textContent=state.meetingParticipantEmails.size+'名選択中';
   });
   document.getElementById('mtgManagerForm').addEventListener('submit', createMeeting);
+  document.getElementById('mtgManagerCreateTab').addEventListener('click', () => setMtgManagerTab('create'));
+  document.getElementById('mtgManagerEditTab').addEventListener('click', () => setMtgManagerTab('edit'));
+  document.getElementById('mtgManageRefresh').addEventListener('click', () => void loadManagedMeetings());
+  document.getElementById('mtgManageList').addEventListener('click', event => {
+    const button=event.target.closest('[data-mtg-open-edit]');
+    if(button)openMtgEdit(Number(button.dataset.mtgOpenEdit));
+  });
+  document.getElementById('mtgEditMode').addEventListener('change', updateMtgEditModeField);
+  document.getElementById('mtgEditCancel').addEventListener('click', closeMtgEdit);
+  document.getElementById('mtgEditForm').addEventListener('submit', saveMtgEdit);
   document.querySelectorAll("[data-route]").forEach((element) => {
     element.addEventListener("click", () => {
       if (element.dataset.postSource) {
@@ -10980,6 +11052,109 @@ function escapeHtml(value) {
 
 
 /* MTG: 全スタッフが登録可能。参加対象者と繰り返しはWorkerでも検証する。 */
+function setMtgManagerTab(which){
+  const tab=which==='edit'?'edit':'create';
+  state.mtgManagerTab=tab;
+  const create=tab==='create';
+  document.getElementById('mtgManagerCreatePanel').hidden=!create;
+  document.getElementById('mtgManagerEditPanel').hidden=create;
+  document.getElementById('mtgManagerCreateTab').classList.toggle('is-active',create);
+  document.getElementById('mtgManagerEditTab').classList.toggle('is-active',!create);
+  document.getElementById('mtgManagerCreateTab').setAttribute('aria-pressed',String(create));
+  document.getElementById('mtgManagerEditTab').setAttribute('aria-pressed',String(!create));
+  if(!create)void loadManagedMeetings();
+}
+async function loadManagedMeetings(){
+  const seq=++state.mtgManageLoadSequence;
+  const root=document.getElementById('mtgManageList');
+  root.innerHTML='<div class="mtg-empty">登録済みMTGを読み込んでいます…</div>';
+  try{
+    // mine=1 はサーバー側でも作成者メールアドレスで絞る。
+    const data=await portalFetch('/api/meetings?mine=1');
+    if(seq!==state.mtgManageLoadSequence)return;
+    state.mtgManagedMeetings=Array.isArray(data.meetings)?data.meetings:[];
+    renderManagedMeetings();
+  }catch(error){
+    if(seq!==state.mtgManageLoadSequence)return;
+    root.innerHTML='<div class="mtg-empty">'+escapeHtml(error.message||'MTGの一覧を取得できませんでした')+'</div>';
+  }
+}
+function renderManagedMeetings(){
+  const root=document.getElementById('mtgManageList');
+  if(!state.mtgManagedMeetings.length){
+    root.innerHTML='<div class="mtg-empty">まだ登録したMTGはありません。</div>';
+    return;
+  }
+  root.innerHTML=state.mtgManagedMeetings.map(m=>{
+    const id=Number(m.id);
+    const place=m.mode==='online'?'オンライン':String(m.place||'').trim()||'場所未定';
+    return `<div class="mtg-manage-row">
+      <div class="mtg-manage-info"><strong>${escapeHtml(meetingFormatDate(m.date))}　${escapeHtml(m.title)}</strong>
+      <div>${escapeHtml(place)}</div>
+      <small>${Number(m.series_count)>1?'繰り返しMTGのうち、この回だけ編集可能':'単独のMTG'} ・ ${m.audience==='custom'?'対象者指定':'全員対象'}</small></div>
+      <button type="button" data-mtg-open-edit="${id}">この回を編集</button>
+    </div>`;
+  }).join('');
+}
+function openMtgEdit(id){
+  const m=state.mtgManagedMeetings.find(row=>Number(row.id)===id);
+  if(!m||!m.can_delete)return;
+  document.getElementById('mtgEditId').value=String(id);
+  document.getElementById('mtgEditHeading').textContent=meetingFormatDate(m.date)+' のMTGを編集';
+  document.getElementById('mtgEditDate').value=m.date||'';
+  document.getElementById('mtgEditTitle').value=m.title||'';
+  document.getElementById('mtgEditMode').value=m.mode==='online'?'online':'in_person';
+  document.getElementById('mtgEditPlace').value=m.mode==='online'?'':m.place||'';
+  document.getElementById('mtgEditTimetable').value=m.timetable||'';
+  updateMtgEditModeField();
+  document.getElementById('mtgManageList').hidden=true;
+  document.querySelector('.mtg-manager-edit-head').hidden=true;
+  const form=document.getElementById('mtgEditForm');
+  form.hidden=false;
+  document.getElementById('mtgManagerEditPanel').scrollTop=0;
+}
+function updateMtgEditModeField(){
+  const online=document.getElementById('mtgEditMode').value==='online';
+  document.getElementById('mtgEditPlaceField').hidden=online;
+  document.getElementById('mtgEditPlace').required=false;
+}
+function closeMtgEdit(){
+  document.getElementById('mtgEditForm').hidden=true;
+  document.getElementById('mtgEditId').value='';
+  document.getElementById('mtgManageList').hidden=false;
+  document.querySelector('.mtg-manager-edit-head').hidden=false;
+  document.getElementById('mtgManagerEditPanel').scrollTop=0;
+}
+async function saveMtgEdit(event){
+  event.preventDefault();
+  if(state.mtgEditSaving)return;
+  const id=Number(document.getElementById('mtgEditId').value);
+  const mode=document.getElementById('mtgEditMode').value;
+  const body={
+    meeting_id:id,
+    date:document.getElementById('mtgEditDate').value,
+    title:document.getElementById('mtgEditTitle').value.trim(),
+    mode,
+    place:mode==='online'?'':document.getElementById('mtgEditPlace').value.trim(),
+    timetable:document.getElementById('mtgEditTimetable').value.trim()
+  };
+  if(!id||!body.date||!body.title||!body.timetable){
+    showToast('日付・項目・TTを入力してください');return;
+  }
+  const button=document.getElementById('mtgEditSave');
+  state.mtgEditSaving=true;
+  button.disabled=true;
+  try{
+    await portalFetch('/api/meetings/update',{method:'POST',body});
+    closeMtgEdit();
+    await loadManagedMeetings();
+    // 依頼出しのMTG出欠タスクはWorker側で内容と期限が同期される。
+    await refreshRemoteTasks();
+    refreshTaskUi();
+    showToast('この回のMTGを更新しました（他の日程は変更なし）');
+  }catch(error){showToast(error.message||'MTGを編集できませんでした');}
+  finally{state.mtgEditSaving=false;button.disabled=false;}
+}
 function meetingFormatDate(date) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(date || ''));
   if (!m) return String(date || '');
@@ -11000,11 +11175,13 @@ function setupMeetingManager(){
   updateMeetingModeField();
   updateMeetingAudienceField();
   updateMeetingRepeatField();
+  setMtgManagerTab(state.mtgManagerTab);
 }
 function updateMeetingModeField(){
   const online=document.getElementById('mtgNewMode').value==='online';
+  const repeating=document.getElementById('mtgNewRepeat').value!=='none';
   document.getElementById('mtgPlaceField').hidden=online;
-  document.getElementById('mtgNewPlace').required=!online;
+  document.getElementById('mtgNewPlace').required=!online && !repeating;
 }
 function updateMeetingAudienceField(){
   const custom=document.getElementById('mtgNewAudience').value==='custom';
@@ -11028,6 +11205,7 @@ function renderMeetingAudienceChoices(){
 }
 function updateMeetingRepeatField(){
   const repeat=document.getElementById('mtgNewRepeat').value;
+  updateMeetingModeField();
   const field=document.getElementById('mtgRepeatUntilField');
   const input=document.getElementById('mtgNewUntil');
   const active=repeat!=='none';
@@ -11062,8 +11240,8 @@ async function createMeeting(event){
     participants:audience==='custom'?[...state.meetingParticipantEmails]:[],
     recurrence:{frequency,until:frequency==='none'?'':document.getElementById('mtgNewUntil').value}
   };
-  if(!body.date || !body.title || (mode==='in_person'&&!body.place)||!body.timetable){
-    showToast('日付・項目・場所（対面のみ）・TTを入力してください');return;
+  if(!body.date || !body.title || (mode==='in_person' && frequency==='none' && !body.place)||!body.timetable){
+    showToast('日付・項目・TTと、繰り返さない対面MTGの場所を入力してください');return;
   }
   if(audience==='custom' && !body.participants.length){
     showToast('参加者を1人以上選択してください');return;
@@ -11077,6 +11255,7 @@ async function createMeeting(event){
     document.getElementById('mtgNewTimetable').value='';
     showToast((result.region==='kansai'?'関西':'関東')+'に'+Number(result.count||1)+'件のMTGを登録しました');
     if(state.region===result.region)state.meetings=[];
+    setMtgManagerTab('edit');
   }catch(error){showToast(error.message||'MTGを登録できませんでした');}
   finally{button.disabled=false;}
 }
@@ -11141,7 +11320,7 @@ function renderMeetings(){
       <div class="mtg-row" tabindex="0" role="button" aria-expanded="${open}" data-mtg-toggle="${id}">
         <div class="mtg-day">${escapeHtml(meetingFormatDate(meeting.date))}</div>
         <div class="mtg-topic"><div class="mtg-title">${escapeHtml(meeting.title)}</div>
-          <div class="mtg-place">${meeting.mode==='online'?'オンライン':'＠'+escapeHtml(meeting.place).replace(/^＠/,'')}</div>
+          <div class="mtg-place">${meeting.mode==='online'?'オンライン':meeting.place?'＠'+escapeHtml(meeting.place).replace(/^＠/,''):'場所未定'}</div>
           <span class="mtg-audience-tag">対象：${escapeHtml(audienceLabel)}</span></div>
         <div class="mtg-status-set">${statuses}</div>
         <div class="mtg-note-set"><input class="mtg-note" type="text" maxlength="1000" data-mtg-remark="${id}"
