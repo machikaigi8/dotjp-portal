@@ -5355,10 +5355,11 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <form id="rpTransferForm" class="rp-transfer-dialog" aria-labelledby="rpTransferTitle">
               <h2 id="rpTransferTitle">RP調整に予定を写す</h2>
               <p id="rpTransferSource">選択した予定</p>
-              <p style="font-size:15px;color:#60738f;margin:0">元のスプシ・通常の予定データは削除しません。RPでは未確定（赤）として表示され、代表の承認まで確定しません。</p>
+              <p style="font-size:15px;color:#60738f;margin:0">元のスプシ・通常の予定データは削除しません。希望日時は未確定（赤）で表示し、代表の承認後だけ確定します。</p>
               <label>対象者 <select id="rpTransferPerson" required></select></label>
-              <label>RPの種類 <select id="rpTransferProgram" required></select></label>
-              <label>本人の役割 <select id="rpTransferRole" required><option value="trainee">RPを受ける側（受講希望）</option><option value="trainer">RP担当側（対応可能）</option></select></label>
+              <p class="rp-transfer-simple-note">RP調整には希望者と日時だけを登録します。RPの種類と担当者は代表画面で設定します。</p>
+              <input id="rpTransferProgram" type="hidden" value="0">
+              <input id="rpTransferRole" type="hidden" value="trainee">
               <p id="rpTransferError" class="rp-transfer-error" role="status"></p>
               <div class="rp-transfer-actions"><button id="rpTransferCancel" type="button">戻る</button><button id="rpTransferSubmit" class="rp-transfer-confirm" type="submit">RP調整へ写す</button></div>
             </form>
@@ -5412,7 +5413,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button type="button" id="rpWeekNext">次の週 →</button>
             <button type="button" id="rpWeekReload">更新</button>
           </nav>
-          <div class="rp-week-legend" aria-label="RP予定の凡例">
+          <div class="rp-week-legend" aria-label="RP希望日時の凡例">
+            <strong>RP希望日</strong>
             <span><b class="pending"></b>未確定</span>
             <span><b class="confirmed"></b>確定済み（担当者名を表示）</span>
           </div>
@@ -5442,7 +5444,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <section class="screen screen-representative" data-screen="representative-dashboard">
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="representative-shell">
-            <header class="representative-head"><div><h1>代表画面｜RP設定</h1><p>RPの種類と担当者を登録します。日付の調整は「スケジュール管理 → RP調整」で行います。</p></div>
+            <header class="representative-head"><div><h1>代表画面｜RP設定・マッチング</h1><p>RPの種類・担当者を登録し、登録済みRPの「編集」から希望日時を照合して承認します。</p></div>
               <button type="button" id="repRefresh">更新</button></header>
             <nav class="rep-view-tabs" aria-label="代表画面の切り替え">
               <button type="button" id="repTabMtg" class="is-active">MTG候補日</button>
@@ -9891,18 +9893,11 @@ function renderScheduleReviewEvents(range) {
 let rpTransferRoster=[],rpTransferCurrentId=0,rpTransferCurrentPlan=null;
 function closeRpTransfer(){document.getElementById('rpTransferOverlay').hidden=true;rpTransferCurrentId=0;rpTransferCurrentPlan=null;}
 async function refreshRpTransferPrograms(){
-  const who=document.getElementById('rpTransferPerson').value;
-  const person=rpTransferRoster.find(x=>x.email===who);
-  const prog=document.getElementById('rpTransferProgram');
-  prog.innerHTML='<option value="">RP設定を取得しています…</option>';
-  if(!person)return;
-  const region=person.group_name==='関西'?'kansai':'kanto';
-  try{
-    const data=await portalFetch('/api/rp/programs?region='+region);
-    prog.innerHTML='<option value="">RPの種類を選択</option>'+(data.programs||[]).map(p=>`<option value="${Number(p.id)}">${escapeHtml(p.title)}</option>`).join('');
-    document.getElementById('rpTransferError').textContent=(data.programs||[]).length?'':'代表画面でこの地域のRP設定を登録してください。';
-  }catch(e){prog.innerHTML='<option value="">取得失敗</option>';document.getElementById('rpTransferError').textContent=e.message||'RP設定が取得できません';}
+  // RP候補には種類を付けない。代表画面で種類・担当者を設定する。
+  const el=document.getElementById('rpTransferProgram');
+  if(el)el.value='0';
 }
+
 async function openRpTransfer(planId,sourceCandidate=null){
   if(!state.canTempRpTransfer){showToast('この機能は一時的に許可したログイン者だけが利用できます');return;}
   const plan=sourceCandidate||(state.calendar.reviewPlans||[]).find(x=>Number(x.id)===Number(planId));
@@ -9921,7 +9916,7 @@ async function openRpTransfer(planId,sourceCandidate=null){
     const owner=String(plan.user_email||'').toLowerCase();
     if(!isUnknown&&rpTransferRoster.some(x=>x.email===owner)){sel.value=owner;sel.disabled=true;}
     else sel.disabled=false;
-    document.getElementById('rpTransferRole').value=/担当可能|RP担当|講師|対応可/i.test([plan.title,plan.memo].join(' '))?'trainer':'trainee';
+    document.getElementById('rpTransferRole').value=/担当可能|RP担当|講師|対応可|RP可能/i.test([plan.title,plan.task_type,plan.memo].join(' '))?'trainer':'trainee';
     await refreshRpTransferPrograms();
   }catch(e){document.getElementById('rpTransferError').textContent=e.message||'名簿を取得できません';}
 }
@@ -9930,9 +9925,8 @@ async function submitRpTransfer(e){
   if(!state.canTempRpTransfer||!rpTransferCurrentId)return;
   const b=document.getElementById('rpTransferSubmit');b.disabled=true;
   try{
-    const body={plan_id:rpTransferCurrentId,person_email:document.getElementById('rpTransferPerson').value,
-      program_id:Number(document.getElementById('rpTransferProgram').value),role:document.getElementById('rpTransferRole').value};
-    if(!body.person_email||!body.program_id)throw new Error('対象者とRPの種類を選んでください');
+    const body={plan_id:rpTransferCurrentId,person_email:document.getElementById('rpTransferPerson').value};
+    if(!body.person_email)throw new Error('予定の対象者を選んでください');
     await portalFetch('/api/rp/manual-move',{method:'POST',body});
     closeRpTransfer();await loadScheduleReview();
     showToast('RP調整へ写しました。未確定の赤い候補として表示されます');
@@ -11545,8 +11539,8 @@ function rpWeekDrawEvents(range){
       Date.parse(a.starts_at)<=Date.parse(p.starts_at)&&Date.parse(a.ends_at)>=Date.parse(p.ends_at));
     if(fullyAssigned)continue;
     items.push({starts_at:p.starts_at,ends_at:p.ends_at,user_email:p.user_email,
-      label:p.user_name||p.user_email, text:(p.title||p.task_type||'RP')+(p.role==='review'?'（役割確認待ち）':''),
-      status:'pending',manual_plan_id:Number(p.manual_plan_id||0),source_plan_id:Number(p.id||0),tooltip:`未確定｜${p.user_name||''}｜${p.title||''}｜${p.role==='review'?'役割確認待ち':p.role==='trainer'?'担当側の候補':'受講側の候補'}`});
+      label:p.user_name||p.user_email, text:p.role==='trainer'?'RP対応可能':'ロープレ希望',
+      status:'pending',manual_plan_id:Number(p.manual_plan_id||0),source_plan_id:Number(p.id||0),tooltip:`未確定｜${p.user_name||''}｜${p.role==='trainer'?'RP対応可能':'ロープレ希望日時'}`});
   }
   for(const a of rpWeekAssignments){
     items.push({starts_at:a.starts_at,ends_at:a.ends_at,
