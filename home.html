@@ -1027,6 +1027,18 @@ button.file-choice-button {
   color: #777;
   font-size: 26px;
 }
+.task-retry-button {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 0.8em;
+  color: #fff;
+  background: #3080ff;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
 .start-task-item {
   width: 100%;
@@ -4492,7 +4504,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
             <div class="start-task-board">
               <div class="start-task-board-head">
-                <span>今週の未完了タスク</span>
+                <span>未完了タスク（過去の依頼も表示）</span>
               </div>
               <div id="startTaskList" class="start-task-list"></div>
             </div>
@@ -5654,6 +5666,7 @@ const state = {
   regionWorkSessions: null,
   hpRequests: [],
   remoteTasks: [],
+  remoteTasksError: '',
   postCards: [],
   postCardIndex: 0,
   managedTaskRows: [],
@@ -6138,6 +6151,7 @@ function wireActions() {
       sessionStorage.setItem("dotjp_region", state.region);
       updateRegion();
       state.remoteTasks = [];
+      state.remoteTasksError = '';
       state.calendar.reviewPlans = [];
       state.regionWorkSessions = null;
       refreshTaskUi();
@@ -6185,6 +6199,10 @@ function wireActions() {
   document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
   // ホームの未完了タスクは、行全体を押すと指定された作業先へ遷移する。
   document.getElementById("unfinishedTasks").addEventListener("click", (event) => {
+    if (event.target.closest('[data-retry-tasks]')) {
+      void refreshRemoteTasks().then(refreshTaskUi);
+      return;
+    }
     const row = event.target.closest("[data-open-request-task]");
     if (!row) return;
     openUnfinishedRequestFromHome(row.dataset.openRequestTask);
@@ -6717,9 +6735,12 @@ function currentWeekTasks() {
   const { start, end } = weekBounds();
 
   const local = loadTasks().filter((task) => {
-    const created = new Date(task.createdAt);
-    const dataRegion = state.preferredRegion || task.region || 'kanto';
-    return created >= start && created < end && dataRegion === state.region;
+    const dataRegion = task.region || state.preferredRegion || 'kanto';
+    if (dataRegion !== state.region) return false;
+    // 過去に作成された未完了タスクも保持する。完了タスクだけ表示週で絞る。
+    if (!task.completedAt) return true;
+    const completedAt = new Date(task.completedAt);
+    return completedAt >= start && completedAt < end;
   });
 
   return [...state.remoteTasks, ...local]
@@ -6773,7 +6794,7 @@ function renderPresetTasks() {
 
 function renderStartTasks() {
   const week = weekLabel();
-  document.getElementById("startWeekLabel").textContent = week;
+  document.getElementById("startWeekLabel").textContent = `${week}／過去の未完了依頼も表示`;
 
   const tasks = currentWeekTasks().filter((task) => !task.completedAt);
   const list = document.getElementById("startTaskList");
@@ -6784,7 +6805,12 @@ function renderStartTasks() {
   }
 
   if (!tasks.length) {
-    list.innerHTML = '<div class="start-task-empty">今週の未完了タスクはありません。</div>';
+    list.innerHTML = state.remoteTasksError
+      ? '<div class="start-task-empty" role="alert">依頼の取得に失敗しました。<button type="button" class="task-retry-button" data-retry-tasks>再取得</button></div>'
+      : '<div class="start-task-empty">未完了の依頼・タスクはありません。</div>';
+    list.querySelector('[data-retry-tasks]')?.addEventListener('click', () => {
+      void refreshRemoteTasks().then(refreshTaskUi);
+    });
   } else {
     list.innerHTML = tasks.map((task) => startTaskItemHtml(task)).join("");
     list.querySelectorAll("[data-select-task]").forEach((button) => {
@@ -6965,9 +6991,13 @@ function renderHomeTaskLists() {
     .filter((task) => task.completedAt)
     .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
 
-  document.getElementById("unfinishedWeekLabel").textContent = weekLabel();
+  document.getElementById("unfinishedWeekLabel").textContent = state.remoteTasksError
+    ? '全期間の未完了依頼／取得エラー' : '未完了の依頼は全期間表示';
   document.getElementById("finishedWeekLabel").textContent = weekLabel();
-  document.getElementById("unfinishedTasks").innerHTML = taskSummaryHtml(unfinished, activeId, true);
+  document.getElementById("unfinishedTasks").innerHTML =
+    (state.remoteTasksError && !state.remoteTasks.length && !unfinished.length)
+      ? '<div class="summary-empty" role="alert">依頼の取得に失敗しました <button type="button" class="task-retry-button" data-retry-tasks>再取得</button></div>'
+      : taskSummaryHtml(unfinished, activeId, true);
   document.getElementById("finishedTasks").innerHTML = taskSummaryHtml(finished, activeId, false);
 }
 
@@ -8197,7 +8227,7 @@ async function sendPostCards() {
     await refreshRemoteTasks();
     refreshTaskUi();
 
-    showToast(`${result.created || cards.length}件の依頼を投函しました`);
+    showToast(`${result.created || cards.length}件の依頼を投函しました。宛先の未完了タスクに反映されます`);
     showScreen("home");
   } catch (error) {
     showToast(error.message || "依頼を送信できませんでした");
@@ -8762,9 +8792,13 @@ async function refreshRemoteTasks() {
       targetLabel: task.target_label || '',
       region: task.region
     }));
+    state.remoteTasksError = '';
   } catch (error) {
     console.warn("remote tasks unavailable", error);
-    if (requestedRegion === state.region) state.remoteTasks = [];
+    if (requestedRegion === state.region) {
+      // 通信障害を「タスクなし」と誤表示しない。前回表示したタスクも保持する。
+      state.remoteTasksError = String(error?.message || '依頼を取得できませんでした');
+    }
   }
 }
 
