@@ -5354,6 +5354,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   font:600 24px/44px Inter,'Noto Sans JP',sans-serif;text-align:center;cursor:pointer;
   z-index:3;
 }
+.screen-home .line-unlink-entry {position:absolute;right:16px;top:12px;border:0;background:transparent;color:#2254a2;text-decoration:underline;font:400 13px/1.4 Inter,'Noto Sans JP',sans-serif;cursor:pointer;z-index:3;}
+.screen-home .line-unlink-entry[hidden]{display:none!important;}
 .line-settings-overlay { position:absolute;inset:0;background:rgba(14,24,39,.68);z-index:18000;display:flex;align-items:center;justify-content:center; }
 .line-settings-overlay[hidden] { display:none !important; }
 .line-settings-panel { width:840px;max-height:880px;overflow-y:auto;padding:28px 35px;background:white;border:5px solid #276cdb;border-radius:16px;box-shadow:0 12px 38px #182e4b55;color:#172232;font-size:20px;line-height:1.5; }
@@ -5473,6 +5475,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <section class="links-panel">
             <h2>リンク集</h2>
             <button type="button" id="lineSettingsOpen" class="line-settings-entry">LINE連携</button>
+            <button type="button" id="lineUnlinkEntry" class="line-unlink-entry" hidden>LINE連携を解除する</button>
             <div class="links-grid">
               <a class="green-menu" href="https://docs.google.com/spreadsheets/d/1isxF8Tmc6FnSVq0IhrcoHMxO6CbnBqD4mrqGBsEWiJg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">経営管理シート</a>
               <a class="green-menu" href="https://docs.google.com/spreadsheets/d/1Tgw7UTuS1HPIt1_vaRi8em5atPb1QQW_sokdY9AH7DE/edit?usp=sharing" target="_blank" rel="noopener noreferrer">経費発生報告</a>
@@ -5487,12 +5490,13 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <p>毎朝8:30に今日のタスク予定を時刻順で配信（@All）。日曜8:30の未登録者メンションは、個人のLINE連携後に別途有効化できます。</p>
               <div id="lineLinkStatus" class="line-link-status" role="status">連携状況を確認中…</div>
               <div id="lineLoginSetupNotice" class="line-link-status" role="status" hidden></div>
+              <p>【本人連携】①「行動量報告／タスク時間報告」を友だち追加 ②公式LINEのトーク下部「ポータル連携」をタップ ③届いた個別リンクを開き、Google認証で完了。友だち登録済みの人も同じ手順です。専用のLINEログインチャネルは不要です。</p>
               <div class="line-row">
-                <button type="button" id="lineLinkStart">LINEアカウントを連携</button>
+                <button type="button" id="lineLinkStart">公式LINEを開く・友だち追加</button>
                 <button type="button" id="lineLinkDisconnect" class="secondary" hidden>連携解除</button>
-                <button type="button" id="lineLinkRefresh" class="secondary">更新</button>
+                <button type="button" id="lineLinkRefresh" class="secondary">連携状態を更新</button>
               </div>
-              <p>LINE公式アカウントへのメッセージ送信は不要です。LINEログインで本人確認します。連携完了後、ホームの「LINE連携」ボタンは自動的に非表示になります。</p>
+              <p>個人LINEのIDや電話番号を入力する必要はありません。トークに文字を送らずメニューをタップしてください。連携後はホームの「LINE連携」ボタンが非表示になります。連携解除はいつでも可能です。</p>
             </section>
           </div>
         </section>
@@ -6005,6 +6009,10 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <label class="line-check"><input type="checkbox" id="lineGroupConfirm">このグループのメンバーが通知内容を閲覧してよい関係者であることを確認しました。</label>
                 <div class="line-row"><button type="button" id="lineGroupSave">通知先グループを保存</button></div>
                 <div id="lineGroupStatus" class="line-link-status" role="status"></div>
+                <h3>LINE本人連携メニュー（初回だけ）</h3>
+                <p>「行動量報告／タスク時間報告」の公式LINEに「ポータル連携」ボタンを設置します。<strong>現在のLINE公式リッチメニューがある場合は置き換わる</strong>ため、確認してから実行してください。</p>
+                <div class="line-row"><button type="button" id="lineInstallLinkMenu" class="secondary">公式LINEに連携メニューを設置</button></div>
+                <div id="lineMenuStatus" class="line-link-status" role="status">未確認</div>
                 <h3>送信チェック（まずここを確認）</h3>
                 <p>送信されない場合、Cronの変更前に「接続診断」を押してください。Cloudflareのシークレット値自体は表示しません。</p>
                 <div class="line-row">
@@ -6642,6 +6650,16 @@ const WORKER = "https://dotjp-login.taka-souda516.workers.dev";
 const POST_AI_WORKER = "https://dotjp-post-ai.taka-souda516.workers.dev";
 const PORTAL_API_WORKER = "https://dotjp-portal-api.taka-souda516.workers.dev";
 
+// v72: LINE Messaging API の10分間トークンを、Googleログインへの遷移中も保持。
+try {
+  const lineUrl=new URL(location.href);
+  const pending=lineUrl.searchParams.get('line_link_token');
+  if(pending && /^[A-Za-z0-9_-]{16,256}$/.test(pending)){
+    sessionStorage.setItem('dotjp_line_pending_token',pending);
+    lineUrl.searchParams.delete('line_link_token');
+    history.replaceState(null,'',lineUrl.pathname+lineUrl.search+lineUrl.hash);
+  }
+}catch(error){console.warn('LINE link token preparation failed',error);}
 const state = {
   user: null,
   isDeveloper: false,
@@ -6846,6 +6864,9 @@ async function init() {
 
     updateRegion();
     startTimerLoop();
+    if(sessionStorage.getItem('dotjp_line_pending_token')){
+      void finishPendingLineLink();
+    }
     const lineResult = new URL(location.href).searchParams.get('line');
     const lineReason = new URL(location.href).searchParams.get('line_reason')||'';
     if(lineResult){
@@ -7116,9 +7137,11 @@ function enableClientFieldCopying() {
 
 function wireActions() {
   document.getElementById('lineSettingsOpen').addEventListener('click', () => void openLineSettings());
+  document.getElementById('lineUnlinkEntry').addEventListener('click', () => void openLineSettings());
   document.getElementById('lineSettingsClose').addEventListener('click', closeLineSettings);
   document.getElementById('lineSettingsOverlay').addEventListener('click', (e)=>{if(e.target.id==='lineSettingsOverlay')closeLineSettings();});
   document.getElementById('lineLinkStart').addEventListener('click', () => void startLineLink());
+  document.getElementById('lineInstallLinkMenu').addEventListener('click', () => void installLineLinkMenu());
   document.getElementById('lineLinkDisconnect').addEventListener('click', () => void unlinkLine());
   document.getElementById('lineLinkRefresh').addEventListener('click', () => void refreshLineSettings());
   document.getElementById('lineGroupSave').addEventListener('click', () => void saveLineGroup());
@@ -9482,16 +9505,18 @@ async function refreshLineSettings({quiet=false}={}){
     const data=await portalFetch('/api/line/status');
     // 通信失敗時は非表示にしない。連携完了がサーバーで確認できた場合だけ隠す。
     document.getElementById('lineSettingsOpen').hidden=Boolean(data.linked);
+    document.getElementById('lineUnlinkEntry').hidden=!Boolean(data.linked);
     box.textContent=data.linked?`LINE連携済み：${data.line_name||'LINEアカウント'}\n（ポータルのメールアドレスと紐づけ済み）`:'未連携：LINE連携すると、日曜のタスク時間未登録リマインドであなた宛てにメンションできます。';
     const notice=document.getElementById('lineLoginSetupNotice');
-    const loginReady=Boolean(data.login_ready);
-    notice.hidden=loginReady||Boolean(data.linked);
+    const ready=Boolean(data.link_ready);
+    notice.hidden=ready||Boolean(data.linked);
     if(!notice.hidden){
-      const missing=(Array.isArray(data.login_missing)?data.login_missing:[]).join(' / ');
-      notice.textContent='LINE個人連携の準備が未完了です。Messaging APIのアクセストークンとは別に、同じプロバイダーでLINEログインチャネル（Webアプリ）を作成し、Cloudflareのdotjp-portal-apiに LINE_LOGIN_CHANNEL_ID、LINE_LOGIN_CHANNEL_SECRET、LINE_LOGIN_REDIRECT_URI を設定してください。'+(missing?'\n未設定・不正な項目：'+missing:'')+'\nコールバックURL：https://dotjp-portal-api.taka-souda516.workers.dev/api/line/connect/callback\n他の支部員が使う前にLINEログインチャネルを「公開済み」にしてください。';
+      const missing=(Array.isArray(data.link_missing)?data.link_missing:[]).join(' / ');
+      notice.textContent='Messaging APIの設定が未完了です。Cloudflareのdotjp-portal-apiにLINE_CHANNEL_SECRETとLINE_CHANNEL_ACCESS_TOKENを登録してください。'+(missing?' 未設定：'+missing:'');
     }
-    document.getElementById('lineLinkStart').disabled=!loginReady;
-    document.getElementById('lineLinkStart').textContent=data.linked?'別のLINEアカウントに再連携':'LINEアカウントを連携';
+    document.getElementById('lineLinkStart').disabled=!ready || !data.official_account_url;
+    document.getElementById('lineLinkStart').textContent=data.linked?'公式LINEを開く':'公式LINEを開く・友だち追加';
+    window.dotjpLineOfficialUrl=data.official_account_url||'';
     document.getElementById('lineLinkDisconnect').hidden=!data.linked;
     area.hidden=!data.can_manage;
     if(data.can_manage){
@@ -9505,6 +9530,8 @@ async function refreshLineSettings({quiet=false}={}){
         picker.appendChild(option);
       }
       document.getElementById('lineGroupStatus').textContent=`通知先：${data.selected_group_id?'選択済み':'未設定'}\nLINE連携済み支部員：${data.linked_count??0}人\n毎朝8:30（@All）：${data.group_enabled?'ON':'OFF（Cloudflareで有効化が必要）'}\n日曜の未登録者メンション：${data.sunday_reminder_enabled?'ON':'OFF（後から有効化可能）'}`;
+      const menuStatus=document.getElementById('lineMenuStatus');
+      menuStatus.textContent=data.link_menu_installed?'「ポータル連携」メニューは設定済みです。':'連携用メニューは未設置です。初回だけ設定してください。';
       document.getElementById('lineGroupConfirm').checked=false;
     }
   }catch(error){
@@ -9516,18 +9543,39 @@ async function refreshLineSettings({quiet=false}={}){
     document.getElementById('lineGroupStatus').textContent=message;
   }
 }
-async function startLineLink(){
-  const button=document.getElementById('lineLinkStart');button.disabled=true;
+function startLineLink(){
+  const url=String(window.dotjpLineOfficialUrl||'');
+  if(!url.startsWith('https://line.me/')){
+    showToast('LINE公式アカウントのURLを取得できませんでした。API設定と接続を確認してください。');return;
+  }
+  window.open(url,'_blank','noopener,noreferrer');
+}
+async function finishPendingLineLink(){
+  const token=sessionStorage.getItem('dotjp_line_pending_token');
+  if(!token)return;
+  sessionStorage.removeItem('dotjp_line_pending_token');
   try{
-    const data=await portalFetch('/api/line/connect/start',{method:'POST',body:{}});
-    if(!data.authorization_url||!data.authorization_url.startsWith('https://access.line.me/'))throw new Error('LINEログイン用のURLが不正です');
-    location.assign(data.authorization_url);
+    const data=await portalFetch('/api/line/connect/complete',{method:'POST',body:{linkToken:token}});
+    const url=String(data.authorization_url||'');
+    if(!url.startsWith('https://access.line.me/dialog/bot/accountLink?'))throw new Error('連携URLが不正です');
+    location.assign(url);
   }catch(error){
-    const message='LINE連携を開始できません：'+(error.message||error);
+    const message='LINE連携を開始できません：'+(error.message||error)+'。公式LINEのメニューから10分以内にやり直してください。';
+    document.getElementById('lineSettingsOverlay').hidden=false;
     document.getElementById('lineLinkStatus').textContent=message;
     showToast(message);
-    button.disabled=false;
   }
+}
+async function installLineLinkMenu(){
+  if(!window.confirm('「行動量報告／タスク時間報告」の既存のリッチメニューを、ポータル連携用メニューに置き換えます。よろしいですか？'))return;
+  const button=document.getElementById('lineInstallLinkMenu'),status=document.getElementById('lineMenuStatus');
+  button.disabled=true;status.textContent='LINE公式アカウントのメニューを設定中…';
+  try{
+    const r=await portalFetch('/api/line/menu/install',{method:'POST',body:{confirmed:true}});
+    status.textContent=r.message||'メニューを設定しました。';
+    showToast('公式LINEのポータル連携メニューを設置しました');
+  }catch(error){status.textContent='設置に失敗：'+(error.message||error);showToast(status.textContent);}
+  finally{button.disabled=false;}
 }
 async function unlinkLine(){
   if(!window.confirm('LINE連携を解除しますか？今後あなたへのメンションは送られなくなります。'))return;
