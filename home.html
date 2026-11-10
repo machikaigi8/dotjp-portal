@@ -4833,7 +4833,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
 /* v58: ホームのタスクは1行1件・タイトルだけ。以前のカード/CSS上書きを解除。 */
 .screen-home .home-summary {
-  grid-template-columns: 500px 305px 264px !important;
+  /* Figma: 枠 x=100..1175、仕切り x=500/900。border 3px 分を内寸から調整 */
+  grid-template-columns: 397px 400px 272px !important;
 }
 .screen-home .home-summary .summary-cell {
   display: flex !important;
