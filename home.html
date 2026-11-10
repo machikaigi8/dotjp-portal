@@ -1,3 +1,4 @@
+<!-- v70: MTG直近順、RP転記モード撤去、LINE管理をHP編集へ移動・連携済みボタン非表示 -->
 <!-- v68: matching Workers_v41, sheet two-way sync and MTG times -->
 <!-- v67: staff+task sheet sync, MTG time and optional TT -->
 <!-- v66: sheet edit/delete reflection and review refresh without changing Figma layout -->
@@ -1517,6 +1518,25 @@ button.summary-task-row:hover {
 }
 
 /* HP編集 */
+
+/* v70: LINE管理はHP編集の独立タブ。表示は代表・開発者に限定。 */
+.screen-hp-edit .figma-hp-line { display:block;overflow-y:auto; }
+.screen-hp-edit .figma-hp-line[hidden] {display:none!important;}
+.screen-hp-edit .figma-hp-line-content { padding:22px 34px 34px;box-sizing:border-box;font-size:19px;line-height:1.55;color:#192b46; }
+.screen-hp-edit .figma-hp-line-admin h3 {font-size:27px;margin:6px 0 10px;}
+.screen-hp-edit .figma-hp-line-admin h3:not(:first-child) {margin-top:30px;border-top:2px solid #c9d7eb;padding-top:18px;}
+.screen-hp-edit .figma-hp-line-admin p {font-size:18px;line-height:1.55;margin:10px 0 18px;}
+.screen-hp-edit .figma-hp-line-admin label {font-size:20px;display:block;}
+.screen-hp-edit .figma-hp-line-admin select {width:100%;min-height:52px;margin:8px 0 14px;padding:9px 14px;font-size:19px;background:white;border:2px solid #7b96c3;border-radius:8px;}
+.screen-hp-edit .figma-hp-line-admin .line-check {display:flex;align-items:flex-start;gap:14px;line-height:1.45;}
+.screen-hp-edit .figma-hp-line-admin .line-check input {width:25px;height:25px;flex:none;margin-top:4px;}
+.screen-hp-edit .figma-hp-line-admin .line-row {display:flex;gap:12px;flex-wrap:wrap;margin:17px 0;}
+.screen-hp-edit .figma-hp-line-admin button {font-size:19px;border:2px solid #3069be;background:#3069d5;color:white;border-radius:8px;min-height:49px;padding:9px 18px;cursor:pointer;}
+.screen-hp-edit .figma-hp-line-admin button.secondary {background:#f2f6ff;color:#25579d;}
+.screen-hp-edit .figma-hp-line-admin button:disabled {opacity:.55;cursor:wait;}
+.screen-hp-edit .figma-hp-line-admin .line-link-status {background:#eff5ff;padding:14px 18px;white-space:pre-wrap;border-radius:8px;overflow-wrap:anywhere;}
+.screen-home #lineSettingsOpen[hidden] {display:none!important;}
+
 
 .hp-edit-panel,
 .screen-share-panel {
@@ -4645,23 +4665,6 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
 
 /* v52: Temporary personal-only RP transfer, no change to original schedule or Sheets. */
-.rp-transfer-note{position:absolute;right:52px;top:116px;font-size:14px;color:#3155a6;background:#e5efff;padding:7px 12px;border-radius:8px;z-index:5}
-.schedule-review-event.is-temp-rp-transfer{cursor:pointer;outline-offset:-3px}
-.schedule-review-event.is-temp-rp-transfer:hover{outline:3px solid #bd3e9c;z-index:10}
-.rp-transfer-overlay[hidden]{display:none!important}
-.rp-transfer-overlay{position:absolute;inset:0;background:rgba(20,23,50,.45);z-index:95;display:flex;justify-content:center;align-items:center;padding:24px;box-sizing:border-box}
-.rp-transfer-dialog{width:min(620px,100%);max-height:85vh;overflow:auto;background:#fff;box-shadow:0 20px 60px #15204c55;border-radius:16px;padding:22px 26px;display:grid;gap:13px;font-size:17px;color:#152149}
-.rp-transfer-dialog h2{font-size:26px;margin:0}
-.rp-transfer-dialog label{display:grid;gap:5px;font-weight:600}
-.rp-transfer-dialog select{height:45px;padding:6px 10px;border:1px solid #afbcd8;background:#fff;border-radius:8px;font-size:17px;width:100%}
-.rp-transfer-dialog button{cursor:pointer;border:1px solid #a8bde0;border-radius:8px;background:#f4f7ff;padding:10px 17px;font-size:17px}
-.rp-transfer-dialog .rp-transfer-confirm{background:#306ef2;color:#fff;font-weight:700}
-.rp-transfer-dialog .rp-transfer-actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap}
-.rp-transfer-dialog .rp-transfer-error{font-size:14px;color:#b03136;min-height:18px}
-.rp-transfer-actions button:disabled{opacity:.55;cursor:wait}
-#reviewOwnTempRpTransfer[hidden]{display:none!important}
-#reviewOwnTempRpTransfer{background:#e9f1ff;color:#164baa}
-.rp-week-board .rp-temp-revert{position:absolute;right:2px;bottom:2px;background:white;border:1px solid #a94152;color:#92222b;border-radius:4px;font-size:12px;cursor:pointer;z-index:10;padding:1px 3px}
 
 /* v54 / Figma 48:601・172:52 / RP登録と表示 */
 .schedule-hub-tabs{position:absolute;top:35px;left:242px;display:flex;gap:23px;z-index:10}
@@ -5488,25 +5491,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <button type="button" id="lineLinkDisconnect" class="secondary" hidden>連携解除</button>
                 <button type="button" id="lineLinkRefresh" class="secondary">更新</button>
               </div>
-              <p>LINE公式アカウントにメッセージを送る必要はありません。LINEログインで本人確認します。解除もいつでもできます。</p>
-              <section id="lineGroupAdmin" class="line-admin" hidden>
-                <h3>通知先LINEグループ（代表・デベロッパーのみ）</h3>
-                <p>LINE Developersで「グループへの参加を許可」をONにし、公式アカウントを通知先グループへ招待してください。候補が出ない場合は、グループに通常のメッセージを1通送ってから更新してください。</p>
-                <label for="lineGroupPicker">通知先を選択</label>
-                <select id="lineGroupPicker"><option value="">グループを読み込み中…</option></select>
-                <label class="line-check"><input type="checkbox" id="lineGroupConfirm">このグループのメンバーが通知内容を閲覧してよい関係者であることを確認しました。</label>
-                <div class="line-row"><button type="button" id="lineGroupSave">通知先グループを保存</button></div>
-                <div id="lineGroupStatus" class="line-link-status" role="status"></div>
-                <h3>送信チェック（まずここを確認）</h3>
-                <p>送信されない場合、Cronの変更前に「接続診断」を押してください。Cloudflareのシークレット値自体は表示しません。</p>
-                <div class="line-row">
-                  <button type="button" id="lineRunDiagnosis" class="secondary">接続診断</button>
-                  <button type="button" id="lineTestSend" class="secondary">@Allテスト送信</button>
-                  <button type="button" id="lineSendToday">今日の予定を今すぐ送信</button>
-                </div>
-                <div id="lineDiagnosisResult" class="line-link-status" role="status" aria-live="polite">まだ診断していません。</div>
-                <p>自動配信を開始するには、Cloudflareの <code>LINE_SCHEDULE_GROUP_ENABLED</code> を <code>true</code> にしてください。保存だけでは配信されません。</p>
-              </section>
+              <p>LINE公式アカウントへのメッセージ送信は不要です。LINEログインで本人確認します。連携完了後、ホームの「LINE連携」ボタンは自動的に非表示になります。</p>
             </section>
           </div>
         </section>
@@ -5987,6 +5972,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="figma-hp-topline">
             <button type="button" class="figma-hp-tab is-active" data-hp-tab="roster">関東・関西名簿</button>
             <button type="button" class="figma-hp-tab" data-hp-tab="requests">要望</button>
+            <button type="button" class="figma-hp-tab" data-hp-tab="line" hidden>LINE通知</button>
           </div>
           <section class="figma-hp-main" data-hp-view="roster">
             <div class="figma-hp-column" data-roster-column="関東">
@@ -6005,6 +5991,28 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <section class="figma-hp-main figma-hp-requests" data-hp-view="requests" hidden>
             <div class="figma-hp-request-list" id="figmaHpRequestsList">
               <p class="figma-hp-empty">読み込み中…</p>
+            </div>
+          </section>
+          <section class="figma-hp-main figma-hp-line" data-hp-view="line" hidden>
+            <div class="figma-hp-line-content">
+              <section id="lineGroupAdmin" class="line-admin figma-hp-line-admin" hidden>
+                <h3>通知先LINEグループ（代表・デベロッパーのみ）</h3>
+                <p>LINE Developersで「グループへの参加を許可」をONにし、公式アカウントを通知先グループへ招待してください。候補が出ない場合は、グループに通常のメッセージを1通送ってから更新してください。</p>
+                <label for="lineGroupPicker">通知先を選択</label>
+                <select id="lineGroupPicker"><option value="">グループを読み込み中…</option></select>
+                <label class="line-check"><input type="checkbox" id="lineGroupConfirm">このグループのメンバーが通知内容を閲覧してよい関係者であることを確認しました。</label>
+                <div class="line-row"><button type="button" id="lineGroupSave">通知先グループを保存</button></div>
+                <div id="lineGroupStatus" class="line-link-status" role="status"></div>
+                <h3>送信チェック（まずここを確認）</h3>
+                <p>送信されない場合、Cronの変更前に「接続診断」を押してください。Cloudflareのシークレット値自体は表示しません。</p>
+                <div class="line-row">
+                  <button type="button" id="lineRunDiagnosis" class="secondary">接続診断</button>
+                  <button type="button" id="lineTestSend" class="secondary">@Allテスト送信</button>
+                  <button type="button" id="lineSendToday">今日の予定を今すぐ送信</button>
+                </div>
+                <div id="lineDiagnosisResult" class="line-link-status" role="status" aria-live="polite">まだ診断していません。</div>
+                <p>自動配信を開始するには、Cloudflareの <code>LINE_SCHEDULE_GROUP_ENABLED</code> を <code>true</code> にしてください。保存だけでは配信されません。</p>
+              </section>
             </div>
           </section>
           <button type="button" class="figma-hp-back" data-common-back="">←戻る</button>
@@ -6222,7 +6230,6 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button type="button" id="reviewNextWeek" aria-label="次の週へ">次週</button>
           </nav>
 
-          <div id="rpTempMoveHint" class="rp-transfer-note" hidden>一時RP転記モード（本人限定）</div>
           <div id="reviewSheetStatus" class="review-sheet-status" aria-live="polite">スプレッドシートの状況を確認しています…</div>
           <div id="reviewMyRpAssignments" class="review-rp-assignments" aria-live="polite"></div>
           <div id="scheduleReviewBoard" class="schedule-review-board">
@@ -6249,23 +6256,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <label>メモ（任意） <textarea id="reviewEditMemo" maxlength="1000" rows="3" placeholder="作業に関する補足"></textarea></label>
               <div class="review-edit-actions">
                 <button type="button" id="reviewEditCancel">キャンセル</button>
-                <button type="button" id="reviewOwnTempRpTransfer" hidden>RPに写す</button>
                 <button type="submit" id="reviewEditSave">変更を保存</button>
               </div>
               <p id="reviewEditWarning" aria-live="polite"></p>
-            </form>
-          </div>
-          <div id="rpTransferOverlay" class="rp-transfer-overlay" hidden>
-            <form id="rpTransferForm" class="rp-transfer-dialog" aria-labelledby="rpTransferTitle">
-              <h2 id="rpTransferTitle">RP調整に予定を写す</h2>
-              <p id="rpTransferSource">選択した予定</p>
-              <p style="font-size:15px;color:#60738f;margin:0">元のスプシ・通常の予定データは削除しません。希望日時は未確定（赤）で表示し、代表の承認後だけ確定します。</p>
-              <label>対象者 <select id="rpTransferPerson" required></select></label>
-              <p class="rp-transfer-simple-note">RP調整には希望者と日時だけを登録します。RPの種類と担当者は代表で設定します。</p>
-              <input id="rpTransferProgram" type="hidden" value="0">
-              <input id="rpTransferRole" type="hidden" value="trainee">
-              <p id="rpTransferError" class="rp-transfer-error" role="status"></p>
-              <div class="rp-transfer-actions"><button id="rpTransferCancel" type="button">戻る</button><button id="rpTransferSubmit" class="rp-transfer-confirm" type="submit">RP調整へ写す</button></div>
             </form>
           </div>
           <button
@@ -6651,7 +6644,6 @@ const state = {
   user: null,
   isDeveloper: false,
   isRepresentative: false,
-  canTempRpTransfer: false,
   canEditRoster: false,
   canManageMeetings: false,
   meetingParticipantEmails: new Set(),
@@ -6815,6 +6807,8 @@ async function init() {
     document.getElementById("app").hidden = false;
 
     refreshTaskUi();
+    // 連携済みならログインのたびにホームのLINE連携ボタンを隠す。
+    void refreshLineSettings({quiet:true});
 
     const calendarResult = new URL(location.href).searchParams.get("calendar");
     const calendarDetail = new URL(location.href).searchParams.get("detail");
@@ -6854,7 +6848,7 @@ async function init() {
     if(lineResult){
       history.replaceState(null,'',`${location.pathname}#home`);
       showToast(lineResult==='connected'?'LINEアカウントを連携しました':'LINE連携が完了しませんでした。設定を確認してください');
-      if(lineResult==='connected')void openLineSettings();
+      if(lineResult==='connected')void refreshLineSettings({quiet:true});
     }
   } catch (error) {
     console.error(error);
@@ -7452,17 +7446,13 @@ function wireActions() {
 
   document.getElementById("scheduleReviewEvents").addEventListener("click", (event) => {
     const item=event.target.closest('[data-own-plan-id]');
-    if (item) openReviewPlanEdit(Number(item.dataset.ownPlanId));
-    else { const other=event.target.closest('[data-rp-transfer-plan]');if(other)void openRpTransfer(Number(other.dataset.rpTransferPlan)); }
+    if(item)openReviewPlanEdit(Number(item.dataset.ownPlanId));
   });
   document.getElementById("scheduleReviewEvents").addEventListener("keydown", (event) => {
-    if (event.key!=="Enter" && event.key!==" ") return;
+    if(event.key!=="Enter"&&event.key!==" ")return;
     const item=event.target.closest('[data-own-plan-id]');
-    const other=event.target.closest('[data-rp-transfer-plan]');
-    if (!item&&!other) return;
-    event.preventDefault();
-    if(item)openReviewPlanEdit(Number(item.dataset.ownPlanId));
-    else void openRpTransfer(Number(other.dataset.rpTransferPlan));
+    if(!item)return;
+    event.preventDefault();openReviewPlanEdit(Number(item.dataset.ownPlanId));
   });
   document.getElementById("reviewEditClose").addEventListener("click", closeReviewPlanEdit);
   document.getElementById("reviewEditCancel").addEventListener("click", closeReviewPlanEdit);
@@ -7470,14 +7460,6 @@ function wireActions() {
     if (event.target.id === "scheduleReviewEditOverlay") closeReviewPlanEdit();
   });
   document.getElementById("scheduleReviewEditForm").addEventListener("submit", saveReviewPlanEdit);
-  document.getElementById('reviewOwnTempRpTransfer').addEventListener('click',()=>{
-    const id=Number(document.getElementById('scheduleReviewEditOverlay').dataset.planId);
-    closeReviewPlanEdit();void openRpTransfer(id);
-  });
-  document.getElementById('rpTransferCancel').addEventListener('click',closeRpTransfer);
-  document.getElementById('rpTransferOverlay').addEventListener('click',e=>{if(e.target.id==='rpTransferOverlay')closeRpTransfer();});
-  document.getElementById('rpTransferPerson').addEventListener('change',()=>void refreshRpTransferPrograms());
-  document.getElementById('rpTransferForm').addEventListener('submit',submitRpTransfer);
 
   document.getElementById("schedulePlanRegisterButton").addEventListener(
     "click",
@@ -9479,11 +9461,13 @@ async function openLineSettings(){
   await refreshLineSettings();
 }
 function closeLineSettings(){document.getElementById('lineSettingsOverlay').hidden=true;}
-async function refreshLineSettings(){
+async function refreshLineSettings({quiet=false}={}){
   const box=document.getElementById('lineLinkStatus'),area=document.getElementById('lineGroupAdmin');
-  box.textContent='連携状況を確認中…';
+  if(!quiet)box.textContent='連携状況を確認中…';
   try{
     const data=await portalFetch('/api/line/status');
+    // 通信失敗時は非表示にしない。連携完了がサーバーで確認できた場合だけ隠す。
+    document.getElementById('lineSettingsOpen').hidden=Boolean(data.linked);
     box.textContent=data.linked?`LINE連携済み：${data.line_name||'LINEアカウント'}\n（ポータルのメールアドレスと紐づけ済み）`:'未連携：LINE連携すると、日曜のタスク時間未登録リマインドであなた宛てにメンションできます。';
     document.getElementById('lineLinkStart').textContent=data.linked?'別のLINEアカウントに再連携':'LINEアカウントを連携';
     document.getElementById('lineLinkDisconnect').hidden=!data.linked;
@@ -9501,7 +9485,12 @@ async function refreshLineSettings(){
       document.getElementById('lineGroupStatus').textContent=`通知先：${data.selected_group_id?'選択済み':'未設定'}\nLINE連携済み支部員：${data.linked_count??0}人\n毎朝8:30（@All）：${data.group_enabled?'ON':'OFF（Cloudflareで有効化が必要）'}\n日曜の未登録者メンション：${data.sunday_reminder_enabled?'ON':'OFF（後から有効化可能）'}`;
       document.getElementById('lineGroupConfirm').checked=false;
     }
-  }catch(error){box.textContent='LINE設定を取得できません：'+(error.message||error);area.hidden=true;}
+  }catch(error){
+    const message='LINE設定を取得できません：'+(error.message||error);
+    box.textContent=message;
+    area.hidden=!(state.isDeveloper||state.isRepresentative);
+    document.getElementById('lineGroupStatus').textContent=message;
+  }
 }
 async function startLineLink(){
   const button=document.getElementById('lineLinkStart');button.disabled=true;
@@ -9580,9 +9569,6 @@ async function loadPortalProfile() {
     const data = await portalFetch("/api/me");
     state.isDeveloper = Boolean(data.developer);
     state.isRepresentative = Boolean(data.representative);
-    state.canTempRpTransfer = Boolean(data.can_temporarily_move_rp);
-    document.getElementById("rpTempMoveHint").hidden = !state.canTempRpTransfer;
-    document.getElementById("reviewOwnTempRpTransfer").hidden = !state.canTempRpTransfer;
     state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
     state.canManageMeetings = Boolean(data.can_manage_meetings);
     document.getElementById("representativeDashboardEntry").hidden = !(state.isRepresentative || state.isDeveloper);
@@ -9646,18 +9632,21 @@ function switchFigmaHpTab(tab) {
     showScreen('hp-request');
     return;
   }
-  const active = (tab === 'requests' && state.isDeveloper) ? 'requests' : 'roster';
+  const canManageLine=Boolean(state.isDeveloper||state.isRepresentative);
+  const active=(tab==='line'&&canManageLine)?'line':(tab==='requests'&&state.isDeveloper)?'requests':'roster';
   document.querySelectorAll('[data-hp-tab]').forEach(el => {
     if (el.dataset.hpTab === 'requests') {
-      el.hidden = !state.isDeveloper && !state.isRepresentative;
+      el.hidden = !canManageLine;
       el.textContent = state.isDeveloper ? '要望' : '要望送信';
     }
-    el.classList.toggle('is-active', el.dataset.hpTab === active);
+    if(el.dataset.hpTab==='line')el.hidden=!canManageLine;
+    el.classList.toggle('is-active',el.dataset.hpTab===active);
   });
   document.querySelectorAll('[data-hp-view]').forEach(el => {
-    el.hidden = el.dataset.hpView !== active;
+    el.hidden=el.dataset.hpView!==active;
   });
-  if (active === 'requests' && state.isDeveloper) void loadHpRequests();
+  if(active==='requests'&&state.isDeveloper)void loadHpRequests();
+  if(active==='line')void refreshLineSettings();
 }
 
 function renderFigmaRoster() {
@@ -10969,14 +10958,12 @@ function renderScheduleReviewEvents(range) {
       "";
     const isMine = String(plan.user_email || "").toLowerCase() ===
       String(state.user?.email || "").toLowerCase();
-    const canTransfer=Boolean(state.canTempRpTransfer);
-    const ownAttrs = isMine
-      ? ` data-own-plan-id="${Number(plan.id)}" role="button" tabindex="0" aria-label="${escapeHtml(`${displayName} の予定を編集`)}"`
-      : canTransfer ? ` data-rp-transfer-plan="${Number(plan.id)}" role="button" tabindex="0" aria-label="${escapeHtml(`${displayName} の予定をRPへ写す`)}"` : '';
+    const ownAttrs=isMine
+      ? ` data-own-plan-id="${Number(plan.id)}" role="button" tabindex="0" aria-label="${escapeHtml(`${displayName} の予定を編集`)}"` : '';
 
     return `
       <div
-        class="schedule-review-event${isMine ? ' is-own-plan' : ''}${(!isMine&&state.canTempRpTransfer)?' is-temp-rp-transfer':''}"${ownAttrs}
+        class="schedule-review-event${isMine ? ' is-own-plan' : ''}"${ownAttrs}
         style="
           left:${left}px;
           top:${top}px;
@@ -10995,58 +10982,6 @@ function renderScheduleReviewEvents(range) {
   }).join("");
 }
 
-
-// v52: One-person, time-bounded manual copy of any existing calendar row to RP.
-// A separate D1 mapping marks RP display; original calendar and Sheets A-E remain untouched.
-let rpTransferRoster=[],rpTransferCurrentId=0,rpTransferCurrentPlan=null;
-function closeRpTransfer(){document.getElementById('rpTransferOverlay').hidden=true;rpTransferCurrentId=0;rpTransferCurrentPlan=null;}
-async function refreshRpTransferPrograms(){
-  // RP候補には種類を付けない。代表で種類・担当者を設定する。
-  const el=document.getElementById('rpTransferProgram');
-  if(el)el.value='0';
-}
-
-async function openRpTransfer(planId,sourceCandidate=null){
-  if(!state.canTempRpTransfer){showToast('この機能は一時的に許可したログイン者だけが利用できます');return;}
-  const plan=sourceCandidate||(state.calendar.reviewPlans||[]).find(x=>Number(x.id)===Number(planId));
-  if(!plan){showToast('元の予定を読み込めません。更新してください');return;}
-  rpTransferCurrentId=planId;rpTransferCurrentPlan=plan;
-  const o=document.getElementById('rpTransferOverlay');o.hidden=false;
-  const isUnknown=String(plan.user_email||'').startsWith('sheet:unknown:');
-  document.getElementById('rpTransferSource').textContent=`${plan.user_name||'氏名未確定'}｜${tokyoDateFromIso(plan.starts_at)} ${formatTokyoClock(new Date(plan.starts_at))}～${formatTokyoClock(new Date(plan.ends_at))}｜${plan.title||''}`;
-  document.getElementById('rpTransferError').textContent=isUnknown?'この行は氏名を確定できていません。元シートを確認し、正しい対象者を選択してください。':'';
-  const sel=document.getElementById('rpTransferPerson');sel.disabled=true;
-  sel.innerHTML='<option value="">名簿を読み込んでいます…</option>';
-  try{
-    const data=await portalFetch('/api/roster');
-    rpTransferRoster=(data.roster||[]).filter(x=>x.enabled!==0 && ['関東','関西'].includes(x.group_name)).map(x=>({email:String(x.email||'').toLowerCase(),name:x.name,group_name:x.group_name}));
-    sel.innerHTML='<option value="">対象者を選択してください</option>'+rpTransferRoster.map(p=>`<option value="${escapeHtml(p.email)}">${escapeHtml(p.name)}（${escapeHtml(p.group_name)}）</option>`).join('');
-    const owner=String(plan.user_email||'').toLowerCase();
-    if(!isUnknown&&rpTransferRoster.some(x=>x.email===owner)){sel.value=owner;sel.disabled=true;}
-    else sel.disabled=false;
-    document.getElementById('rpTransferRole').value=/担当可能|RP担当|講師|対応可|RP可能/i.test([plan.title,plan.task_type,plan.memo].join(' '))?'trainer':'trainee';
-    await refreshRpTransferPrograms();
-  }catch(e){document.getElementById('rpTransferError').textContent=e.message||'名簿を取得できません';}
-}
-async function submitRpTransfer(e){
-  e.preventDefault();
-  if(!state.canTempRpTransfer||!rpTransferCurrentId)return;
-  const b=document.getElementById('rpTransferSubmit');b.disabled=true;
-  try{
-    const body={plan_id:rpTransferCurrentId,person_email:document.getElementById('rpTransferPerson').value};
-    if(!body.person_email)throw new Error('予定の対象者を選んでください');
-    await portalFetch('/api/rp/manual-move',{method:'POST',body});
-    closeRpTransfer();await loadScheduleReview();
-    showToast('RP調整へ写しました。未確定の赤い候補として表示されます');
-  }catch(e){document.getElementById('rpTransferError').textContent=e.message||'RPに写せませんでした';}
-  finally{b.disabled=false;}
-}
-async function revertRpTransfer(id){
-  if(!state.canTempRpTransfer||!Number.isSafeInteger(id)||id<1)return;
-  if(!confirm('このRP候補を通常の予定確認へ戻しますか？元の予定・スプシは変更しません。'))return;
-  try{await portalFetch('/api/rp/manual-unmove',{method:'POST',body:{plan_id:id}});showToast('通常の予定確認へ戻しました');await rpWeekLoad();}
-  catch(e){showToast(e.message||'元に戻せませんでした');}
-}
 
 // v42: 所有者以外の予定はクリック不可。編集権限はWorker側でも検査。
 function closeReviewPlanEdit() {
@@ -11933,6 +11868,22 @@ function setMtgManagerTab(which){
   document.getElementById('mtgManagerEditTab').setAttribute('aria-pressed',String(!create));
   if(!create)void loadManagedMeetings();
 }
+// MTGは今後の開催を直近順で上に、終了済みは直近順で下に表示する。
+// 日本時間(+09:00)で比較し、開始時間未設定の予定はその日の最後として扱う。
+function meetingNearFirst(a,b){
+  const timeOf=(meeting)=>{
+    const day=String(meeting?.date||'');
+    const time=/^\d{2}:\d{2}$/.test(String(meeting?.start_time||''))?meeting.start_time:'23:59';
+    const ms=Date.parse(`${day}T${time}:00+09:00`);
+    return Number.isFinite(ms)?ms:0;
+  };
+  const now=Date.now();
+  const ta=timeOf(a),tb=timeOf(b);
+  const upcomingA=ta>=now,upcomingB=tb>=now;
+  if(upcomingA!==upcomingB)return upcomingA?-1:1;
+  if(ta!==tb)return upcomingA?ta-tb:tb-ta;
+  return Number(b?.id||0)-Number(a?.id||0);
+}
 async function loadManagedMeetings(){
   const seq=++state.mtgManageLoadSequence;
   const root=document.getElementById('mtgManageList');
@@ -11941,7 +11892,7 @@ async function loadManagedMeetings(){
     // mine=1 はサーバー側でも作成者メールアドレスで絞る。
     const data=await portalFetch('/api/meetings?mine=1');
     if(seq!==state.mtgManageLoadSequence)return;
-    state.mtgManagedMeetings=Array.isArray(data.meetings)?data.meetings:[];
+    state.mtgManagedMeetings=(Array.isArray(data.meetings)?data.meetings:[]).slice().sort(meetingNearFirst);
     renderManagedMeetings();
   }catch(error){
     if(seq!==state.mtgManageLoadSequence)return;
@@ -12145,7 +12096,7 @@ async function loadMeetings(preserveScroll=false){
   try{
     const data=await portalFetch('/api/meetings?region='+encodeURIComponent(region));
     if(current!==state.meetingLoadingId||state.region!==region)return;
-    state.meetings=Array.isArray(data.meetings)?data.meetings:[];
+    state.meetings=(Array.isArray(data.meetings)?data.meetings:[]).slice().sort(meetingNearFirst);
     if(!state.meetings.some(m=>Number(m.id)===state.expandedMeetingId))state.expandedMeetingId=null;
     renderMeetings();
     if(preserveScroll)root.scrollTop=savedScroll;
@@ -12792,7 +12743,7 @@ function rpWeekDrawEvents(range){
     const top=58+(start-540)/60*56;
     const height=Math.max(18,(end-start)/60*56);
     const cls=p.status==='confirmed'?'rp-event-confirmed':'rp-event-pending';
-    return `<div class="schedule-review-event ${cls}" style="left:${left}px;top:${top}px;width:${width}px;height:${height}px" title="${escapeHtml(p.tooltip)}" aria-label="${escapeHtml(p.tooltip)}"><div><span class="schedule-review-event-name">${escapeHtml(p.label)}</span><span class="schedule-review-event-title">${escapeHtml(p.text)}</span>${p.trainer?`<span class="rp-week-assigned-name">担当：${escapeHtml(p.trainer)}</span>`:''}</div>${state.canTempRpTransfer && p.manual_plan_id ? `<button type="button" class="rp-temp-revert" data-rp-revert="${p.manual_plan_id}" title="元の予定確認へ戻す">戻す</button>` : state.canTempRpTransfer && p.source_plan_id ? `<button type="button" class="rp-temp-revert" data-rp-reclass="${p.source_plan_id}" title="RPの対象者と役割を手動設定">役割設定</button>` : ''}</div>`;
+    return `<div class="schedule-review-event ${cls}" style="left:${left}px;top:${top}px;width:${width}px;height:${height}px" title="${escapeHtml(p.tooltip)}" aria-label="${escapeHtml(p.tooltip)}"><div><span class="schedule-review-event-name">${escapeHtml(p.label)}</span><span class="schedule-review-event-title">${escapeHtml(p.text)}</span>${p.trainer?`<span class="rp-week-assigned-name">担当：${escapeHtml(p.trainer)}</span>`:''}</div></div>`;
   }).join('');
   msg.textContent=placed.length?'':'この週のRP候補・確定済みRPはありません。';
 }
@@ -12863,10 +12814,6 @@ async function rpV50Approve(index,btn){
   }catch(e){showToast(e.message||'確定できませんでした。候補を更新してください');btn.disabled=false;}
 }
 document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('rpWeekEvents').addEventListener('click',e=>{
-    const b=e.target.closest('[data-rp-revert]');if(b){void revertRpTransfer(Number(b.dataset.rpRevert));return;}
-    const c=e.target.closest('[data-rp-reclass]');if(c){const plan=rpWeekCandidatePlans.find(x=>Number(x.id)===Number(c.dataset.rpReclass));if(plan)void openRpTransfer(Number(c.dataset.rpReclass),plan);}
-  });
   for(const [id,fn] of [['rpWeekPrev',()=>rpWeekShift(-1)],['rpWeekToday',()=>rpWeekShift(0)],
                         ['rpWeekNext',()=>rpWeekShift(1)],['rpWeekReload',()=>rpWeekLoad()]]){
     document.getElementById(id)?.addEventListener('click',fn);
