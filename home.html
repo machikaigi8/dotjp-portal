@@ -1,3 +1,6 @@
+<!-- v68: matching Workers_v41, sheet two-way sync and MTG times -->
+<!-- v67: staff+task sheet sync, MTG time and optional TT -->
+<!-- v66: sheet edit/delete reflection and review refresh without changing Figma layout -->
 <!-- v65: 管理者向けLINE接続診断／@Allテスト・手動配信機能 -->
 <!-- v64: LINE日次@Allと日曜個人メンションのON/OFFを区別して表示 -->
 <!DOCTYPE html>
@@ -4195,6 +4198,8 @@ display: flex; gap: 13px; align-items: baseline; margin: 16px 2px 10px;
 .mtg-staff-header p { margin:5px 0 21px; color:#5e6881; font-size:19px; }
 .mtg-manager-form { overflow:auto; max-height:540px; padding:0 7px 20px; }
 .mtg-manager-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px 24px; }
+.mtg-time-display { font-size:22px; font-weight:700; margin:6px 0 15px; }
+.mtg-day small { display:block; font-size:14px; font-weight:600; white-space:nowrap; margin-top:4px; }
 .mtg-manager-grid label, .mtg-tt-label { font-size:20px; font-weight:700; display:flex; flex-direction:column; gap:7px; }
 .mtg-manager-grid input,.mtg-manager-grid select,.mtg-tt-label textarea { display:block; width:100%; min-height:53px; border:2px solid #cad4ed; border-radius:11px; padding:8px 13px; background:#fff; color:#142340; font:inherit; font-size:22px; }
 .mtg-tt-label { margin-top:18px; }
@@ -5533,6 +5538,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <div class="mtg-manager-grid">
                 <label>日付 <input id="mtgNewDate" type="date" required></label>
                 <label>項目 <input id="mtgNewTitle" type="text" maxlength="100" value="支部ミーティング" placeholder="支部ミーティング" required></label>
+                <label>MTG開始時刻 <input id="mtgNewStartTime" type="time" step="300" required></label>
+                <label>MTG終了時刻 <input id="mtgNewEndTime" type="time" step="300" required></label>
                 <label>開催方法 <select id="mtgNewMode"><option value="in_person">対面</option><option value="online">オンライン</option></select></label>
                 <label id="mtgPlaceField">場所（対面・繰り返し時は任意） <input id="mtgNewPlace" type="text" maxlength="160" placeholder="会場が決まり次第、各回の編集から登録できます" required></label>
               </div>
@@ -5553,7 +5560,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <label id="mtgRepeatUntilField" class="mtg-repeat-until" hidden>繰り返し終了日（最長1年・最大60回）
                 <input id="mtgNewUntil" type="date">
               </label>
-              <label class="mtg-tt-label">TT（タイムテーブル） <textarea id="mtgNewTimetable" maxlength="8000" rows="8" placeholder="13:00　開会&#10;13:10　報告&#10;14:00　議題" required></textarea></label>
+              <label class="mtg-tt-label">TT（タイムテーブル・任意） <textarea id="mtgNewTimetable" maxlength="8000" rows="8" placeholder="必要な場合だけ入力してください"></textarea></label>
               <div class="mtg-form-footer"><span id="mtgManagerRegionInfo">所属地域に登録されます</span><button id="mtgCreateButton" type="submit">MTGを登録</button></div>
             </form>
             </div>
@@ -5569,10 +5576,12 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div class="mtg-manager-grid">
                   <label>日付 <input id="mtgEditDate" type="date" required></label>
                   <label>項目 <input id="mtgEditTitle" type="text" maxlength="100" required></label>
+                  <label>MTG開始時刻 <input id="mtgEditStartTime" type="time" step="300" required></label>
+                  <label>MTG終了時刻 <input id="mtgEditEndTime" type="time" step="300" required></label>
                   <label>開催方法 <select id="mtgEditMode"><option value="in_person">対面</option><option value="online">オンライン</option></select></label>
                   <label id="mtgEditPlaceField">場所（未定の場合は空欄可） <input id="mtgEditPlace" type="text" maxlength="160" placeholder="会場未定"></label>
                 </div>
-                <label class="mtg-tt-label">TT（タイムテーブル）<textarea id="mtgEditTimetable" maxlength="8000" rows="4" required></textarea></label>
+                <label class="mtg-tt-label">TT（タイムテーブル・任意）<textarea id="mtgEditTimetable" maxlength="8000" rows="4"></textarea></label>
                 <p class="mtg-edit-note">この回のみ変更します。参加対象者と既存の出欠回答は引き継ぎます。</p>
                 <div class="mtg-edit-actions">
                   <button type="button" id="mtgEditCancel">キャンセル</button>
@@ -10719,7 +10728,8 @@ async function loadScheduleReview() {
       start: range.startIso,
       end: range.endIso,
       scope: "all",
-      region
+      region,
+      sync: "1"
     });
     const data = await portalFetch(`/api/calendar/plans?${params.toString()}`);
     // 週や地域を素早く切り替えた場合、古いレスポンスで上書きしない。
@@ -10729,11 +10739,11 @@ async function loadScheduleReview() {
     state.calendar.reviewPlans = (Array.isArray(data.plans) ? data.plans : []).filter(plan =>
       !plan.rp_manual_id && !/(?:RP|ロープレ)/i.test([plan.title,plan.task_type,plan.memo].filter(Boolean).join(' '))
     );
+    if(data.sheetSync?.ok===false)showToast('スプシ同期に失敗：'+String(data.sheetSync.error||'権限を確認してください'));
     const note=document.getElementById('reviewSheetStatus');
     if(note){const s=data.sheetSync||{};note.className='review-sheet-status'+(s.ok===false?' is-warning':'');
       note.textContent=s.ok===false?'スプシの取得に失敗：'+(s.error||'権限を確認してください'):
-        s.skipped?'スプシと照合済み（'+s.updated+'件更新・'+s.added+'件取込・'+s.skipped+'件は確認待ち）':
-        'スプシと照合済み（既存行の追加 '+(s.added||0)+'件・更新 '+(s.updated||0)+'件）';}
+        'スプシ照合：追加 '+(s.added||0)+'件・更新 '+(s.updated||0)+'件・削除 '+(s.deleted||0)+'件・行移動 '+(s.relinked||0)+'件'+(s.skipped?'（確認待ち '+s.skipped+'件）':'');}
     // v50: 確定済みRPはRP調整へ集約。予定確認には再掲しない。
     document.getElementById('reviewMyRpAssignments').textContent='';
     renderScheduleReviewEvents(range);
@@ -11948,7 +11958,7 @@ function renderManagedMeetings(){
     const id=Number(m.id);
     const place=m.mode==='online'?'オンライン':String(m.place||'').trim()||'場所未定';
     return `<div class="mtg-manage-row">
-      <div class="mtg-manage-info"><strong>${escapeHtml(meetingFormatDate(m.date))}　${escapeHtml(m.title)}</strong>
+      <div class="mtg-manage-info"><strong>${escapeHtml(meetingFormatDate(m.date))} ${escapeHtml(m.start_time&&m.end_time?m.start_time+'〜'+m.end_time:'時間未設定')}　${escapeHtml(m.title)}</strong>
       <div>${escapeHtml(place)}</div>
       <small>${Number(m.series_count)>1?'繰り返しMTGのうち、この回だけ編集可能':'単独のMTG'} ・ ${m.audience==='custom'?'対象者指定':'全員対象'}</small></div>
       <button type="button" data-mtg-open-edit="${id}">この回を編集</button>
@@ -11961,6 +11971,8 @@ function openMtgEdit(id){
   document.getElementById('mtgEditId').value=String(id);
   document.getElementById('mtgEditHeading').textContent=meetingFormatDate(m.date)+' のMTGを編集';
   document.getElementById('mtgEditDate').value=m.date||'';
+  document.getElementById('mtgEditStartTime').value=m.start_time||'';
+  document.getElementById('mtgEditEndTime').value=m.end_time||'';
   document.getElementById('mtgEditTitle').value=m.title||'';
   document.getElementById('mtgEditMode').value=m.mode==='online'?'online':'in_person';
   document.getElementById('mtgEditPlace').value=m.mode==='online'?'':m.place||'';
@@ -11993,12 +12005,14 @@ async function saveMtgEdit(event){
     meeting_id:id,
     date:document.getElementById('mtgEditDate').value,
     title:document.getElementById('mtgEditTitle').value.trim(),
+    start_time:document.getElementById('mtgEditStartTime').value,
+    end_time:document.getElementById('mtgEditEndTime').value,
     mode,
     place:mode==='online'?'':document.getElementById('mtgEditPlace').value.trim(),
     timetable:document.getElementById('mtgEditTimetable').value.trim()
   };
-  if(!id||!body.date||!body.title||!body.timetable){
-    showToast('日付・項目・TTを入力してください');return;
+  if(!id||!body.date||!body.title||!body.start_time||!body.end_time||body.end_time<=body.start_time){
+    showToast('日付・項目・MTGの開始／終了時刻を確認してください（TTは任意）');return;
   }
   const button=document.getElementById('mtgEditSave');
   state.mtgEditSaving=true;
@@ -12092,6 +12106,8 @@ async function createMeeting(event){
   const body={
     date:document.getElementById('mtgNewDate').value,
     title:document.getElementById('mtgNewTitle').value.trim(),
+    start_time:document.getElementById('mtgNewStartTime').value,
+    end_time:document.getElementById('mtgNewEndTime').value,
     mode,
     place:mode==='online'?'':document.getElementById('mtgNewPlace').value.trim(),
     timetable:document.getElementById('mtgNewTimetable').value.trim(),
@@ -12099,8 +12115,9 @@ async function createMeeting(event){
     participants:audience==='custom'?[...state.meetingParticipantEmails]:[],
     recurrence:{frequency,until:frequency==='none'?'':document.getElementById('mtgNewUntil').value}
   };
-  if(!body.date || !body.title || (mode==='in_person' && frequency==='none' && !body.place)||!body.timetable){
-    showToast('日付・項目・TTと、繰り返さない対面MTGの場所を入力してください');return;
+  if(!body.date||!body.title||!body.start_time||!body.end_time||body.end_time<=body.start_time||
+     (mode==='in_person'&&frequency==='none'&&!body.place)){
+    showToast('日付・項目・MTG時間と、繰り返さない対面MTGの場所を確認してください（TTは任意）');return;
   }
   if(audience==='custom' && !body.participants.length){
     showToast('参加者を1人以上選択してください');return;
@@ -12177,7 +12194,8 @@ function renderMeetings(){
       </div>`:'';
     return `<article class="mtg-item">
       <div class="mtg-row" tabindex="0" role="button" aria-expanded="${open}" data-mtg-toggle="${id}">
-        <div class="mtg-day">${escapeHtml(meetingFormatDate(meeting.date))}</div>
+        <div class="mtg-day">${escapeHtml(meetingFormatDate(meeting.date))}
+        <small>${escapeHtml(meeting.start_time&&meeting.end_time?meeting.start_time+'〜'+meeting.end_time:'時間未設定')}</small></div>
         <div class="mtg-topic"><div class="mtg-title">${escapeHtml(meeting.title)}</div>
           <div class="mtg-place">${meeting.mode==='online'?'オンライン':meeting.place?'＠'+escapeHtml(meeting.place).replace(/^＠/,''):'場所未定'}</div>
           <span class="mtg-audience-tag">対象：${escapeHtml(audienceLabel)}</span></div>
@@ -12186,7 +12204,8 @@ function renderMeetings(){
           value="${escapeHtml(note)}" placeholder="備考（任意）" aria-label="${escapeHtml(meeting.title)}の備考" ${canAnswer?'':'disabled'}>
           <button type="button" class="mtg-save-note" data-mtg-save-note="${id}" title="備考を保存" ${canAnswer?'':'disabled'}>保存</button></div>
       </div>
-      ${open?`<div class="mtg-details"><section><h3>TT（タイムテーブル）</h3><pre class="mtg-timetable">${escapeHtml(meeting.timetable)}</pre></section>
+      ${open?`<div class="mtg-details"><section><h3>MTG時間</h3><p class="mtg-time-display">${escapeHtml(meeting.start_time&&meeting.end_time?meeting.start_time+'〜'+meeting.end_time:'時間未設定')}</p>
+        <h3>TT（タイムテーブル）</h3><pre class="mtg-timetable">${escapeHtml(meeting.timetable||'未登録')}</pre></section>
         <section><h3>回答一覧（${answerRows.length}名）</h3><div class="mtg-answers">${responses}</div></section>
         <div class="mtg-details-footer">${canAnswer?'':`<span class="mtg-outside-audience">あなたはこのMTGの参加対象外です。</span>`}${deleteActions}</div>
       </div>`:''}
@@ -12468,7 +12487,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('rpConfirmedAssignments').addEventListener('click',e=>{const b=e.target.closest('[data-rp-delete]');if(b)void rpDelete(Number(b.dataset.rpDelete));});
   document.getElementById('reviewSheetSync').addEventListener('click',async()=>{const b=document.getElementById('reviewSheetSync');b.disabled=true;
     const status=document.getElementById('reviewSheetStatus');status.textContent='既存行も含めて同期しています…';
-    try{const s=await portalFetch('/api/calendar/sheet-sync',{method:'POST',body:{}});status.textContent=`スプシ同期完了：新規${s.added||0}件／更新${s.updated||0}件／確認待ち${s.skipped||0}件`;await loadScheduleReview();}
+    try{const s=await portalFetch('/api/calendar/sheet-sync',{method:'POST',body:{}});status.textContent=`スプシ同期完了：追加${s.added||0}件／更新${s.updated||0}件／削除${s.deleted||0}件／行移動${s.relinked||0}件／確認待ち${s.skipped||0}件`;await loadScheduleReview();}
     catch(e){status.textContent='スプシ同期失敗：'+e.message;status.classList.add('is-warning');}
     finally{b.disabled=false;}
   });
@@ -12951,6 +12970,18 @@ document.addEventListener('DOMContentLoaded',()=>{
   const init=()=>{mount()};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
+</script>
+
+
+<script>
+// v66: reflect edits/deletes made in Google Sheets even while the review page remains open.
+window.addEventListener('DOMContentLoaded',()=>{
+  window.setInterval(()=>{
+    if(document.visibilityState==='visible' && typeof state!=='undefined' &&
+       state.currentScreen==='schedule-review' && typeof loadScheduleReview==='function')
+      void loadScheduleReview();
+  },60000);
+});
 </script>
 
 </body>
