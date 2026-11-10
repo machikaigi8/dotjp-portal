@@ -5375,6 +5375,284 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .line-settings-panel .line-check input { width:24px;height:24px;flex:none;margin-top:4px; }
 .line-settings-panel button:disabled { opacity:.55;cursor:not-allowed; }
 
+
+
+/* v76: クライアント画面をFigma最新フレーム 64:637 / 105:463 / 158:687 に同期。
+   フォームを送る 107:489 のマークアップ・CSSには一切変更しない。 */
+.screen-client .common-back-button {
+  left: 75px !important;
+  top: 904px !important;
+}
+.screen-client-contact .client-panel,
+.screen-client-won .client-panel,
+.screen-client-deals .client-panel {
+  left: 70px;
+  top: 208px;
+  width: 1300px;
+  height: 690px;
+}
+.screen-client-contact .common-back-button,
+.screen-client-won .common-back-button,
+.screen-client-deals .common-back-button {
+  left: 70px !important;
+  top: 898px !important;
+}
+.screen-client-won .client-sheet-table-scroll,
+.screen-client-deals .client-sheet-table-scroll {height: 485px;}
+
+/* Figma 158:687: 上段メニュー3列、左の担当者2列、右の行動量2x2をピクセル位置指定。 */
+.screen-client-staff-status .staff-status-tabs {
+  position: absolute;
+  left: 120px;
+  top: 110px;
+  width: 1200px;
+  height: 60px;
+  display: grid;
+  grid-template-columns: repeat(3, 360px);
+  column-gap: 60px;
+  z-index: 3;
+}
+.screen-client-staff-status .staff-status-tabs button {
+  height: 60px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: #d4d5ff;
+  color: #000;
+  font-size: 35px;
+  line-height: 1.2;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.screen-client-staff-status .staff-status-panel {
+  position: absolute;
+  left: 70px;
+  top: 208px;
+  width: 1300px;
+  height: 690px;
+  box-sizing: border-box;
+  padding: 0;
+  display: block;
+  background: #fff;
+  overflow: hidden;
+}
+.screen-client-staff-status .staff-status-person-column {
+  position: absolute;
+  left: 37px;
+  top: 34px;
+  width: 325px;
+  height: 600px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 150px 150px;
+  grid-auto-rows: 60px;
+  column-gap: 25px;
+  row-gap: 30px;
+  align-content: start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+}
+.screen-client-staff-status .staff-status-person-column button {
+  box-sizing: border-box;
+  width: 150px;
+  height: 60px;
+  min-height: 60px;
+  padding: 0 3px;
+  background: #2fb000;
+  color: #fff;
+  font-size: 35px;
+  font-weight: 500;
+  line-height: 60px;
+  text-align: center;
+  border: 0;
+  border-radius: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: none;
+}
+.screen-client-staff-status .staff-status-person-column button.is-selected {
+  background: #1a5e01;
+  box-shadow: none;
+}
+.screen-client-staff-status .staff-status-content {
+  position: absolute;
+  left: 385px;
+  top: 34px;
+  width: 885px;
+  height: 600px;
+  min-width: 885px;
+  display: block;
+  overflow: visible;
+}
+.screen-client-staff-status .staff-status-heading {
+  position: absolute;
+  left: 1px;
+  top: 0;
+  height: 60px;
+  width: 884px;
+  display: block;
+  margin: 0;
+}
+.screen-client-staff-status .staff-status-heading h2 {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  width: 300px;
+  height: 60px;
+  background: #d4d5ff;
+  color: #000;
+  font-size: 35px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+/* 既存APIの状態管理・更新ボタンは残しつつ、Figmaにない補助要素を非表示。 */
+.screen-client-staff-status #staffStatusPersonLabel,
+.screen-client-staff-status #staffStatusReload { display: none; }
+.screen-client-staff-status .staff-status-stat-grid {
+  position: absolute;
+  left: 0;
+  top: 90px;
+  width: 885px;
+  height: 510px;
+  display: grid;
+  grid-template-columns: 430px 430px;
+  grid-template-rows: 240px 240px;
+  column-gap: 25px;
+  row-gap: 30px;
+}
+.screen-client-staff-status .staff-status-stat-card {
+  position: relative;
+  width: 430px;
+  height: 240px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 3px solid #000;
+  background: #fff;
+}
+.screen-client-staff-status .staff-status-card-header {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 52px;
+  margin: 0;
+}
+.screen-client-staff-status .staff-status-card-header h3 {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  margin: 0;
+  padding: 0;
+  font-size: 35px;
+  font-weight: 500;
+  color: #000;
+  line-height: 44px;
+  white-space: nowrap;
+}
+.screen-client-staff-status .staff-status-date-control {
+  position: absolute;
+  top: 6px;
+  right: 14px;
+  width: 151px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 3px;
+  background: #d9d9d9;
+  font-size: 30px;
+  line-height: 42px;
+  color: #000;
+  white-space: nowrap;
+  cursor: pointer;
+  overflow: hidden;
+}
+.screen-client-staff-status [data-staff-period='month'] .staff-status-date-control {width: 110px;}
+.screen-client-staff-status .staff-status-date-control > span {
+  font-size: 30px;
+  line-height: 42px;
+  color: #000;
+  font-weight: 400;
+  text-align: center;
+}
+.screen-client-staff-status .staff-status-date-control input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+.screen-client-staff-status .staff-status-card-header > span {
+  display: none;
+}
+.screen-client-staff-status .staff-status-metrics {
+  margin: 0;
+  padding: 0 10px 0 12px;
+  font-size: 35px;
+  font-weight: 400;
+  line-height: 42px;
+  color: #000;
+}
+.screen-client-staff-status .staff-status-metric {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  min-height: 42px;
+  white-space: nowrap;
+}
+.screen-client-staff-status .staff-status-metric span {font-size: 34px;}
+.screen-client-staff-status .staff-status-metric strong {
+  min-width: 35px;
+  text-align: right;
+  color: #000;
+  font-size: 32px;
+  font-weight: 500;
+}
+.screen-client-staff-status .staff-status-note {display: none;}
+.screen-client-staff-status .staff-status-note.is-warning {
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: -27px;
+  width: 885px;
+  font-size: 14px;
+  line-height: 1.3;
+  color: #a32323;
+  background: #fff;
+}
+.screen-client-staff-status .staff-status-back {
+  left: 70px;
+  top: 898px;
+  width: 140px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #3080ff;
+  color: #fff;
+  font-size: 40px;
+  line-height: 60px;
+  font-weight: 400;
+  text-align: center;
+  cursor: pointer;
+}
+
 </style>
 </head>
 <body>
@@ -5800,15 +6078,15 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               </div>
               <div class="staff-status-stat-grid">
                 <section class="staff-status-stat-card" data-staff-period="day">
-                  <div class="staff-status-card-header"><h3>1日の行動量</h3><input id="staffStatusDay" type="date" aria-label="集計する日付"></div>
+                  <div class="staff-status-card-header"><h3>1日の行動量</h3><label class="staff-status-date-control"><span>日時選択▼</span><input id="staffStatusDay" type="date" aria-label="集計する日付"></label></div>
                   <div class="staff-status-metrics" id="staffStatusDayMetrics"></div>
                 </section>
                 <section class="staff-status-stat-card" data-staff-period="week">
-                  <div class="staff-status-card-header"><h3>1週間の行動量</h3><input id="staffStatusWeek" type="date" title="選択日を含む日曜〜土曜の週を表示" aria-label="集計する週の基準日"></div>
+                  <div class="staff-status-card-header"><h3>1週間の行動量</h3><label class="staff-status-date-control"><span>日時選択▼</span><input id="staffStatusWeek" type="date" title="選択日を含む日曜〜土曜の週を表示" aria-label="集計する週の基準日"></label></div>
                   <div class="staff-status-metrics" id="staffStatusWeekMetrics"></div>
                 </section>
                 <section class="staff-status-stat-card" data-staff-period="month">
-                  <div class="staff-status-card-header"><h3>1ヶ月の行動量</h3><input id="staffStatusMonth" type="month" aria-label="集計する月"></div>
+                  <div class="staff-status-card-header"><h3>1ヶ月の行動量</h3><label class="staff-status-date-control"><span id="staffStatusMonthText">月▼</span><input id="staffStatusMonth" type="month" aria-label="集計する月"></label></div>
                   <div class="staff-status-metrics" id="staffStatusMonthMetrics"></div>
                 </section>
                 <section class="staff-status-stat-card" data-staff-period="total">
@@ -8520,7 +8798,9 @@ async function loadClientStaffStatus() {
     for(const id of ['staffStatusDayMetrics','staffStatusWeekMetrics','staffStatusMonthMetrics','staffStatusTotalMetrics']){
       document.getElementById(id).textContent='読み込めませんでした';
     }
-    document.getElementById('staffStatusNote').textContent=e.message||'読み込みに失敗しました。';
+    const note=document.getElementById('staffStatusNote');
+    note.textContent=e.message||'読み込みに失敗しました。';
+    note.classList.add('is-warning');
   }
 }
 function renderClientStaffStatus() {
@@ -8532,17 +8812,27 @@ function renderClientStaffStatus() {
   const member=data.members.find(p=>p.email===data.email);
   document.getElementById('staffStatusPersonLabel').textContent=member?member.name:'スタッフを選択してください';
   const metrics=member?.periods||{};
-  const labels=[['pending','未送信'],['completed','完了'],['mail','内メール'],['form','内フォーム']];
+  const labelsByPeriod={
+    day:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']],
+    week:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']],
+    month:[['pending','未送信'],['completed','完了'],['mail','内メール'],['form','内フォーム']],
+    total:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']]
+  };
   for (const [period,id] of [['day','staffStatusDayMetrics'],['week','staffStatusWeekMetrics'],
        ['month','staffStatusMonthMetrics'],['total','staffStatusTotalMetrics']]) {
     const stats=metrics[period]||{};
-    document.getElementById(id).innerHTML=labels.map(([k,label])=>{
+    document.getElementById(id).innerHTML=labelsByPeriod[period].map(([k,label])=>{
       const n=stats[k];
       return `<div class="staff-status-metric"><span>${label}：</span><strong title="${n==null?'対象期間の信頼できるデータがありません':'登録データに基づく件数'}">${Number.isFinite(n)?n.toLocaleString('ja-JP'):'—'}</strong></div>`;
     }).join('');
   }
-  document.getElementById('staffStatusNote').textContent=(data.warning?data.warning+'　':'')+
-    '期間別の完了・フォームはポータル経由で記録した送信件数。累計の完了・フォームと現在の未送信は企業リストから集計します。メールは送信種別の記録がないため未集計です。';
+  const statusNote=document.getElementById('staffStatusNote');
+  statusNote.textContent=(data.warning?data.warning+'　':'')+
+    '期間別の完了・フォームはポータル経由で記録した送信件数。累計の完了・フォームと現在の未送信は企業リストから集計します。メールと架電は送信種別の記録がないため未集計です。';
+  statusNote.classList.toggle('is-warning',Boolean(data.warning));
+  const selectedMonth=document.getElementById('staffStatusMonth').value;
+  document.getElementById('staffStatusMonthText').textContent=/^\d{4}-(0[1-9]|1[0-2])$/.test(selectedMonth)
+    ? `${Number(selectedMonth.slice(5))}月▼` : '月▼';
 }
 
 function updateRegion() {
