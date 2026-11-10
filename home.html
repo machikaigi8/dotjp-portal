@@ -1,3 +1,4 @@
+<!-- v75: タスク時間は本人の実績のみ表示。関東・関西を合算し、全体集計を廃止 -->
 <!-- v70: MTG直近順、RP転記モード撤去、LINE管理をHP編集へ移動・連携済みボタン非表示 -->
 <!-- v68: matching Workers_v41, sheet two-way sync and MTG times -->
 <!-- v67: staff+task sheet sync, MTG time and optional TT -->
@@ -6682,7 +6683,7 @@ const state = {
   officeExpenses: {rows:[],canReview:false,loadingSeq:0},
   clientStaffStatus: { members: [], email: "", day: "", week: "", month: "", requestSeq: 0, warning: "" },
   preferredRegion: null,
-  regionWorkSessions: null,
+  personalWorkSessions: null,
   hpRequests: [],
   remoteTasks: [],
   remoteTasksError: '',
@@ -6819,7 +6820,7 @@ async function init() {
     await loadPortalProfile();
     // 旧版の端末内履歴も、現在の所属地域で安全にD1へ移行する。
     void syncLegacySessionsToD1();
-    void loadRegionalWorkSessions();
+    void loadPersonalWorkSessions();
     // Prefetch the assigned company queue while other dashboard data loads.
     void loadClientCompanies(false, true);
     await refreshRemoteTasks();
@@ -7227,10 +7228,10 @@ function wireActions() {
       state.remoteTasks = [];
       state.remoteTasksError = '';
       state.calendar.reviewPlans = [];
-      state.regionWorkSessions = null;
+      state.personalWorkSessions = null;
       refreshTaskUi();
       void refreshRemoteTasks().then(refreshTaskUi);
-      void loadRegionalWorkSessions();
+      void loadPersonalWorkSessions();
       if (state.currentScreen === 'schedule-review') void loadScheduleReview();
       if (state.currentScreen === 'schedule-candidates') void rpWeekLoad();
       if (state.currentScreen === 'representative-dashboard') void rpConfigLoad();
@@ -7759,20 +7760,16 @@ function userSessionKey(name) {
   return `dotjp_portal_session_${name}_${userIdentity()}`;
 }
 
-// 地域別集計はCloudflare D1で共有する。地域の画面を切り替えた際に再取得する。
-async function loadRegionalWorkSessions() {
-  const region = state.region;
+// v75: 現在ログインしている本人のタスク時間のみ取得（関東・関西の両方を合算）。
+async function loadPersonalWorkSessions() {
   try {
     const since = new Date(Date.now()-7*86400000).toISOString();
-    const params = new URLSearchParams({region,since});
-    const data = await portalFetch('/api/work-sessions?' + params.toString());
-    if (region !== state.region) return;
-    state.regionWorkSessions = Array.isArray(data.sessions) ? data.sessions : [];
+    const data = await portalFetch('/api/work-sessions?' + new URLSearchParams({since}).toString());
+    state.personalWorkSessions = Array.isArray(data.sessions) ? data.sessions : [];
     renderTaskTimeChart();
   } catch (error) {
-    console.warn('regional work sessions unavailable',error);
-    if (region !== state.region) return;
-    state.regionWorkSessions = null;
+    console.warn('personal work sessions unavailable',error);
+    state.personalWorkSessions = null;
     renderTaskTimeChart();
   }
 }
@@ -7786,7 +7783,7 @@ async function syncLegacySessionsToD1() {
       });
     } catch(error){console.warn('local work history sync postponed',error);break;}
   }
-  await loadRegionalWorkSessions();
+  await loadPersonalWorkSessions();
 }
 
 function loadTasks() {
@@ -7824,6 +7821,17 @@ function isPickerOnlyTask(task) {
          (task.type === "mtg" && task.title === "MTG");
 }
 
+// v74: MTG自動出欠依頼は出欠画面と同じ「今日〜7日後」だけを未完了欄に表示。
+// 日付は必ずJSTの暦日で比較する。通常の依頼・完了履歴には影響させない。
+function isVisiblePendingMeetingTask(task, now = new Date()) {
+  if (task?.completedAt || !String(task?.evidence || '').startsWith('mtg:')) return true;
+  const date = String(task?.deadline || '').slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  const todayJst = new Date(now.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const endJst = new Date(Date.parse(todayJst + 'T00:00:00Z') + 7 * 86400000).toISOString().slice(0, 10);
+  return date >= todayJst && date <= endJst;
+}
+
 function currentWeekTasks() {
   const { start, end } = weekBounds();
 
@@ -7837,7 +7845,7 @@ function currentWeekTasks() {
   });
 
   return [...state.remoteTasks, ...local]
-    .filter((task) => !isPickerOnlyTask(task))
+    .filter((task) => !isPickerOnlyTask(task) && isVisiblePendingMeetingTask(task))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
 
@@ -8016,7 +8024,7 @@ function openUnfinishedRequestFromHome(taskId) {
       // オフライン時はローカル記録を残し、次回ログイン時の既存同期処理で再送する。
       void portalFetch("/api/work-sessions", {
         method: "POST", body: { region: state.region, sessions: [interrupted] }
-      }).then(() => loadRegionalWorkSessions()).catch(error => {
+      }).then(() => loadPersonalWorkSessions()).catch(error => {
         console.warn("Task switch session sync postponed", error);
       });
     }
@@ -8279,18 +8287,26 @@ function renderTaskTimeChart() {
   const days = lastSevenDays();
   const totals = new Map(days.map((day) => [localDateKey(day), 0]));
 
-  loadSessions().forEach((session) => {
-    // 旧版のローカル記録は現時点の名簿所属へ引き継ぐ。
-    const dataRegion = state.preferredRegion || session.region || 'kanto';
-    if (dataRegion !== state.region) return;
-    const start = new Date(session.startedAt);
-    const end = new Date(session.endedAt);
-    if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end <= start) return;
-    addDurationAcrossDays(start, end, totals);
-  });
+  if (Array.isArray(state.personalWorkSessions)) {
+    // D1のログインユーザー本人の記録だけを利用。別端末で行ったタスクも集計対象。
+    state.personalWorkSessions.forEach((record) => {
+      const dayKey = String(record.day_key || '');
+      if (totals.has(dayKey)) {
+        totals.set(dayKey, Math.max(0, Number(record.duration_ms) || 0));
+      }
+    });
+  } else {
+    // オフライン時は本人の端末内記録を使う（他人のデータは使わない）。
+    loadSessions().forEach((session) => {
+      const start = new Date(session.startedAt);
+      const end = new Date(session.endedAt);
+      if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end <= start) return;
+      addDurationAcrossDays(start, end, totals);
+    });
+  }
 
   const runningStart = getActiveStartedAt();
-  if (runningStart > 0 && (state.preferredRegion || state.region) === state.region) {
+  if (runningStart > 0) {
     addDurationAcrossDays(new Date(runningStart), new Date(), totals);
   }
 
@@ -8308,13 +8324,9 @@ function renderTaskTimeChart() {
     </div>`;
   }).join("");
 
-  // 自分の時間と、画面で選択中の地域全体の時間を同じ行に表示。
-  const regionTotal = state.regionWorkSessions == null ? null :
-    state.regionWorkSessions.reduce((sum,item)=>sum+Math.max(0,Number(item.duration_ms)||0),0);
-  const regionLabel = state.region === 'kansai' ? '関西' : '関東';
-  const totalLabel = regionTotal == null ? `自分 ${formatDuration(total)}` :
-    `自分 ${formatDuration(total)} ｜ ${regionLabel} ${formatDuration(regionTotal)}`;
-  chart.innerHTML = `<div class="task-chart-total" style="font-size:11px;white-space:nowrap" title="選択中の地域の集計">${totalLabel}</div><div class="task-chart-bars">${bars}</div>`;
+  // v75: 全体集計は表示しない。関東・関西を問わず本人の実績のみを表示。
+  const totalLabel = `自分 ${formatDuration(total)}`;
+  chart.innerHTML = `<div class="task-chart-total" style="font-size:14px;white-space:nowrap" title="自分の直近7日間のタスク時間（関東・関西合算）">${totalLabel}</div><div class="task-chart-bars">${bars}</div>`;
 }
 
 function formatDuration(ms) {
@@ -10073,6 +10085,7 @@ async function refreshRemoteTasks() {
       content: task.content,
       targetLink: task.target_link || '',
       targetLabel: task.target_label || '',
+      evidence: task.evidence || '',
       region: task.region
     }));
     state.remoteTasksError = '';
