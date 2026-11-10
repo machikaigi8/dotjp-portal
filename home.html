@@ -5653,6 +5653,44 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   cursor: pointer;
 }
 
+
+/* v77: クライアント内の戻るボタンを Figma の矩形に統一（64:637, 105:463, 158:687）。
+   対象: クライアント / お問い合わせフォーム / 獲得企業一覧 / 商談予定企業 /
+         支部員タスク状況。フォームを送る (107:489) は 2in1 専用座標を維持。 */
+:is(.screen-client, .screen-client-contact, .screen-client-won, .screen-client-deals, .screen-client-staff-status) > [data-common-back] {
+  position: absolute !important;
+  left: 70px !important;
+  top: 898px !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  height: 60px !important;
+  min-height: 60px !important;
+  max-height: 60px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #3080ff !important;
+  color: #fff !important;
+  font-family: Inter, "Noto Sans JP", sans-serif !important;
+  font-size: 40px !important;
+  line-height: 60px !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 150 !important;
+}
+
 </style>
 </head>
 <body>
@@ -7986,7 +8024,10 @@ function installCommonBackButtons() {
     button.type = "button";
     button.className = "common-back-button";
     button.dataset.commonBack = "";
-    button.textContent = "← 戻る";
+    // Figma: クライアント配下の通常画面はスペースなしの「←戻る」。
+    // 「フォームを送る」は専用レイアウト・表示を一切変更しない。
+    button.textContent = ["client", "client-contact", "client-won", "client-deals", "client-staff-status"].includes(name)
+      ? "←戻る" : "← 戻る";
     button.addEventListener("click", goBackScreen);
     screen.appendChild(button);
   });
