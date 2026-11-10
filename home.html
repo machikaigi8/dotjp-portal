@@ -1,3 +1,9 @@
+<!-- v70: MTG直近順、RP転記モード撤去、LINE管理をHP編集へ移動・連携済みボタン非表示 -->
+<!-- v68: matching Workers_v41, sheet two-way sync and MTG times -->
+<!-- v67: staff+task sheet sync, MTG time and optional TT -->
+<!-- v66: sheet edit/delete reflection and review refresh without changing Figma layout -->
+<!-- v65: 管理者向けLINE接続診断／@Allテスト・手動配信機能 -->
+<!-- v64: LINE日次@Allと日曜個人メンションのON/OFFを区別して表示 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -5480,6 +5486,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <h2 id="lineSettingsTitle">LINE通知・アカウント連携</h2>
               <p>毎朝8:30に今日のタスク予定を時刻順で配信（@All）。日曜8:30の未登録者メンションは、個人のLINE連携後に別途有効化できます。</p>
               <div id="lineLinkStatus" class="line-link-status" role="status">連携状況を確認中…</div>
+              <div id="lineLoginSetupNotice" class="line-link-status" role="status" hidden></div>
               <div class="line-row">
                 <button type="button" id="lineLinkStart">LINEアカウントを連携</button>
                 <button type="button" id="lineLinkDisconnect" class="secondary" hidden>連携解除</button>
@@ -5491,6 +5498,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         </section>
 
 
+        <!-- v71: LINE個人連携の事前設定診断・出欠MTGの週内表示 -->
         <!-- Figma 64:637: クライアント -->
         <!-- Figma 2026-11-05: コンス / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-cons" aria-label="コンス">
@@ -6839,10 +6847,22 @@ async function init() {
     updateRegion();
     startTimerLoop();
     const lineResult = new URL(location.href).searchParams.get('line');
+    const lineReason = new URL(location.href).searchParams.get('line_reason')||'';
     if(lineResult){
       history.replaceState(null,'',`${location.pathname}#home`);
-      showToast(lineResult==='connected'?'LINEアカウントを連携しました':'LINE連携が完了しませんでした。設定を確認してください');
-      if(lineResult==='connected')void refreshLineSettings({quiet:true});
+      const reason=lineReason;
+      const why={cancelled:'LINEで連携がキャンセルされました。',authorization:'LINEログインチャネルの設定・公開状態を確認してください。',state:'連携の認証情報が一致しません。ポータルから再度操作してください。',expired:'連携操作の有効期限が切れました。もう一度やり直してください。',duplicate:'このLINEアカウントは他の支部員に連携されています。',token:'LINEログインチャネルID・Secret・コールバックURLが正しいか確認してください。',profile:'LINEプロフィールの取得に失敗しました。再度お試しください。',server:'Workersのログを確認してください。'};
+      const feedback=lineResult==='connected'?'LINEアカウントを連携しました':'LINE連携が完了しませんでした。'+(why[reason]||'設定を確認してください。');
+      showToast(feedback);
+      if(lineResult==='connected'){
+        void refreshLineSettings({quiet:true});
+      }else{
+        document.getElementById('lineSettingsOverlay').hidden=false;
+        // 設定の取得が完了してからエラーを残す（非同期更新で上書きされない）。
+        void refreshLineSettings({quiet:true}).finally(()=>{
+          document.getElementById('lineLinkStatus').textContent=feedback;
+        });
+      }
     }
   } catch (error) {
     console.error(error);
@@ -9463,6 +9483,14 @@ async function refreshLineSettings({quiet=false}={}){
     // 通信失敗時は非表示にしない。連携完了がサーバーで確認できた場合だけ隠す。
     document.getElementById('lineSettingsOpen').hidden=Boolean(data.linked);
     box.textContent=data.linked?`LINE連携済み：${data.line_name||'LINEアカウント'}\n（ポータルのメールアドレスと紐づけ済み）`:'未連携：LINE連携すると、日曜のタスク時間未登録リマインドであなた宛てにメンションできます。';
+    const notice=document.getElementById('lineLoginSetupNotice');
+    const loginReady=Boolean(data.login_ready);
+    notice.hidden=loginReady||Boolean(data.linked);
+    if(!notice.hidden){
+      const missing=(Array.isArray(data.login_missing)?data.login_missing:[]).join(' / ');
+      notice.textContent='LINE個人連携の準備が未完了です。Messaging APIのアクセストークンとは別に、同じプロバイダーでLINEログインチャネル（Webアプリ）を作成し、Cloudflareのdotjp-portal-apiに LINE_LOGIN_CHANNEL_ID、LINE_LOGIN_CHANNEL_SECRET、LINE_LOGIN_REDIRECT_URI を設定してください。'+(missing?'\n未設定・不正な項目：'+missing:'')+'\nコールバックURL：https://dotjp-portal-api.taka-souda516.workers.dev/api/line/connect/callback\n他の支部員が使う前にLINEログインチャネルを「公開済み」にしてください。';
+    }
+    document.getElementById('lineLinkStart').disabled=!loginReady;
     document.getElementById('lineLinkStart').textContent=data.linked?'別のLINEアカウントに再連携':'LINEアカウントを連携';
     document.getElementById('lineLinkDisconnect').hidden=!data.linked;
     area.hidden=!data.can_manage;
@@ -9482,6 +9510,8 @@ async function refreshLineSettings({quiet=false}={}){
   }catch(error){
     const message='LINE設定を取得できません：'+(error.message||error);
     box.textContent=message;
+    document.getElementById('lineLinkStart').disabled=false;
+    document.getElementById('lineLoginSetupNotice').hidden=true;
     area.hidden=!(state.isDeveloper||state.isRepresentative);
     document.getElementById('lineGroupStatus').textContent=message;
   }
@@ -9492,7 +9522,12 @@ async function startLineLink(){
     const data=await portalFetch('/api/line/connect/start',{method:'POST',body:{}});
     if(!data.authorization_url||!data.authorization_url.startsWith('https://access.line.me/'))throw new Error('LINEログイン用のURLが不正です');
     location.assign(data.authorization_url);
-  }catch(error){showToast('LINE連携を開始できません：'+(error.message||error));button.disabled=false;}
+  }catch(error){
+    const message='LINE連携を開始できません：'+(error.message||error);
+    document.getElementById('lineLinkStatus').textContent=message;
+    showToast(message);
+    button.disabled=false;
+  }
 }
 async function unlinkLine(){
   if(!window.confirm('LINE連携を解除しますか？今後あなたへのメンションは送られなくなります。'))return;
@@ -12088,9 +12123,14 @@ async function loadMeetings(preserveScroll=false){
   const savedScroll=preserveScroll?root.scrollTop:0;
   if(!preserveScroll)root.innerHTML='<div class="mtg-empty">MTGを読み込んでいます…</div>';
   try{
-    const data=await portalFetch('/api/meetings?region='+encodeURIComponent(region));
+    const data=await portalFetch('/api/meetings?attendance=1&region='+encodeURIComponent(region));
     if(current!==state.meetingLoadingId||state.region!==region)return;
-    state.meetings=(Array.isArray(data.meetings)?data.meetings:[]).slice().sort(meetingNearFirst);
+    // クライアント側でも同じ日付範囲を適用（旧Worker/キャッシュが返す過去分を表示しない）。
+    const todayJst=new Date(Date.now()+9*3600000).toISOString().slice(0,10);
+    const endJst=new Date(Date.parse(todayJst+'T00:00:00Z')+7*86400000).toISOString().slice(0,10);
+    state.meetings=(Array.isArray(data.meetings)?data.meetings:[])
+      .filter(m=>String(m.date||'')>=todayJst&&String(m.date||'')<=endJst)
+      .sort(meetingNearFirst);
     if(!state.meetings.some(m=>Number(m.id)===state.expandedMeetingId))state.expandedMeetingId=null;
     renderMeetings();
     if(preserveScroll)root.scrollTop=savedScroll;
@@ -12102,7 +12142,7 @@ async function loadMeetings(preserveScroll=false){
 function renderMeetings(){
   const root=document.getElementById('mtgMeetingList');
   if(!state.meetings.length){
-    root.innerHTML='<div class="mtg-empty">この地域に表示できるMTGはありません。<br>MTGの登録は「人事局」画面から行えます。</div>';
+    root.innerHTML='<div class="mtg-empty">今日から1週間後までのMTGはありません。<br>MTGの登録は「人事局」画面から行えます。</div>';
     return;
   }
   root.innerHTML=state.meetings.map(meeting=>{
