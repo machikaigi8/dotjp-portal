@@ -1,5 +1,8 @@
+<!-- v93: editable history calendar + popup preview test + daily template -->
 <!-- v90: One-time shared companytokyo Gmail, CC=current signed-in staff; search stays native. -->
 <!-- v91: activity Gmail 07:00, LINE 12:00 unreported, email verify improvements, form M/N/O strict -->
+<!-- v92: administrator manual activity report delivery testing -->
+<!-- v94: 管理者のLINE手動連携候補・本人連携の併用・誤紐づけ防止 -->
 <!-- v85: M/N/O filter, official company email suggestion, Gmail send OAuth -->
 <!-- v83: calendar account profile photos and Figma client document list -->
 <!-- v81: calendar provider/account service icons instead of empty radio circles -->
@@ -6148,6 +6151,65 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-mail .client-mail-status{font-size:14px;white-space:normal;}
 
 </style>
+<style>
+
+/* v94: Manager-assisted LINE account mapping, within the existing HP LINE tab. */
+.line-manual-member-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 18px;max-height:360px;overflow:auto;}
+.line-manual-member{display:flex;align-items:center;gap:10px;background:#f7faff;border:1px solid #c8d6ee;border-radius:8px;padding:9px;min-width:0;}
+.line-manual-member img,.line-manual-avatar{width:42px;height:42px;flex:none;border-radius:50%;background:#dee8f9;object-fit:cover;}
+.line-manual-avatar{display:grid;place-items:center;color:#4a5d84;font-size:20px;}
+.line-manual-member-details{flex:1;min-width:0;font-size:15px;line-height:1.45;overflow-wrap:anywhere;}
+.line-manual-member-details small{display:block;color:#56647d;font-size:12px;}
+.line-manual-member button,.line-manual-link-row button{border:1px solid #4f71bc;background:#e9f1ff;color:#204d9f;border-radius:6px;padding:6px 9px;font-size:13px;cursor:pointer;flex:none;}
+.line-manual-member button:disabled{opacity:.45;cursor:default;}
+.line-manual-link-list{max-height:320px;overflow-y:auto;margin:10px 0 14px;}
+.line-manual-link-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #dce5f2;background:#fafcff;font-size:15px;}
+.line-manual-link-row button{background:#fff0f0;border-color:#ce8282;color:#9c2432;}
+@media(max-width:800px){.line-manual-member-list{grid-template-columns:1fr;}}
+
+/* v93: Activity history calendar / editable daily report / manual popup test. */
+.task-chart-cell{cursor:pointer;}
+.task-chart-cell:hover{background:#f2f5ff;}
+.task-chart-cell:focus-visible{outline:3px solid #3869dd;outline-offset:-3px;}
+.task-chart-cell .summary-title{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:7px;}
+#taskTimeChart{cursor:pointer;}
+.activity-history-overlay[hidden]{display:none!important;}
+.activity-history-overlay{position:fixed;inset:0;z-index:1000002;background:rgba(12,21,42,.70);display:grid;place-items:center;padding:20px;}
+.activity-history-dialog{position:relative;width:min(750px,96vw);max-height:94dvh;overflow-y:auto;background:#fff;border-radius:14px;padding:22px 28px;box-shadow:0 14px 80px rgba(0,0,0,.28);color:#18213c;font-family:'Noto Sans JP',sans-serif;}
+.activity-history-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:0 0 14px;}
+.activity-history-head h2{font-size:25px;line-height:1.3;margin:0;}
+.activity-history-close{background:#eee;border-radius:6px;padding:4px 14px;font-size:25px;cursor:pointer;}
+.activity-history-calendar-nav{display:flex;align-items:center;justify-content:center;gap:18px;margin:14px 0;}
+.activity-history-calendar-nav button,.activity-history-back{background:#e7ebff;color:#1e3590;border-radius:6px;border:1px solid #aebdf4;padding:7px 17px;font-size:17px;cursor:pointer;}
+.activity-history-calendar-nav button:disabled{opacity:.36;cursor:default;}
+.activity-history-calendar-nav strong{min-width:160px;text-align:center;font-size:23px;}
+.activity-history-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;}
+.activity-history-weekday{padding:10px 0;text-align:center;background:#edf0fd;font-weight:700;}
+.activity-history-date{min-height:68px;border:1px solid #d5def0;border-radius:7px;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;cursor:pointer;font-size:19px;color:#25334d;}
+.activity-history-date:hover:not(:disabled){background:#ecf1ff;border-color:#526bd2;}
+.activity-history-date:disabled{opacity:.28;cursor:default;}
+.activity-history-date.is-edited{background:#e9f3ff;border:2px solid #315dd3;}
+.activity-history-date.has-record:not(.is-edited):after{content:'●';color:#54a0d7;font-size:10px;line-height:1;}
+.activity-history-date.is-edited:after{content:'編集済';font-size:10px;color:#214fb8;font-weight:700;}
+.activity-history-note{font-size:13px;color:#54647c;line-height:1.5;margin:12px 0 4px;}
+.activity-history-form[hidden],.activity-history-calendar[hidden]{display:none!important;}
+.activity-history-section{border-top:2px solid #dce6fa;margin-top:12px;padding-top:12px;}
+.activity-history-section h3{font-size:19px;margin:0 0 8px;color:#253b79;}
+.activity-history-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+.activity-history-fields label{display:flex;align-items:center;gap:7px;font-size:15px;}
+.activity-history-fields input{width:75px;border:1px solid #a9b7d4;border-radius:5px;padding:6px;text-align:right;font-size:16px;}
+.activity-history-form textarea{width:100%;box-sizing:border-box;min-height:74px;resize:vertical;border:1px solid #a9b7d4;padding:9px;border-radius:6px;font-size:16px;}
+.activity-history-form label.block{display:block;margin:12px 0 5px;font-weight:700;}
+.activity-history-time{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.activity-history-time input[type='number']{width:90px;border:1px solid #a9b7d4;padding:6px;font-size:16px;}
+.activity-history-preview{white-space:pre-wrap;border:1px solid #d2dcf2;background:#f7f9fe;padding:10px;border-radius:6px;font:13px/1.5 sans-serif;max-height:155px;overflow:auto;}
+.activity-history-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:15px;}
+.activity-history-actions button{border:0;border-radius:7px;padding:11px 21px;cursor:pointer;font-size:17px;}
+.activity-history-save{background:#315dd3;color:#fff;}
+.activity-history-status{color:#a12434;min-height:23px;white-space:pre-wrap;font-size:14px;}
+@media(max-width:600px){.activity-history-dialog{padding:14px;}.activity-history-fields{grid-template-columns:1fr;}.activity-history-date{min-height:51px;font-size:16px;}}
+
+</style>
 </head>
 <body>
   <div id="loading" class="loading-screen">認証情報を確認しています…</div>
@@ -6196,8 +6258,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <div class="summary-week-label" id="finishedWeekLabel"></div>
               <div class="summary-value task-summary-list" id="finishedTasks"></div>
             </div>
-            <div class="summary-cell task-chart-cell">
-              <div class="summary-title">タスク時間</div>
+            <div class="summary-cell task-chart-cell" id="homeTaskTimeCell" role="button" tabindex="0" aria-label="タスク時間と過去の行動量をカレンダーから編集">
+              <div class="summary-title" id="homeTaskTimeOpen">タスク時間</div>
               <div class="task-chart-period">直近7日</div>
               <div id="taskTimeChart" class="task-time-chart"></div>
             </div>
@@ -6848,7 +6910,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div class="line-row"><button type="button" id="lineGroupSave">通知先グループを保存</button></div>
                 <div id="lineGroupStatus" class="line-link-status" role="status"></div>
                 <h3>行動量報告グループ（正午の未報告者を自動投稿）</h3>
-                <p>本人連携済みのLINEアカウントから、このグループに「【YYYY-MM-DDの行動量】」形式で送信された場合だけ報告済みと判定します。未報告者の前日実績を公式LINEが明示して投稿します。未連携者は判定対象外です。</p>
+                <p>ポータル名簿と紐づいたLINEアカウントから、指定の行動量報告フォーマットで送信された場合に「報告済み」と判定します。未報告者の前日実績は公式LINEが投稿します。未連携者は判定対象外です。管理者による手動連携も下で設定できます。</p>
                 <label for="lineActivityGroupPicker">行動量報告グループを選択</label>
                 <select id="lineActivityGroupPicker"><option value="">グループを読み込み中…</option></select>
                 <label class="line-check"><input type="checkbox" id="lineActivityGroupConfirm">このグループへの各人の行動量投稿について関係者の了承を確認しました。</label>
@@ -6859,6 +6921,29 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <p>自動送信の送信元Gmailを1回だけ認証します。共有企業メールとは別のGoogleアカウントです。</p>
                 <div class="line-row"><button type="button" id="activityMailConnect">行動量メールの送信元を連携</button></div>
                 <div id="activityMailStatus" class="line-link-status" role="status">未確認</div>
+                <h3>行動量報告の手動テスト（代表・デベロッパーのみ）</h3>
+                <p>定時配信に影響させず、最初に内容を確認してから1回ずつ送信できます。メールはログイン中の本人1名宛、LINEは保存済みの行動量報告グループへ1件だけ投稿します。前日の確定集計がなければ明示されたサンプルを使用します。</p>
+                <div class="line-row">
+                  <button type="button" id="activityManualPreview" class="secondary">テスト内容を確認</button>
+                  <button type="button" id="activityManualPopup" class="secondary">ポップアップ表示テスト</button>
+                  <button type="button" id="activityManualEmail" class="secondary">自分宛にテストメール</button>
+                  <button type="button" id="activityManualLine" class="secondary">LINEグループへテスト投稿</button>
+                </div>
+                <div id="activityManualResult" class="line-link-status" role="status" aria-live="polite">テスト未実行。先に「テスト内容を確認」を押してください。</div>
+                <h3>LINEアカウントの手動連携（代表・デベロッパーのみ）</h3>
+                <p>行動量報告・通知先として設定済みのグループで発言したメンバーを候補に表示します。本人から利用目的への同意を得て、表示名・アイコンとポータル名簿を確認してから連携してください。<strong>氏名だけで自動連携しません。</strong> 候補が出ない場合、グループを設定後に本人に一度発言してもらってください。</p>
+                <div class="line-row"><button type="button" id="lineManualRefresh" class="secondary">発言したメンバーを更新</button></div>
+                <div id="lineManualStatus" class="line-link-status" role="status">未読み込み</div>
+                <div id="lineManualCandidatesList" class="line-manual-member-list" aria-label="LINE連携候補"></div>
+                <label for="lineManualCandidateSelect">連携するLINEアカウント</label>
+                <select id="lineManualCandidateSelect"><option value="">LINEアカウントを選択</option></select>
+                <label for="lineManualRosterSelect">対応するポータル名簿</label>
+                <select id="lineManualRosterSelect"><option value="">名簿から選択</option></select>
+                <label class="line-check"><input type="checkbox" id="lineManualConfirm">本人確認と、LINEの発言・行動量をポータルの名簿と紐づけて利用することへの本人の同意を確認しました。</label>
+                <div class="line-row"><button type="button" id="lineManualSave">選択した2件を連携</button></div>
+                <h3>現在のLINE連携一覧・解除</h3>
+                <p>誤連携した場合はここで解除できます。別人への上書きはできません。</p>
+                <div id="lineManualLinkedList" class="line-manual-link-list"></div>
                 <h3>LINE本人連携メニュー（初回だけ）</h3>
                 <p>「行動量報告／タスク時間報告」の公式LINEに「ポータル連携」ボタンを設置します。<strong>現在のLINE公式リッチメニューがある場合は置き換わる</strong>ため、確認してから実行してください。</p>
                 <div class="line-row"><button type="button" id="lineInstallLinkMenu" class="secondary">公式LINEに連携メニューを設置</button></div>
@@ -7650,6 +7735,7 @@ async function init() {
   window.addEventListener("hashchange", routeFromHash);
   wireActions();
   installYesterdayActivityActions();
+  installActivityHistoryActions();
   installCommonBackButtons();
 
   const token = sessionStorage.getItem("dotjp_access_token");
@@ -8000,7 +8086,14 @@ function wireActions() {
   document.getElementById('lineLinkRefresh').addEventListener('click', () => void refreshLineSettings());
   document.getElementById('lineGroupSave').addEventListener('click', () => void saveLineGroup());
   document.getElementById('lineActivityGroupSave').addEventListener('click', () => void saveActivityGroup());
+  document.getElementById('lineManualRefresh').addEventListener('click', () => void refreshLineManualDirectory());
+  document.getElementById('lineManualSave').addEventListener('click', () => void saveLineMemberAsManager());
   document.getElementById('activityMailConnect').addEventListener('click', () => void activityMailConnect());
+  document.getElementById('activityManualPreview').addEventListener('click', () => void activityManualShowPreview());
+  document.getElementById('activityManualPopup').addEventListener('click', () => void activityManualPopupTest());
+  document.getElementById('activityManualEmail').addEventListener('click', () => void activityManualSendTest('email'));
+  document.getElementById('activityManualLine').addEventListener('click', () => void activityManualSendTest('line'));
+
   document.getElementById('lineRunDiagnosis').addEventListener('click', () => void diagnoseLineConnection());
   document.getElementById('lineTestSend').addEventListener('click', () => void sendLineConnectionTest());
   document.getElementById('lineSendToday').addEventListener('click', () => void sendLineTodayNow());
@@ -9434,6 +9527,207 @@ function clientStaffFamilyName(person) {
   const chars=Array.from(raw);
   return chars.length<=2?raw:chars.slice(0,2).join('');
 }
+
+// v93: Activity report archive editor. This is a standalone popup outside the
+// scaled Figma canvas so Edge, mobile and tablet clicks land correctly.
+const activityHistoryState={month:'',day:'',busy:false};
+const ACTIVITY_HISTORY_KEYS=['student_voice','student_call','student_connected','student_won',
+  'company_list','company_call','company_mail','company_won'];
+function activityHistoryDateLabel(day){
+ const x=String(day).split('-');return `${Number(x[1])}/${Number(x[2])}`;
+}
+function activityHistoryMonthShift(month,n){
+ const [y,m]=month.split('-').map(Number);
+ return new Date(Date.UTC(y,m-1+n,1)).toISOString().slice(0,7);
+}
+function activityHistoryEarliestMonth(){
+ const d=new Date(Date.now()+9*3600000-730*86400000);
+ return d.toISOString().slice(0,7);
+}
+function activityHistoryReportText(day,values,reflection,goal){
+ const n=k=>Math.max(0,Number(values[k])||0);
+ return `📅 日付：${activityHistoryDateLabel(day)}
+
+━━━━━━━━━━━━
+🎓 学生向けアプローチ
+━━━━━━━━━━━━
+・声掛け数：${n('student_voice')}件
+・架電数：${n('student_call')}件
+・通電数：${n('student_connected')}件
+・獲得数：${n('student_won')}件
+
+━━━━━━━━━━━━
+🏢 企業向けアプローチ
+━━━━━━━━━━━━
+・リストアップ数：${n('company_list')}社
+・架電数：${n('company_call')}件
+・お問い合わせメール送信数：${n('company_mail')}件
+・獲得数：${n('company_won')}社
+
+━━━━━━━━━━━━
+💬 振り返り・ネクストアクション
+━━━━━━━━━━━━
+【本日の振り返り】
+${String(reflection||'').trim()||'未記入'}
+
+【明日の行動目標】
+${String(goal||'').trim()||'未記入'}`;
+}
+function activityHistoryInputSnapshot(){
+ const m={};document.querySelectorAll('[data-edit-activity]').forEach(el=>m[el.dataset.editActivity]=Number(el.value));
+ return {day:activityHistoryState.day,metrics:m,
+  reflection:document.getElementById('activityHistoryReflection').value.trim(),
+  tomorrowGoal:document.getElementById('activityHistoryGoal').value.trim(),
+  task_minutes:document.getElementById('activityHistoryTimeOverride').checked?
+   Number(document.getElementById('activityHistoryMinutes').value):null};
+}
+function activityHistoryPreviewUpdate(){
+ const p=activityHistoryInputSnapshot();
+ document.getElementById('activityHistoryPreview').textContent=activityHistoryReportText(p.day,p.metrics,p.reflection,p.tomorrowGoal);
+}
+function activityHistoryShowCalendar(){
+ document.getElementById('activityHistoryCalendar').hidden=false;
+ document.getElementById('activityHistoryForm').hidden=true;
+ document.getElementById('activityHistoryTitle').textContent='過去の行動量を編集';
+}
+function activityHistoryClose(){document.getElementById('activityHistoryOverlay').hidden=true;}
+async function activityHistoryOpen(){
+ activityHistoryState.month=staffStatusToday().slice(0,7);
+ activityHistoryState.day='';
+ document.getElementById('activityHistoryOverlay').hidden=false;
+ activityHistoryShowCalendar();
+ await activityHistoryRenderMonth();
+ document.querySelector('.activity-history-dialog')?.focus();
+}
+async function activityHistoryRenderMonth(){
+ const month=activityHistoryState.month;
+ const root=document.getElementById('activityHistoryDays');
+ document.getElementById('activityHistoryMonth').textContent=`${Number(month.slice(0,4))}年 ${Number(month.slice(5,7))}月`;
+ document.getElementById('activityHistoryPrev').disabled=month<=activityHistoryEarliestMonth();
+ document.getElementById('activityHistoryNext').disabled=month>=staffStatusToday().slice(0,7);
+ root.replaceChildren();
+ for(const name of ['日','月','火','水','木','金','土']){
+  const b=document.createElement('div');b.className='activity-history-weekday';b.textContent=name;root.append(b);
+ }
+ const first=new Date(`${month}-01T00:00:00Z`);
+ const count=new Date(Date.UTC(Number(month.slice(0,4)),Number(month.slice(5,7)),0)).getUTCDate();
+ for(let i=0;i<first.getUTCDay();i++)root.append(document.createElement('div'));
+ const dateButtons=[];
+ const earliest=new Date(Date.now()+9*3600000-730*86400000).toISOString().slice(0,10);
+ for(let d=1;d<=count;d++){
+  const day=`${month}-${String(d).padStart(2,'0')}`;
+  const b=document.createElement('button');b.type='button';b.className='activity-history-date';b.textContent=String(d);
+  b.disabled=day>=staffStatusToday()||day<earliest;
+  b.dataset.day=day;
+  b.addEventListener('click',()=>void activityHistoryOpenDay(day));
+  root.append(b);dateButtons.push(b);
+ }
+ try{
+  const response=await portalFetch(`/api/client/activity/month?month=${encodeURIComponent(month)}`);
+  if(activityHistoryState.month!==month)return;
+  const byDay=new Map((response.days||[]).map(x=>[x.day,x]));
+  dateButtons.forEach(btn=>{
+   const data=byDay.get(btn.dataset.day);
+   if(!data)return;
+   btn.classList.add('has-record');
+   if(data.edited)btn.classList.add('is-edited');
+   btn.title=data.edited?'修正済み':'記録あり';
+  });
+ }catch(error){
+  const p=document.createElement('p');p.className='activity-history-status';
+  p.textContent=`記録日の取得失敗：${error.message}（日付を選んで直接開くことはできます）`;
+  root.after(p);setTimeout(()=>p.remove(),5000);
+ }
+}
+async function activityHistoryOpenDay(day){
+ if(activityHistoryState.busy)return;
+ activityHistoryState.busy=true;activityHistoryState.day=day;
+ const form=document.getElementById('activityHistoryForm');
+ const status=document.getElementById('activityHistoryStatus');
+ form.hidden=false;document.getElementById('activityHistoryCalendar').hidden=true;
+ document.getElementById('activityHistoryTitle').textContent=`${day} の行動量・タスク時間`;
+ status.textContent='読み込み中…';
+ try{
+  const record=await portalFetch(`/api/client/activity/day?day=${encodeURIComponent(day)}`);
+  if(activityHistoryState.day!==day)return;
+  for(const input of document.querySelectorAll('[data-edit-activity]'))input.value=String(record.metrics?.[input.dataset.editActivity]||0);
+  document.getElementById('activityHistoryReflection').value=record.reflection||'';
+  document.getElementById('activityHistoryGoal').value=record.tomorrowGoal||'';
+  document.getElementById('activityHistoryTimeOverride').checked=Boolean(record.time_overridden);
+  const time=document.getElementById('activityHistoryMinutes');
+  time.value=String(record.task_minutes||0);
+  time.disabled=!record.time_overridden;
+  status.textContent=record.edited?'編集済みの内容を読み込みました。':(record.has_record?'既存の記録を読み込みました。':'この日の記録はありません。数値を入力して保存できます。');
+  activityHistoryPreviewUpdate();
+ }catch(e){status.textContent='読み込み失敗：'+e.message;form.hidden=true;activityHistoryShowCalendar();showToast(e.message);}
+ finally{activityHistoryState.busy=false;}
+}
+async function activityHistorySave(event){
+ event.preventDefault();if(activityHistoryState.busy)return;
+ const p=activityHistoryInputSnapshot();
+ if(Object.values(p.metrics).some(n=>!Number.isInteger(n)||n<0||n>1000000)){
+  document.getElementById('activityHistoryStatus').textContent='行動量は0以上の整数で入力してください。';return;
+ }
+ if(p.task_minutes!==null&&(!Number.isInteger(p.task_minutes)||p.task_minutes<0||p.task_minutes>1440)){
+  document.getElementById('activityHistoryStatus').textContent='タスク時間は0〜1440分で入力してください。';return;
+ }
+ activityHistoryState.busy=true;
+ const save=document.getElementById('activityHistorySave');save.disabled=true;
+ document.getElementById('activityHistoryStatus').textContent='保存中…';
+ try{
+  await portalFetch('/api/client/activity/day',{method:'POST',body:p});
+  document.getElementById('activityHistoryStatus').textContent='保存しました。';
+  showToast(`${p.day} の行動量を保存しました。`);
+  await loadPersonalWorkSessions();
+  activityHistoryShowCalendar();
+  void activityHistoryRenderMonth();
+ }catch(e){document.getElementById('activityHistoryStatus').textContent='保存できません：'+e.message;}
+ finally{activityHistoryState.busy=false;save.disabled=false;}
+}
+function installActivityHistoryActions(){
+ const opener=document.getElementById('homeTaskTimeCell');
+ opener?.addEventListener('click',()=>void activityHistoryOpen());
+ opener?.addEventListener('keydown',e=>{if(e.target===opener&&(e.key==='Enter'||e.key===' ')){e.preventDefault();void activityHistoryOpen();}});
+ document.getElementById('activityHistoryClose').addEventListener('click',activityHistoryClose);
+ document.getElementById('activityHistoryOverlay').addEventListener('click',e=>{if(e.target.id==='activityHistoryOverlay')activityHistoryClose();});
+ document.getElementById('activityHistoryPrev').addEventListener('click',()=>{
+  if(activityHistoryState.month<=activityHistoryEarliestMonth())return;
+  activityHistoryState.month=activityHistoryMonthShift(activityHistoryState.month,-1);void activityHistoryRenderMonth();
+ });
+ document.getElementById('activityHistoryNext').addEventListener('click',()=>{
+  if(activityHistoryState.month>=staffStatusToday().slice(0,7))return;
+  activityHistoryState.month=activityHistoryMonthShift(activityHistoryState.month,1);void activityHistoryRenderMonth();
+ });
+ document.getElementById('activityHistoryBack').addEventListener('click',()=>{activityHistoryShowCalendar();void activityHistoryRenderMonth();});
+ document.getElementById('activityHistoryCancel').addEventListener('click',()=>{activityHistoryShowCalendar();void activityHistoryRenderMonth();});
+ document.getElementById('activityHistoryForm').addEventListener('submit',e=>void activityHistorySave(e));
+ document.getElementById('activityHistoryTimeOverride').addEventListener('change',e=>{
+  document.getElementById('activityHistoryMinutes').disabled=!e.target.checked;
+ });
+ document.getElementById('activityHistoryForm').addEventListener('input',activityHistoryPreviewUpdate);
+ document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  const overlay=document.getElementById('activityHistoryOverlay');if(!overlay.hidden)activityHistoryClose();
+ });
+}
+async function activityManualPopupTest(){
+ const btn=document.getElementById('activityManualPopup'),status=document.getElementById('activityManualResult');
+ btn.disabled=true;
+ try{
+  const p=await portalFetch('/api/client/activity-test/preview');
+  const overlay=document.getElementById('dailyActivityOverlay');
+  document.getElementById('dailyActivityTitle').textContent='【テスト表示】昨日の行動量';
+  document.getElementById('dailyActivityStatus').textContent=p.is_sample?
+    'これは実績ではないサンプルです。表示のみのテストで、送信や報告済み登録は行いません。':
+    '昨日の本人データを使った表示テストです。送信や報告済み登録は行いません。';
+  document.getElementById('dailyActivityText').value=p.report;
+  document.getElementById('dailyActivityCopy').disabled=false;
+  overlay.dataset.test='1';overlay.hidden=false;
+  status.textContent='ポップアップをテスト表示しました。閉じても「今日の表示済み」には記録しません。';
+ }catch(e){status.textContent='表示テスト失敗：'+e.message;}
+ finally{btn.disabled=false;}
+}
+
 async function displayYesterdayActivity(){
   const who=String(userIdentity()||'').toLowerCase();if(!who)return;
   const today=staffStatusToday(),key=`dotjp_daily_activity_seen_${who}_${today}`;
@@ -9443,14 +9737,12 @@ async function displayYesterdayActivity(){
     if(localStorage.getItem(key)==='1')return;
     const dialog=document.getElementById('dailyActivityOverlay');
     if(!result.ready)return; // baseline first, no ungrounded previous-day numbers
-    const c=result.counts||{};
-    const report=result.ready
-      ?`【${result.day}の行動量】\n架電：${Number(c.call||0)}件\nお問い合わせフォーム：${Number(c.form||0)}件\nメール：${Number(c.mail||0)}件`
-      :`【${result.day}の行動量】\n${result.notice||'昨日の集計はまだありません。'}`;
+    const report=String(result.report||'');
     document.getElementById('dailyActivityTitle').textContent=`昨日（${result.day}）の行動量`;
-    document.getElementById('dailyActivityStatus').textContent=result.ready?'今日の初回ログインです。昨日の行動量をLINEで報告しましょう。':report.split('\n')[1];
+    document.getElementById('dailyActivityStatus').textContent='今日の初回ログインです。昨日の行動量をLINEで報告しましょう。';
     document.getElementById('dailyActivityText').value=report;
     document.getElementById('dailyActivityCopy').disabled=!result.ready;
+    dialog.dataset.test='0';
     dialog.hidden=false;
   }catch(error){console.warn('daily activity summary',error);}
 }
@@ -9458,7 +9750,9 @@ function installYesterdayActivityActions(){
   document.getElementById('dailyActivityClose').addEventListener('click',()=>{
     document.getElementById('dailyActivityOverlay').hidden=true;
     const who=String(userIdentity()||'').toLowerCase();
-    if(who && !document.getElementById('dailyActivityCopy').disabled)localStorage.setItem(`dotjp_daily_activity_seen_${who}_${staffStatusToday()}`,'1');
+    if(who && document.getElementById('dailyActivityOverlay').dataset.test!=='1' &&
+       !document.getElementById('dailyActivityCopy').disabled)
+      localStorage.setItem(`dotjp_daily_activity_seen_${who}_${staffStatusToday()}`,'1');
   });
   document.getElementById('dailyActivityCopy').addEventListener('click',async()=>{
     const text=document.getElementById('dailyActivityText').value;
@@ -10517,6 +10811,8 @@ async function refreshLineSettings({quiet=false}={}){
       document.getElementById('lineActivityGroupConfirm').checked=false;
       document.getElementById('lineActivityGroupStatus').textContent=`行動量報告先：${data.selected_activity_group_id?'設定済み':'未設定'} / 正午自動投稿：${data.activity_auto_report_enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
       void activityMailRefreshStatus();
+      const lineTab=document.querySelector('[data-hp-view="line"]');
+      if(lineTab&&!lineTab.hidden)void refreshLineManualDirectory();
     }
   }catch(error){
     const message='LINE設定を取得できません：'+(error.message||error);
@@ -10580,6 +10876,94 @@ async function saveLineGroup(){
 }
 
 
+// v94: Manual matching directory. Use DOM textContent to prevent XSS from LINE names.
+let lineManualDirectory=null;
+async function refreshLineManualDirectory(){
+ const status=document.getElementById('lineManualStatus');
+ const refresh=document.getElementById('lineManualRefresh');
+ if(!status || !refresh)return;
+ refresh.disabled=true;status.textContent='LINEグループで発言したメンバーと名簿を読み込み中…';
+ try{
+   const data=await portalFetch('/api/line/members/candidates');
+   lineManualDirectory=data;
+   const candidates=document.getElementById('lineManualCandidatesList');
+   const linked=document.getElementById('lineManualLinkedList');
+   const candidateSelect=document.getElementById('lineManualCandidateSelect');
+   const rosterSelect=document.getElementById('lineManualRosterSelect');
+   const previousCandidate=candidateSelect.value,previousRoster=rosterSelect.value;
+   candidates.replaceChildren();linked.replaceChildren();candidateSelect.replaceChildren();rosterSelect.replaceChildren();
+   const option=(select,value,label)=>{
+     const o=document.createElement('option');o.value=value;o.textContent=label;select.appendChild(o);return o;
+   };
+   option(candidateSelect,'','LINEアカウントを選択');
+   option(rosterSelect,'','名簿から選択');
+   for(const r of data.roster||[])option(rosterSelect,r.email,`${r.name}（${r.group_name||'未振り分け'} / ${r.email}）`);
+   for(const m of data.members||[]){
+     const usable=Boolean(m.profile_available)&&!m.linked_email;
+     const key=m.group_id+'|'+m.line_user_id;
+     if(usable)option(candidateSelect,key,m.name+'（LINE ID末尾 '+m.line_user_id.slice(-5)+'）');
+     const row=document.createElement('div');row.className='line-manual-member';
+     let avatar;
+     if(m.picture_url&&m.picture_url.startsWith('https://')){
+       avatar=document.createElement('img');avatar.src=m.picture_url;avatar.alt='';avatar.referrerPolicy='no-referrer';
+     }else{avatar=document.createElement('span');avatar.className='line-manual-avatar';avatar.textContent='LINE';}
+     row.appendChild(avatar);
+     const details=document.createElement('div');details.className='line-manual-member-details';
+     const heading=document.createElement('strong');heading.textContent=m.name;details.appendChild(heading);
+     const sub=document.createElement('small');sub.textContent=m.linked_email?
+       `連携済：${m.linked_name||m.linked_email}`:
+       (m.profile_available?'未連携／名簿と照合してください':'プロフィール取得不可（グループから退出した可能性）');
+     details.appendChild(sub);row.appendChild(details);
+     const btn=document.createElement('button');btn.type='button';btn.textContent=m.linked_email?'連携済':'選択';btn.disabled=!usable;
+     btn.addEventListener('click',()=>{candidateSelect.value=key;candidateSelect.focus();});
+     row.appendChild(btn);candidates.appendChild(row);
+   }
+   if(!data.members?.length){const empty=document.createElement('p');empty.textContent='候補がありません。管理画面でLINEグループを設定し、そのグループで一度発言してから更新してください。';candidates.appendChild(empty);}
+   if(previousCandidate&&Array.from(candidateSelect.options).some(o=>o.value===previousCandidate))candidateSelect.value=previousCandidate;
+   if(previousRoster&&Array.from(rosterSelect.options).some(o=>o.value===previousRoster))rosterSelect.value=previousRoster;
+   for(const link of data.links||[]){
+     const row=document.createElement('div');row.className='line-manual-link-row';
+     const who=document.createElement('div');
+     const name=document.createElement('strong');name.textContent=link.roster_name||link.email;who.appendChild(name);
+     const info=document.createElement('div');info.textContent=`${link.line_name||'LINEアカウント'} / ${link.email}`;who.appendChild(info);row.appendChild(who);
+     const btn=document.createElement('button');btn.type='button';btn.textContent='連携解除';
+     btn.addEventListener('click',()=>void unlinkLineMemberAsManager(link.email,link.line_user_id));
+     row.appendChild(btn);linked.appendChild(row);
+   }
+   if(!data.links?.length){const empty=document.createElement('p');empty.textContent='現在の連携はありません。';linked.appendChild(empty);}
+   document.getElementById('lineManualConfirm').checked=false;
+   status.textContent=`最近30日以内に発言：${data.members?.length||0}人 ／ 連携済み：${data.links?.length||0}人。連携には本人の同意を確認してください。`;
+ }catch(error){status.textContent='LINE連携候補の取得に失敗：'+(error?.message||error);}
+ finally{refresh.disabled=false;}
+}
+async function saveLineMemberAsManager(){
+ const candidate=document.getElementById('lineManualCandidateSelect').value;
+ const email=document.getElementById('lineManualRosterSelect').value;
+ const checked=document.getElementById('lineManualConfirm').checked;
+ const member=(lineManualDirectory?.members||[]).find(x=>x.group_id+'|'+x.line_user_id===candidate);
+ const staff=(lineManualDirectory?.roster||[]).find(x=>x.email===email);
+ if(!member||!staff){showToast('LINEアカウントとポータル名簿を両方選んでください。');return;}
+ if(!checked){showToast('本人確認と利用目的への同意を確認してください。');return;}
+ if(!window.confirm(`【連携確認】\nLINE：${member.name}\nポータル：${staff.name}（${staff.email}）\n\n2人が同じ本人であり、本人同意があることを確認しましたか？`))return;
+ const btn=document.getElementById('lineManualSave');btn.disabled=true;
+ try{
+   await portalFetch('/api/line/members/link',{method:'POST',body:{group_id:member.group_id,line_user_id:member.line_user_id,email:staff.email,confirmed:true}});
+   showToast('LINEアカウントを名簿に連携しました。');
+   await refreshLineManualDirectory();await refreshLineSettings({quiet:true});
+ }catch(error){showToast('LINEの連携に失敗：'+(error?.message||error));}
+ finally{btn.disabled=false;}
+}
+async function unlinkLineMemberAsManager(email,uid){
+ const link=(lineManualDirectory?.links||[]).find(x=>x.email===email&&x.line_user_id===uid);
+ if(!link)return;
+ if(!window.confirm(`「${link.roster_name||link.email}」のLINE連携を解除しますか？\n解除後はその人の自動報告判定・メンションが無効になります。`))return;
+ try{
+   await portalFetch('/api/line/members/unlink',{method:'POST',body:{email,line_user_id:uid,confirmed:true}});
+   showToast('LINE連携を解除しました。');
+   await refreshLineManualDirectory();await refreshLineSettings({quiet:true});
+ }catch(error){showToast('LINE連携を解除できません：'+(error?.message||error));}
+}
+
 async function saveActivityGroup(){
  const id=document.getElementById('lineActivityGroupPicker').value;
  if(!id||!document.getElementById('lineActivityGroupConfirm').checked){showToast('報告グループを選択し、閲覧権限を確認してください。');return;}
@@ -10606,6 +10990,36 @@ async function activityMailConnect(){
   if(!d.authorizationUrl?.startsWith('https://accounts.google.com/'))throw new Error('Google認証URLを取得できませんでした。');
   location.assign(d.authorizationUrl);
  }catch(e){showToast('連携失敗：'+e.message);btn.disabled=false;}
+}
+// v92: Safe, administrator-only one-time activity report delivery tests.
+async function activityManualShowPreview(){
+ const target=document.getElementById('activityManualResult');
+ const btn=document.getElementById('activityManualPreview');
+ btn.disabled=true;target.textContent='送信内容と接続状況を確認中…';
+ try{
+  const p=await portalFetch('/api/client/activity-test/preview');
+  target.textContent=`【送信前の確認】\n前日：${p.day}\n内容：${p.is_sample?'サンプル（実績ではありません）':'前日の確定データ'}\n${p.reason?'理由：'+p.reason+'\n':''}メール：${p.sender} → ${p.recipient}\nGmail連携：${p.mail_connected?'済':'未連携'}\nLINEグループ：${p.group_name}\n\n${p.report}`;
+ }catch(e){target.textContent='プレビュー失敗：'+e.message;}
+ finally{btn.disabled=false;}
+}
+async function activityManualSendTest(channel){
+ const id=channel==='email'?'activityManualEmail':'activityManualLine';
+ const btn=document.getElementById(id),target=document.getElementById('activityManualResult');
+ btn.disabled=true;
+ try{
+  const p=await portalFetch('/api/client/activity-test/preview');
+  if(channel==='email'&&!p.mail_connected)throw new Error('行動量メール送信元が未連携です。先にGmailを連携してください。');
+  if(channel==='line'&&!p.group_id)throw new Error('行動量報告グループが未設定です。先にグループを保存してください。');
+  const to=channel==='email'?p.recipient:p.group_name;
+  const message=`【テスト送信】\n${channel==='email'?'メール':'LINEグループ'}へ実際に1件送ります。\n宛先：${to}\nデータ：${p.is_sample?'サンプル（実績ではありません）':'前日の確定データ'}\n本番の送信済み・報告済み状態は変更しません。\n実行しますか？`;
+  if(!window.confirm(message))return;
+  target.textContent='テスト送信中…';
+  const result=await portalFetch('/api/client/activity-test/send',{
+    method:'POST',body:{channel,confirmed:true,group_id:p.group_id||''}});
+  target.textContent=`${result.message}\n${channel==='email'?`宛先：${result.recipient} / 送信元：${result.sender}`:`送信先：${result.group_name}`}\n送信データ：${result.is_sample?'サンプル':'前日の確定データ'}`;
+  showToast('行動量報告のテスト送信を受け付けました。');
+ }catch(e){target.textContent='テスト送信失敗：'+e.message;showToast(e.message);}
+ finally{btn.disabled=false;}
 }
 // v65: 管理者用接続診断・Cronを待たない送信テスト。
 async function diagnoseLineConnection(){
@@ -14065,6 +14479,68 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
+
+
+<!-- v93: Day-by-day editor for only the currently signed-in member. -->
+<div id="activityHistoryOverlay" class="activity-history-overlay" hidden role="presentation">
+ <section class="activity-history-dialog" role="dialog" aria-modal="true" aria-labelledby="activityHistoryTitle" tabindex="-1">
+  <div class="activity-history-head">
+   <h2 id="activityHistoryTitle">過去の行動量を編集</h2>
+   <button type="button" id="activityHistoryClose" class="activity-history-close" aria-label="閉じる">×</button>
+  </div>
+  <div id="activityHistoryCalendar" class="activity-history-calendar">
+   <div class="activity-history-calendar-nav">
+    <button type="button" id="activityHistoryPrev">前月</button>
+    <strong id="activityHistoryMonth"></strong>
+    <button type="button" id="activityHistoryNext">次月</button>
+   </div>
+   <div id="activityHistoryDays" class="activity-history-grid" aria-label="編集する日付を選択"></div>
+   <p class="activity-history-note">● 記録がある日／青枠 編集済み。昨日までの過去730日を編集できます。編集は本人の記録だけに反映されます。</p>
+  </div>
+  <form id="activityHistoryForm" class="activity-history-form" hidden>
+   <button type="button" id="activityHistoryBack" class="activity-history-back">← カレンダーに戻る</button>
+   <div class="activity-history-section">
+    <h3>🎓 学生向けアプローチ</h3>
+    <div class="activity-history-fields">
+     <label>声掛け数 <input type="number" data-edit-activity="student_voice" min="0" max="1000000" step="1" required> 件</label>
+     <label>架電数 <input type="number" data-edit-activity="student_call" min="0" max="1000000" step="1" required> 件</label>
+     <label>通電数 <input type="number" data-edit-activity="student_connected" min="0" max="1000000" step="1" required> 件</label>
+     <label>獲得数 <input type="number" data-edit-activity="student_won" min="0" max="1000000" step="1" required> 件</label>
+    </div>
+   </div>
+   <div class="activity-history-section">
+    <h3>🏢 企業向けアプローチ</h3>
+    <div class="activity-history-fields">
+     <label>リストアップ数 <input type="number" data-edit-activity="company_list" min="0" max="1000000" step="1" required> 社</label>
+     <label>架電数 <input type="number" data-edit-activity="company_call" min="0" max="1000000" step="1" required> 件</label>
+     <label>お問い合わせメール送信数 <input type="number" data-edit-activity="company_mail" min="0" max="1000000" step="1" required> 件</label>
+     <label>獲得数 <input type="number" data-edit-activity="company_won" min="0" max="1000000" step="1" required> 社</label>
+    </div>
+   </div>
+   <div class="activity-history-section">
+    <h3>💬 振り返り・ネクストアクション</h3>
+    <label class="block" for="activityHistoryReflection">本日の振り返り</label>
+    <textarea id="activityHistoryReflection" maxlength="1000"></textarea>
+    <label class="block" for="activityHistoryGoal">明日の行動目標</label>
+    <textarea id="activityHistoryGoal" maxlength="1000"></textarea>
+   </div>
+   <div class="activity-history-section">
+    <div class="activity-history-time">
+     <label><input type="checkbox" id="activityHistoryTimeOverride"> 当日のタスク時間も手動補正する</label>
+     <input type="number" id="activityHistoryMinutes" min="0" max="1440" step="1" disabled> 分
+    </div>
+    <p class="activity-history-note">時間を補正しない場合、作業セッションから計算された元の時間を維持します。</p>
+   </div>
+   <div class="activity-history-section"><h3>LINE・メールに使用する文章のプレビュー</h3>
+    <div id="activityHistoryPreview" class="activity-history-preview"></div></div>
+   <p id="activityHistoryStatus" class="activity-history-status" role="status"></p>
+   <div class="activity-history-actions">
+    <button type="button" id="activityHistoryCancel" class="activity-history-back">戻る</button>
+    <button type="submit" id="activityHistorySave" class="activity-history-save">この日の報告を保存</button>
+   </div>
+  </form>
+ </section>
+</div>
 
 <!-- v79: Yesterday's activity, shown only at first signed-in visit each day. -->
 <div id="dailyActivityOverlay" class="daily-activity-overlay" hidden role="presentation">
