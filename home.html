@@ -1,3 +1,4 @@
+<!-- v95: LINE notification panel scroll fix and jump to manual account mapping -->
 <!-- v93: editable history calendar + popup preview test + daily template -->
 <!-- v90: One-time shared companytokyo Gmail, CC=current signed-in staff; search stays native. -->
 <!-- v91: activity Gmail 07:00, LINE 12:00 unreported, email verify improvements, form M/N/O strict -->
@@ -6209,6 +6210,41 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .activity-history-status{color:#a12434;min-height:23px;white-space:pre-wrap;font-size:14px;}
 @media(max-width:600px){.activity-history-dialog{padding:14px;}.activity-history-fields{grid-template-columns:1fr;}.activity-history-date{min-height:51px;font-size:16px;}}
 
+
+/* v95: The generic HP panel's later `overflow:hidden` overrode LINE panel scrolling.
+   Restore an independently scrollable area without moving the fixed Figma canvas. */
+.screen-hp-edit .figma-hp-main.figma-hp-line {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  touch-action: pan-y;
+}
+.screen-hp-edit .figma-hp-line-content { min-height: 100%; }
+.screen-hp-edit .figma-hp-main.figma-hp-line::-webkit-scrollbar { width: 14px; }
+.screen-hp-edit .figma-hp-main.figma-hp-line::-webkit-scrollbar-thumb {
+  background: #a1b1ce;
+  border: 3px solid #f7f9ff;
+  border-radius: 12px;
+}
+.screen-hp-edit .figma-hp-main.figma-hp-line::-webkit-scrollbar-track { background: #f7f9ff; }
+.screen-hp-edit .line-quick-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: sticky;
+  top: -22px;
+  z-index: 4;
+  padding: 10px 12px;
+  margin: -8px 0 14px;
+  background: #f0f4fc;
+  border: 1px solid #d2dff0;
+  border-radius: 8px;
+  font-size: 15px;
+}
+.screen-hp-edit .line-quick-navigation button { font-size: 17px; min-height: 38px; }
 </style>
 </head>
 <body>
@@ -6902,6 +6938,10 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <section class="figma-hp-main figma-hp-line" data-hp-view="line" hidden>
             <div class="figma-hp-line-content">
               <section id="lineGroupAdmin" class="line-admin figma-hp-line-admin" hidden>
+                <div class="line-quick-navigation">
+                  <span>設定が下まで続きます。右側のスクロールバーで移動できます。</span>
+                  <button type="button" id="lineJumpManual" class="secondary">LINE手動連携へ移動 ↓</button>
+                </div>
                 <h3>通知先LINEグループ（代表・デベロッパーのみ）</h3>
                 <p>LINE Developersで「グループへの参加を許可」をONにし、公式アカウントを通知先グループへ招待してください。候補が出ない場合は、グループに通常のメッセージを1通送ってから更新してください。</p>
                 <label for="lineGroupPicker">通知先を選択</label>
@@ -6930,7 +6970,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                   <button type="button" id="activityManualLine" class="secondary">LINEグループへテスト投稿</button>
                 </div>
                 <div id="activityManualResult" class="line-link-status" role="status" aria-live="polite">テスト未実行。先に「テスト内容を確認」を押してください。</div>
-                <h3>LINEアカウントの手動連携（代表・デベロッパーのみ）</h3>
+                <h3 id="lineManualSection">LINEアカウントの手動連携（代表・デベロッパーのみ）</h3>
                 <p>行動量報告・通知先として設定済みのグループで発言したメンバーを候補に表示します。本人から利用目的への同意を得て、表示名・アイコンとポータル名簿を確認してから連携してください。<strong>氏名だけで自動連携しません。</strong> 候補が出ない場合、グループを設定後に本人に一度発言してもらってください。</p>
                 <div class="line-row"><button type="button" id="lineManualRefresh" class="secondary">発言したメンバーを更新</button></div>
                 <div id="lineManualStatus" class="line-link-status" role="status">未読み込み</div>
@@ -8087,6 +8127,14 @@ function wireActions() {
   document.getElementById('lineGroupSave').addEventListener('click', () => void saveLineGroup());
   document.getElementById('lineActivityGroupSave').addEventListener('click', () => void saveActivityGroup());
   document.getElementById('lineManualRefresh').addEventListener('click', () => void refreshLineManualDirectory());
+  document.getElementById('lineJumpManual').addEventListener('click', () => {
+    const panel = document.querySelector('.screen-hp-edit .figma-hp-main.figma-hp-line');
+    const heading = document.getElementById('lineManualSection');
+    if (!panel || !heading || panel.hidden) return;
+    // offsetTop is expressed in unscaled Figma canvas CSS pixels, matching scrollTop.
+    // Use this instead of viewport rects, which are scaled by canvas transform.
+    panel.scrollTo({ top: Math.max(0, heading.offsetTop - 78), behavior: 'smooth' });
+  });
   document.getElementById('lineManualSave').addEventListener('click', () => void saveLineMemberAsManager());
   document.getElementById('activityMailConnect').addEventListener('click', () => void activityMailConnect());
   document.getElementById('activityManualPreview').addEventListener('click', () => void activityManualShowPreview());
