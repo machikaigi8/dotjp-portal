@@ -6127,6 +6127,15 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
 .screen-client-mail .client-mail-verify{font-size:18px;}
 
+/* v89: Use a native anchor, not window.open. Remains clickable even while the draft loads. */
+.screen-client-mail a.client-mail-verify{
+  display:flex;align-items:center;justify-content:center;text-decoration:none;
+  z-index:5;position:absolute;touch-action:manipulation;
+}
+.screen-client-mail a.client-mail-verify:focus-visible{
+  outline:3px solid #283dff;outline-offset:3px;
+}
+
 /* v85: send-only Gmail OAuth; no special university field. */
 .screen-client-mail .client-mail-gmail-connect{position:absolute;left:530px;top:27px;width:129px;height:28px;box-sizing:border-box;border:1px solid #3d60c9;border-radius:4px;background:#eef1ff;color:#233b8f;font:500 13px/26px Inter,'Noto Sans JP',sans-serif;cursor:pointer;white-space:nowrap;}
 .screen-client-mail .client-mail-gmail-connect:hover{background:#dce4ff;}
@@ -6412,7 +6421,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button type="button" class="client-mail-gmail-connect" id="clientMailGmailConnect" title="@dot-jp.or.jp のGmailアカウントのみ">Gmail送信を連携</button>
             <label class="client-mail-field client-mail-to" for="clientMailTo"><span>宛先</span>
               <input id="clientMailTo" type="email" required placeholder="宛先は保存されません／検索または手動入力"></label>
-            <button type="button" id="clientMailVerify" class="client-mail-verify">メールを検索</button>
+            <a id="clientMailVerify" class="client-mail-verify"
+               href="https://www.google.com/search?q=%E4%BC%81%E6%A5%AD+%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%E5%85%88+%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9"
+               target="_blank" rel="noopener noreferrer">メールを検索</a>
             <label class="client-mail-field client-mail-cc" for="clientMailCc"><span>CC</span>
               <textarea id="clientMailCc" placeholder="なし（複数は改行区切り）" rows="2"></textarea></label>
             <label class="client-mail-field client-mail-bcc" for="clientMailBcc"><span>BCC</span>
@@ -14014,22 +14025,42 @@ window.addEventListener('DOMContentLoaded',()=>{
 </div>
 
 <script>
-// v88: Mail recipients are per-send inputs. Only the email template is saved.
+// v89: Native outbound search link + click-to-verify; recipients stay per-send only.
 const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',saved:false,dirty:false,verifyStep:0,
   sender:'',sendReady:false,sent:null,preview:null,busy:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
 const clientMailIds=['clientMailTo','clientMailCc','clientMailBcc','clientMailSubject','clientMailBody'];
 function clientMailEl(id){return document.getElementById(id);}
 function clientMailStatus(message){const el=clientMailEl('clientMailStatus');if(el)el.textContent=String(message||'');}
+function clientMailSearchUrl(record){
+ // Open the same kind of native link used by the inquiry form, so Edge/new-tab
+ // navigation is not swallowed by popup-blocking or a failed window.open().
+ const name=String(record?.name||'').trim();
+ const terms=name?[`"${name}"`,'お問い合わせ','メールアドレス','公式サイト']:
+   ['企業','お問い合わせ先','メールアドレス'];
+ // Never use a previous company's URL while the next company's draft is loading.
+ if(record&&Number(record.row)===clientMailState.row){
+  try{
+   const site=new URL(clientMailState.companyWebsite||clientMailState.companyContactUrl);
+   if(/^https?:$/.test(site.protocol))terms.push(site.hostname.replace(/^www\./i,''));
+  }catch(_){/* A missing website is normal. */}
+ }
+ return 'https://www.google.com/search?q='+encodeURIComponent(terms.join(' '));
+}
 function clientMailRenderButtons(){
  const step=clientMailState.verifyStep,dirty=clientMailState.dirty,saved=clientMailState.saved;
- const button=clientMailEl('clientMailVerify');
- button.textContent=step===2?'メールを再検索':step===1?'確認した':'メールを検索';
- button.classList.toggle('is-visited',step===1);
- button.classList.toggle('is-verified',step===2);
- // Search stays clickable when the draft is unsaved or an old verification is recorded.
- // Do not wait for draft saving to open the separate search tab.
+ const link=clientMailEl('clientMailVerify');
  const selectedRow=Number(clientMailEl('clientMailCompany')?.value||clientMailState.row);
- button.disabled=!selectedRow||!!clientMailState.sent;
+ const record=clientMailState.rows.find(x=>Number(x.row)===selectedRow);
+ // Always keep a real href: this still works if the JavaScript search handler fails.
+ link.href=clientMailSearchUrl(record);
+ link.target='_blank';link.rel='noopener noreferrer';
+ link.textContent=step===2?'メールを再検索':step===1?'確認した':'メールを検索';
+ link.setAttribute('aria-label',link.textContent);
+ link.classList.toggle('is-visited',step===1);
+ link.classList.toggle('is-verified',step===2);
+ link.title=record?`「${record.name}」の公式問い合わせメールアドレスを検索`:
+   '企業データがまだ取得できていません。押すと再読み込みします。';
+ // Do not disable the search link due to saving/loading/verification state.
  clientMailEl('clientMailConfirm').disabled=clientMailState.busy||!saved||dirty||step!==2||!!clientMailState.sent;
  clientMailEl('clientMailSyncO').hidden=clientMailState.sent?.status!=='sent_unmarked';
  clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!!clientMailState.sent;
@@ -14055,6 +14086,7 @@ async function clientMailChoose(row){
  row=Number(row);if(!row)return;
  const record=clientMailState.rows.find(x=>Number(x.row)===row);
  clientMailState.row=row;clientMailState.name=record?.name||'';
+ clientMailState.companyWebsite='';clientMailState.companyContactUrl='';
  clientMailState.verifyStep=0;clientMailState.saved=false;clientMailState.dirty=false;
  clientMailState.preview=null;clientMailState.sent=null;
  clientMailEl('clientMailTo').value=''; // Must never carry over a recipient from the previous company.
@@ -14130,33 +14162,44 @@ async function clientMailSave(){
  }catch(e){clientMailStatus(e.message||'保存に失敗しました。');return false;}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
-async function clientMailVerifyAction(){
- if(clientMailState.sent)return;
+// Called directly in the trusted user's click. A native <a target="_blank"> handles
+// navigation: no popup-script permission is needed in Microsoft Edge.
+function clientMailVerifyClick(event){
  const row=Number(clientMailEl('clientMailCompany')?.value||clientMailState.row);
  const record=clientMailState.rows.find(x=>Number(x.row)===row);
- if(!row||!record){clientMailStatus('先に企業を選んでください。');return;}
- if(clientMailState.verifyStep!==1){
-  // Search always opens immediately in the click gesture, even while a draft is unsaved.
-  const name=record.name||clientMailState.name;
-  let domain='';
-  try{const site=new URL(clientMailState.companyWebsite||clientMailState.companyContactUrl);
-   if(/^https?:$/.test(site.protocol))domain=site.hostname.replace(/^www\./i,'');
-  }catch(_){}
-  const terms=[`"${name}"`,'お問い合わせ先','メールアドレス','企業公式サイト','採用'];
-  if(domain)terms.push(domain);
-  const url='https://www.google.com/search?q='+encodeURIComponent(terms.join(' '));
-  const opened=window.open(url,'_blank');
-  if(opened)try{opened.opener=null;}catch(_){}
-  // An external-site popup may be blocked, but allow the user to retry the search.
-  if(!opened){clientMailStatus('検索ウィンドウがブロックされました。このサイトのポップアップを許可してください。');return;}
-  clientMailState.verifyStep=1;
-  clientMailStatus('公式サイトで問い合わせ用メールアドレスを調べ、宛先欄に入力して「確認した」を押してください。');
-  clientMailRenderButtons();return;
+ if(!row||!record){
+  event.preventDefault();
+  clientMailStatus('企業一覧が未取得です。再読み込みします。取得できなければ認証・対象企業の条件を確認してください。');
+  void clientMailOpen();
+  return;
  }
- if(clientMailState.busy){clientMailStatus('読み込み処理中です。検索後の確認は読み込み完了後に行ってください。');return;}
+ if(clientMailState.sent){
+  event.preventDefault();
+  clientMailStatus('この企業は送信済みのため、送信操作はできません。');
+  return;
+ }
+ if(clientMailState.verifyStep===1){
+  event.preventDefault();
+  void clientMailCompleteVerification();
+  return;
+ }
+ // No await/window.open here. The browser follows the anchor's actual href.
+ // Opening the search does NOT require the draft or recipient to be saved.
+ clientMailState.verifyStep=1;
+ clientMailState.preview=null;
+ clientMailStatus('公式サイトで問い合わせ先メールアドレスを調べ、宛先欄に入力したら「確認した」を押してください。');
+ clientMailRenderButtons();
+}
+async function clientMailCompleteVerification(){
+ const row=Number(clientMailEl('clientMailCompany')?.value||clientMailState.row);
+ if(!row||clientMailState.busy){
+  clientMailStatus('企業情報の読み込み中です。読み込み完了後に「確認した」を押してください。');
+  return;
+ }
  const recipient=clientMailEl('clientMailTo').value.trim();
  if(!recipient||!clientMailEl('clientMailTo').checkValidity()){
-  clientMailStatus('公式サイトで確認した有効な宛先メールアドレスを入力してください。');return;
+  clientMailStatus('公式サイトで確認した有効な宛先メールアドレスを入力してください。');
+  return;
  }
  try{
   if(!clientMailState.saved||clientMailState.dirty){
@@ -14166,7 +14209,7 @@ async function clientMailVerifyAction(){
   await portalFetch('/api/client/mail/search-start',{method:'POST',body:{row}});
   const data=await portalFetch('/api/client/mail/verify',{method:'POST',body:{row,recipient}});
   clientMailState.verifyStep=Number(data.verify_step||2);
-  clientMailStatus('この宛先を確認しました。「確認」から送信前プレビューへ進めます。宛先は下書きに保存しません。');
+  clientMailStatus('この宛先を確認しました。「確認」から送信前プレビューへ進めます。宛先は保存していません。');
  }catch(e){clientMailState.verifyStep=1;clientMailStatus(e.message||'確認に失敗しました。');}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
@@ -14223,7 +14266,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  clientMailEl('clientMailCompany').addEventListener('change',e=>void clientMailChoose(Number(e.target.value)));
  clientMailIds.forEach(id=>clientMailEl(id).addEventListener('input',clientMailTouch));
  clientMailEl('clientMailSave').addEventListener('click',()=>void clientMailSave());
- clientMailEl('clientMailVerify').addEventListener('click',()=>void clientMailVerifyAction());
+ clientMailEl('clientMailVerify').addEventListener('click',clientMailVerifyClick);
  clientMailEl('clientMailConfirm').addEventListener('click',()=>void clientMailConfirm());
  clientMailEl('clientMailSkip').addEventListener('click',clientMailSkip);
  clientMailEl('clientMailSyncO').addEventListener('click',()=>void clientMailSync());
