@@ -1,3 +1,4 @@
+<!-- v85: M/N/O filter, official company email suggestion, Gmail send OAuth -->
 <!-- v83: calendar account profile photos and Figma client document list -->
 <!-- v81: calendar provider/account service icons instead of empty radio circles -->
 <!-- v80: visual polish for schedule accounts and times; no data/API changes -->
@@ -6085,11 +6086,6 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
 
 /* v84 — Figma 196:955 / 196:1057 mail composer. 1440 x 1024 canvas. */
-/* Extra university control occupies the unfilled right-side header, preserving Figma's CC and subject rows. */
-.screen-client-mail .client-mail-university{left:838px;top:23px;width:445px;height:36px;display:flex;flex-direction:row;align-items:center;gap:6px;}
-.screen-client-mail .client-mail-university>span{font-size:17px;line-height:30px;min-height:0;}
-.screen-client-mail .client-mail-university>input{height:31px;min-height:31px;width:300px;font-size:17px;padding:3px 6px;}
-
 .screen-client-mail,.screen-client-mail-preview{background:#f2f2ff;}
 .screen-client-mail .client-tabs{row-gap:51px;}
 .screen-client-mail .client-mail-panel{position:absolute;left:70px;top:331px;width:1300px;height:521px;box-sizing:border-box;background:#fff;z-index:1;margin:0;}
@@ -6104,11 +6100,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-mail .client-mail-verify{position:absolute;left:490px;top:156px;width:169px;height:40px;border:1px solid #c66364;background:#ff9090;color:#111;font-size:19px;white-space:nowrap;cursor:pointer;padding:0;}
 .screen-client-mail .client-mail-verify.is-visited{background:#ffb6a7;}
 .screen-client-mail .client-mail-verify.is-verified{background:#69bf91;border-color:#329965;color:#123;}
-.screen-client-mail .client-mail-university{left:50px;top:192px;width:609px;}
 .screen-client-mail .client-mail-cc{left:50px;top:225px;width:300px;}
 .screen-client-mail .client-mail-bcc{left:359px;top:225px;width:300px;}
 .screen-client-mail .client-mail-cc textarea,.screen-client-mail .client-mail-bcc textarea{height:115px;min-height:115px;resize:none;}
-.screen-client-mail .client-mail-university{top:189px;}
 .screen-client-mail .client-mail-cc,.screen-client-mail .client-mail-bcc{top:225px;}
 .screen-client-mail .client-mail-subject{left:52px;top:392px;width:609px;}
 .screen-client-mail .client-mail-subject textarea{height:63px;resize:none;font-size:18px;}
@@ -6130,11 +6124,14 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 :is(.screen-client-mail,.screen-client-mail-preview)>[data-common-back]{position:absolute!important;left:70px!important;top:898px!important;width:140px!important;height:60px!important;background:#3080ff!important;color:#fff!important;font:400 40px/60px Inter,'Noto Sans JP',sans-serif!important;border:0!important;margin:0!important;padding:0!important;text-align:center!important;}
 
 
-/* University name is a small inline control above the body, not an overlapping CC field. */
-.screen-client-mail .client-mail-university{left:839px;top:24px;width:443px;height:33px;display:flex;flex-direction:row;align-items:center;gap:7px;}
-.screen-client-mail .client-mail-university>span{font-size:16px;line-height:32px;min-height:0;white-space:nowrap;}
-.screen-client-mail .client-mail-university>input{width:300px;min-height:32px;height:32px;font-size:17px;padding:3px 7px;}
 .screen-client-mail .client-mail-verify{font-size:18px;}
+
+/* v85: send-only Gmail OAuth; no special university field. */
+.screen-client-mail .client-mail-gmail-connect{position:absolute;left:530px;top:27px;width:129px;height:28px;box-sizing:border-box;border:1px solid #3d60c9;border-radius:4px;background:#eef1ff;color:#233b8f;font:500 13px/26px Inter,'Noto Sans JP',sans-serif;cursor:pointer;white-space:nowrap;}
+.screen-client-mail .client-mail-gmail-connect:hover{background:#dce4ff;}
+.screen-client-mail .client-mail-to{top:127px;}
+.screen-client-mail .client-mail-to input{font-size:18px;}
+.screen-client-mail .client-mail-status{font-size:14px;white-space:normal;}
 
 </style>
 </head>
@@ -6409,13 +6406,12 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <form id="clientMailForm" class="client-mail-panel" autocomplete="off">
             <label class="client-mail-field client-mail-company" for="clientMailCompany"><span>会社</span>
               <select id="clientMailCompany" required><option value="">企業一覧を取得中…</option></select></label>
-            <label class="client-mail-field client-mail-from" for="clientMailFrom"><span>自分のメールアドレス</span>
+            <label class="client-mail-field client-mail-from" for="clientMailFrom"><span>送信元Gmail</span>
               <input id="clientMailFrom" readonly aria-readonly="true" value=""></label>
+            <button type="button" class="client-mail-gmail-connect" id="clientMailGmailConnect">Gmail送信を連携</button>
             <label class="client-mail-field client-mail-to" for="clientMailTo"><span>宛先</span>
-              <input id="clientMailTo" type="email" required placeholder="企業のメールアドレスを入力"></label>
+              <input id="clientMailTo" type="email" required placeholder="公式サイトの候補を検索中／手動入力可能"></label>
             <button type="button" id="clientMailVerify" class="client-mail-verify">メールを検索</button>
-            <label class="client-mail-field client-mail-university" for="clientMailUniversity"><span>大学名（本人が入力）</span>
-              <input id="clientMailUniversity" placeholder="例：慶應義塾大学" required maxlength="70"></label>
             <label class="client-mail-field client-mail-cc" for="clientMailCc"><span>CC</span>
               <textarea id="clientMailCc" placeholder="なし（複数は改行区切り）" rows="2"></textarea></label>
             <label class="client-mail-field client-mail-bcc" for="clientMailBcc"><span>BCC</span>
@@ -14017,12 +14013,12 @@ window.addEventListener('DOMContentLoaded',()=>{
 </div>
 
 <script>
-// v84 — Figma client email flow; server-side draft/authorization is authoritative.
-const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',university:'',saved:false,dirty:false,verifyStep:0,sender:'',sendReady:false,sent:null,preview:null,busy:false};
-const clientMailIds=['clientMailTo','clientMailUniversity','clientMailCc','clientMailBcc','clientMailSubject','clientMailBody'];
+// v85: Gmail send-only OAuth, company website suggestion and inline university editing.
+const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',saved:false,dirty:false,verifyStep:0,
+  sender:'',sendReady:false,sent:null,preview:null,busy:false,addressSearchId:0};
+const clientMailIds=['clientMailTo','clientMailCc','clientMailBcc','clientMailSubject','clientMailBody'];
 function clientMailEl(id){return document.getElementById(id);}
-function clientMailStatus(message){clientMailEl('clientMailStatus').textContent=String(message||'');}
-function clientMailTemplateRender(t){return String(t||'').replaceAll('{{company}}',clientMailState.name).replaceAll('{{university}}',clientMailEl('clientMailUniversity').value.trim()).replaceAll('{{name}}',String(state.user?.name||''));}
+function clientMailStatus(message){const el=clientMailEl('clientMailStatus');if(el)el.textContent=String(message||'');}
 function clientMailRenderButtons(){
  const step=clientMailState.verifyStep,dirty=clientMailState.dirty,saved=clientMailState.saved;
  const button=clientMailEl('clientMailVerify');
@@ -14031,27 +14027,25 @@ function clientMailRenderButtons(){
  button.disabled=clientMailState.busy||!saved||dirty||!clientMailState.row||step===2||!!clientMailState.sent;
  clientMailEl('clientMailConfirm').disabled=clientMailState.busy||!saved||dirty||step!==2||!!clientMailState.sent;
  clientMailEl('clientMailSyncO').hidden=clientMailState.sent?.status!=='sent_unmarked';
- const sendBlocked=Boolean(clientMailState.sent);
- clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!!sendBlocked;
+ clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!!clientMailState.sent;
 }
 async function clientMailOpen(){
  if(clientMailState.busy)return;
- clientMailStatus('会社一覧を読み込んでいます…');
+ clientMailStatus('対象企業一覧を取得中…（M・N・O列がすべてFALSE）');
  try{
   const response=await portalFetch('/api/client/mail/companies');
-  clientMailState.rows=response.companies||[];
-  clientMailState.canEdit=Boolean(response.can_edit);
+  clientMailState.rows=response.companies||[];clientMailState.canEdit=Boolean(response.can_edit);
   const select=clientMailEl('clientMailCompany');
   select.innerHTML='<option value="">会社を選択してください</option>'+clientMailState.rows.map(x=>`<option value="${x.row}">${escapeHtml(x.name)}（${x.row}行）</option>`).join('');
   const preferred=clientMailState.rows.find(x=>x.row===clientMailState.row)||clientMailState.rows[0];
   if(preferred){select.value=String(preferred.row);await clientMailChoose(preferred.row);}
-  else clientMailStatus('担当企業がありません。O列が未送信の企業を確認してください。');
+  else clientMailStatus('対象企業がありません。M・N・OがすべてFALSEの担当企業だけ表示します。');
  }catch(e){clientMailStatus(e.message||'企業一覧を取得できませんでした。');}
 }
 async function clientMailChoose(row){
  if(!row)return;
- clientMailState.busy=true;
- clientMailRenderButtons();clientMailStatus('メール情報を取得しています…');
+ clientMailState.busy=true;const requestId=++clientMailState.addressSearchId;
+ clientMailRenderButtons();clientMailStatus('メール情報を取得中…');
  try{
   const data=await portalFetch('/api/client/mail/draft?row='+encodeURIComponent(row));
   clientMailState.row=row;clientMailState.name=data.company.name;clientMailState.canEdit=Boolean(data.can_edit);
@@ -14060,45 +14054,45 @@ async function clientMailChoose(row){
   clientMailState.sender=data.sender;clientMailState.sendReady=Boolean(data.send_ready);
   clientMailState.sent=data.sent||null;
   clientMailEl('clientMailFrom').value=data.sender;
-  for(const [id,val] of [['clientMailTo',data.draft.recipient],['clientMailUniversity',data.draft.university],['clientMailCc',data.draft.cc],['clientMailBcc',data.draft.bcc],['clientMailSubject',data.draft.subject]])clientMailEl(id).value=val||'';
-  clientMailEl('clientMailBody').value=data.draft.body||'';
-  for(const id of ['clientMailCc','clientMailBcc','clientMailSubject','clientMailBody'])clientMailEl(id).readOnly=!clientMailState.canEdit;
+  for(const [id,val] of [['clientMailTo',data.draft.recipient],['clientMailCc',data.draft.cc],
+    ['clientMailBcc',data.draft.bcc],['clientMailSubject',data.draft.subject],['clientMailBody',data.draft.body]])clientMailEl(id).value=val||'';
+  for(const id of ['clientMailCc','clientMailBcc','clientMailSubject'])clientMailEl(id).readOnly=!clientMailState.canEdit;
+  // Everyone may replace the university phrase inside the body; backend enforces all other fields for ordinary users.
+  clientMailEl('clientMailBody').readOnly=false;
+  clientMailEl('clientMailGmailConnect').textContent=data.gmail?.connected?'Gmailアカウントを変更':'Gmail送信を連携';
   if(clientMailState.sent)clientMailStatus('送信履歴：'+clientMailState.sent.status+'。再送信は防止されています。');
-  else clientMailStatus(data.send_ready?'入力内容を確認して「保存」を押してください。':'送信元のResend設定が未完了です。下書きと確認は利用できます。');
+  else clientMailStatus(data.send_ready?'大学名は本文の〇〇を直接置換してください。宛先を確認してから保存してください。':
+    '送信するには「Gmail送信を連携」が必要です。下書き作成は可能。');
+  if(!clientMailEl('clientMailTo').value&&!clientMailState.saved)void clientMailAutoRecipient(row,requestId);
  }catch(e){clientMailStatus(e.message||'下書きを開けませんでした。');}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
-function clientMailTouch(event){
- const id=event.target.id;
- if(clientMailState.busy||!clientMailState.row)return;
- if(id==='clientMailBody'&&clientMailState.canEdit){
-  // Dynamic values are materialized for editing; restore tokens on save.
- } else if(['clientMailUniversity'].includes(id) && clientMailState.template){
-  clientMailEl('clientMailBody').value=clientMailTemplateRender(clientMailState.template);
- }
- clientMailState.dirty=true;clientMailState.saved=false;clientMailState.verifyStep=0;
- clientMailStatus('内容が変更されました。先に「保存」を押してください。');clientMailRenderButtons();
+async function clientMailAutoRecipient(row,requestId){
+ try{
+  const result=await portalFetch('/api/client/mail/address-suggest?row='+encodeURIComponent(row));
+  if(clientMailState.addressSearchId!==requestId||clientMailState.row!==row)return;
+  if(result.email&&!clientMailEl('clientMailTo').value.trim()){
+    clientMailEl('clientMailTo').value=result.email;
+    clientMailTouch({target:clientMailEl('clientMailTo')});
+    clientMailStatus(`公式サイトの候補「${result.email}」を入力しました。送信前に必ず企業公式サイトで本人が確認してください。（${result.source||'出典不明'}）`);
+  }else if(!result.email)clientMailStatus(result.message||'公開アドレスなし。手動入力してください。');
+ }catch(e){if(clientMailState.addressSearchId===requestId)clientMailStatus('サイトから取得できませんでした。宛先は手動入力して確認してください。');}
 }
-function clientMailTemplateFromBody(){
- let t=clientMailEl('clientMailBody').value;
- for(const [actual,token] of [[clientMailState.name,'{{company}}'],[clientMailEl('clientMailUniversity').value.trim(),'{{university}}'],[String(state.user?.name||''),'{{name}}']]){
-  if(actual)t=t.replaceAll(actual,token);
- }
- // Figma requires matching company and author, not template errors.
- if(!['{{company}}','{{university}}','{{name}}'].every(x=>t.includes(x)))throw new Error('本文には会社名・大学名・本人の氏名を残してください。');
- return t;
+function clientMailTouch(event){
+ if(clientMailState.busy||!clientMailState.row)return;
+ clientMailState.dirty=true;clientMailState.saved=false;clientMailState.verifyStep=0;
+ clientMailStatus(event.target?.id==='clientMailBody'?'大学名を本文内で直接修正してください。変更は保存してから確認できます。':
+   '内容が変更されました。先に保存してから宛先を再確認してください。');clientMailRenderButtons();
 }
 async function clientMailSave(){
  if(clientMailState.busy||!clientMailState.row)return;
- let template;
- try{template=clientMailState.canEdit?clientMailTemplateFromBody():clientMailState.template;}catch(e){clientMailStatus(e.message);return;}
  clientMailState.busy=true;clientMailRenderButtons();
  try{
-  await portalFetch('/api/client/mail/save',{method:'POST',body:{row:clientMailState.row,recipient:clientMailEl('clientMailTo').value,
-    university:clientMailEl('clientMailUniversity').value,cc:clientMailEl('clientMailCc').value,bcc:clientMailEl('clientMailBcc').value,
-    subject:clientMailEl('clientMailSubject').value,body_template:template}});
-  clientMailState.template=template;clientMailState.saved=true;clientMailState.dirty=false;clientMailState.verifyStep=0;
-  clientMailStatus('保存しました。宛先メールアドレスを別タブで検索して確認してください。');
+  await portalFetch('/api/client/mail/save',{method:'POST',body:{row:clientMailState.row,
+    recipient:clientMailEl('clientMailTo').value,cc:clientMailEl('clientMailCc').value,
+    bcc:clientMailEl('clientMailBcc').value,subject:clientMailEl('clientMailSubject').value,body:clientMailEl('clientMailBody').value}});
+  clientMailState.saved=true;clientMailState.dirty=false;clientMailState.verifyStep=0;
+  clientMailStatus('保存しました。「メールを検索」から宛先を別タブで確認してください。');
  }catch(e){clientMailStatus(e.message);}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
@@ -14110,14 +14104,13 @@ async function clientMailVerifyAction(){
   const query=encodeURIComponent(`${name} 採用 問い合わせ メールアドレス ${recipient}`);
   const opened=window.open('https://www.google.com/search?q='+query,'_blank');
   if(opened)try{opened.opener=null;}catch(_){}
-  if(!opened){clientMailStatus('検索タブがブロックされました。ポップアップを許可してから再操作してください。');return;}
+  if(!opened){clientMailStatus('検索タブがブロックされました。ポップアップを許可してください。');return;}
   try{const data=await portalFetch('/api/client/mail/search-start',{method:'POST',body:{row}});
-   clientMailState.verifyStep=data.verify_step;
-   clientMailStatus('検索結果を確認したら「確認した」をクリックしてください。');
-  }catch(e){clientMailStatus(e.message);} 
+    clientMailState.verifyStep=data.verify_step;clientMailStatus('検索結果と公式サイトを確認したら「確認した」を押してください。');
+  }catch(e){clientMailStatus(e.message);}
  }else if(clientMailState.verifyStep===1){
   try{const data=await portalFetch('/api/client/mail/verify',{method:'POST',body:{row}});
-   clientMailState.verifyStep=data.verify_step;clientMailStatus('宛先を確認済みにしました。「確認」から送信前プレビューへ進めます。');
+    clientMailState.verifyStep=data.verify_step;clientMailStatus('宛先が確認済みになりました。「確認」から送信前プレビューへ進めます。');
   }catch(e){clientMailStatus(e.message);}
  }
  clientMailRenderButtons();
@@ -14125,61 +14118,71 @@ async function clientMailVerifyAction(){
 async function clientMailConfirm(){
  if(clientMailState.busy||clientMailState.dirty||clientMailState.verifyStep!==2)return;
  clientMailState.busy=true;clientMailRenderButtons();
- try{const data=await portalFetch('/api/client/mail/preview',{method:'POST',body:{row:clientMailState.row}});
+ try{
+  const data=await portalFetch('/api/client/mail/preview',{method:'POST',body:{row:clientMailState.row}});
   clientMailState.preview=data;
   clientMailEl('clientMailPreviewHead').innerHTML=[['宛先',data.recipient],['Cc',data.cc||'なし'],['Bcc',data.bcc||'なし'],['件名',data.subject],['差出人',data.sender]]
     .map(([label,value])=>`<div><b>${escapeHtml(label)}</b>${escapeHtml(value)}</div>`).join('');
   clientMailEl('clientMailPreviewBody').textContent=data.body;
   clientMailEl('clientMailPreviewSend').disabled=!data.send_ready;
   showScreen('client-mail-preview');
-  if(!data.send_ready)showToast('送信元のResend設定が未完了です。送信はできません。');
+  if(!data.send_ready)showToast('Gmail送信が未連携です。メール画面から連携してください。');
  }catch(e){clientMailStatus(e.message);}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
 async function clientMailSend(){
  const data=clientMailState.preview;if(!data||clientMailState.busy)return;
- if(!window.confirm(`「${data.company}」宛てに実際のメールを送信します。宛先 ${data.recipient} で間違いありませんか？`))return;
+ if(!window.confirm(`「${data.company}」宛てにGmailから実際のメールを送信します。宛先 ${data.recipient} で間違いありませんか？`))return;
  clientMailState.busy=true;clientMailEl('clientMailPreviewSend').disabled=true;
  try{
   const result=await portalFetch('/api/client/mail/send',{method:'POST',body:{row:data.row}});
-  showScreen('client-mail');
-  clientMailState.sent={status:result.sheet_marked?'sent_marked':'sent_unmarked'};
-  clientMailStatus(result.warning||(result.sheet_marked?'送信成功。スプシO列もTRUEにしました。':'メールは受理されました。O列だけ確認してください。'));
-  if(result.sheet_marked){await clientMailOpen();showToast('メール送信成功。O列をTRUEにしました。');}
+  showScreen('client-mail');clientMailState.sent={status:result.sheet_marked?'sent_marked':'sent_unmarked'};
+  clientMailStatus(result.warning||(result.sheet_marked?'Gmail送信成功。O列をTRUEにしました。':'送信済み、O列を再同期してください。'));
+  if(result.sheet_marked){await clientMailOpen();showToast('Gmail送信成功。O列をTRUEにしました。');}
   else showToast('メールは送信済みです。O列の再同期が必要です。');
  }catch(e){showScreen('client-mail');clientMailStatus(e.message);showToast(e.message);}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
 async function clientMailSync(){
  try{await portalFetch('/api/client/mail/sync-sheet',{method:'POST',body:{row:clientMailState.row}});
-  clientMailStatus('O列をTRUEに更新しました。');await clientMailOpen();
- }catch(e){clientMailStatus(e.message);}
+   clientMailStatus('O列をTRUEに更新しました。');await clientMailOpen();}
+ catch(e){clientMailStatus(e.message);}
 }
 function clientMailSkip(){
- const list=clientMailState.rows;const idx=list.findIndex(x=>x.row===clientMailState.row);
+ const list=clientMailState.rows,idx=list.findIndex(x=>x.row===clientMailState.row);
  const next=list[idx+1]||list[0];if(next&&next.row!==clientMailState.row){
   clientMailEl('clientMailCompany').value=String(next.row);void clientMailChoose(next.row);
- }else clientMailStatus('次の担当企業はありません。');
+ }else clientMailStatus('次の対象企業はありません。');
+}
+async function clientMailConnectGmail(){
+ try{
+  const result=await portalFetch('/api/client/mail/gmail/connect',{method:'POST',body:{}});
+  if(!result.authorizationUrl)throw new Error('Google認証URLがありません。');
+  window.location.href=result.authorizationUrl;
+ }catch(e){clientMailStatus(e.message||'Gmail連携を開始できませんでした。');}
 }
 window.addEventListener('DOMContentLoaded',()=>{
  clientMailEl('clientMailForm').addEventListener('submit',event=>event.preventDefault());
  clientMailEl('clientMailCompany').addEventListener('change',e=>void clientMailChoose(Number(e.target.value)));
  clientMailIds.forEach(id=>clientMailEl(id).addEventListener('input',clientMailTouch));
- clientMailEl('clientMailSave').addEventListener('click',clientMailSave);
+ clientMailEl('clientMailSave').addEventListener('click',()=>void clientMailSave());
  clientMailEl('clientMailVerify').addEventListener('click',()=>void clientMailVerifyAction());
  clientMailEl('clientMailConfirm').addEventListener('click',()=>void clientMailConfirm());
  clientMailEl('clientMailSkip').addEventListener('click',clientMailSkip);
  clientMailEl('clientMailSyncO').addEventListener('click',()=>void clientMailSync());
  clientMailEl('clientMailPreviewChange').addEventListener('click',()=>showScreen('client-mail'));
  clientMailEl('clientMailPreviewSend').addEventListener('click',()=>void clientMailSend());
+ clientMailEl('clientMailGmailConnect').addEventListener('click',()=>void clientMailConnectGmail());
+ const qs=new URLSearchParams(location.search);if(qs.has('gmail')){
+  const info=qs.get('gmail')==='connected'?'Gmailの連携に成功しました。':'Gmailの連携エラー：'+(qs.get('detail')||'設定を確認してください');
+  setTimeout(()=>clientMailStatus(info),900);
+ }
 });
-// Keep existing router behavior while loading companies only when the mail page opens.
 const clientMailOriginalShowScreen=showScreen;
 showScreen=function(name,...args){
-  const old=state.currentScreen;
-  const answer=clientMailOriginalShowScreen(name,...args);
-  if(name==='client-mail'&&old!==name&&clientMailState.rows.length===0)void clientMailOpen();
-  return answer;
+ const old=state.currentScreen,answer=clientMailOriginalShowScreen(name,...args);
+ if(name==='client-mail'&&old!==name)void clientMailOpen();
+ return answer;
 };
 </script>
 
