@@ -1,3 +1,5 @@
+<!-- v81: calendar provider/account service icons instead of empty radio circles -->
+<!-- v80: visual polish for schedule accounts and times; no data/API changes -->
 <!-- v79: activity and schedule UI -->
 <!-- v75: タスク時間は本人の実績のみ表示。関東・関西を合算し、全体集計を廃止 -->
 <!-- v70: MTG直近順、RP転記モード撤去、LINE管理をHP編集へ移動・連携済みボタン非表示 -->
@@ -5722,6 +5724,286 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-schedule .provider-microsoft {top:550px !important;}
 /* The whole grey picker rectangle opens the native picker, not only its icon. */
 .screen-client-staff-status .staff-status-date-control input {pointer-events:none;}
+
+/* ===============================================================
+   v80: Schedule page visual polish only
+   Canvas and Figma frame coordinates unchanged: accounts are never clipped;
+   polished consistent controls; active selection and accessibility preserved.
+   =============================================================== */
+.screen-schedule .calendar-provider-group {
+  overflow: visible !important;
+}
+.screen-schedule .calendar-provider-heading h2 {
+  color: #182550 !important;
+}
+.screen-schedule .calendar-provider-heading .calendar-connect-button {
+  z-index: 8 !important;
+  border: 1.5px solid #4969cd !important;
+  color: #2644a3 !important;
+  background: #f1f5ff !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  transition: background-color .14s, border-color .14s !important;
+}
+.screen-schedule .calendar-provider-heading .calendar-connect-button:hover,
+.screen-schedule .calendar-provider-heading .calendar-connect-button:focus-visible {
+  background: #e1e9ff !important;
+  border-color: #284fc2 !important;
+}
+/* Two (or more) connected Google calendars must fit: the previous 130px cap
+   clipped the second 69px account and cut its circle and blue outline. */
+.screen-schedule .provider-google .calendar-account-list {
+  max-height: 189px !important;
+}
+.screen-schedule .provider-apple .calendar-account-list,
+.screen-schedule .provider-microsoft .calendar-account-list {
+  max-height: 115px !important;
+}
+.screen-schedule .calendar-account-list {
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: #bac8e8 transparent;
+  padding-right: 8px !important;
+}
+.screen-schedule .calendar-account-row {
+  grid-template-columns: 42px minmax(0,1fr) !important;
+  gap: 10px !important;
+  box-sizing: border-box !important;
+  width: 471px !important;
+  height: 69px !important;
+  min-height: 69px !important;
+  margin: 0 0 7px !important;
+  padding: 7px 12px !important;
+  border: 2px solid #aebede !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+.screen-schedule .calendar-account-row:has(.calendar-account-toggle:checked) {
+  border-color: #5b78db !important;
+  background: #f8faff !important;
+}
+.screen-schedule .calendar-account-row.is-off {
+  border-color: #c7cedc !important;
+  background: #f8f9fc !important;
+}
+.screen-schedule .calendar-provider-icon {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 36px !important;
+  height: 36px !important;
+  border: 2px solid #92a2c1 !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  position: relative;
+  margin: auto !important;
+  flex: none !important;
+}
+.screen-schedule .calendar-account-row:has(.calendar-account-toggle:checked) .calendar-provider-icon {
+  border-color: #365bc6 !important;
+}
+.screen-schedule .calendar-account-row:has(.calendar-account-toggle:checked) .calendar-provider-icon::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 8px; top: 8px;
+  border-radius: 50%;
+  background: #365bc6;
+}
+.screen-schedule .calendar-account-email {
+  font: 500 23px/1.32 Inter, 'Noto Sans JP', 'Segoe UI', sans-serif !important;
+  letter-spacing: -.35px !important;
+  color: #1e2a45 !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+}
+.screen-schedule .calendar-account-row.is-off .calendar-account-email {
+  color: #77839b !important;
+}
+.screen-schedule .calendar-account-toggle {
+  width: 42px !important;
+  height: 60px !important;
+  left: 7px !important;
+  top: 3px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+}
+.screen-schedule .calendar-disconnect-button {
+  z-index: 10 !important;
+  width: 24px !important;
+  height: 24px !important;
+  top: 4px !important;
+  right: 4px !important;
+  font: 500 19px/24px Inter, sans-serif !important;
+  color: #8b404a !important;
+  border-radius: 6px !important;
+}
+/* The top schedule tabs share the same family of calm blue colors.
+   The active tab is identifiable without changing tab positions or dimensions. */
+.screen-schedule .schedule-hub-tabs button[data-route] {
+  background: #e7eeff !important;
+  color: #2d447d !important;
+}
+.screen-schedule .schedule-hub-tabs button[data-route].is-active {
+  background: #cad9ff !important;
+  color: #183b87 !important;
+}
+.screen-schedule .schedule-hub-tabs button[data-route]:hover:not(.is-active),
+.screen-schedule .schedule-hub-tabs button[data-route]:focus-visible {
+  background: #d7e4ff !important;
+}
+/* Keep the original Figma panel frame at 529x700 and its same location. */
+.screen-schedule .available-times {
+  border-color: #222e4b !important;
+}
+.screen-schedule .available-times-heading h2 {
+  color: #1e2b50 !important;
+}
+.screen-schedule .availability-week-nav button {
+  border-radius: 5px !important;
+  font: 500 17px/30px Inter, 'Noto Sans JP', sans-serif !important;
+  background: #e7ebf3 !important;
+  color: #33446a !important;
+}
+.screen-schedule .availability-week-nav button:hover:not(:disabled),
+.screen-schedule .availability-week-nav button:focus-visible {
+  background: #d6e2ff !important;
+  color: #1f3c94 !important;
+}
+.screen-schedule .availability-week-nav button.is-current {
+  color: #22469b !important;
+  background: #dbe6ff !important;
+  font-weight: 600 !important;
+}
+.screen-schedule .availability-week-nav button:disabled {
+  opacity: .45 !important;
+}
+.screen-schedule .figma-week-strip {
+  border-radius: 5px !important;
+  overflow: hidden !important;
+}
+.screen-schedule .figma-week-day {
+  box-sizing: border-box !important;
+  background: #e9edf6 !important;
+  color: #33446a !important;
+  border-right: 1px solid #fff !important;
+  font: 500 22px/28px Inter, 'Noto Sans JP', sans-serif !important;
+  transition: background-color .12s, color .12s;
+}
+.screen-schedule .figma-week-day:first-child {
+  background: #e9edf6 !important;
+}
+.screen-schedule .figma-week-day.is-selected {
+  color: #fff !important;
+  background: #304c96 !important;
+  font-weight: 600 !important;
+}
+.screen-schedule .figma-week-day.is-past,
+.screen-schedule .figma-week-day:disabled {
+  background: #f1f2f5 !important;
+  color: #9ba4b3 !important;
+  opacity: 1 !important;
+}
+.screen-schedule .figma-week-day:hover:not(:disabled):not(.is-selected) {
+  background: #dbe5ff !important;
+}
+.screen-schedule .figma-week-list {
+  box-sizing: border-box !important;
+  padding: 17px 0 0 27px !important;
+  scrollbar-width: thin;
+  scrollbar-color: #bdc7dd transparent;
+}
+.screen-schedule .figma-week-slot,
+.screen-schedule .figma-week-slot:hover,
+.screen-schedule .figma-week-slot:focus-visible {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 432px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 0 11px !important;
+  padding: 0 12px !important;
+  border: 1px solid #dee6f4 !important;
+  border-radius: 7px !important;
+  background: #f7f9fe !important;
+  color: #253454 !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  font: 500 22px/1.2 Inter, 'Noto Sans JP',sans-serif !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  transition: background-color .12s,border-color .12s !important;
+}
+.screen-schedule .figma-week-slot:hover,
+.screen-schedule .figma-week-slot:focus-visible {
+  background: #e6edff !important;
+  border-color: #7a9be9 !important;
+  color: #203b8e !important;
+}
+.screen-schedule .figma-week-empty {
+  color: #67738b !important;
+  font-size: 20px !important;
+  line-height: 1.5 !important;
+}
+.screen-schedule .work-hours-open-button {
+  box-sizing: border-box !important;
+  width: auto !important;
+  height: 42px !important;
+  padding: 0 18px !important;
+  border: 1.5px solid #5271d3 !important;
+  border-radius: 7px !important;
+  background: #eef3ff !important;
+  color: #2648a6 !important;
+  font: 600 21px/39px Inter, 'Noto Sans JP', sans-serif !important;
+  text-align: center !important;
+  cursor: pointer !important;
+}
+.screen-schedule .work-hours-open-button:hover,
+.screen-schedule .work-hours-open-button:focus-visible {
+  background: #dbe6ff !important;
+}
+
+
+/* v81: branded service icons in place of the empty account circles. */
+.screen-schedule .calendar-provider-icon,
+.screen-schedule .calendar-account-row:has(.calendar-account-toggle:checked) .calendar-provider-icon {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:38px !important;
+  height:38px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+  font-size:initial !important;
+}
+.screen-schedule .calendar-provider-icon::after,
+.screen-schedule .calendar-account-row:has(.calendar-account-toggle:checked) .calendar-provider-icon::after {
+  content:none !important;
+  display:none !important;
+}
+.screen-schedule .calendar-provider-icon svg {
+  display:block;
+  width:33px;
+  height:33px;
+  flex:none;
+  overflow:visible;
+  pointer-events:none;
+}
+.screen-schedule .calendar-provider-icon.apple svg { width:35px; height:35px; }
+.screen-schedule .calendar-provider-icon.microsoft svg { width:34px; height:34px; }
+
 </style>
 </head>
 <body>
@@ -10626,9 +10908,14 @@ root.innerHTML =
     }
 
     root.innerHTML = items.map((item) => {
-      // Figma (48:601): outline circle, not a provider logo or avatar.
-      // The checkbox below still controls whether the calendar is used.
-      const accountIcon = `<span class="calendar-provider-icon ${provider}" aria-hidden="true"></span>`;
+      // Show a recognizable service icon for each connected account.
+      // The existing invisible checkbox overlay remains the enable/disable control.
+      const providerSvg = {
+        google: `<svg viewBox="0 0 48 48" role="presentation" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.28 5.48-4.82 7.18l7.73 6c4.51-4.17 7.13-10.35 7.13-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.2C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.14 1.44-4.89 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`,
+        apple: `<svg viewBox="0 0 24 24" role="presentation" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="#202636" d="M17.05 12.536c-.031-3.137 2.55-4.663 2.666-4.737-1.456-2.135-3.726-2.428-4.526-2.454-1.919-.198-3.778 1.13-4.752 1.13-.972 0-2.486-1.102-4.087-1.072-2.102.029-4.038 1.224-5.12 3.129-2.184 3.783-.558 9.358 1.564 12.436 1.04 1.508 2.276 3.2 3.872 3.14 1.557-.061 2.143-1.003 4.024-1.003s2.409 1.003 4.03.972c1.664-.024 2.718-1.512 3.75-3.027a12.5 12.5 0 001.7-3.485c-3.896-1.489-3.849-5.026-3.846-5.129z" transform="translate(1.5 0) scale(.88)"/><path fill="#202636" d="M13.974 4.286C14.86 3.212 15.46 1.718 15.295.228c-1.276.05-2.82.85-3.736 1.921-.822.95-1.542 2.474-1.346 3.93 1.425.11 2.875-.723 3.761-1.793z" transform="translate(1.5 0) scale(.88)"/></svg>`,
+        microsoft: `<svg viewBox="0 0 48 48" role="presentation" focusable="false" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="10" width="26" height="30" rx="3" fill="#0078D4"/><path d="M20 17h23v15L31.5 24z" fill="#28A8EA"/><path d="M20 19l11.5 9L43 19v17H20z" fill="#0063AD"/><path d="M20 18l11.5 9L43 18" fill="none" stroke="#E9F8FF" stroke-width="2.8" stroke-linejoin="round"/><path d="M4 7.5 29 4v40L4 40z" fill="#075FAD"/><text x="16" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="23" fill="#fff">O</text></svg>`
+      }[provider] || '';
+      const accountIcon = `<span class="calendar-provider-icon ${provider}" aria-hidden="true">${providerSvg}</span>`;
 
       return `
         <div class="calendar-account-row ${Number(item.enabled) ? "" : "is-off"}">
