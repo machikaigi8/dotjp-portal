@@ -1,3 +1,4 @@
+<!-- v87: Confirmed email button auto-saves when needed; search reset after recipient changes -->
 <!-- v85: M/N/O filter, official company email suggestion, Gmail send OAuth -->
 <!-- v83: calendar account profile photos and Figma client document list -->
 <!-- v81: calendar provider/account service icons instead of empty radio circles -->
@@ -14025,7 +14026,9 @@ function clientMailRenderButtons(){
  const button=clientMailEl('clientMailVerify');
  button.textContent=step===2?'確認済み':step===1?'確認した':'メールを検索';
  button.classList.toggle('is-visited',step===1);button.classList.toggle('is-verified',step===2);
- button.disabled=clientMailState.busy||!clientMailState.row||step===2||!!clientMailState.sent||(step===1&&(!saved||dirty));
+ // v87: After opening search, allow '確認した' even if the draft is not saved yet.
+ // The click handler will save changes first and then verify the same recipient.
+ button.disabled=clientMailState.busy||!clientMailState.row||step===2||!!clientMailState.sent;
  clientMailEl('clientMailConfirm').disabled=clientMailState.busy||!saved||dirty||step!==2||!!clientMailState.sent;
  clientMailEl('clientMailSyncO').hidden=clientMailState.sent?.status!=='sent_unmarked';
  clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!!clientMailState.sent;
@@ -14111,7 +14114,6 @@ async function clientMailSave(){
 }
 async function clientMailVerifyAction(){
  if(clientMailState.busy||!clientMailState.row||clientMailState.sent)return;
- if(clientMailState.verifyStep===1&&(!clientMailState.saved||clientMailState.dirty))return;
  const row=clientMailState.row;
  if(clientMailState.verifyStep===0){
   const name=clientMailState.name;
@@ -14132,14 +14134,40 @@ async function clientMailVerifyAction(){
     clientMailState.pendingSearch=true;
     clientMailState.pendingSearchRecipient=clientMailEl('clientMailTo').value.trim();
     clientMailState.verifyStep=1;
-    clientMailStatus('公式サイトのメールアドレスを別タブで確認してください。まず入力内容を「保存」すると「確認した」が押せるようになります。');
-  }else try{const data=await portalFetch('/api/client/mail/search-start',{method:'POST',body:{row}});
-    clientMailState.verifyStep=data.verify_step;clientMailStatus('別タブで企業公式サイトの「お問い合わせ先メールアドレス」を調べ、入力欄の宛先と一致することを確認してから「確認した」を押してください。');
-  }catch(e){clientMailStatus(e.message);}
+    clientMailStatus('公式サイトの宛先を照合後、「確認した」を押してください。未保存の内容はその時に自動保存します。');
+  }else{
+    clientMailState.busy=true;clientMailRenderButtons();
+    try{
+      const data=await portalFetch('/api/client/mail/search-start',{method:'POST',body:{row}});
+      clientMailState.verifyStep=Number(data.verify_step||1);
+      clientMailStatus('別タブで企業公式サイトの「お問い合わせ先メールアドレス」を調べ、宛先と一致してから「確認した」を押してください。');
+    }catch(e){clientMailStatus(e.message||'検索確認を開始できませんでした。');}
+    finally{clientMailState.busy=false;}
+  }
  }else if(clientMailState.verifyStep===1){
-  try{const data=await portalFetch('/api/client/mail/verify',{method:'POST',body:{row}});
-    clientMailState.verifyStep=data.verify_step;clientMailStatus('宛先が確認済みになりました。「確認」から送信前プレビューへ進めます。');
-  }catch(e){clientMailStatus(e.message);}
+  // v87: The formerly disabled '確認した' button now saves the draft automatically.
+  // If the recipient changes after search, the search itself must be repeated.
+  if(!clientMailState.saved||clientMailState.dirty){
+    const searched=clientMailState.pendingSearch&&
+      clientMailState.pendingSearchRecipient===clientMailEl('clientMailTo').value.trim();
+    if(!searched){
+      clientMailState.verifyStep=0;
+      clientMailState.pendingSearch=false;
+      clientMailState.pendingSearchRecipient='';
+      clientMailStatus('宛先が検索時と異なるため、変更を保存してからメールを再検索してください。');
+      clientMailRenderButtons();return;
+    }
+    // Existing save logic re-registers /search-start after persisting the recipient.
+    await clientMailSave();
+    if(!clientMailState.saved||clientMailState.dirty||clientMailState.verifyStep!==1)return;
+  }
+  clientMailState.busy=true;clientMailRenderButtons();
+  try{
+    const data=await portalFetch('/api/client/mail/verify',{method:'POST',body:{row}});
+    clientMailState.verifyStep=Number(data.verify_step||2);
+    clientMailStatus('宛先が確認済みになりました。「確認」から送信前プレビューへ進めます。');
+  }catch(e){clientMailStatus(e.message||'確認状態を保存できませんでした。');}
+  finally{clientMailState.busy=false;}
  }
  clientMailRenderButtons();
 }
