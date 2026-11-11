@@ -1,4 +1,5 @@
 <!-- v90: One-time shared companytokyo Gmail, CC=current signed-in staff; search stays native. -->
+<!-- v91: activity Gmail 07:00, LINE 12:00 unreported, email verify improvements, form M/N/O strict -->
 <!-- v85: M/N/O filter, official company email suggestion, Gmail send OAuth -->
 <!-- v83: calendar account profile photos and Figma client document list -->
 <!-- v81: calendar provider/account service icons instead of empty radio circles -->
@@ -6846,6 +6847,18 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <label class="line-check"><input type="checkbox" id="lineGroupConfirm">このグループのメンバーが通知内容を閲覧してよい関係者であることを確認しました。</label>
                 <div class="line-row"><button type="button" id="lineGroupSave">通知先グループを保存</button></div>
                 <div id="lineGroupStatus" class="line-link-status" role="status"></div>
+                <h3>行動量報告グループ（正午の未報告者を自動投稿）</h3>
+                <p>本人連携済みのLINEアカウントから、このグループに「【YYYY-MM-DDの行動量】」形式で送信された場合だけ報告済みと判定します。未報告者の前日実績を公式LINEが明示して投稿します。未連携者は判定対象外です。</p>
+                <label for="lineActivityGroupPicker">行動量報告グループを選択</label>
+                <select id="lineActivityGroupPicker"><option value="">グループを読み込み中…</option></select>
+                <label class="line-check"><input type="checkbox" id="lineActivityGroupConfirm">このグループへの各人の行動量投稿について関係者の了承を確認しました。</label>
+                <div class="line-row"><button type="button" id="lineActivityGroupSave">行動量報告グループを保存</button></div>
+                <div id="lineActivityGroupStatus" class="line-link-status" role="status"></div>
+                <p>本番配信にはCloudflareで <code>LINE_ACTIVITY_AUTO_REPORT_ENABLED=true</code> が必要です。毎日12:00 JSTに判定します。</p>
+                <h3>朝7時の前日行動量メール（送信元の初回連携）</h3>
+                <p>自動送信の送信元Gmailを1回だけ認証します。共有企業メールとは別のGoogleアカウントです。</p>
+                <div class="line-row"><button type="button" id="activityMailConnect">行動量メールの送信元を連携</button></div>
+                <div id="activityMailStatus" class="line-link-status" role="status">未確認</div>
                 <h3>LINE本人連携メニュー（初回だけ）</h3>
                 <p>「行動量報告／タスク時間報告」の公式LINEに「ポータル連携」ボタンを設置します。<strong>現在のLINE公式リッチメニューがある場合は置き換わる</strong>ため、確認してから実行してください。</p>
                 <div class="line-row"><button type="button" id="lineInstallLinkMenu" class="secondary">公式LINEに連携メニューを設置</button></div>
@@ -7986,6 +7999,8 @@ function wireActions() {
   document.getElementById('lineLinkDisconnect').addEventListener('click', () => void unlinkLine());
   document.getElementById('lineLinkRefresh').addEventListener('click', () => void refreshLineSettings());
   document.getElementById('lineGroupSave').addEventListener('click', () => void saveLineGroup());
+  document.getElementById('lineActivityGroupSave').addEventListener('click', () => void saveActivityGroup());
+  document.getElementById('activityMailConnect').addEventListener('click', () => void activityMailConnect());
   document.getElementById('lineRunDiagnosis').addEventListener('click', () => void diagnoseLineConnection());
   document.getElementById('lineTestSend').addEventListener('click', () => void sendLineConnectionTest());
   document.getElementById('lineSendToday').addEventListener('click', () => void sendLineTodayNow());
@@ -10492,6 +10507,16 @@ async function refreshLineSettings({quiet=false}={}){
       const menuStatus=document.getElementById('lineMenuStatus');
       menuStatus.textContent=data.link_menu_installed?'「ポータル連携」メニューは設定済みです。':'連携用メニューは未設置です。初回だけ設定してください。';
       document.getElementById('lineGroupConfirm').checked=false;
+      const activityPicker=document.getElementById('lineActivityGroupPicker');
+      activityPicker.replaceChildren();
+      const empty=document.createElement('option');empty.value='';empty.textContent='行動量報告グループを選択';activityPicker.appendChild(empty);
+      for(const group of data.groups||[]){
+        const opt=document.createElement('option');opt.value=group.id;opt.textContent=group.name+(group.active?'':'（Bot退出済み）');
+        opt.disabled=!group.active;opt.selected=group.id===data.selected_activity_group_id;activityPicker.appendChild(opt);
+      }
+      document.getElementById('lineActivityGroupConfirm').checked=false;
+      document.getElementById('lineActivityGroupStatus').textContent=`行動量報告先：${data.selected_activity_group_id?'設定済み':'未設定'} / 正午自動投稿：${data.activity_auto_report_enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
+      void activityMailRefreshStatus();
     }
   }catch(error){
     const message='LINE設定を取得できません：'+(error.message||error);
@@ -10500,6 +10525,7 @@ async function refreshLineSettings({quiet=false}={}){
     document.getElementById('lineLoginSetupNotice').hidden=true;
     area.hidden=!(state.isDeveloper||state.isRepresentative);
     document.getElementById('lineGroupStatus').textContent=message;
+    document.getElementById('lineActivityGroupStatus').textContent=message;
   }
 }
 function startLineLink(){
@@ -10554,6 +10580,33 @@ async function saveLineGroup(){
 }
 
 
+async function saveActivityGroup(){
+ const id=document.getElementById('lineActivityGroupPicker').value;
+ if(!id||!document.getElementById('lineActivityGroupConfirm').checked){showToast('報告グループを選択し、閲覧権限を確認してください。');return;}
+ const btn=document.getElementById('lineActivityGroupSave');btn.disabled=true;
+ try{
+  await portalFetch('/api/line/activity-group/select',{method:'POST',body:{group_id:id,confirmed:true}});
+  await refreshLineSettings();showToast('行動量報告グループを保存しました。');
+ }catch(e){showToast('保存できません：'+e.message);}finally{btn.disabled=false;}
+}
+async function activityMailRefreshStatus(){
+ const el=document.getElementById('activityMailStatus'),btn=document.getElementById('activityMailConnect');
+ if(!el||!btn)return;
+ try{
+  const d=await portalFetch('/api/client/activity-mail/status');
+  el.textContent=`送信元：${d.sender||'未設定'} / Gmail連携：${d.connected?'済':'未連携'} / 朝7時メール：${d.enabled?'ON':'OFF（Cloudflareで設定）'}`;
+  btn.hidden=Boolean(d.connected)||!Boolean(d.can_connect);
+ }catch(e){el.textContent='確認失敗：'+e.message;btn.hidden=true;}
+}
+async function activityMailConnect(){
+ const btn=document.getElementById('activityMailConnect');btn.disabled=true;
+ try{
+  const d=await portalFetch('/api/client/activity-mail/connect',{method:'POST',body:{}});
+  if(d.connected){await activityMailRefreshStatus();return;}
+  if(!d.authorizationUrl?.startsWith('https://accounts.google.com/'))throw new Error('Google認証URLを取得できませんでした。');
+  location.assign(d.authorizationUrl);
+ }catch(e){showToast('連携失敗：'+e.message);btn.disabled=false;}
+}
 // v65: 管理者用接続診断・Cronを待たない送信テスト。
 async function diagnoseLineConnection(){
   const box=document.getElementById('lineDiagnosisResult'),button=document.getElementById('lineRunDiagnosis');
@@ -14103,7 +14156,7 @@ async function clientMailChoose(row){
   clientMailState.template=data.draft.body_template;clientMailState.saved=Boolean(data.draft.saved);
   if(clientMailState.verifyStep!==1)clientMailState.verifyStep=0;clientMailState.dirty=false; // Keep a search started while loading.
   clientMailState.sender=data.sender;clientMailState.sendReady=Boolean(data.send_ready);
-  clientMailState.sent=data.sent||null;
+  clientMailState.sent=data.sent?.status==='failed'?null:(data.sent||null);
   clientMailEl('clientMailFrom').value='companytokyo@dot-jp.or.jp';
   // CC is the currently authenticated portal user, not a draft or a manually entered address.
   clientMailEl('clientMailCc').value=String(state.user?.email||data.draft.cc||'').trim().toLowerCase();
@@ -14119,7 +14172,7 @@ async function clientMailChoose(row){
   gmailSetup.hidden=Boolean(data.gmail?.connected)||!Boolean(data.gmail?.can_connect);
   gmailSetup.textContent='送信元を連携';
   gmailSetup.title='companytokyo@dot-jp.or.jp を一度だけGoogle認証で連携';
-  if(clientMailState.sent)clientMailStatus('送信履歴：'+clientMailState.sent.status+'。再送信は防止されています。');
+  if(clientMailState.sent)clientMailStatus('送信履歴：'+clientMailState.sent.status+(clientMailState.sent.status==='failed'?'。Gmailに拒否されたため、設定を確認して再試行できます。':'。重複送信は防止されています。'));
   else if(data.gmail?.domain_error)clientMailStatus(data.gmail.domain_error);
   else if(!data.gmail?.connected)clientMailStatus(data.gmail?.can_connect?
     '送信元 companytokyo@dot-jp.or.jp のGmailを一度だけ連携してください。':
@@ -14147,9 +14200,10 @@ function clientMailTouch(event){
  clientMailState.preview=null;
  if(isRecipient){
   // Entering an address found by the search must not reset the "確認した" step.
-  if(clientMailState.verifyStep===2)clientMailState.verifyStep=0;
-  clientMailStatus(clientMailState.verifyStep===1?'見つけた宛先を入力したら「確認した」を押してください。':
-    '宛先を変更しました。「メールを検索」から公式サイトで確認してください。');
+  // Manually entered address: go directly to 「確認した」, no search required.
+  clientMailState.verifyStep=clientMailEl('clientMailTo').value.trim()?1:0;
+  clientMailStatus(clientMailState.verifyStep===1?'宛先を入力しました。「確認した」を押して、送信前の確認へ進めます。':
+    '宛先を空にしました。検索または手動入力してください。');
  }else{
   clientMailState.dirty=true;clientMailState.saved=false;
   if(clientMailState.verifyStep===2)clientMailState.verifyStep=0;
@@ -14219,7 +14273,6 @@ async function clientMailCompleteVerification(){
    const ok=await clientMailSave();if(!ok)return;
   }
   clientMailState.busy=true;clientMailRenderButtons();
-  await portalFetch('/api/client/mail/search-start',{method:'POST',body:{row}});
   const data=await portalFetch('/api/client/mail/verify',{method:'POST',body:{row,recipient}});
   clientMailState.verifyStep=Number(data.verify_step||2);
   clientMailStatus('この宛先を確認しました。「確認」から送信前プレビューへ進めます。宛先は保存していません。');
@@ -14236,14 +14289,16 @@ async function clientMailConfirm(){
   clientMailEl('clientMailPreviewHead').innerHTML=[['宛先',data.recipient],['Cc',data.cc||'なし'],['Bcc',data.bcc||'なし'],['件名',data.subject],['差出人',data.sender]]
     .map(([label,value])=>`<div><b>${escapeHtml(label)}</b>${escapeHtml(value)}</div>`).join('');
   clientMailEl('clientMailPreviewBody').textContent=data.body;
-  clientMailEl('clientMailPreviewSend').disabled=!data.send_ready;
+  // Allow clicking to reveal a concrete server-side reason if shared Gmail is not ready.
+  clientMailEl('clientMailPreviewSend').disabled=false;
   showScreen('client-mail-preview');
-  if(!data.send_ready)showToast('Gmail送信が未連携です。メール画面から連携してください。');
+  if(!data.send_ready)showToast('共通の送信元Gmailが未連携・設定不備です。送信ボタンで詳細を確認できます。');
  }catch(e){clientMailStatus(e.message||'送信前の確認に失敗しました。');}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
 async function clientMailSend(){
  const data=clientMailState.preview;if(!data||clientMailState.busy)return;
+ if(!data.send_ready){showToast('送信元 companytokyo@dot-jp.or.jp が未連携です。LINE管理画面ではなく、メール画面の連携状況を確認してください。');return;}
  if(!window.confirm(`「${data.company}」宛てにGmailから実際のメールを送信します。宛先 ${data.recipient} で間違いありませんか？`))return;
  clientMailState.busy=true;clientMailEl('clientMailPreviewSend').disabled=true;
  try{
