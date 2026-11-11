@@ -1,4 +1,4 @@
-<!-- v88: Email search always available; recipient input is not persisted in drafts -->
+<!-- v90: One-time shared companytokyo Gmail, CC=current signed-in staff; search stays native. -->
 <!-- v85: M/N/O filter, official company email suggestion, Gmail send OAuth -->
 <!-- v83: calendar account profile photos and Figma client document list -->
 <!-- v81: calendar provider/account service icons instead of empty radio circles -->
@@ -6136,9 +6136,12 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   outline:3px solid #283dff;outline-offset:3px;
 }
 
-/* v85: send-only Gmail OAuth; no special university field. */
+/* v90: fixed shared sender, automatic CC, one-time authorized Gmail setup. */
 .screen-client-mail .client-mail-gmail-connect{position:absolute;left:530px;top:27px;width:129px;height:28px;box-sizing:border-box;border:1px solid #3d60c9;border-radius:4px;background:#eef1ff;color:#233b8f;font:500 13px/26px Inter,'Noto Sans JP',sans-serif;cursor:pointer;white-space:nowrap;}
 .screen-client-mail .client-mail-gmail-connect:hover{background:#dce4ff;}
+.screen-client-mail .client-mail-from input{font-size:16px;letter-spacing:-.25px;}
+.screen-client-mail #clientMailGmailConnect[hidden]{display:none!important;}
+.screen-client-mail #clientMailCc[readonly]{background:#f4f5f8;color:#26364c;}
 .screen-client-mail .client-mail-to{top:127px;}
 .screen-client-mail .client-mail-to input{font-size:18px;}
 .screen-client-mail .client-mail-status{font-size:14px;white-space:normal;}
@@ -6416,16 +6419,16 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <form id="clientMailForm" class="client-mail-panel" autocomplete="off">
             <label class="client-mail-field client-mail-company" for="clientMailCompany"><span>会社</span>
               <select id="clientMailCompany" required><option value="">企業一覧を取得中…</option></select></label>
-            <label class="client-mail-field client-mail-from" for="clientMailFrom"><span>送信元Gmail</span>
-              <input id="clientMailFrom" readonly aria-readonly="true" value="" title="@dot-jp.or.jp のGmailアカウント限定"></label>
-            <button type="button" class="client-mail-gmail-connect" id="clientMailGmailConnect" title="@dot-jp.or.jp のGmailアカウントのみ">Gmail送信を連携</button>
+            <label class="client-mail-field client-mail-from" for="clientMailFrom"><span>送信元（固定）</span>
+              <input id="clientMailFrom" readonly aria-readonly="true" value="companytokyo@dot-jp.or.jp" title="送信元は固定されています"></label>
+            <button type="button" class="client-mail-gmail-connect" id="clientMailGmailConnect" title="代表・デベロッパーのみ。一度だけ送信元のGmailを連携します" hidden>送信元を連携</button>
             <label class="client-mail-field client-mail-to" for="clientMailTo"><span>宛先</span>
               <input id="clientMailTo" type="email" required placeholder="宛先は保存されません／検索または手動入力"></label>
             <a id="clientMailVerify" class="client-mail-verify"
                href="https://www.google.com/search?q=%E4%BC%81%E6%A5%AD+%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%E5%85%88+%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9"
                target="_blank" rel="noopener noreferrer">メールを検索</a>
-            <label class="client-mail-field client-mail-cc" for="clientMailCc"><span>CC</span>
-              <textarea id="clientMailCc" placeholder="なし（複数は改行区切り）" rows="2"></textarea></label>
+            <label class="client-mail-field client-mail-cc" for="clientMailCc"><span>CC（ログイン中の本人）</span>
+              <textarea id="clientMailCc" rows="2" readonly aria-readonly="true" title="CCはログイン中の本人のメールアドレスに自動設定されます"></textarea></label>
             <label class="client-mail-field client-mail-bcc" for="clientMailBcc"><span>BCC</span>
               <textarea id="clientMailBcc" placeholder="なし（複数は改行区切り）" rows="2"></textarea></label>
             <label class="client-mail-field client-mail-subject" for="clientMailSubject"><span>件名</span>
@@ -14025,10 +14028,10 @@ window.addEventListener('DOMContentLoaded',()=>{
 </div>
 
 <script>
-// v89: Native outbound search link + click-to-verify; recipients stay per-send only.
+// v90: Shared fixed Gmail sender, signed-in user CC, and native email lookup.
 const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',saved:false,dirty:false,verifyStep:0,
   sender:'',sendReady:false,sent:null,preview:null,busy:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
-const clientMailIds=['clientMailTo','clientMailCc','clientMailBcc','clientMailSubject','clientMailBody'];
+const clientMailIds=['clientMailTo','clientMailBcc','clientMailSubject','clientMailBody'];
 function clientMailEl(id){return document.getElementById(id);}
 function clientMailStatus(message){const el=clientMailEl('clientMailStatus');if(el)el.textContent=String(message||'');}
 function clientMailSearchUrl(record){
@@ -14101,17 +14104,26 @@ async function clientMailChoose(row){
   if(clientMailState.verifyStep!==1)clientMailState.verifyStep=0;clientMailState.dirty=false; // Keep a search started while loading.
   clientMailState.sender=data.sender;clientMailState.sendReady=Boolean(data.send_ready);
   clientMailState.sent=data.sent||null;
-  clientMailEl('clientMailFrom').value=data.sender;
+  clientMailEl('clientMailFrom').value='companytokyo@dot-jp.or.jp';
+  // CC is the currently authenticated portal user, not a draft or a manually entered address.
+  clientMailEl('clientMailCc').value=String(state.user?.email||data.draft.cc||'').trim().toLowerCase();
+  clientMailEl('clientMailCc').readOnly=true;
   // The recipient is intentionally never loaded from the saved draft.
   if(clientMailState.verifyStep!==1)clientMailEl('clientMailTo').value='';
-  for(const [id,val] of [['clientMailCc',data.draft.cc],['clientMailBcc',data.draft.bcc],
+  for(const [id,val] of [['clientMailBcc',data.draft.bcc],
     ['clientMailSubject',data.draft.subject],['clientMailBody',data.draft.body]])clientMailEl(id).value=val||'';
-  for(const id of ['clientMailCc','clientMailBcc','clientMailSubject'])clientMailEl(id).readOnly=!clientMailState.canEdit;
+  for(const id of ['clientMailBcc','clientMailSubject'])clientMailEl(id).readOnly=!clientMailState.canEdit;
   clientMailEl('clientMailBody').readOnly=false;
-  clientMailEl('clientMailGmailConnect').textContent=data.gmail?.connected?'Gmailアカウントを変更':'Gmail送信を連携';
-  clientMailEl('clientMailGmailConnect').title='送信可能なのは @dot-jp.or.jp のGmailアカウントのみです';
+  // The one-time setup button disappears once the fixed shared account is linked.
+  const gmailSetup=clientMailEl('clientMailGmailConnect');
+  gmailSetup.hidden=Boolean(data.gmail?.connected)||!Boolean(data.gmail?.can_connect);
+  gmailSetup.textContent='送信元を連携';
+  gmailSetup.title='companytokyo@dot-jp.or.jp を一度だけGoogle認証で連携';
   if(clientMailState.sent)clientMailStatus('送信履歴：'+clientMailState.sent.status+'。再送信は防止されています。');
   else if(data.gmail?.domain_error)clientMailStatus(data.gmail.domain_error);
+  else if(!data.gmail?.connected)clientMailStatus(data.gmail?.can_connect?
+    '送信元 companytokyo@dot-jp.or.jp のGmailを一度だけ連携してください。':
+    '共通送信元が未連携です。代表またはデベロッパーによる連携後、送信できます。');
   else clientMailStatus(clientMailState.verifyStep===1?'企業公式サイトで宛先を照合し、「確認した」を押してください。':
     '「メールを検索」は保存前でも押せます。宛先欄は保存せず、送信ごとに入力してください。');
   if(!clientMailState.sent)void clientMailAutoRecipient(row,requestId);
@@ -14152,7 +14164,8 @@ async function clientMailSave(){
  try{
   // The address field is NOT part of the saved email draft.
   await portalFetch('/api/client/mail/save',{method:'POST',body:{row:clientMailState.row,
-    cc:clientMailEl('clientMailCc').value,bcc:clientMailEl('clientMailBcc').value,
+    // CC is generated server-side from the login session and is never editable.
+    bcc:clientMailEl('clientMailBcc').value,
     subject:clientMailEl('clientMailSubject').value,body:clientMailEl('clientMailBody').value}});
   clientMailState.saved=true;clientMailState.dirty=false;
   if(clientMailState.verifyStep===2)clientMailState.verifyStep=0;
@@ -14257,6 +14270,11 @@ function clientMailSkip(){
 async function clientMailConnectGmail(){
  try{
   const result=await portalFetch('/api/client/mail/gmail/connect',{method:'POST',body:{}});
+  if(result.connected){
+   clientMailStatus('送信元の連携は完了しています。');
+   if(clientMailState.row)await clientMailChoose(clientMailState.row);
+   return;
+  }
   if(!result.authorizationUrl)throw new Error('Google認証URLがありません。');
   window.location.href=result.authorizationUrl;
  }catch(e){clientMailStatus(e.message||'Gmail連携を開始できませんでした。');}
@@ -14274,7 +14292,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  clientMailEl('clientMailPreviewSend').addEventListener('click',()=>void clientMailSend());
  clientMailEl('clientMailGmailConnect').addEventListener('click',()=>void clientMailConnectGmail());
  const qs=new URLSearchParams(location.search);if(qs.has('gmail')){
-  const info=qs.get('gmail')==='connected'?'Gmailの連携に成功しました。':'Gmailの連携エラー：'+(qs.get('detail')||'設定を確認してください');
+  const info=qs.get('gmail')==='connected'?'companytokyo@dot-jp.or.jp の連携に成功しました。以後、送信元の変更はできません。':'Gmailの連携エラー：'+(qs.get('detail')||'設定を確認してください');
   setTimeout(()=>clientMailStatus(info),900);
  }
 });
