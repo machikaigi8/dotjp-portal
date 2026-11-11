@@ -8844,11 +8844,29 @@ async function loadClientStaffStatus() {
     note.classList.add('is-warning');
   }
 }
+// v78: 支部員タスク状況の緑色の選択ボタンには名字だけを表示する。
+// 統計の参照・選択・本人識別はこれまでどおりemailと名簿フルネームで行う。
+function clientStaffFamilyName(person) {
+  const explicit=String(person?.family_name||person?.last_name||person?.surname||'').trim();
+  if(explicit) return explicit;
+  const raw=String(person?.name||'').trim().replace(/[（(].*$/u,'').trim();
+  if(!raw) return '氏名未登録';
+  // 名簿で姓と名が空白で区切られている場合は空白前をそのまま使う。
+  if(/[\s\u3000]/u.test(raw)) return raw.split(/[\s\u3000]+/u)[0];
+  // 名簿に区切りがない場合も、3文字以上の姓や1文字姓を取り違えない。
+  // 確実な既知の姓を先に優先し、その他は一般的な2文字姓として表示する。
+  const known=['小松﨑','小松崎','左右田','佐々木','長谷川','小笠原','五十嵐','久保田','宇都宮','阿久津',
+    '工藤','佐藤','大城','山﨑','山崎','今野','近山','吉水','大友','芳賀','西田','薛'];
+  const match=known.find(surname=>raw.startsWith(surname));
+  if(match) return match;
+  const chars=Array.from(raw);
+  return chars.length<=2?raw:chars.slice(0,2).join('');
+}
 function renderClientStaffStatus() {
   const data=state.clientStaffStatus;
   const personList=document.getElementById('staffStatusPeople');
   personList.innerHTML=data.members.length?data.members.map(person=>
-    `<button type="button" data-staff-email="${escapeHtml(person.email)}" class="${data.email===person.email?'is-selected':''}" title="${escapeHtml(person.name)}" aria-pressed="${data.email===person.email}">${escapeHtml(person.name)}</button>`).join(''):
+    `<button type="button" data-staff-email="${escapeHtml(person.email)}" class="${data.email===person.email?'is-selected':''}" title="${escapeHtml(person.name)}" aria-pressed="${data.email===person.email}">${escapeHtml(clientStaffFamilyName(person))}</button>`).join(''):
     '<p style="font-size:24px">この地域には名簿登録者がいません。</p>';
   const member=data.members.find(p=>p.email===data.email);
   document.getElementById('staffStatusPersonLabel').textContent=member?member.name:'スタッフを選択してください';
