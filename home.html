@@ -1,3 +1,4 @@
+<!-- v97: LINE admin linking requires an actual message; hide per-person link UI; clarify single Gmail sender authorization. -->
 <!-- v96: LINE current-group participants where LINE API permits, fallback known members; activity email no dedicated linking UI -->
 <!-- v95: LINE notification panel scroll fix and jump to manual account mapping -->
 <!-- v93: editable history calendar + popup preview test + daily template -->
@@ -6347,7 +6348,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
           <section class="links-panel">
             <h2>リンク集</h2>
-            <button type="button" id="lineSettingsOpen" class="line-settings-entry">LINE連携</button>
+            <button type="button" id="lineSettingsOpen" class="line-settings-entry" hidden>LINE連携</button>
             <button type="button" id="lineUnlinkEntry" class="line-unlink-entry" hidden>LINE連携を解除する</button>
             <div class="links-grid">
               <a class="green-menu" href="https://docs.google.com/spreadsheets/d/1isxF8Tmc6FnSVq0IhrcoHMxO6CbnBqD4mrqGBsEWiJg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">経営管理シート</a>
@@ -6951,7 +6952,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div class="line-row"><button type="button" id="lineGroupSave">通知先グループを保存</button></div>
                 <div id="lineGroupStatus" class="line-link-status" role="status"></div>
                 <h3>行動量報告グループ（正午の未報告者を自動投稿）</h3>
-                <p>ポータル名簿と紐づいたLINEアカウントから、指定の行動量報告フォーマットで送信された場合に「報告済み」と判定します。未報告者の前日実績は公式LINEが投稿します。未連携者は判定対象外です。管理者による手動連携も下で設定できます。</p>
+                <p>LINEグループで一度メッセージを送ってもらい、管理者が名簿と手動で紐づけます。連携済みの人だけ報告済みかどうかを判定します。未連携の人には、正午の代理投稿を行いません。各人の連携操作は不要です。</p>
                 <label for="lineActivityGroupPicker">行動量報告グループを選択</label>
                 <select id="lineActivityGroupPicker"><option value="">グループを読み込み中…</option></select>
                 <label class="line-check"><input type="checkbox" id="lineActivityGroupConfirm">このグループへの各人の行動量投稿について関係者の了承を確認しました。</label>
@@ -6959,7 +6960,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div id="lineActivityGroupStatus" class="line-link-status" role="status"></div>
                 <p>本番配信にはCloudflareで <code>LINE_ACTIVITY_AUTO_REPORT_ENABLED=true</code> が必要です。毎日12:00 JSTに判定します。</p>
                 <h3>朝7時の前日行動量メール</h3>
-                <p>送信先は各メンバーのポータルログインアドレスです。各自のGmail連携は不要。送信元は既に認証済みの行動量メール用Gmail、または企業メールの共通Gmailを利用します。</p>
+                <p>送信先は各メンバーのポータルログインアドレスです。受信する側のGmail連携は不要です。ただし自動送信には送信元の認証が1件だけ必要です。未連携なら企業メール画面から代表・デベロッパーが共通送信元を一度だけ認証してください。</p>
                 <div id="activityMailStatus" class="line-link-status" role="status">送信元と配信先を確認中…</div>
                 <h3>行動量報告の手動テスト（代表・デベロッパーのみ）</h3>
                 <p>定時配信に影響させず、最初に内容を確認してから1回ずつ送信できます。メールはログイン中の本人1名宛、LINEは保存済みの行動量報告グループへ1件だけ投稿します。前日の確定集計がなければ明示されたサンプルを使用します。</p>
@@ -6971,8 +6972,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 </div>
                 <div id="activityManualResult" class="line-link-status" role="status" aria-live="polite">テスト未実行。先に「テスト内容を確認」を押してください。</div>
                 <h3 id="lineManualSection">LINEアカウントの手動連携（代表・デベロッパーのみ）</h3>
-                <p>LINEグループの現在の参加者から選んで名簿と連携します。LINE公式アカウントが認証済み・プレミアムなら全参加者を取得できます。未認証の場合は、既に発言・参加通知を受信した人から選択します。<strong>本人確認・同意は必須で、氏名だけの自動連携はしません。</strong></p>
-                <div class="line-row"><button type="button" id="lineManualRefresh" class="secondary">グループ参加者を取得・更新</button></div>
+                <p>公式LINEが参加している通知先または行動量報告グループで、本人にメッセージを1件送ってもらってください。管理者が「発言者を更新」から選び、名簿と手動で紐づけます。<strong>本人確認・同意は必須。未連携なら正午の自動報告の対象外です。</strong></p>
+                <div class="line-row"><button type="button" id="lineManualRefresh" class="secondary">発言したメンバーを更新</button></div>
                 <div id="lineManualStatus" class="line-link-status" role="status">未読み込み</div>
                 <div id="lineManualCandidatesList" class="line-manual-member-list" aria-label="LINE連携候補"></div>
                 <label for="lineManualCandidateSelect">連携するLINEアカウント</label>
@@ -6984,10 +6985,11 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <h3>現在のLINE連携一覧・解除</h3>
                 <p>誤連携した場合はここで解除できます。別人への上書きはできません。</p>
                 <div id="lineManualLinkedList" class="line-manual-link-list"></div>
-                <h3>LINE本人連携メニュー（初回だけ）</h3>
-                <p>「行動量報告／タスク時間報告」の公式LINEに「ポータル連携」ボタンを設置します。<strong>現在のLINE公式リッチメニューがある場合は置き換わる</strong>ため、確認してから実行してください。</p>
-                <div class="line-row"><button type="button" id="lineInstallLinkMenu" class="secondary">公式LINEに連携メニューを設置</button></div>
-                <div id="lineMenuStatus" class="line-link-status" role="status">未確認</div>
+                <!-- v97: 手動連携方式へ統一。旧リッチメニュー設定は互換性のためDOMのみ保持。 -->
+                <div hidden>
+                  <button type="button" id="lineInstallLinkMenu" class="secondary">旧連携メニューを設置</button>
+                  <div id="lineMenuStatus" class="line-link-status" role="status"></div>
+                </div>
                 <h3>送信チェック（まずここを確認）</h3>
                 <p>送信されない場合、Cronの変更前に「接続診断」を押してください。Cloudflareのシークレット値自体は表示しません。</p>
                 <div class="line-row">
@@ -10819,9 +10821,9 @@ async function refreshLineSettings({quiet=false}={}){
   try{
     const data=await portalFetch('/api/line/status');
     // 通信失敗時は非表示にしない。連携完了がサーバーで確認できた場合だけ隠す。
-    document.getElementById('lineSettingsOpen').hidden=Boolean(data.linked);
-    document.getElementById('lineUnlinkEntry').hidden=!Boolean(data.linked);
-    box.textContent=data.linked?`LINE連携済み：${data.line_name||'LINEアカウント'}\n（ポータルのメールアドレスと紐づけ済み）`:'未連携：LINE連携すると、日曜のタスク時間未登録リマインドであなた宛てにメンションできます。';
+    document.getElementById('lineSettingsOpen').hidden=true; // v97: 管理者手動連携へ統一
+    document.getElementById('lineUnlinkEntry').hidden=true; // 解除も管理者の手動連携一覧から
+    box.textContent=data.linked?`LINE連携済み：${data.line_name||'LINEアカウント'}`:'LINE連携は管理者が行います。公式LINEのいるグループで一度発言してください。';
     const notice=document.getElementById('lineLoginSetupNotice');
     const ready=Boolean(data.link_ready);
     notice.hidden=ready||Boolean(data.linked);
@@ -10929,7 +10931,7 @@ async function refreshLineManualDirectory(){
  const status=document.getElementById('lineManualStatus');
  const refresh=document.getElementById('lineManualRefresh');
  if(!status || !refresh)return;
- refresh.disabled=true;status.textContent='LINEグループの参加者を確認し、名簿を読み込み中…';
+ refresh.disabled=true;status.textContent='グループで発言したメンバーを読み込み中…';
  try{
    const data=await portalFetch('/api/line/members/candidates');
    lineManualDirectory=data;
@@ -10959,13 +10961,13 @@ async function refreshLineManualDirectory(){
      const heading=document.createElement('strong');heading.textContent=m.name;details.appendChild(heading);
      const sub=document.createElement('small');sub.textContent=m.linked_email?
        `連携済：${m.linked_name||m.linked_email}`:
-       (m.source==='group'?'グループ参加中・未連携':'Webhookで把握済・未連携');
+       'グループで発言済み・未連携';
      details.appendChild(sub);row.appendChild(details);
      const btn=document.createElement('button');btn.type='button';btn.textContent=m.linked_email?'連携済':'選択';btn.disabled=!usable;
      btn.addEventListener('click',()=>{candidateSelect.value=key;candidateSelect.focus();});
      row.appendChild(btn);candidates.appendChild(row);
    }
-   if(!data.members?.length){const empty=document.createElement('p');empty.textContent='連携可能な候補がありません。未認証公式LINEの場合は、メンバーの発言または参加通知がWebhookに届く必要があります。';candidates.appendChild(empty);}
+   if(!data.members?.length){const empty=document.createElement('p');empty.textContent='候補がありません。公式LINEがいるグループで本人にメッセージを1件送ってもらい、LINE Webhook受信後に更新してください。';candidates.appendChild(empty);}
    if(previousCandidate&&Array.from(candidateSelect.options).some(o=>o.value===previousCandidate))candidateSelect.value=previousCandidate;
    if(previousRoster&&Array.from(rosterSelect.options).some(o=>o.value===previousRoster))rosterSelect.value=previousRoster;
    for(const link of data.links||[]){
@@ -10979,10 +10981,8 @@ async function refreshLineManualDirectory(){
    }
    if(!data.links?.length){const empty=document.createElement('p');empty.textContent='現在の連携はありません。';linked.appendChild(empty);}
    document.getElementById('lineManualConfirm').checked=false;
-   const modes=(data.group_modes||[]).map(m=>m.state==='full'?
-      `グループ${m.group_id.slice(-5)}：参加者取得済（${m.count}人）`:
-      `グループ${m.group_id.slice(-5)}：${m.note}`).join('\n');
-   status.textContent=`表示できた参加者：${data.members?.length||0}人 ／ 連携済み：${data.links?.length||0}人。\n${modes||'対象のLINEグループが未設定です。'}\n連携には本人の確認と同意が必要です。`;
+   const modes=(data.group_modes||[]).map(m=>`グループ${m.group_id.slice(-5)}：${m.note}`).join('\n');
+   status.textContent=`最近30日以内の発言者：${data.members?.length||0}人 ／ 連携済み：${data.links?.length||0}人。\n${modes||'対象のLINEグループが未設定です。'}\n各人の連携操作は不要です。本人確認と同意を得て手動連携してください。`;
  }catch(error){status.textContent='LINE連携候補の取得に失敗：'+(error?.message||error);}
  finally{refresh.disabled=false;}
 }
@@ -11028,7 +11028,7 @@ async function activityMailRefreshStatus(){
  if(!el)return;
  try{
   const d=await portalFetch('/api/client/activity-mail/status');
-  el.textContent=`送信先：各人のログインアドレス（本人ごとに自動設定）\n送信元：${d.sender||'未設定'}\nGmail送信権限：${d.connected?'利用可能':'未連携（管理者が企業メールの共通送信元を一度連携する必要があります）'}\n朝7時の自動配信：${d.enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
+  el.textContent=`送信先：各人のポータルログインアドレス（受信側の連携不要）\n送信元：${d.connected?(d.sender||'認証済み'):'未認証（共通送信元 companytokyo@dot-jp.or.jp を使用予定）'}\nGmail送信権限：${d.connected?'利用可能':'未連携：このままでは自動メールを送れません。代表・デベロッパーが企業メール画面で共通送信元を1回だけ連携してください。'}\n朝7時の自動配信：${d.enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
  }catch(e){el.textContent='メール接続の確認に失敗：'+e.message;}
 }
 // v92: Safe, administrator-only one-time activity report delivery tests.
