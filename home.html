@@ -1,3 +1,4 @@
+<!-- v79: activity and schedule UI -->
 <!-- v75: タスク時間は本人の実績のみ表示。関東・関西を合算し、全体集計を廃止 -->
 <!-- v70: MTG直近順、RP転記モード撤去、LINE管理をHP編集へ移動・連携済みボタン非表示 -->
 <!-- v68: matching Workers_v41, sheet two-way sync and MTG times -->
@@ -5691,6 +5692,36 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   z-index: 150 !important;
 }
 
+
+/* v79: full-size click areas, visible selected dates and explicit calendar linking */
+.screen-schedule .calendar-provider-heading .calendar-connect-button {
+  opacity:1 !important; left:auto !important;right:0 !important;top:7px !important;
+  width:102px !important;height:40px !important;padding:3px !important;
+  border:2px solid #344ec9 !important;border-radius:6px !important;
+  background:#eef0ff !important;color:#162d87 !important;
+  font:600 19px/30px sans-serif !important;cursor:pointer !important;
+}
+.screen-schedule .calendar-provider-group { z-index:2; }
+.screen-client-staff-status .staff-status-date-control { cursor:pointer; }
+.screen-client-staff-status .staff-status-date-control > span {font-size:19px;line-height:1.3;white-space:nowrap;}
+.screen-client-staff-status [data-staff-period='month'] .staff-status-date-control > span {font-size:23px;}
+.daily-activity-overlay[hidden] {display:none !important;}
+.daily-activity-overlay {position:fixed;inset:0;z-index:999999;background:rgba(15,24,50,.57);display:grid;place-items:center;padding:16px;}
+.daily-activity-dialog {box-sizing:border-box;width:min(580px,96vw);max-height:90vh;overflow:auto;background:#fff;padding:28px 32px;border-radius:12px;box-shadow:0 20px 70px rgba(0,0,0,.24);color:#18213c;font-family:'Noto Sans JP',sans-serif;}
+.daily-activity-dialog h2{margin:0 0 12px;font-size:27px;}
+.daily-activity-dialog #dailyActivityStatus{font-size:16px;line-height:1.5;}
+.daily-activity-dialog textarea{box-sizing:border-box;width:100%;height:176px;min-height:140px;resize:vertical;border:1px solid #95a3c2;background:#fafbff;padding:14px;font:19px/1.7 sans-serif;color:#172548;}
+.daily-activity-hint{font-size:16px;color:#455574;}
+.daily-activity-actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;}
+.daily-activity-actions button{font-size:18px;border:0;border-radius:6px;padding:12px 20px;cursor:pointer;background:#dbe3f7;color:#1c2c55;}
+.daily-activity-actions button:first-child{background:#2b56db;color:white;}
+
+/* Figma 48:601 (2026-11-11): aligned provider headings and account top. */
+.screen-schedule .provider-google {top:25px !important;}
+.screen-schedule .provider-apple {top:304px !important;}
+.screen-schedule .provider-microsoft {top:550px !important;}
+/* The whole grey picker rectangle opens the native picker, not only its icon. */
+.screen-client-staff-status .staff-status-date-control input {pointer-events:none;}
 </style>
 </head>
 <body>
@@ -5820,7 +5851,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         </section>
 
 
-        <!-- v71: LINE個人連携の事前設定診断・出欠MTGの週内表示 -->
+        <!-- v79: 行動量の日次差分・昨日のログイン時報告とカレンダー連携表示 -->
         <!-- Figma 64:637: クライアント -->
         <!-- Figma 2026-11-05: コンス / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-cons" aria-label="コンス">
@@ -7114,6 +7145,7 @@ async function init() {
   window.visualViewport?.addEventListener("resize", fitCanvas);
   window.addEventListener("hashchange", routeFromHash);
   wireActions();
+  installYesterdayActivityActions();
   installCommonBackButtons();
 
   const token = sessionStorage.getItem("dotjp_access_token");
@@ -7470,6 +7502,13 @@ function wireActions() {
     document.getElementById(id).addEventListener('change', () => void loadClientStaffStatus());
   }
   document.getElementById('staffStatusReload').addEventListener('click', () => void loadClientStaffStatus());
+  document.querySelectorAll('.screen-client-staff-status .staff-status-date-control').forEach(label=>{
+    label.addEventListener('click',event=>{
+      if(event.target instanceof HTMLInputElement)return;
+      event.preventDefault();const input=label.querySelector('input');
+      if(input){try{input.showPicker()}catch(_){input.focus();input.click();}}
+    });
+  });
   document.getElementById('staffStatusPeople').addEventListener('click', (event) => {
     const button=event.target.closest('button[data-staff-email]');
     if (!button) return;
@@ -7918,7 +7957,7 @@ function showScreen(name, updateHash = true, recordHistory = true) {
   fitCanvas();
 
   if (name === "task-start") renderStartTasks();
-  if (name === "home") refreshTaskUi();
+  if (name === "home") { refreshTaskUi(); void displayYesterdayActivity(); }
   if (name === "task-end") {
     updateElapsedTaskText();
     syncClientSendCountToReport();
@@ -8806,6 +8845,7 @@ function staffStatusToday() {
   const get=k=>p.find(x=>x.type===k)?.value||'';
   return `${get('year')}-${get('month')}-${get('day')}`;
 }
+function staffStatusSunday(day){const d=new Date(day+'T00:00:00+09:00');d.setUTCDate(d.getUTCDate()-d.getUTCDay());return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);}
 function initStaffStatusDates() {
   const data=state.clientStaffStatus;
   const today=staffStatusToday();
@@ -8817,6 +8857,15 @@ function initStaffStatusDates() {
 }
 async function loadClientStaffStatus() {
   initStaffStatusDates();
+  // Show the chosen date immediately, even while the API is loading.
+  const selectedDayPreview=document.getElementById('staffStatusDay').value;
+  const selectedWeekPreview=document.getElementById('staffStatusWeek').value;
+  const selectedMonthPreview=document.getElementById('staffStatusMonth').value;
+  const dlabel=document.querySelector("[data-staff-period='day'] .staff-status-date-control > span");
+  const wlabel=document.querySelector("[data-staff-period='week'] .staff-status-date-control > span");
+  if(dlabel&&selectedDayPreview)dlabel.textContent=selectedDayPreview.slice(5).replace('-','/')+'▼';
+  if(wlabel&&selectedWeekPreview)wlabel.textContent=staffStatusSunday(selectedWeekPreview).slice(5).replace('-','/')+'週▼';
+  if(selectedMonthPreview)document.getElementById('staffStatusMonthText').textContent=Number(selectedMonthPreview.slice(5))+'月▼';
   const data=state.clientStaffStatus;
   const seq=++data.requestSeq;
   const query=new URLSearchParams({region:state.region,day:document.getElementById('staffStatusDay').value,
@@ -8862,6 +8911,38 @@ function clientStaffFamilyName(person) {
   const chars=Array.from(raw);
   return chars.length<=2?raw:chars.slice(0,2).join('');
 }
+async function displayYesterdayActivity(){
+  const who=String(userIdentity()||'').toLowerCase();if(!who)return;
+  const today=staffStatusToday(),key=`dotjp_daily_activity_seen_${who}_${today}`;
+  if(localStorage.getItem(key)==='1')return;
+  try{
+    const result=await portalFetch('/api/client/activity-yesterday');
+    if(localStorage.getItem(key)==='1')return;
+    const dialog=document.getElementById('dailyActivityOverlay');
+    if(!result.ready)return; // baseline first, no ungrounded previous-day numbers
+    const c=result.counts||{};
+    const report=result.ready
+      ?`【${result.day}の行動量】\n架電：${Number(c.call||0)}件\nお問い合わせフォーム：${Number(c.form||0)}件\nメール：${Number(c.mail||0)}件`
+      :`【${result.day}の行動量】\n${result.notice||'昨日の集計はまだありません。'}`;
+    document.getElementById('dailyActivityTitle').textContent=`昨日（${result.day}）の行動量`;
+    document.getElementById('dailyActivityStatus').textContent=result.ready?'今日の初回ログインです。昨日の行動量をLINEで報告しましょう。':report.split('\n')[1];
+    document.getElementById('dailyActivityText').value=report;
+    document.getElementById('dailyActivityCopy').disabled=!result.ready;
+    dialog.hidden=false;
+  }catch(error){console.warn('daily activity summary',error);}
+}
+function installYesterdayActivityActions(){
+  document.getElementById('dailyActivityClose').addEventListener('click',()=>{
+    document.getElementById('dailyActivityOverlay').hidden=true;
+    const who=String(userIdentity()||'').toLowerCase();
+    if(who && !document.getElementById('dailyActivityCopy').disabled)localStorage.setItem(`dotjp_daily_activity_seen_${who}_${staffStatusToday()}`,'1');
+  });
+  document.getElementById('dailyActivityCopy').addEventListener('click',async()=>{
+    const text=document.getElementById('dailyActivityText').value;
+    try{await navigator.clipboard.writeText(text);showToast('コピーしました。LINEに貼り付けて送信してください。');}
+    catch(_){document.getElementById('dailyActivityText').select();document.execCommand('copy');showToast('コピーしました。LINEに貼り付けてください。');}
+  });
+}
 function renderClientStaffStatus() {
   const data=state.clientStaffStatus;
   const personList=document.getElementById('staffStatusPeople');
@@ -8887,9 +8968,17 @@ function renderClientStaffStatus() {
   }
   const statusNote=document.getElementById('staffStatusNote');
   statusNote.textContent=(data.warning?data.warning+'　':'')+
-    '期間別の完了・フォームはポータル経由で記録した送信件数。累計の完了・フォームと現在の未送信は企業リストから集計します。メールと架電は送信種別の記録がないため未集計です。';
+    'スプシのM列（架電）・N列（フォーム）・O列（メール）の増分を0時に保存した記録です。今日の数値は速報値。初回導入以前の履歴は推定しません。';
   statusNote.classList.toggle('is-warning',Boolean(data.warning));
   const selectedMonth=document.getElementById('staffStatusMonth').value;
+  const selectedDay=document.getElementById('staffStatusDay').value;
+  const selectedWeek=document.getElementById('staffStatusWeek').value;
+  const dayNode=document.querySelector("[data-staff-period='day'] .staff-status-date-control > span");
+  const weekNode=document.querySelector("[data-staff-period='week'] .staff-status-date-control > span");
+  if(dayNode&&/^\d{4}-\d{2}-\d{2}$/.test(selectedDay)) dayNode.textContent=`${Number(selectedDay.slice(5,7))}/${Number(selectedDay.slice(8))}▼`;
+  if(weekNode&&/^\d{4}-\d{2}-\d{2}$/.test(selectedWeek)) {
+    const ws=staffStatusSunday(selectedWeek);weekNode.textContent=`${Number(ws.slice(5,7))}/${Number(ws.slice(8))}週▼`;
+  }
   document.getElementById('staffStatusMonthText').textContent=/^\d{4}-(0[1-9]|1[0-2])$/.test(selectedMonth)
     ? `${Number(selectedMonth.slice(5))}月▼` : '月▼';
 }
@@ -13376,5 +13465,19 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
+
+<!-- v79: Yesterday's activity, shown only at first signed-in visit each day. -->
+<div id="dailyActivityOverlay" class="daily-activity-overlay" hidden role="presentation">
+  <section class="daily-activity-dialog" role="dialog" aria-modal="true" aria-labelledby="dailyActivityTitle">
+    <h2 id="dailyActivityTitle">昨日の行動量</h2>
+    <p id="dailyActivityStatus" role="status">読み込み中…</p>
+    <textarea id="dailyActivityText" readonly aria-label="コピーできる昨日の行動量"></textarea>
+    <p class="daily-activity-hint">コピーして、自分でLINEグループに報告してください。</p>
+    <div class="daily-activity-actions">
+      <button id="dailyActivityCopy" type="button">行動量をコピー</button>
+      <button id="dailyActivityClose" type="button">閉じる</button>
+    </div>
+  </section>
+</div>
 </body>
 </html>
