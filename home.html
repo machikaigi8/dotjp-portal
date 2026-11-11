@@ -1,3 +1,4 @@
+<!-- v98: Daily activity report is sent only from takaaki_souda@dot-jp.or.jp; one-time sender authorization in LINE admin. -->
 <!-- v97: LINE admin linking requires an actual message; hide per-person link UI; clarify single Gmail sender authorization. -->
 <!-- v96: LINE current-group participants where LINE API permits, fallback known members; activity email no dedicated linking UI -->
 <!-- v95: LINE notification panel scroll fix and jump to manual account mapping -->
@@ -6960,8 +6961,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div id="lineActivityGroupStatus" class="line-link-status" role="status"></div>
                 <p>本番配信にはCloudflareで <code>LINE_ACTIVITY_AUTO_REPORT_ENABLED=true</code> が必要です。毎日12:00 JSTに判定します。</p>
                 <h3>朝7時の前日行動量メール</h3>
-                <p>送信先は各メンバーのポータルログインアドレスです。受信する側のGmail連携は不要です。ただし自動送信には送信元の認証が1件だけ必要です。未連携なら企業メール画面から代表・デベロッパーが共通送信元を一度だけ認証してください。</p>
+                <p>送信元は takaaki_souda@dot-jp.or.jp に固定。宛先は各メンバーのポータルログインアドレスです。受信者のGmail連携は不要。送信元の権限が未設定の場合のみ、管理者が本人のGoogleアカウントで1回だけ許可してください。企業メール用のアカウントとは別管理です。</p>
                 <div id="activityMailStatus" class="line-link-status" role="status">送信元と配信先を確認中…</div>
+                <div class="line-row"><button type="button" id="activityMailConnect" class="secondary" hidden>送信元のGmail権限を1回だけ許可</button></div>
                 <h3>行動量報告の手動テスト（代表・デベロッパーのみ）</h3>
                 <p>定時配信に影響させず、最初に内容を確認してから1回ずつ送信できます。メールはログイン中の本人1名宛、LINEは保存済みの行動量報告グループへ1件だけ投稿します。前日の確定集計がなければ明示されたサンプルを使用します。</p>
                 <div class="line-row">
@@ -8128,6 +8130,7 @@ function wireActions() {
   document.getElementById('lineLinkRefresh').addEventListener('click', () => void refreshLineSettings());
   document.getElementById('lineGroupSave').addEventListener('click', () => void saveLineGroup());
   document.getElementById('lineActivityGroupSave').addEventListener('click', () => void saveActivityGroup());
+  document.getElementById('activityMailConnect').addEventListener('click', () => void activityMailAuthorizeSender());
   document.getElementById('lineManualRefresh').addEventListener('click', () => void refreshLineManualDirectory());
   document.getElementById('lineJumpManual').addEventListener('click', () => {
     const panel = document.querySelector('.screen-hp-edit .figma-hp-main.figma-hp-line');
@@ -11025,11 +11028,25 @@ async function saveActivityGroup(){
 }
 async function activityMailRefreshStatus(){
  const el=document.getElementById('activityMailStatus');
- if(!el)return;
+ const btn=document.getElementById('activityMailConnect');
+ if(!el||!btn)return;
+ btn.hidden=true;
  try{
   const d=await portalFetch('/api/client/activity-mail/status');
-  el.textContent=`送信先：各人のポータルログインアドレス（受信側の連携不要）\n送信元：${d.connected?(d.sender||'認証済み'):'未認証（共通送信元 companytokyo@dot-jp.or.jp を使用予定）'}\nGmail送信権限：${d.connected?'利用可能':'未連携：このままでは自動メールを送れません。代表・デベロッパーが企業メール画面で共通送信元を1回だけ連携してください。'}\n朝7時の自動配信：${d.enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
+  el.textContent=`送信先：各人のポータルログインアドレス（受信側の連携不要）\n送信元：${d.sender||'takaaki_souda@dot-jp.or.jp'}（固定）\nGmail送信権限：${d.connected?'利用可能':'未連携：送信元本人のGoogleアカウントでgmail.send権限を一度だけ許可してください。'}\n朝7時の自動配信：${d.enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
+  btn.hidden=Boolean(d.connected)||!Boolean(d.can_connect);
  }catch(e){el.textContent='メール接続の確認に失敗：'+e.message;}
+}
+async function activityMailAuthorizeSender(){
+ const btn=document.getElementById('activityMailConnect');
+ btn.disabled=true;
+ try{
+  const data=await portalFetch('/api/client/activity-mail/connect',{method:'POST',body:{}});
+  if(data.connected){await activityMailRefreshStatus();return;}
+  const link=String(data.authorizationUrl||'');
+  if(!link.startsWith('https://accounts.google.com/'))throw new Error('Googleの認証リンクを取得できませんでした。');
+  window.location.assign(link);
+ }catch(e){showToast('Gmail権限の許可を開始できません：'+e.message);btn.disabled=false;}
 }
 // v92: Safe, administrator-only one-time activity report delivery tests.
 async function activityManualShowPreview(){
@@ -11048,7 +11065,7 @@ async function activityManualSendTest(channel){
  btn.disabled=true;
  try{
   const p=await portalFetch('/api/client/activity-test/preview');
-  if(channel==='email'&&!p.mail_connected)throw new Error('行動量メールの送信元が未連携です。既存の企業メール共通送信元を管理者が連携してください。');
+  if(channel==='email'&&!p.mail_connected)throw new Error('送信元 takaaki_souda@dot-jp.or.jp のGmail送信権限が未連携です。LINE管理画面の許可ボタンから1回だけ認証してください。');
   if(channel==='line'&&!p.group_id)throw new Error('行動量報告グループが未設定です。先にグループを保存してください。');
   const to=channel==='email'?p.recipient:p.group_name;
   const message=`【テスト送信】\n${channel==='email'?'メール':'LINEグループ'}へ実際に1件送ります。\n宛先：${to}\nデータ：${p.is_sample?'サンプル（実績ではありません）':'前日の確定データ'}\n本番の送信済み・報告済み状態は変更しません。\n実行しますか？`;
