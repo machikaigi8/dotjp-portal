@@ -1,3 +1,4 @@
+<!-- v83: calendar account profile photos and Figma client document list -->
 <!-- v81: calendar provider/account service icons instead of empty radio circles -->
 <!-- v80: visual polish for schedule accounts and times; no data/API changes -->
 <!-- v79: activity and schedule UI -->
@@ -6004,6 +6005,137 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-schedule .calendar-provider-icon.apple svg { width:35px; height:35px; }
 .screen-schedule .calendar-provider-icon.microsoft svg { width:34px; height:34px; }
 
+
+/* v82: Prefer the connected account's own photo; fall back to the provider logo.
+   These rules affect only the schedule calendar account icon slot. */
+.screen-schedule .calendar-provider-icon {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+}
+.screen-schedule .calendar-provider-icon .calendar-account-photo {
+  position: absolute;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #fff;
+  pointer-events: none;
+}
+.screen-schedule .calendar-provider-icon.has-photo .calendar-account-photo {
+  display: block;
+}
+.screen-schedule .calendar-provider-icon.has-photo svg {
+  visibility: hidden;
+}
+
+
+
+/* v83 — クライアント資料一覧: Figma 64:637 and 194:886, 1440x1024. */
+.screen-client .client-tabs,
+.screen-client-materials .client-tabs {
+  row-gap: 51px;
+}
+.screen-client-materials {
+  background: #f2f2ff;
+}
+.screen-client-materials .client-material-email {
+  position: absolute;
+  left: 120px;
+  top: 332px;
+  width: 360px;
+  height: 100px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #7577ff;
+  color: #fff;
+  font: 500 35px/1.2 Inter, 'Noto Sans JP', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.screen-client-materials .client-material-email:hover,
+.screen-client-materials .client-material-email:focus-visible {
+  background: #686bf0;
+  outline-offset: 3px;
+}
+/* 現行のFigmaと同じ戻るボタン。フォームを送るの例外は変更しない。 */
+.screen-client-materials > [data-common-back] {
+  position: absolute !important;
+  left: 70px !important;
+  top: 898px !important;
+  width: 140px !important;
+  height: 60px !important;
+  min-width: 140px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #3080ff !important;
+  color: #fff !important;
+  font: 400 40px/60px Inter, 'Noto Sans JP', sans-serif !important;
+  text-align: center !important;
+}
+
+
+
+/* v84 — Figma 196:955 / 196:1057 mail composer. 1440 x 1024 canvas. */
+/* Extra university control occupies the unfilled right-side header, preserving Figma's CC and subject rows. */
+.screen-client-mail .client-mail-university{left:838px;top:23px;width:445px;height:36px;display:flex;flex-direction:row;align-items:center;gap:6px;}
+.screen-client-mail .client-mail-university>span{font-size:17px;line-height:30px;min-height:0;}
+.screen-client-mail .client-mail-university>input{height:31px;min-height:31px;width:300px;font-size:17px;padding:3px 6px;}
+
+.screen-client-mail,.screen-client-mail-preview{background:#f2f2ff;}
+.screen-client-mail .client-tabs{row-gap:51px;}
+.screen-client-mail .client-mail-panel{position:absolute;left:70px;top:331px;width:1300px;height:521px;box-sizing:border-box;background:#fff;z-index:1;margin:0;}
+.screen-client-mail .client-mail-field{position:absolute;display:flex;flex-direction:column;gap:4px;font:400 22px/1.15 Inter,'Noto Sans JP',sans-serif;color:#111;}
+.screen-client-mail .client-mail-field>span{display:block;font-size:22px;min-height:25px;white-space:nowrap;}
+.screen-client-mail :is(input,select,textarea){display:block;width:100%;box-sizing:border-box;margin:0;border:1px solid #4e5562;border-radius:0;background:white;color:#151515;font:400 19px/1.35 Inter,'Noto Sans JP',sans-serif;padding:6px 8px;min-height:40px;outline-offset:1px;}
+.screen-client-mail :is(input,select,textarea):focus-visible{outline:2px solid #5264b9;border-color:#5264b9;}
+.screen-client-mail :is(input,textarea)[readonly]{background:#f4f5f8;color:#555;}
+.screen-client-mail .client-mail-company{left:50px;top:29px;width:320px;}
+.screen-client-mail .client-mail-from{left:399px;top:29px;width:260px;}
+.screen-client-mail .client-mail-to{left:50px;top:127px;width:440px;}
+.screen-client-mail .client-mail-verify{position:absolute;left:490px;top:156px;width:169px;height:40px;border:1px solid #c66364;background:#ff9090;color:#111;font-size:19px;white-space:nowrap;cursor:pointer;padding:0;}
+.screen-client-mail .client-mail-verify.is-visited{background:#ffb6a7;}
+.screen-client-mail .client-mail-verify.is-verified{background:#69bf91;border-color:#329965;color:#123;}
+.screen-client-mail .client-mail-university{left:50px;top:192px;width:609px;}
+.screen-client-mail .client-mail-cc{left:50px;top:225px;width:300px;}
+.screen-client-mail .client-mail-bcc{left:359px;top:225px;width:300px;}
+.screen-client-mail .client-mail-cc textarea,.screen-client-mail .client-mail-bcc textarea{height:115px;min-height:115px;resize:none;}
+.screen-client-mail .client-mail-university{top:189px;}
+.screen-client-mail .client-mail-cc,.screen-client-mail .client-mail-bcc{top:225px;}
+.screen-client-mail .client-mail-subject{left:52px;top:392px;width:609px;}
+.screen-client-mail .client-mail-subject textarea{height:63px;resize:none;font-size:18px;}
+.screen-client-mail .client-mail-body{left:686px;top:29px;width:600px;}
+.screen-client-mail .client-mail-body textarea{height:361px;resize:none;white-space:pre-wrap;font:400 19px/1.33 Inter,'Noto Sans JP',sans-serif;}
+.screen-client-mail .client-mail-actions{position:absolute;left:686px;top:446px;width:600px;display:flex;justify-content:space-between;align-items:center;}
+.screen-client-mail .client-mail-actions button{width:180px;height:60px;background:#ffd4d5;color:#111;border:0;border-radius:0;font:500 30px Inter,'Noto Sans JP',sans-serif;cursor:pointer;}
+.screen-client-mail .client-mail-actions button:disabled{opacity:.4;cursor:not-allowed;}
+.screen-client-mail .client-mail-sync{position:absolute;left:50px;top:457px;font-size:15px;padding:8px 12px;background:#fff0db;border:1px solid #e4a769;cursor:pointer;max-width:610px;}
+.screen-client-mail .client-mail-status{position:absolute;left:50px;top:507px;font-size:14px;margin:0;color:#42516e;max-width:600px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.screen-client-mail-preview .client-mail-preview-panel{position:absolute;left:70px;top:110px;width:1300px;height:745px;background:#fff;border:1px solid #222;border-radius:30px;box-sizing:border-box;padding:16px 13px;overflow:hidden;}
+.screen-client-mail-preview .client-mail-preview-head{font:400 22px/1.8 Inter,'Noto Sans JP',sans-serif;color:#1c1c1c;border-bottom:1px solid #e7e7e7;white-space:pre-wrap;word-break:break-all;max-height:175px;overflow-y:auto;padding-bottom:7px;}
+.screen-client-mail-preview .client-mail-preview-head b{display:inline-block;color:#667;min-width:75px;font-weight:400;}
+.screen-client-mail-preview .client-mail-preview-body{font:400 19px/1.45 Inter,'Noto Sans JP',sans-serif;white-space:pre-wrap;word-break:break-word;position:absolute;left:13px;right:13px;top:203px;bottom:140px;margin:0;padding:10px 6px;overflow-y:auto;}
+.screen-client-mail-preview :is(.client-mail-preview-change,.client-mail-preview-send){position:absolute;right:13px;width:180px;height:60px;background:#ffd4d5;color:#111;border:0;font:500 32px/1.3 Inter,'Noto Sans JP',sans-serif;cursor:pointer;}
+.screen-client-mail-preview .client-mail-preview-change{bottom:102px;}
+.screen-client-mail-preview .client-mail-preview-send{bottom:16px;}
+.screen-client-mail-preview .client-mail-preview-send:disabled{opacity:.5;cursor:wait;}
+:is(.screen-client-mail,.screen-client-mail-preview)>[data-common-back]{position:absolute!important;left:70px!important;top:898px!important;width:140px!important;height:60px!important;background:#3080ff!important;color:#fff!important;font:400 40px/60px Inter,'Noto Sans JP',sans-serif!important;border:0!important;margin:0!important;padding:0!important;text-align:center!important;}
+
+
+/* University name is a small inline control above the body, not an overlapping CC field. */
+.screen-client-mail .client-mail-university{left:839px;top:24px;width:443px;height:33px;display:flex;flex-direction:row;align-items:center;gap:7px;}
+.screen-client-mail .client-mail-university>span{font-size:16px;line-height:32px;min-height:0;white-space:nowrap;}
+.screen-client-mail .client-mail-university>input{width:300px;min-height:32px;height:32px;font-size:17px;padding:3px 7px;}
+.screen-client-mail .client-mail-verify{font-size:18px;}
+
 </style>
 </head>
 <body>
@@ -6245,9 +6377,72 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
             <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
             <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
+            <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
+            <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
           </nav>
         </section>
 
+        <!-- Figma 194:886 — クライアント資料一覧 -->
+        <section class="screen screen-client-materials" data-screen="client-materials" aria-label="資料一覧">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
+            <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
+            <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
+          </nav>
+          <button type="button" id="clientMaterialsEmailScript" class="client-material-email">メールスクリプト</button>
+        </section>
+
+
+        <!-- Figma 196:955: クライアント／メールを送る（フォームを送るは無変更） -->
+        <section class="screen screen-client-mail" data-screen="client-mail" aria-label="メールを送る">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
+            <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
+            <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
+          </nav>
+          <form id="clientMailForm" class="client-mail-panel" autocomplete="off">
+            <label class="client-mail-field client-mail-company" for="clientMailCompany"><span>会社</span>
+              <select id="clientMailCompany" required><option value="">企業一覧を取得中…</option></select></label>
+            <label class="client-mail-field client-mail-from" for="clientMailFrom"><span>自分のメールアドレス</span>
+              <input id="clientMailFrom" readonly aria-readonly="true" value=""></label>
+            <label class="client-mail-field client-mail-to" for="clientMailTo"><span>宛先</span>
+              <input id="clientMailTo" type="email" required placeholder="企業のメールアドレスを入力"></label>
+            <button type="button" id="clientMailVerify" class="client-mail-verify">メールを検索</button>
+            <label class="client-mail-field client-mail-university" for="clientMailUniversity"><span>大学名（本人が入力）</span>
+              <input id="clientMailUniversity" placeholder="例：慶應義塾大学" required maxlength="70"></label>
+            <label class="client-mail-field client-mail-cc" for="clientMailCc"><span>CC</span>
+              <textarea id="clientMailCc" placeholder="なし（複数は改行区切り）" rows="2"></textarea></label>
+            <label class="client-mail-field client-mail-bcc" for="clientMailBcc"><span>BCC</span>
+              <textarea id="clientMailBcc" placeholder="なし（複数は改行区切り）" rows="2"></textarea></label>
+            <label class="client-mail-field client-mail-subject" for="clientMailSubject"><span>件名</span>
+              <textarea id="clientMailSubject" rows="2" required></textarea></label>
+            <label class="client-mail-field client-mail-body" for="clientMailBody"><span>本文</span>
+              <textarea id="clientMailBody" spellcheck="false" aria-label="メール本文"></textarea></label>
+            <div class="client-mail-actions">
+              <button id="clientMailSave" type="button">保存</button>
+              <button id="clientMailConfirm" type="button" disabled>確認</button>
+              <button id="clientMailSkip" type="button">スキップ</button>
+            </div>
+            <button id="clientMailSyncO" type="button" class="client-mail-sync" hidden>メール送信済み：O列だけ再同期</button>
+            <p id="clientMailStatus" class="client-mail-status" role="status">会社を選んでください。</p>
+          </form>
+        </section>
+        <!-- Figma 196:1057: 送信前の最終確認表示（実際の送信内容をそのまま表示） -->
+        <section class="screen screen-client-mail-preview" data-screen="client-mail-preview" aria-label="送信前の確認画面">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="client-mail-preview-panel" role="region" aria-label="送信内容の最終確認">
+            <div class="client-mail-preview-head" id="clientMailPreviewHead"></div>
+            <pre class="client-mail-preview-body" id="clientMailPreviewBody"></pre>
+            <button type="button" class="client-mail-preview-change" id="clientMailPreviewChange">変更</button>
+            <button type="button" class="client-mail-preview-send" id="clientMailPreviewSend">送信</button>
+          </div>
+        </section>
 
         <!-- v47: 03B企業インターン企業管理 E=受注 / B=企業名 / M:Q=詳細 -->
         <section class="screen screen-client-won" data-screen="client-won" aria-label="獲得企業一覧">
@@ -7377,6 +7572,9 @@ const screenNames = new Set([
   "client-contact",
   "client-won",
   "client-deals",
+  "client-materials",
+  "client-mail",
+  "client-mail-preview",
   "client-send",
   "client-staff-status",
   "hp-edit",
@@ -7784,6 +7982,23 @@ function wireActions() {
     document.getElementById(id).addEventListener('change', () => void loadClientStaffStatus());
   }
   document.getElementById('staffStatusReload').addEventListener('click', () => void loadClientStaffStatus());
+  // Figma 194:886: メールスクリプト。FigmaにURLが未登録のため、
+  // 未設定の資料を架空のURLに開くことはしない。
+  document.getElementById("clientMaterialsEmailScript")?.addEventListener("click", () => {
+    const url = ""; // メールスクリプトの正式URLを受領したらここに設定する。
+    if (!url) {
+      showToast("メールスクリプトのURLは未設定です。デベロッパーに資料URLの登録を依頼してください。");
+      return;
+    }
+    try {
+      const target = new URL(url);
+      if (target.protocol !== "https:") throw new Error("URL must be HTTPS");
+      window.open(target.href, "_blank", "noopener,noreferrer");
+    } catch (_) {
+      showToast("資料のURLが正しくありません。");
+    }
+  });
+
   document.querySelectorAll('.screen-client-staff-status .staff-status-date-control').forEach(label=>{
     label.addEventListener('click',event=>{
       if(event.target instanceof HTMLInputElement)return;
@@ -8347,7 +8562,7 @@ function installCommonBackButtons() {
     button.dataset.commonBack = "";
     // Figma: クライアント配下の通常画面はスペースなしの「←戻る」。
     // 「フォームを送る」は専用レイアウト・表示を一切変更しない。
-    button.textContent = ["client", "client-contact", "client-won", "client-deals", "client-staff-status"].includes(name)
+    button.textContent = ["client", "client-contact", "client-won", "client-deals", "client-materials", "client-mail", "client-mail-preview", "client-staff-status"].includes(name)
       ? "←戻る" : "← 戻る";
     button.addEventListener("click", goBackScreen);
     screen.appendChild(button);
@@ -10885,6 +11100,21 @@ async function loadCalendarConnections() {
   }
 }
 
+function safeCalendarAccountPhoto(value) {
+  const candidate = String(value || "").trim();
+  if (!candidate) return "";
+  // Images from Google are HTTPS URLs. Microsoft returns a JPEG/PNG data URL.
+  if (/^data:image\/(?:jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/i.test(candidate)) {
+    return candidate;
+  }
+  try {
+    const url = new URL(candidate);
+    return url.protocol === "https:" && !url.username && !url.password ? candidate : "";
+  } catch (_) {
+    return "";
+  }
+}
+
 function renderCalendarConnections() {
   const providerMap = {
     google: document.getElementById("calendarAccountsGoogle"),
@@ -10915,7 +11145,10 @@ root.innerHTML =
         apple: `<svg viewBox="0 0 24 24" role="presentation" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="#202636" d="M17.05 12.536c-.031-3.137 2.55-4.663 2.666-4.737-1.456-2.135-3.726-2.428-4.526-2.454-1.919-.198-3.778 1.13-4.752 1.13-.972 0-2.486-1.102-4.087-1.072-2.102.029-4.038 1.224-5.12 3.129-2.184 3.783-.558 9.358 1.564 12.436 1.04 1.508 2.276 3.2 3.872 3.14 1.557-.061 2.143-1.003 4.024-1.003s2.409 1.003 4.03.972c1.664-.024 2.718-1.512 3.75-3.027a12.5 12.5 0 001.7-3.485c-3.896-1.489-3.849-5.026-3.846-5.129z" transform="translate(1.5 0) scale(.88)"/><path fill="#202636" d="M13.974 4.286C14.86 3.212 15.46 1.718 15.295.228c-1.276.05-2.82.85-3.736 1.921-.822.95-1.542 2.474-1.346 3.93 1.425.11 2.875-.723 3.761-1.793z" transform="translate(1.5 0) scale(.88)"/></svg>`,
         microsoft: `<svg viewBox="0 0 48 48" role="presentation" focusable="false" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="10" width="26" height="30" rx="3" fill="#0078D4"/><path d="M20 17h23v15L31.5 24z" fill="#28A8EA"/><path d="M20 19l11.5 9L43 19v17H20z" fill="#0063AD"/><path d="M20 18l11.5 9L43 18" fill="none" stroke="#E9F8FF" stroke-width="2.8" stroke-linejoin="round"/><path d="M4 7.5 29 4v40L4 40z" fill="#075FAD"/><text x="16" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="23" fill="#fff">O</text></svg>`
       }[provider] || '';
-      const accountIcon = `<span class="calendar-provider-icon ${provider}" aria-hidden="true">${providerSvg}</span>`;
+      // Workers returns a profile image per connected account as account_picture.
+      // Never substitute a different account's picture; when unavailable use the service logo.
+      const photoUrl = safeCalendarAccountPhoto(item.account_picture);
+      const accountIcon = `<span class="calendar-provider-icon ${provider}" aria-hidden="true">${providerSvg}${photoUrl ? `<img class="calendar-account-photo" src="${escapeHtml(photoUrl)}" alt="" loading="lazy" decoding="async">` : ""}</span>`;
 
       return `
         <div class="calendar-account-row ${Number(item.enabled) ? "" : "is-off"}">
@@ -10937,6 +11170,22 @@ root.innerHTML =
         </div>
       `;
     }).join("");
+
+    // Keep the provider logo visible until the user's profile photo actually loads.
+    // Broken/restricted images automatically retain the service logo.
+    root.querySelectorAll(".calendar-account-photo").forEach((img) => {
+      const icon = img.closest(".calendar-provider-icon");
+      const reveal = () => {
+        if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+          icon?.classList.add("has-photo");
+        }
+      };
+      img.addEventListener("load", reveal, { once: true });
+      img.addEventListener("error", () => {
+        icon?.classList.remove("has-photo");
+      }, { once: true });
+      if (img.complete) reveal();
+    });
 
     root.querySelectorAll("[data-calendar-toggle]").forEach((input) => {
       input.addEventListener("change", async () => {
@@ -13766,5 +14015,173 @@ window.addEventListener('DOMContentLoaded',()=>{
     </div>
   </section>
 </div>
+
+<script>
+// v84 — Figma client email flow; server-side draft/authorization is authoritative.
+const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',university:'',saved:false,dirty:false,verifyStep:0,sender:'',sendReady:false,sent:null,preview:null,busy:false};
+const clientMailIds=['clientMailTo','clientMailUniversity','clientMailCc','clientMailBcc','clientMailSubject','clientMailBody'];
+function clientMailEl(id){return document.getElementById(id);}
+function clientMailStatus(message){clientMailEl('clientMailStatus').textContent=String(message||'');}
+function clientMailTemplateRender(t){return String(t||'').replaceAll('{{company}}',clientMailState.name).replaceAll('{{university}}',clientMailEl('clientMailUniversity').value.trim()).replaceAll('{{name}}',String(state.user?.name||''));}
+function clientMailRenderButtons(){
+ const step=clientMailState.verifyStep,dirty=clientMailState.dirty,saved=clientMailState.saved;
+ const button=clientMailEl('clientMailVerify');
+ button.textContent=step===2?'確認済み':step===1?'確認した':'メールを検索';
+ button.classList.toggle('is-visited',step===1);button.classList.toggle('is-verified',step===2);
+ button.disabled=clientMailState.busy||!saved||dirty||!clientMailState.row||step===2||!!clientMailState.sent;
+ clientMailEl('clientMailConfirm').disabled=clientMailState.busy||!saved||dirty||step!==2||!!clientMailState.sent;
+ clientMailEl('clientMailSyncO').hidden=clientMailState.sent?.status!=='sent_unmarked';
+ const sendBlocked=Boolean(clientMailState.sent);
+ clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!!sendBlocked;
+}
+async function clientMailOpen(){
+ if(clientMailState.busy)return;
+ clientMailStatus('会社一覧を読み込んでいます…');
+ try{
+  const response=await portalFetch('/api/client/mail/companies');
+  clientMailState.rows=response.companies||[];
+  clientMailState.canEdit=Boolean(response.can_edit);
+  const select=clientMailEl('clientMailCompany');
+  select.innerHTML='<option value="">会社を選択してください</option>'+clientMailState.rows.map(x=>`<option value="${x.row}">${escapeHtml(x.name)}（${x.row}行）</option>`).join('');
+  const preferred=clientMailState.rows.find(x=>x.row===clientMailState.row)||clientMailState.rows[0];
+  if(preferred){select.value=String(preferred.row);await clientMailChoose(preferred.row);}
+  else clientMailStatus('担当企業がありません。O列が未送信の企業を確認してください。');
+ }catch(e){clientMailStatus(e.message||'企業一覧を取得できませんでした。');}
+}
+async function clientMailChoose(row){
+ if(!row)return;
+ clientMailState.busy=true;
+ clientMailRenderButtons();clientMailStatus('メール情報を取得しています…');
+ try{
+  const data=await portalFetch('/api/client/mail/draft?row='+encodeURIComponent(row));
+  clientMailState.row=row;clientMailState.name=data.company.name;clientMailState.canEdit=Boolean(data.can_edit);
+  clientMailState.template=data.draft.body_template;clientMailState.saved=Boolean(data.draft.saved);
+  clientMailState.verifyStep=Number(data.draft.verify_step||0);clientMailState.dirty=false;
+  clientMailState.sender=data.sender;clientMailState.sendReady=Boolean(data.send_ready);
+  clientMailState.sent=data.sent||null;
+  clientMailEl('clientMailFrom').value=data.sender;
+  for(const [id,val] of [['clientMailTo',data.draft.recipient],['clientMailUniversity',data.draft.university],['clientMailCc',data.draft.cc],['clientMailBcc',data.draft.bcc],['clientMailSubject',data.draft.subject]])clientMailEl(id).value=val||'';
+  clientMailEl('clientMailBody').value=data.draft.body||'';
+  for(const id of ['clientMailCc','clientMailBcc','clientMailSubject','clientMailBody'])clientMailEl(id).readOnly=!clientMailState.canEdit;
+  if(clientMailState.sent)clientMailStatus('送信履歴：'+clientMailState.sent.status+'。再送信は防止されています。');
+  else clientMailStatus(data.send_ready?'入力内容を確認して「保存」を押してください。':'送信元のResend設定が未完了です。下書きと確認は利用できます。');
+ }catch(e){clientMailStatus(e.message||'下書きを開けませんでした。');}
+ finally{clientMailState.busy=false;clientMailRenderButtons();}
+}
+function clientMailTouch(event){
+ const id=event.target.id;
+ if(clientMailState.busy||!clientMailState.row)return;
+ if(id==='clientMailBody'&&clientMailState.canEdit){
+  // Dynamic values are materialized for editing; restore tokens on save.
+ } else if(['clientMailUniversity'].includes(id) && clientMailState.template){
+  clientMailEl('clientMailBody').value=clientMailTemplateRender(clientMailState.template);
+ }
+ clientMailState.dirty=true;clientMailState.saved=false;clientMailState.verifyStep=0;
+ clientMailStatus('内容が変更されました。先に「保存」を押してください。');clientMailRenderButtons();
+}
+function clientMailTemplateFromBody(){
+ let t=clientMailEl('clientMailBody').value;
+ for(const [actual,token] of [[clientMailState.name,'{{company}}'],[clientMailEl('clientMailUniversity').value.trim(),'{{university}}'],[String(state.user?.name||''),'{{name}}']]){
+  if(actual)t=t.replaceAll(actual,token);
+ }
+ // Figma requires matching company and author, not template errors.
+ if(!['{{company}}','{{university}}','{{name}}'].every(x=>t.includes(x)))throw new Error('本文には会社名・大学名・本人の氏名を残してください。');
+ return t;
+}
+async function clientMailSave(){
+ if(clientMailState.busy||!clientMailState.row)return;
+ let template;
+ try{template=clientMailState.canEdit?clientMailTemplateFromBody():clientMailState.template;}catch(e){clientMailStatus(e.message);return;}
+ clientMailState.busy=true;clientMailRenderButtons();
+ try{
+  await portalFetch('/api/client/mail/save',{method:'POST',body:{row:clientMailState.row,recipient:clientMailEl('clientMailTo').value,
+    university:clientMailEl('clientMailUniversity').value,cc:clientMailEl('clientMailCc').value,bcc:clientMailEl('clientMailBcc').value,
+    subject:clientMailEl('clientMailSubject').value,body_template:template}});
+  clientMailState.template=template;clientMailState.saved=true;clientMailState.dirty=false;clientMailState.verifyStep=0;
+  clientMailStatus('保存しました。宛先メールアドレスを別タブで検索して確認してください。');
+ }catch(e){clientMailStatus(e.message);}
+ finally{clientMailState.busy=false;clientMailRenderButtons();}
+}
+async function clientMailVerifyAction(){
+ if(clientMailState.busy||!clientMailState.saved||clientMailState.dirty)return;
+ const row=clientMailState.row;
+ if(clientMailState.verifyStep===0){
+  const name=clientMailState.name,recipient=clientMailEl('clientMailTo').value.trim();
+  const query=encodeURIComponent(`${name} 採用 問い合わせ メールアドレス ${recipient}`);
+  const opened=window.open('https://www.google.com/search?q='+query,'_blank');
+  if(opened)try{opened.opener=null;}catch(_){}
+  if(!opened){clientMailStatus('検索タブがブロックされました。ポップアップを許可してから再操作してください。');return;}
+  try{const data=await portalFetch('/api/client/mail/search-start',{method:'POST',body:{row}});
+   clientMailState.verifyStep=data.verify_step;
+   clientMailStatus('検索結果を確認したら「確認した」をクリックしてください。');
+  }catch(e){clientMailStatus(e.message);} 
+ }else if(clientMailState.verifyStep===1){
+  try{const data=await portalFetch('/api/client/mail/verify',{method:'POST',body:{row}});
+   clientMailState.verifyStep=data.verify_step;clientMailStatus('宛先を確認済みにしました。「確認」から送信前プレビューへ進めます。');
+  }catch(e){clientMailStatus(e.message);}
+ }
+ clientMailRenderButtons();
+}
+async function clientMailConfirm(){
+ if(clientMailState.busy||clientMailState.dirty||clientMailState.verifyStep!==2)return;
+ clientMailState.busy=true;clientMailRenderButtons();
+ try{const data=await portalFetch('/api/client/mail/preview',{method:'POST',body:{row:clientMailState.row}});
+  clientMailState.preview=data;
+  clientMailEl('clientMailPreviewHead').innerHTML=[['宛先',data.recipient],['Cc',data.cc||'なし'],['Bcc',data.bcc||'なし'],['件名',data.subject],['差出人',data.sender]]
+    .map(([label,value])=>`<div><b>${escapeHtml(label)}</b>${escapeHtml(value)}</div>`).join('');
+  clientMailEl('clientMailPreviewBody').textContent=data.body;
+  clientMailEl('clientMailPreviewSend').disabled=!data.send_ready;
+  showScreen('client-mail-preview');
+  if(!data.send_ready)showToast('送信元のResend設定が未完了です。送信はできません。');
+ }catch(e){clientMailStatus(e.message);}
+ finally{clientMailState.busy=false;clientMailRenderButtons();}
+}
+async function clientMailSend(){
+ const data=clientMailState.preview;if(!data||clientMailState.busy)return;
+ if(!window.confirm(`「${data.company}」宛てに実際のメールを送信します。宛先 ${data.recipient} で間違いありませんか？`))return;
+ clientMailState.busy=true;clientMailEl('clientMailPreviewSend').disabled=true;
+ try{
+  const result=await portalFetch('/api/client/mail/send',{method:'POST',body:{row:data.row}});
+  showScreen('client-mail');
+  clientMailState.sent={status:result.sheet_marked?'sent_marked':'sent_unmarked'};
+  clientMailStatus(result.warning||(result.sheet_marked?'送信成功。スプシO列もTRUEにしました。':'メールは受理されました。O列だけ確認してください。'));
+  if(result.sheet_marked){await clientMailOpen();showToast('メール送信成功。O列をTRUEにしました。');}
+  else showToast('メールは送信済みです。O列の再同期が必要です。');
+ }catch(e){showScreen('client-mail');clientMailStatus(e.message);showToast(e.message);}
+ finally{clientMailState.busy=false;clientMailRenderButtons();}
+}
+async function clientMailSync(){
+ try{await portalFetch('/api/client/mail/sync-sheet',{method:'POST',body:{row:clientMailState.row}});
+  clientMailStatus('O列をTRUEに更新しました。');await clientMailOpen();
+ }catch(e){clientMailStatus(e.message);}
+}
+function clientMailSkip(){
+ const list=clientMailState.rows;const idx=list.findIndex(x=>x.row===clientMailState.row);
+ const next=list[idx+1]||list[0];if(next&&next.row!==clientMailState.row){
+  clientMailEl('clientMailCompany').value=String(next.row);void clientMailChoose(next.row);
+ }else clientMailStatus('次の担当企業はありません。');
+}
+window.addEventListener('DOMContentLoaded',()=>{
+ clientMailEl('clientMailForm').addEventListener('submit',event=>event.preventDefault());
+ clientMailEl('clientMailCompany').addEventListener('change',e=>void clientMailChoose(Number(e.target.value)));
+ clientMailIds.forEach(id=>clientMailEl(id).addEventListener('input',clientMailTouch));
+ clientMailEl('clientMailSave').addEventListener('click',clientMailSave);
+ clientMailEl('clientMailVerify').addEventListener('click',()=>void clientMailVerifyAction());
+ clientMailEl('clientMailConfirm').addEventListener('click',()=>void clientMailConfirm());
+ clientMailEl('clientMailSkip').addEventListener('click',clientMailSkip);
+ clientMailEl('clientMailSyncO').addEventListener('click',()=>void clientMailSync());
+ clientMailEl('clientMailPreviewChange').addEventListener('click',()=>showScreen('client-mail'));
+ clientMailEl('clientMailPreviewSend').addEventListener('click',()=>void clientMailSend());
+});
+// Keep existing router behavior while loading companies only when the mail page opens.
+const clientMailOriginalShowScreen=showScreen;
+showScreen=function(name,...args){
+  const old=state.currentScreen;
+  const answer=clientMailOriginalShowScreen(name,...args);
+  if(name==='client-mail'&&old!==name&&clientMailState.rows.length===0)void clientMailOpen();
+  return answer;
+};
+</script>
+
 </body>
 </html>
