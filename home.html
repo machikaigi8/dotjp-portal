@@ -1,3 +1,4 @@
+<!-- v96: LINE current-group participants where LINE API permits, fallback known members; activity email no dedicated linking UI -->
 <!-- v95: LINE notification panel scroll fix and jump to manual account mapping -->
 <!-- v93: editable history calendar + popup preview test + daily template -->
 <!-- v90: One-time shared companytokyo Gmail, CC=current signed-in staff; search stays native. -->
@@ -6957,10 +6958,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div class="line-row"><button type="button" id="lineActivityGroupSave">行動量報告グループを保存</button></div>
                 <div id="lineActivityGroupStatus" class="line-link-status" role="status"></div>
                 <p>本番配信にはCloudflareで <code>LINE_ACTIVITY_AUTO_REPORT_ENABLED=true</code> が必要です。毎日12:00 JSTに判定します。</p>
-                <h3>朝7時の前日行動量メール（送信元の初回連携）</h3>
-                <p>自動送信の送信元Gmailを1回だけ認証します。共有企業メールとは別のGoogleアカウントです。</p>
-                <div class="line-row"><button type="button" id="activityMailConnect">行動量メールの送信元を連携</button></div>
-                <div id="activityMailStatus" class="line-link-status" role="status">未確認</div>
+                <h3>朝7時の前日行動量メール</h3>
+                <p>送信先は各メンバーのポータルログインアドレスです。各自のGmail連携は不要。送信元は既に認証済みの行動量メール用Gmail、または企業メールの共通Gmailを利用します。</p>
+                <div id="activityMailStatus" class="line-link-status" role="status">送信元と配信先を確認中…</div>
                 <h3>行動量報告の手動テスト（代表・デベロッパーのみ）</h3>
                 <p>定時配信に影響させず、最初に内容を確認してから1回ずつ送信できます。メールはログイン中の本人1名宛、LINEは保存済みの行動量報告グループへ1件だけ投稿します。前日の確定集計がなければ明示されたサンプルを使用します。</p>
                 <div class="line-row">
@@ -6971,8 +6971,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 </div>
                 <div id="activityManualResult" class="line-link-status" role="status" aria-live="polite">テスト未実行。先に「テスト内容を確認」を押してください。</div>
                 <h3 id="lineManualSection">LINEアカウントの手動連携（代表・デベロッパーのみ）</h3>
-                <p>行動量報告・通知先として設定済みのグループで発言したメンバーを候補に表示します。本人から利用目的への同意を得て、表示名・アイコンとポータル名簿を確認してから連携してください。<strong>氏名だけで自動連携しません。</strong> 候補が出ない場合、グループを設定後に本人に一度発言してもらってください。</p>
-                <div class="line-row"><button type="button" id="lineManualRefresh" class="secondary">発言したメンバーを更新</button></div>
+                <p>LINEグループの現在の参加者から選んで名簿と連携します。LINE公式アカウントが認証済み・プレミアムなら全参加者を取得できます。未認証の場合は、既に発言・参加通知を受信した人から選択します。<strong>本人確認・同意は必須で、氏名だけの自動連携はしません。</strong></p>
+                <div class="line-row"><button type="button" id="lineManualRefresh" class="secondary">グループ参加者を取得・更新</button></div>
                 <div id="lineManualStatus" class="line-link-status" role="status">未読み込み</div>
                 <div id="lineManualCandidatesList" class="line-manual-member-list" aria-label="LINE連携候補"></div>
                 <label for="lineManualCandidateSelect">連携するLINEアカウント</label>
@@ -8136,7 +8136,6 @@ function wireActions() {
     panel.scrollTo({ top: Math.max(0, heading.offsetTop - 78), behavior: 'smooth' });
   });
   document.getElementById('lineManualSave').addEventListener('click', () => void saveLineMemberAsManager());
-  document.getElementById('activityMailConnect').addEventListener('click', () => void activityMailConnect());
   document.getElementById('activityManualPreview').addEventListener('click', () => void activityManualShowPreview());
   document.getElementById('activityManualPopup').addEventListener('click', () => void activityManualPopupTest());
   document.getElementById('activityManualEmail').addEventListener('click', () => void activityManualSendTest('email'));
@@ -10930,7 +10929,7 @@ async function refreshLineManualDirectory(){
  const status=document.getElementById('lineManualStatus');
  const refresh=document.getElementById('lineManualRefresh');
  if(!status || !refresh)return;
- refresh.disabled=true;status.textContent='LINEグループで発言したメンバーと名簿を読み込み中…';
+ refresh.disabled=true;status.textContent='LINEグループの参加者を確認し、名簿を読み込み中…';
  try{
    const data=await portalFetch('/api/line/members/candidates');
    lineManualDirectory=data;
@@ -10960,13 +10959,13 @@ async function refreshLineManualDirectory(){
      const heading=document.createElement('strong');heading.textContent=m.name;details.appendChild(heading);
      const sub=document.createElement('small');sub.textContent=m.linked_email?
        `連携済：${m.linked_name||m.linked_email}`:
-       (m.profile_available?'未連携／名簿と照合してください':'プロフィール取得不可（グループから退出した可能性）');
+       (m.source==='group'?'グループ参加中・未連携':'Webhookで把握済・未連携');
      details.appendChild(sub);row.appendChild(details);
      const btn=document.createElement('button');btn.type='button';btn.textContent=m.linked_email?'連携済':'選択';btn.disabled=!usable;
      btn.addEventListener('click',()=>{candidateSelect.value=key;candidateSelect.focus();});
      row.appendChild(btn);candidates.appendChild(row);
    }
-   if(!data.members?.length){const empty=document.createElement('p');empty.textContent='候補がありません。管理画面でLINEグループを設定し、そのグループで一度発言してから更新してください。';candidates.appendChild(empty);}
+   if(!data.members?.length){const empty=document.createElement('p');empty.textContent='連携可能な候補がありません。未認証公式LINEの場合は、メンバーの発言または参加通知がWebhookに届く必要があります。';candidates.appendChild(empty);}
    if(previousCandidate&&Array.from(candidateSelect.options).some(o=>o.value===previousCandidate))candidateSelect.value=previousCandidate;
    if(previousRoster&&Array.from(rosterSelect.options).some(o=>o.value===previousRoster))rosterSelect.value=previousRoster;
    for(const link of data.links||[]){
@@ -10980,7 +10979,10 @@ async function refreshLineManualDirectory(){
    }
    if(!data.links?.length){const empty=document.createElement('p');empty.textContent='現在の連携はありません。';linked.appendChild(empty);}
    document.getElementById('lineManualConfirm').checked=false;
-   status.textContent=`最近30日以内に発言：${data.members?.length||0}人 ／ 連携済み：${data.links?.length||0}人。連携には本人の同意を確認してください。`;
+   const modes=(data.group_modes||[]).map(m=>m.state==='full'?
+      `グループ${m.group_id.slice(-5)}：参加者取得済（${m.count}人）`:
+      `グループ${m.group_id.slice(-5)}：${m.note}`).join('\n');
+   status.textContent=`表示できた参加者：${data.members?.length||0}人 ／ 連携済み：${data.links?.length||0}人。\n${modes||'対象のLINEグループが未設定です。'}\n連携には本人の確認と同意が必要です。`;
  }catch(error){status.textContent='LINE連携候補の取得に失敗：'+(error?.message||error);}
  finally{refresh.disabled=false;}
 }
@@ -11022,22 +11024,12 @@ async function saveActivityGroup(){
  }catch(e){showToast('保存できません：'+e.message);}finally{btn.disabled=false;}
 }
 async function activityMailRefreshStatus(){
- const el=document.getElementById('activityMailStatus'),btn=document.getElementById('activityMailConnect');
- if(!el||!btn)return;
+ const el=document.getElementById('activityMailStatus');
+ if(!el)return;
  try{
   const d=await portalFetch('/api/client/activity-mail/status');
-  el.textContent=`送信元：${d.sender||'未設定'} / Gmail連携：${d.connected?'済':'未連携'} / 朝7時メール：${d.enabled?'ON':'OFF（Cloudflareで設定）'}`;
-  btn.hidden=Boolean(d.connected)||!Boolean(d.can_connect);
- }catch(e){el.textContent='確認失敗：'+e.message;btn.hidden=true;}
-}
-async function activityMailConnect(){
- const btn=document.getElementById('activityMailConnect');btn.disabled=true;
- try{
-  const d=await portalFetch('/api/client/activity-mail/connect',{method:'POST',body:{}});
-  if(d.connected){await activityMailRefreshStatus();return;}
-  if(!d.authorizationUrl?.startsWith('https://accounts.google.com/'))throw new Error('Google認証URLを取得できませんでした。');
-  location.assign(d.authorizationUrl);
- }catch(e){showToast('連携失敗：'+e.message);btn.disabled=false;}
+  el.textContent=`送信先：各人のログインアドレス（本人ごとに自動設定）\n送信元：${d.sender||'未設定'}\nGmail送信権限：${d.connected?'利用可能':'未連携（管理者が企業メールの共通送信元を一度連携する必要があります）'}\n朝7時の自動配信：${d.enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
+ }catch(e){el.textContent='メール接続の確認に失敗：'+e.message;}
 }
 // v92: Safe, administrator-only one-time activity report delivery tests.
 async function activityManualShowPreview(){
@@ -11056,7 +11048,7 @@ async function activityManualSendTest(channel){
  btn.disabled=true;
  try{
   const p=await portalFetch('/api/client/activity-test/preview');
-  if(channel==='email'&&!p.mail_connected)throw new Error('行動量メール送信元が未連携です。先にGmailを連携してください。');
+  if(channel==='email'&&!p.mail_connected)throw new Error('行動量メールの送信元が未連携です。既存の企業メール共通送信元を管理者が連携してください。');
   if(channel==='line'&&!p.group_id)throw new Error('行動量報告グループが未設定です。先にグループを保存してください。');
   const to=channel==='email'?p.recipient:p.group_name;
   const message=`【テスト送信】\n${channel==='email'?'メール':'LINEグループ'}へ実際に1件送ります。\n宛先：${to}\nデータ：${p.is_sample?'サンプル（実績ではありません）':'前日の確定データ'}\n本番の送信済み・報告済み状態は変更しません。\n実行しますか？`;
