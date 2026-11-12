@@ -6619,6 +6619,11 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div class="line-row"><button type="button" id="lineActivityGroupSave">行動量報告グループを保存</button></div>
                 <div id="lineActivityGroupStatus" class="line-link-status" role="status"></div>
                 <p>本番配信にはCloudflareで <code>LINE_ACTIVITY_AUTO_REPORT_ENABLED=true</code> が必要です。毎日15:00 JSTに判定します。</p>
+                <h3>行動量報告の提出状況（代表・デベロッパーのみ）</h3>
+                <p>対象日ごとに本人のLINE提出状況を確認・修正できます。日付と数値項目から判定し、一部省略や表記揺れを許容します。手動設定は自動判定より優先されます。既に送信された代理投稿は取り消されません。</p>
+                <div class="line-row"><label for="activitySubmissionDate">報告対象日</label><input type="date" id="activitySubmissionDate"><button type="button" id="activitySubmissionRefresh" class="secondary">提出状況を更新</button></div>
+                <div id="activitySubmissionStatus" class="line-link-status" role="status" aria-live="polite">日付を選択して更新してください。</div>
+                <div id="activitySubmissionRows" class="line-manual-link-list" aria-label="行動量提出状況"></div>
                 <h3>朝7時の前日行動量メール</h3>
                 <p>送信元は takaaki_souda@dot-jp.or.jp に固定。宛先は各メンバーのポータルログインアドレスです。受信者のGmail連携は不要。送信元の権限が未設定の場合のみ、管理者が本人のGoogleアカウントで1回だけ許可してください。企業メール用のアカウントとは別管理です。</p>
                 <div id="activityMailStatus" class="line-link-status" role="status">送信元と配信先を確認中…</div>
@@ -8203,6 +8208,8 @@ function wireActions() {
   document.getElementById('lineLinkRefresh').addEventListener('click', () => void refreshLineSettings());
   document.getElementById('lineGroupSave').addEventListener('click', () => void saveLineGroup());
   document.getElementById('lineActivityGroupSave').addEventListener('click', () => void saveActivityGroup());
+  document.getElementById('activitySubmissionRefresh').addEventListener('click',()=>void refreshActivitySubmissions());
+  document.getElementById('activitySubmissionDate').addEventListener('change',()=>void refreshActivitySubmissions());
   document.getElementById('activityMailConnect').addEventListener('click', () => void activityMailAuthorizeSender());
   document.getElementById('lineManualRefresh').addEventListener('click', () => void refreshLineManualDirectory());
   document.getElementById('lineJumpManual').addEventListener('click', () => {
@@ -11017,7 +11024,10 @@ async function refreshLineSettings({quiet=false}={}){
       document.getElementById('lineActivityGroupConfirm').checked=false;
       document.getElementById('lineActivityGroupStatus').textContent=`行動量報告先：${data.selected_activity_group_id?'設定済み':'未設定'} / 15時自動投稿：${data.activity_auto_report_enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
       void activityMailRefreshStatus();
-      if(state.currentScreen==='client-line')void refreshLineManualDirectory();
+      if(state.currentScreen==='client-line'){
+        void refreshLineManualDirectory();
+        void refreshActivitySubmissions();
+      }
     }
   }catch(error){
     const message='LINE設定を取得できません：'+(error.message||error);
@@ -11171,6 +11181,39 @@ async function unlinkLineMemberAsManager(email,uid){
  }catch(error){showToast('LINE連携を解除できません：'+(error?.message||error));}
 }
 
+let activitySubmissionRequest=0;
+async function refreshActivitySubmissions(){
+ const date=document.getElementById('activitySubmissionDate'),status=document.getElementById('activitySubmissionStatus'),rows=document.getElementById('activitySubmissionRows');
+ if(!date||!status||!rows)return;
+ const jst=new Date(Date.now()+9*3600000);date.max=jst.toISOString().slice(0,10);
+ if(!date.value)date.value=new Date(jst.getTime()-86400000).toISOString().slice(0,10);
+ const day=date.value,seq=++activitySubmissionRequest;rows.replaceChildren();status.textContent='提出状況を確認中…';
+ try{
+  const data=await portalFetch('/api/line/activity-submissions?day='+encodeURIComponent(day));
+  if(seq!==activitySubmissionRequest||date.value!==day)return;
+  const items=data.rows||[],linked=items.filter(x=>x.linked),done=linked.filter(x=>x.submitted).length;
+  const batch={sent:'代理投稿済み',none:'代理投稿対象なし',processing:'代理投稿処理中',unknown:'送信結果未確定'}[data.batch_status]||'代理投稿未実行';
+  status.textContent=`${day}：LINE連携済み ${linked.length}人／提出済み ${done}人／未提出 ${linked.length-done}人／未連携 ${items.length-linked.length}人\n${batch}（確定集計がある連携済みメンバーのみ自動投稿対象）`;
+  for(const item of items){
+   const row=document.createElement('div');row.className='line-manual-link-row';row.style.flexWrap='wrap';
+   const desc=document.createElement('div');desc.className='line-manual-member-details';
+   const name=document.createElement('strong');name.textContent=item.name;
+   const detail=document.createElement('small');detail.textContent=`${item.linked?'LINE連携済み':'LINE未連携・代理投稿対象外'} ／ ${item.submitted?'提出済み':'未提出'} ／ ${item.mode==='auto'?(item.detected?'自動検出あり':'自動検出なし'):'手動設定（自動検出'+(item.detected?'あり':'なし')+'）'}`;
+   desc.append(name,detail);row.appendChild(desc);
+   const picker=document.createElement('select');picker.setAttribute('aria-label',item.name+'の提出判定');picker.style.width='auto';
+   for(const [value,label] of [['auto','自動判定'],['submitted','提出済み'],['unsubmitted','未提出']]){const opt=document.createElement('option');opt.value=value;opt.textContent=label;picker.appendChild(opt);}
+   picker.value=item.mode;row.appendChild(picker);
+   const save=document.createElement('button');save.type='button';save.textContent='保存';save.className='secondary';row.appendChild(save);
+   save.addEventListener('click',async()=>{
+    const mode=picker.value;if(date.value!==day||seq!==activitySubmissionRequest)return;
+    if(mode==='unsubmitted'&&!window.confirm('未提出に固定します。既に本人が投稿していても15時の代理投稿対象になる可能性があります。よろしいですか？'))return;
+    save.disabled=true;picker.disabled=true;
+    try{await portalFetch('/api/line/activity-submissions',{method:'POST',body:{day,group_id:data.group_id,email:item.email,mode}});showToast('提出状況を保存しました。');if(date.value===day)await refreshActivitySubmissions();}
+    catch(e){showToast('保存できません：'+e.message);save.disabled=false;picker.disabled=false;}
+   });rows.appendChild(row);
+  }
+ }catch(e){if(seq===activitySubmissionRequest)status.textContent='提出状況を取得できません：'+e.message;}
+}
 async function saveActivityGroup(){
  const id=document.getElementById('lineActivityGroupPicker').value;
  if(!id||!document.getElementById('lineActivityGroupConfirm').checked){showToast('報告グループを選択し、閲覧権限を確認してください。');return;}
