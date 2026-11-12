@@ -6479,7 +6479,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="department-placeholder-panel mtg-list-shell">
             <div class="mtg-list-head"><h2>MTG出欠登録</h2><span id="mtgRegionLabel">関東</span><button id="mtgRefreshButton" type="button">更新</button></div>
-            <div class="mtg-list-explain">枠をクリックすると、TTと回答者の出欠・備考が表示されます。備考は任意です。</div>
+            <div class="mtg-list-explain">登録済みのMTGを全期間表示します。枠をクリックするとTT・回答一覧を確認できます。備考は任意です。</div>
             <div id="mtgMeetingList" class="mtg-meeting-list" aria-live="polite">MTGを読み込んでいます…</div>
           </div>
         </section>
@@ -8941,7 +8941,7 @@ function isPickerOnlyTask(task) {
          (task.type === "mtg" && task.title === "MTG");
 }
 
-// MTG自動出欠依頼は出欠画面と同じ「今日〜7日後」だけを未完了欄に表示。
+// MTG自動出欠依頼は「今日〜7日後」だけを未完了欄に表示。
 // 日付は必ずJSTの暦日で比較する。通常の依頼・完了履歴には影響させない。
 function isVisiblePendingMeetingTask(task, now = new Date()) {
   if (task?.completedAt || !String(task?.evidence || '').startsWith('mtg:')) return true;
@@ -13804,12 +13804,7 @@ async function loadMeetings(preserveScroll=false){
   try{
     const data=await portalFetch('/api/meetings?attendance=1&region='+encodeURIComponent(region));
     if(current!==state.meetingLoadingId||state.region!==region)return;
-    // クライアント側でも同じ日付範囲を適用（旧Worker/キャッシュが返す過去分を表示しない）。
-    const todayJst=new Date(Date.now()+9*3600000).toISOString().slice(0,10);
-    const endJst=new Date(Date.parse(todayJst+'T00:00:00Z')+7*86400000).toISOString().slice(0,10);
-    state.meetings=(Array.isArray(data.meetings)?data.meetings:[])
-      .filter(m=>String(m.date||'')>=todayJst&&String(m.date||'')<=endJst)
-      .sort(meetingNearFirst);
+    state.meetings=(Array.isArray(data.meetings)?data.meetings:[]).slice().sort(meetingNearFirst);
     if(!state.meetings.some(m=>Number(m.id)===state.expandedMeetingId))state.expandedMeetingId=null;
     renderMeetings();
     if(preserveScroll)root.scrollTop=savedScroll;
@@ -13821,7 +13816,7 @@ async function loadMeetings(preserveScroll=false){
 function renderMeetings(){
   const root=document.getElementById('mtgMeetingList');
   if(!state.meetings.length){
-    root.innerHTML='<div class="mtg-empty">今日から1週間後までのMTGはありません。<br>MTGの登録は「人事局」画面から行えます。</div>';
+    root.innerHTML='<div class="mtg-empty">登録済みのMTGはありません。<br>MTGの登録は「人事局」画面から行えます。</div>';
     return;
   }
   root.innerHTML=state.meetings.map(meeting=>{
