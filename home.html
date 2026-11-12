@@ -1,3 +1,8 @@
+<!-- v103: persistent personal email settings and confirmation retained until address change or successful send. -->
+<!-- v102: enterprise signature contact address fixed to companytokyo; exact Japanese name format. -->
+<!-- v101: personal signature settings for enterprise mail; generated from authenticated user. -->
+<!-- v100: shared Gmail signature scope upgrade and safe HTML preview. -->
+<!-- v99: enterprise email automatic signature, shown separately in composer and included in final preview. -->
 <!-- v98: Daily activity report is sent only from takaaki_souda@dot-jp.or.jp; one-time sender authorization in LINE admin. -->
 <!-- v97: LINE admin linking requires an actual message; hide per-person link UI; clarify single Gmail sender authorization. -->
 <!-- v96: LINE current-group participants where LINE API permits, fallback known members; activity email no dedicated linking UI -->
@@ -6116,7 +6121,23 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-mail .client-mail-subject{left:52px;top:392px;width:609px;}
 .screen-client-mail .client-mail-subject textarea{height:63px;resize:none;font-size:18px;}
 .screen-client-mail .client-mail-body{left:686px;top:29px;width:600px;}
-.screen-client-mail .client-mail-body textarea{height:361px;resize:none;white-space:pre-wrap;font:400 19px/1.33 Inter,'Noto Sans JP',sans-serif;}
+.screen-client-mail .client-mail-body textarea{height:237px;resize:none;white-space:pre-wrap;font:400 19px/1.33 Inter,'Noto Sans JP',sans-serif;}
+.screen-client-mail .client-mail-signature{left:686px;top:309px;width:600px;}
+.screen-client-mail .client-mail-signature>span{font-size:17px;min-height:20px;}
+#clientMailSignatureSettings{position:absolute;right:0;top:-4px;z-index:2;border:1px solid #3d60c9;border-radius:4px;background:#eef1ff;color:#233b8f;font:500 15px/25px Inter,'Noto Sans JP',sans-serif;cursor:pointer;padding:0 12px;}
+#clientMailSignatureDialog{width:min(540px,90vw);max-height:85vh;overflow:auto;border:1px solid #485a82;border-radius:12px;padding:22px;color:#172344;background:white;box-sizing:border-box;font:16px/1.5 Inter,'Noto Sans JP',sans-serif;}
+#clientMailSignatureDialog::backdrop{background:rgba(15,23,42,.48);}
+#clientMailSignatureDialog h2{margin:0 0 8px;font-size:23px;}
+#clientMailSignatureDialog label{display:flex;flex-direction:column;gap:3px;margin:8px 0;}
+#clientMailSignatureDialog :is(input,select){width:100%;box-sizing:border-box;border:1px solid #a0acc2;border-radius:4px;padding:7px 9px;background:white;font:inherit;min-height:36px;}
+#clientMailSignatureDialog input[readonly],#clientMailSignatureDialog select:disabled{background:#f1f3f7;color:#45516a;}
+#clientMailSignatureDialog .signature-profile-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:14px;}
+#clientMailSignatureDialog button{border:1px solid #355cb7;border-radius:5px;padding:8px 16px;background:#fff;color:#233b8f;cursor:pointer;font:inherit;}
+#clientMailSignatureDialog button[type=submit]{background:#315cc9;color:white;}
+#clientMailSignatureDialog button:disabled{opacity:.55;cursor:wait;}
+#clientMailSignatureProfileStatus{min-height:1.5em;color:#a12828;font-size:14px;}
+
+.screen-client-mail .client-mail-signature textarea{height:105px;min-height:105px;resize:none;font:400 15px/1.19 Inter,'Noto Sans JP',sans-serif;white-space:pre-wrap;}
 .screen-client-mail .client-mail-actions{position:absolute;left:686px;top:446px;width:600px;display:flex;justify-content:space-between;align-items:center;}
 .screen-client-mail .client-mail-actions button{width:180px;height:60px;background:#ffd4d5;color:#111;border:0;border-radius:0;font:500 30px Inter,'Noto Sans JP',sans-serif;cursor:pointer;}
 .screen-client-mail .client-mail-actions button:disabled{opacity:.4;cursor:not-allowed;}
@@ -6125,7 +6146,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-mail-preview .client-mail-preview-panel{position:absolute;left:70px;top:110px;width:1300px;height:745px;background:#fff;border:1px solid #222;border-radius:30px;box-sizing:border-box;padding:16px 13px;overflow:hidden;}
 .screen-client-mail-preview .client-mail-preview-head{font:400 22px/1.8 Inter,'Noto Sans JP',sans-serif;color:#1c1c1c;border-bottom:1px solid #e7e7e7;white-space:pre-wrap;word-break:break-all;max-height:175px;overflow-y:auto;padding-bottom:7px;}
 .screen-client-mail-preview .client-mail-preview-head b{display:inline-block;color:#667;min-width:75px;font-weight:400;}
-.screen-client-mail-preview .client-mail-preview-body{font:400 19px/1.45 Inter,'Noto Sans JP',sans-serif;white-space:pre-wrap;word-break:break-word;position:absolute;left:13px;right:13px;top:203px;bottom:140px;margin:0;padding:10px 6px;overflow-y:auto;}
+.screen-client-mail-preview .client-mail-preview-body{font:400 19px/1.45 Inter,'Noto Sans JP',sans-serif;white-space:pre-wrap;word-break:break-word;position:absolute;left:13px;right:13px;top:203px;bottom:140px;width:calc(100% - 26px);height:calc(100% - 343px);box-sizing:border-box;margin:0;padding:0;border:0;background:white;overflow-y:auto;}
 .screen-client-mail-preview :is(.client-mail-preview-change,.client-mail-preview-send){position:absolute;right:13px;width:180px;height:60px;background:#ffd4d5;color:#111;border:0;font:500 32px/1.3 Inter,'Noto Sans JP',sans-serif;cursor:pointer;}
 .screen-client-mail-preview .client-mail-preview-change{bottom:102px;}
 .screen-client-mail-preview .client-mail-preview-send{bottom:16px;}
@@ -6537,6 +6558,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <textarea id="clientMailSubject" rows="2" required></textarea></label>
             <label class="client-mail-field client-mail-body" for="clientMailBody"><span>本文</span>
               <textarea id="clientMailBody" spellcheck="false" aria-label="メール本文"></textarea></label>
+            <div class="client-mail-field client-mail-signature"><span>署名（送信時に自動付与）</span>
+              <textarea id="clientMailSignature" readonly aria-readonly="true" rows="5" placeholder="署名設定から本人の情報を登録してください" aria-label="署名（送信時に自動付与）" title="本人の登録情報から署名を自動生成し、送信時に本文末尾へ付与します。"></textarea>
+              <button id="clientMailSignatureSettings" type="button">署名設定</button></div>
             <div class="client-mail-actions">
               <button id="clientMailSave" type="button">保存</button>
               <button id="clientMailConfirm" type="button" disabled>確認</button>
@@ -6545,13 +6569,29 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button id="clientMailSyncO" type="button" class="client-mail-sync" hidden>メール送信済み：O列だけ再同期</button>
             <p id="clientMailStatus" class="client-mail-status" role="status">会社を選んでください。</p>
           </form>
+          <dialog id="clientMailSignatureDialog" aria-labelledby="clientMailSignatureTitle">
+            <form id="clientMailSignatureProfileForm" autocomplete="off">
+              <h2 id="clientMailSignatureTitle">企業メールの署名設定</h2>
+              <p style="font-size:14px;margin:0 0 8px">一度登録すると今後の企業メールに自動で付きます。氏名・部署は名簿情報を使用します。署名のMail欄は共通アドレス固定、CCはログイン中の本人です。</p>
+              <label>氏名<input id="clientSignatureName" readonly></label>
+              <label>署名のメールアドレス（固定）<input id="clientSignatureEmail" readonly value="companytokyo@dot-jp.or.jp"></label>
+              <label>部署<select id="clientSignatureDepartment" required><option value="">選択してください</option><option>コンス部</option><option>マーケティング部</option><option>人事局</option><option>プログラム部</option><option>クライアント部</option><option>事務局</option></select></label>
+              <label>大学名<input id="clientSignatureUniversity" required maxlength="80" placeholder="○○大学"></label>
+              <label>学部名<input id="clientSignatureFaculty" required maxlength="80" placeholder="○○学部"></label>
+              <label>学年<select id="clientSignatureGrade" required><option value="">選択してください</option><option value="1">1年</option><option value="2">2年</option><option value="3">3年</option><option value="4">4年</option><option value="5">5年</option><option value="6">6年</option></select></label>
+              <label>ローマ字氏名<input id="clientSignatureRomanName" required maxlength="80" placeholder="Taro Yamada"></label>
+              <label>電話番号<input id="clientSignaturePhone" type="tel" required maxlength="32" placeholder="090-1234-5678"></label>
+              <p id="clientMailSignatureProfileStatus" role="status"></p>
+              <div class="signature-profile-actions"><button type="button" id="clientSignatureCancel">閉じる</button><button type="submit" id="clientSignatureSave">保存</button></div>
+            </form>
+          </dialog>
         </section>
         <!-- Figma 196:1057: 送信前の最終確認表示（実際の送信内容をそのまま表示） -->
         <section class="screen screen-client-mail-preview" data-screen="client-mail-preview" aria-label="送信前の確認画面">
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="client-mail-preview-panel" role="region" aria-label="送信内容の最終確認">
             <div class="client-mail-preview-head" id="clientMailPreviewHead"></div>
-            <pre class="client-mail-preview-body" id="clientMailPreviewBody"></pre>
+            <iframe class="client-mail-preview-body" id="clientMailPreviewBody" title="署名付き送信前プレビュー" sandbox="" referrerpolicy="no-referrer"></iframe>
             <button type="button" class="client-mail-preview-change" id="clientMailPreviewChange">変更</button>
             <button type="button" class="client-mail-preview-send" id="clientMailPreviewSend">送信</button>
           </div>
@@ -14616,7 +14656,11 @@ window.addEventListener('DOMContentLoaded',()=>{
 <script>
 // v90: Shared fixed Gmail sender, signed-in user CC, and native email lookup.
 const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',saved:false,dirty:false,verifyStep:0,
-  sender:'',sendReady:false,sent:null,preview:null,busy:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
+  sender:'',sendReady:false,signatureReady:false,signaturePrompted:false,sent:null,preview:null,busy:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
+const clientMailRecipients=new Map(); // page-memory only; never store raw recipient in localStorage/D1 drafts
+let clientMailRecipientOwner='';
+function clientMailRecipientKey(row=clientMailState.row,name=clientMailState.name){return JSON.stringify([row,name]);}
+function clientMailRememberRecipient(){if(clientMailState.row)clientMailRecipients.set(clientMailRecipientKey(),{value:clientMailEl('clientMailTo').value,step:clientMailState.verifyStep});}
 const clientMailIds=['clientMailTo','clientMailBcc','clientMailSubject','clientMailBody'];
 function clientMailEl(id){return document.getElementById(id);}
 function clientMailStatus(message){const el=clientMailEl('clientMailStatus');if(el)el.textContent=String(message||'');}
@@ -14643,19 +14687,25 @@ function clientMailRenderButtons(){
  // Always keep a real href: this still works if the JavaScript search handler fails.
  link.href=clientMailSearchUrl(record);
  link.target='_blank';link.rel='noopener noreferrer';
- link.textContent=step===2?'メールを再検索':step===1?'確認した':'メールを検索';
+ link.textContent=step===2?'確認済み':step===1?'確認した':'メールを検索';
+ link.setAttribute('aria-disabled',String(step===2));
  link.setAttribute('aria-label',link.textContent);
  link.classList.toggle('is-visited',step===1);
  link.classList.toggle('is-verified',step===2);
- link.title=record?`「${record.name}」の公式問い合わせメールアドレスを検索`:
+ link.title=step===2?'宛先確認済み。変更するまで再確認不要です。':record?`「${record.name}」の公式問い合わせメールアドレスを検索`:
    '企業データがまだ取得できていません。押すと再読み込みします。';
  // Do not disable the search link due to saving/loading/verification state.
  clientMailEl('clientMailConfirm').disabled=clientMailState.busy||!saved||dirty||step!==2||!!clientMailState.sent;
  clientMailEl('clientMailSyncO').hidden=clientMailState.sent?.status!=='sent_unmarked';
  clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!!clientMailState.sent;
+ clientMailEl('clientMailCompany').disabled=clientMailState.busy;
+ clientMailEl('clientMailSkip').disabled=clientMailState.busy;
+ for(const id of clientMailIds)clientMailEl(id).disabled=clientMailState.busy;
+ clientMailEl('clientMailSignatureSettings').disabled=clientMailState.busy;
 }
 async function clientMailOpen(){
  if(clientMailState.busy)return;
+ const owner=String(state.user?.email||'').toLowerCase();if(owner!==clientMailRecipientOwner){clientMailRecipients.clear();clientMailRecipientOwner=owner;}
  clientMailStatus('担当者名を照合中…（本人の担当企業、M・N・OすべてFALSE）');
  try{
   const response=await portalFetch('/api/client/mail/companies');
@@ -14666,7 +14716,13 @@ async function clientMailOpen(){
   if(preferred){select.value=String(preferred.row);await clientMailChoose(preferred.row);}
   else{
    clientMailState.row=0;clientMailState.verifyStep=0;
-   clientMailStatus('担当者欄が本人の名前とほぼ一致し、M・N・OがすべてFALSEの企業はありません。');
+   clientMailEl('clientMailSignature').value='';
+   const gmail=await portalFetch('/api/client/mail/gmail/status');
+   const setup=clientMailEl('clientMailGmailConnect');
+   setup.hidden=!Boolean(gmail.can_connect);
+   setup.textContent='送信元を連携';
+   setup.title='companytokyo@dot-jp.or.jp のGmail送信権限を許可';
+   clientMailStatus('担当者欄が本人の名前とほぼ一致し、M・N・OがすべてFALSEの企業はありません。'+(gmail.can_connect?' 共通Gmailの権限設定は可能です。':''));
    clientMailRenderButtons();
   }
  }catch(e){clientMailStatus(e.message||'企業一覧を取得できませんでした。');clientMailRenderButtons();}
@@ -14678,7 +14734,10 @@ async function clientMailChoose(row){
  clientMailState.companyWebsite='';clientMailState.companyContactUrl='';
  clientMailState.verifyStep=0;clientMailState.saved=false;clientMailState.dirty=false;
  clientMailState.preview=null;clientMailState.sent=null;
- clientMailEl('clientMailTo').value=''; // Must never carry over a recipient from the previous company.
+ clientMailEl('clientMailSignature').value='';
+ const remembered=clientMailRecipients.get(clientMailRecipientKey());
+ clientMailEl('clientMailTo').value=remembered?.value||'';
+ clientMailState.verifyStep=remembered?.step||0; // only the same company, in this page session
  clientMailState.busy=true;const requestId=++clientMailState.addressSearchId;
  clientMailRenderButtons();clientMailStatus('メール情報を取得中…');
  try{
@@ -14687,32 +14746,35 @@ async function clientMailChoose(row){
   clientMailState.name=data.company.name;clientMailState.canEdit=Boolean(data.can_edit);
   clientMailState.companyWebsite=data.company.website||'';clientMailState.companyContactUrl=data.company.contact_url||'';
   clientMailState.template=data.draft.body_template;clientMailState.saved=Boolean(data.draft.saved);
-  if(clientMailState.verifyStep!==1)clientMailState.verifyStep=0;clientMailState.dirty=false; // Keep a search started while loading.
-  clientMailState.sender=data.sender;clientMailState.sendReady=Boolean(data.send_ready);
+  if(clientMailState.verifyStep===2&&Number(data.draft.verify_step)!==2)clientMailState.verifyStep=clientMailEl('clientMailTo').value.trim()?1:0;
+  clientMailState.dirty=false;
+  clientMailState.sender=data.sender;clientMailState.sendReady=Boolean(data.send_ready);clientMailState.signatureReady=Boolean(data.signature_ready);
   clientMailState.sent=data.sent?.status==='failed'?null:(data.sent||null);
   clientMailEl('clientMailFrom').value='companytokyo@dot-jp.or.jp';
   // CC is the currently authenticated portal user, not a draft or a manually entered address.
   clientMailEl('clientMailCc').value=String(state.user?.email||data.draft.cc||'').trim().toLowerCase();
   clientMailEl('clientMailCc').readOnly=true;
-  // The recipient is intentionally never loaded from the saved draft.
-  if(clientMailState.verifyStep!==1)clientMailEl('clientMailTo').value='';
+  // The recipient is never loaded from a saved draft; only transient page memory is used.
+  clientMailRememberRecipient();
   for(const [id,val] of [['clientMailBcc',data.draft.bcc],
-    ['clientMailSubject',data.draft.subject],['clientMailBody',data.draft.body]])clientMailEl(id).value=val||'';
+    ['clientMailSubject',data.draft.subject],['clientMailBody',data.draft.body],['clientMailSignature',data.draft.signature]])clientMailEl(id).value=val||'';
   for(const id of ['clientMailBcc','clientMailSubject'])clientMailEl(id).readOnly=!clientMailState.canEdit;
   clientMailEl('clientMailBody').readOnly=false;
   // The one-time setup button disappears once the fixed shared account is linked.
   const gmailSetup=clientMailEl('clientMailGmailConnect');
-  gmailSetup.hidden=Boolean(data.gmail?.connected)||!Boolean(data.gmail?.can_connect);
+  gmailSetup.hidden=!Boolean(data.gmail?.can_connect);
   gmailSetup.textContent='送信元を連携';
-  gmailSetup.title='companytokyo@dot-jp.or.jp を一度だけGoogle認証で連携';
+  gmailSetup.title='companytokyo@dot-jp.or.jp のGmail送信権限を許可';
   if(clientMailState.sent)clientMailStatus('送信履歴：'+clientMailState.sent.status+(clientMailState.sent.status==='failed'?'。Gmailに拒否されたため、設定を確認して再試行できます。':'。重複送信は防止されています。'));
   else if(data.gmail?.domain_error)clientMailStatus(data.gmail.domain_error);
   else if(!data.gmail?.connected)clientMailStatus(data.gmail?.can_connect?
     '送信元 companytokyo@dot-jp.or.jp のGmailを一度だけ連携してください。':
     '共通送信元が未連携です。代表またはデベロッパーによる連携後、送信できます。');
-  else clientMailStatus(clientMailState.verifyStep===1?'企業公式サイトで宛先を照合し、「確認した」を押してください。':
+  else if(data.signature_error)clientMailStatus(data.signature_error);
+  else clientMailStatus(clientMailState.verifyStep===2?'宛先確認済みです。「確認」から送信前プレビューへ進めます。':clientMailState.verifyStep===1?'企業公式サイトで宛先を照合し、「確認した」を押してください。':
     '「メールを検索」は保存前でも押せます。宛先欄は保存せず、送信ごとに入力してください。');
   if(!clientMailState.sent)void clientMailAutoRecipient(row,requestId);
+  if(!clientMailState.signatureReady&&!clientMailState.signaturePrompted&&!clientMailState.sent){clientMailState.signaturePrompted=true;void clientMailOpenSignature();}
  }catch(e){clientMailStatus(e.message||'下書きを開けませんでした。検索は利用できます。');}
  finally{if(requestId===clientMailState.addressSearchId){clientMailState.busy=false;clientMailRenderButtons();}}
 }
@@ -14735,13 +14797,13 @@ function clientMailTouch(event){
   // Entering an address found by the search must not reset the "確認した" step.
   // Manually entered address: go directly to 「確認した」, no search required.
   clientMailState.verifyStep=clientMailEl('clientMailTo').value.trim()?1:0;
+  clientMailRememberRecipient();
   clientMailStatus(clientMailState.verifyStep===1?'宛先を入力しました。「確認した」を押して、送信前の確認へ進めます。':
     '宛先を空にしました。検索または手動入力してください。');
  }else{
   clientMailState.dirty=true;clientMailState.saved=false;
-  if(clientMailState.verifyStep===2)clientMailState.verifyStep=0;
   clientMailStatus(event.target?.id==='clientMailBody'?'大学名を本文内で直接修正してください。保存は本文・件名などだけが対象です。':
-    '内容が変更されました。件名・本文などを保存してください。宛先は保存されません。');
+    '内容が変更されました。保存すると次の企業にも引き継がれます。宛先確認は維持されます。');
  }
  clientMailRenderButtons();
 }
@@ -14750,14 +14812,15 @@ async function clientMailSave(){
  clientMailState.busy=true;clientMailRenderButtons();
  try{
   // The address field is NOT part of the saved email draft.
-  await portalFetch('/api/client/mail/save',{method:'POST',body:{row:clientMailState.row,
+  const result=await portalFetch('/api/client/mail/save',{method:'POST',body:{row:clientMailState.row,
     // CC is generated server-side from the login session and is never editable.
     bcc:clientMailEl('clientMailBcc').value,
     subject:clientMailEl('clientMailSubject').value,body:clientMailEl('clientMailBody').value}});
   clientMailState.saved=true;clientMailState.dirty=false;
-  if(clientMailState.verifyStep===2)clientMailState.verifyStep=0;
-  clientMailStatus(clientMailState.verifyStep===1?'本文・件名などを保存しました。宛先を照合したら「確認した」を押してください。':
-    '本文・件名などを保存しました。宛先は保存していません。「メールを検索」で確認してください。');
+  if(clientMailState.verifyStep===2&&Number(result.verify_step)!==2)clientMailState.verifyStep=clientMailEl('clientMailTo').value.trim()?1:0;
+  clientMailRememberRecipient();
+  clientMailStatus(clientMailState.verifyStep===2?'設定を保存しました。宛先は確認済みです。そのまま「確認」へ進めます。':
+    '設定を保存しました。次の企業にも引き継がれます。宛先は保存していません。');
   return true;
  }catch(e){clientMailStatus(e.message||'保存に失敗しました。');return false;}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
@@ -14778,6 +14841,7 @@ function clientMailVerifyClick(event){
   clientMailStatus('この企業は送信済みのため、送信操作はできません。');
   return;
  }
+ if(clientMailState.verifyStep===2){event.preventDefault();return;}
  if(clientMailState.verifyStep===1){
   event.preventDefault();
   void clientMailCompleteVerification();
@@ -14807,13 +14871,15 @@ async function clientMailCompleteVerification(){
   }
   clientMailState.busy=true;clientMailRenderButtons();
   const data=await portalFetch('/api/client/mail/verify',{method:'POST',body:{row,recipient}});
-  clientMailState.verifyStep=Number(data.verify_step||2);
+  if(row!==clientMailState.row||recipient!==clientMailEl('clientMailTo').value.trim())return;
+  clientMailState.verifyStep=Number(data.verify_step||2);clientMailRememberRecipient();
   clientMailStatus('この宛先を確認しました。「確認」から送信前プレビューへ進めます。宛先は保存していません。');
  }catch(e){clientMailState.verifyStep=1;clientMailStatus(e.message||'確認に失敗しました。');}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
 async function clientMailConfirm(){
  if(clientMailState.busy||clientMailState.dirty||!clientMailState.saved||clientMailState.verifyStep!==2)return;
+ if(!clientMailState.signatureReady){await clientMailOpenSignature();return;}
  clientMailState.busy=true;clientMailRenderButtons();
  try{
   const recipient=clientMailEl('clientMailTo').value.trim();
@@ -14821,12 +14887,13 @@ async function clientMailConfirm(){
   clientMailState.preview=data;
   clientMailEl('clientMailPreviewHead').innerHTML=[['宛先',data.recipient],['Cc',data.cc||'なし'],['Bcc',data.bcc||'なし'],['件名',data.subject],['差出人',data.sender]]
     .map(([label,value])=>`<div><b>${escapeHtml(label)}</b>${escapeHtml(value)}</div>`).join('');
-  clientMailEl('clientMailPreviewBody').textContent=data.body;
+  // An isolated document: no scripts, forms, network or top-level navigation.
+  clientMailEl('clientMailPreviewBody').srcdoc='<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src data:; base-uri \'none\'; form-action \'none\'"><style>body{font:16px/1.6 Arial,sans-serif;margin:10px;color:#111;overflow-wrap:anywhere}img{max-width:100%;height:auto}a{pointer-events:none}</style></head><body>'+String(data.body_html||escapeHtml(data.body||''))+'</body></html>';
   // Allow clicking to reveal a concrete server-side reason if shared Gmail is not ready.
   clientMailEl('clientMailPreviewSend').disabled=false;
   showScreen('client-mail-preview');
   if(!data.send_ready)showToast('共通の送信元Gmailが未連携・設定不備です。送信ボタンで詳細を確認できます。');
- }catch(e){clientMailStatus(e.message||'送信前の確認に失敗しました。');}
+ }catch(e){if(/宛先の確認が一致しません|宛先を確認済み/.test(e.message||'')){clientMailState.verifyStep=clientMailEl('clientMailTo').value.trim()?1:0;clientMailRememberRecipient();}clientMailStatus(e.message||'送信前の確認に失敗しました。');}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
 async function clientMailSend(){
@@ -14836,10 +14903,12 @@ async function clientMailSend(){
  clientMailState.busy=true;clientMailEl('clientMailPreviewSend').disabled=true;
  try{
   // Explicitly pass the already-previewed address: it is not persisted in draft records.
-  const result=await portalFetch('/api/client/mail/send',{method:'POST',body:{row:data.row,recipient:data.recipient}});
+  const result=await portalFetch('/api/client/mail/send',{method:'POST',body:{row:data.row,recipient:data.recipient,preview_digest:data.preview_digest}});
+  clientMailRecipients.delete(clientMailRecipientKey(data.row,data.company));
+  clientMailState.verifyStep=0;clientMailState.preview=null;clientMailEl('clientMailTo').value='';
   showScreen('client-mail');clientMailState.sent={status:result.sheet_marked?'sent_marked':'sent_unmarked'};
   clientMailStatus(result.warning||(result.sheet_marked?'Gmail送信成功。O列をTRUEにしました。':'送信済み、O列を再同期してください。'));
-  if(result.sheet_marked){await clientMailOpen();showToast('Gmail送信成功。O列をTRUEにしました。');}
+  if(result.sheet_marked){clientMailState.busy=false;await clientMailOpen();showToast('Gmail送信成功。O列をTRUEにしました。');}
   else showToast('メールは送信済みです。O列の再同期が必要です。');
  }catch(e){showScreen('client-mail');clientMailStatus(e.message);showToast(e.message);}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
@@ -14855,6 +14924,35 @@ function clientMailSkip(){
   clientMailEl('clientMailCompany').value=String(next.row);void clientMailChoose(next.row);
  }else clientMailStatus('次の対象企業はありません。');
 }
+async function clientMailOpenSignature(){
+ const dlg=clientMailEl('clientMailSignatureDialog'),status=clientMailEl('clientMailSignatureProfileStatus'),save=clientMailEl('clientSignatureSave');
+ if(dlg.open)return;
+ save.disabled=true;status.textContent='署名情報を取得中…';dlg.showModal();
+ try{
+  const data=await portalFetch('/api/client/mail/signature-profile'),p=data.profile;
+  for(const [id,key] of [['clientSignatureName','name'],['clientSignatureEmail','signature_email'],['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureGrade','grade'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])clientMailEl(id).value=p[key]||'';
+  clientMailEl('clientSignatureEmail').value='companytokyo@dot-jp.or.jp';
+  clientMailEl('clientSignatureDepartment').disabled=Boolean(p.department_locked);
+  clientMailState.signatureReady=Boolean(data.ready);clientMailEl('clientMailSignature').value=data.signature||'';
+  status.textContent='';save.disabled=false;
+ }catch(e){status.textContent=e.message||'署名情報の取得に失敗しました。';}
+}
+async function clientMailSaveSignature(event){
+ event.preventDefault();
+ const dlg=clientMailEl('clientMailSignatureDialog'),save=clientMailEl('clientSignatureSave'),status=clientMailEl('clientMailSignatureProfileStatus');
+ if(save.disabled)return;save.disabled=true;status.textContent='保存中…';
+ try{
+  const body={};for(const [id,key] of [['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureGrade','grade'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])body[key]=clientMailEl(id).value;
+  const data=await portalFetch('/api/client/mail/signature-profile',{method:'POST',body});
+  if(!data.ready)throw new Error('名簿の氏名などを確認してください。');
+  clientMailState.signatureReady=true;clientMailState.preview=null;clientMailEl('clientMailSignature').value=data.signature;
+  // Do not overwrite existing body edits; fill only the initial university placeholder.
+  const editor=clientMailEl('clientMailBody');
+  if(clientMailState.row&&editor.value.includes('〇〇大学の')){editor.value=editor.value.replace('〇〇大学の',()=>data.profile.university+'の');clientMailTouch({target:editor});}
+  dlg.close();clientMailStatus('本人の署名を保存しました。今後のメールに自動で付与されます。');clientMailRenderButtons();
+ }catch(e){status.textContent=e.message||'署名を保存できませんでした。';}
+ finally{save.disabled=false;}
+}
 async function clientMailConnectGmail(){
  try{
   const result=await portalFetch('/api/client/mail/gmail/connect',{method:'POST',body:{}});
@@ -14869,6 +14967,9 @@ async function clientMailConnectGmail(){
 }
 window.addEventListener('DOMContentLoaded',()=>{
  clientMailEl('clientMailForm').addEventListener('submit',event=>event.preventDefault());
+ clientMailEl('clientMailSignatureSettings').addEventListener('click',()=>void clientMailOpenSignature());
+ clientMailEl('clientMailSignatureProfileForm').addEventListener('submit',event=>void clientMailSaveSignature(event));
+ clientMailEl('clientSignatureCancel').addEventListener('click',()=>clientMailEl('clientMailSignatureDialog').close());
  clientMailEl('clientMailCompany').addEventListener('change',e=>void clientMailChoose(Number(e.target.value)));
  clientMailIds.forEach(id=>clientMailEl(id).addEventListener('input',clientMailTouch));
  clientMailEl('clientMailSave').addEventListener('click',()=>void clientMailSave());
