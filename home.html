@@ -1,3 +1,33 @@
+<!-- v107: shared enterprise outreach completion, form and home reconciliation; retain mail settings. -->
+<!-- v106: apply server mail task completion and expose reasons; retain all v105 mail settings. -->
+<!-- v105: preserve mail settings, complete verified empty mail queue, roster-first names. -->
+<!-- v104: advance to the next eligible company after a successful enterprise email send and sheet sync. -->
+<!-- v103: persistent personal email settings and confirmation retained until address change or successful send. -->
+<!-- v102: enterprise signature contact address fixed to companytokyo; exact Japanese name format. -->
+<!-- v101: personal signature settings for enterprise mail; generated from authenticated user. -->
+<!-- v100: shared Gmail signature scope upgrade and safe HTML preview. -->
+<!-- v99: enterprise email automatic signature, shown separately in composer and included in final preview. -->
+<!-- v98: Daily activity report is sent only from takaaki_souda@dot-jp.or.jp; one-time sender authorization in LINE admin. -->
+<!-- v97: LINE admin linking requires an actual message; hide per-person link UI; clarify single Gmail sender authorization. -->
+<!-- v96: LINE current-group participants where LINE API permits, fallback known members; activity email no dedicated linking UI -->
+<!-- v95: LINE notification panel scroll fix and jump to manual account mapping -->
+<!-- v93: editable history calendar + popup preview test + daily template -->
+<!-- v90: One-time shared companytokyo Gmail, CC=current signed-in staff; search stays native. -->
+<!-- v91: activity Gmail 07:00, LINE 12:00 unreported, email verify improvements, form M/N/O strict -->
+<!-- v92: administrator manual activity report delivery testing -->
+<!-- v94: 管理者のLINE手動連携候補・本人連携の併用・誤紐づけ防止 -->
+<!-- v85: M/N/O filter, official company email suggestion, Gmail send OAuth -->
+<!-- v83: calendar account profile photos and Figma client document list -->
+<!-- v81: calendar provider/account service icons instead of empty radio circles -->
+<!-- v80: visual polish for schedule accounts and times; no data/API changes -->
+<!-- v79: activity and schedule UI -->
+<!-- v75: タスク時間は本人の実績のみ表示。関東・関西を合算し、全体集計を廃止 -->
+<!-- v70: MTG直近順、RP転記モード撤去、LINE管理をHP編集へ移動・連携済みボタン非表示 -->
+<!-- v68: matching Workers_v41, sheet two-way sync and MTG times -->
+<!-- v67: staff+task sheet sync, MTG time and optional TT -->
+<!-- v66: sheet edit/delete reflection and review refresh without changing Figma layout -->
+<!-- v65: 管理者向けLINE接続診断／@Allテスト・手動配信機能 -->
+<!-- v64: LINE日次@Allと日曜個人メンションのON/OFFを区別して表示 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8010,10 +8040,13 @@ async function loadClientCompanies(force = false, silent = false) {
 
   clientSheetInFlight = (async () => {
     try {
-      const data = await portalFetch("/api/client/companies");
+      const ctx=clientMailCompletionContext();
+      const data = await portalFetch("/api/client/companies?"+new URLSearchParams({region:ctx.region,active_id:String(ctx.active_id)}));
       clientSheetCompanies = Array.isArray(data.companies) ? data.companies : [];
       clientSheetFetchedAt = Date.now();
       syncClientCompanySelection();
+      await clientMailApplyCompletion(data.completion);
+      if(data.completion?.reason==='retry'&&!silent)showToast(data.completion.error);
     } catch (error) {
       console.warn("Failed to preload client companies", error);
       if (!silent || state.currentScreen === "client-send") {
@@ -8066,7 +8099,7 @@ async function markClientCompanySent() {
   try {
     const data = await portalFetch("/api/client/mark-sent", {
       method: "POST",
-      body: { row: current.row, company: current.name }
+      body: { row: current.row, company: current.name, ...clientMailCompletionContext() }
     });
     if (data.recorded) recordClientSentRow(current.row);
     clientSheetCompanies = Array.isArray(data.companies)
@@ -8078,6 +8111,9 @@ async function markClientCompanySent() {
     showToast(data.recorded
       ? `送信済み：N列をTRUEに更新しました（今回 ${clientSentRows().length}件）`
       : "送信済みに変更しました。記録済みのため重複集計はしません");
+    await clientMailApplyCompletion(data.completion);
+    if(data.completion?.reason==='retry')showToast(data.completion.error);
+    else if(data.completion?.completed?.length)showToast('企業対応タスクが完了しました。');
   } catch (error) {
     showToast(`送信済みにできませんでした：${error.message}`);
     // Reload if the sheet changed in the meantime.
@@ -8662,7 +8698,7 @@ if (name === "post-confirm") {
   }
 
   if (name === "client-send") {
-    loadClientCompanies();
+    loadClientCompanies(true);
   }
   if (name === 'client-won') void loadClientBusiness('won');
   if (name === 'client-deals') void loadClientBusiness('deals');
@@ -11553,7 +11589,8 @@ async function refreshRemoteTasks() {
     const params = new URLSearchParams({
       start: start.toISOString(),
       end: end.toISOString(),
-      region: requestedRegion
+      region: requestedRegion,
+      active_id: String(clientMailCompletionContext().active_id)
     });
 
     const data = await portalFetch(
@@ -11581,6 +11618,11 @@ async function refreshRemoteTasks() {
       region: task.region
     }));
     state.remoteTasksError = '';
+    const outreach=data.outreach_completion;
+    const completedIds=[...new Set([...(outreach?.completed||[]),...(outreach?.confirmed||[])])];
+    if(completedIds.length)await clientMailFinishActiveTimer(completedIds);
+    if(outreach?.completed?.length)showToast('企業対応タスクが完了しました。');
+    if(outreach?.reason==='retry')console.warn(outreach.error);
   } catch (error) {
     console.warn("remote tasks unavailable", error);
     if (requestedRegion === state.region) {
@@ -14707,10 +14749,9 @@ function clientMailCompletionContext(){
  return {region:state.region,active_id:active.startsWith('remote_')?Number(active.slice(7)):0};
 }
 function clientMailCompletionMessage(completion){
- if(completion?.blocked)return ' 未確定・未同期のメールが'+Number(completion.blocked_count||0)+'件あります。'+(completion.blocked_companies?.length?'対象：'+completion.blocked_companies.join('、')+'。':'')+'タスクは未完了です。';
  if(completion?.reason==='retry')return ' '+completion.error;
- if(completion?.completed?.length||completion?.confirmed?.length)return ' 企業メール送信タスクを完了しました。';
- if(completion?.reason==='no_matching_task')return ' 対応する未完了のメール送信依頼は見つかりませんでした。依頼の担当箇所を「企業メール送信」に設定すると自動完了の対象になります。';
+ if(completion?.completed?.length||completion?.confirmed?.length)return ' 企業対応タスクを完了しました。';
+ if(completion?.reason==='no_matching_task')return ' 対応する未完了の企業対応依頼はありません。';
  return '';
 }
 async function clientMailApplyCompletion(completion){
@@ -14751,7 +14792,7 @@ async function clientMailOpen({afterRow=0,priorCompletion=null}={}){
      completion.completed=[...new Set([...(completion.completed||[]),...(priorCompletion.completed||[])])];
      completion.confirmed=[...new Set([...(completion.confirmed||[]),...(priorCompletion.confirmed||[])])];
    }
-   if(completion.completed?.length||completion.confirmed?.length)showToast('企業メール送信タスクが完了しました。');
+   if(completion.completed?.length||completion.confirmed?.length)showToast('企業対応タスクが完了しました。');
    // Fresh visits with zero companies still show saved settings instead of empty fields.
    try{
     const settings=await portalFetch('/api/client/mail/settings');
