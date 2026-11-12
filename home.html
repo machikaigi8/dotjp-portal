@@ -1,3 +1,4 @@
+<!-- v105: preserve mail settings, complete verified empty mail queue, roster-first names. -->
 <!-- v104: advance to the next eligible company after a successful enterprise email send and sheet sync. -->
 <!-- v103: persistent personal email settings and confirmation retained until address change or successful send. -->
 <!-- v102: enterprise signature contact address fixed to companytokyo; exact Japanese name format. -->
@@ -10000,6 +10001,7 @@ function postTargetOptions() {
   document.querySelectorAll('.screen-home .links-grid a[href]')
     .forEach(el=>add('url:'+el.href,el.textContent.trim().replace(/\s+/g,' ')));
   add('route:client-send','お問い合わせフォーム');
+  add('route:client-mail','企業メール送信');
   add('route:client-staff-status','支部員タスク状況');
   add('route:schedule-hours','稼働時間登録');
   add('route:schedule-review','予定確認');
@@ -11168,6 +11170,9 @@ async function sendLineTodayNow(){
 async function loadPortalProfile() {
   try {
     const data = await portalFetch("/api/me");
+    if(data.user?.email && String(data.user.email).toLowerCase()===userIdentity()){
+      state.user={...state.user,...data.user};fillUserInfo();
+    }
     state.isDeveloper = Boolean(data.developer);
     state.isRepresentative = Boolean(data.representative);
     state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
@@ -11210,6 +11215,8 @@ async function loadRoster(includeDisabled = false) {
     state.roster = Array.isArray(data.roster)
       ? data.roster
       : [];
+    const own=state.roster.find(r=>String(r.email||'').toLowerCase()===userIdentity()&&Number(r.enabled)!==0);
+    if(own?.name&&state.user&&state.user.name!==own.name){state.user={...state.user,name:own.name};fillUserInfo();}
 
     renderDestinationRosterOptions();
     renderMeetingAudienceChoices();
@@ -11351,6 +11358,8 @@ async function saveFigmaRosterRow() {
     await loadRoster(true);
     // 直近の所属先を反映。現在表示中の地域は手動選択を維持。
     if (String(email).toLowerCase() === userIdentity()) {
+      state.user={...state.user,name};fillUserInfo();
+      clientSheetFetchedAt=0;void loadClientCompanies(true,true);
       state.preferredRegion = group_name === '関西' ? 'kansai' : group_name === '関東' ? 'kanto' : null;
     }
     showToast('名簿を更新しました');
@@ -11590,8 +11599,8 @@ async function refreshRemoteTasks() {
       type: "request",
       createdAt: task.created_at,
       completedAt: task.completed_at || null,
-      requester: task.requester_name,
-      recipient: task.recipient_name,
+      requester: task.current_requester_name || task.requester_name,
+      recipient: task.current_recipient_name || task.recipient_name,
       deadline: task.deadline,
       content: task.content,
       targetLink: task.target_link || '',
@@ -14657,7 +14666,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 <script>
 // v90: Shared fixed Gmail sender, signed-in user CC, and native email lookup.
 const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',saved:false,dirty:false,verifyStep:0,
-  sender:'',sendReady:false,signatureReady:false,signaturePrompted:false,sent:null,preview:null,busy:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
+  sender:'',sendReady:false,signatureReady:false,signaturePrompted:false,sent:null,preview:null,busy:false,draftReady:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
 const clientMailRecipients=new Map(); // page-memory only; never store raw recipient in localStorage/D1 drafts
 let clientMailRecipientOwner='';
 function clientMailRecipientKey(row=clientMailState.row,name=clientMailState.name){return JSON.stringify([row,name]);}
@@ -14698,10 +14707,10 @@ function clientMailRenderButtons(){
  // Do not disable the search link due to saving/loading/verification state.
  clientMailEl('clientMailConfirm').disabled=clientMailState.busy||!saved||dirty||step!==2||!!clientMailState.sent;
  clientMailEl('clientMailSyncO').hidden=clientMailState.sent?.status!=='sent_unmarked';
- clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!!clientMailState.sent;
+ clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!clientMailState.draftReady||!!clientMailState.sent;
  clientMailEl('clientMailCompany').disabled=clientMailState.busy;
- clientMailEl('clientMailSkip').disabled=clientMailState.busy;
- for(const id of clientMailIds)clientMailEl(id).disabled=clientMailState.busy;
+ clientMailEl('clientMailSkip').disabled=clientMailState.busy||!clientMailState.row;
+ for(const id of clientMailIds)clientMailEl(id).disabled=clientMailState.busy||!clientMailState.row||!clientMailState.draftReady;
  clientMailEl('clientMailSignatureSettings').disabled=clientMailState.busy;
 }
 // v104: follow sheet order, wrapping only when no later eligible company remains.
@@ -14709,31 +14718,59 @@ function clientMailNextRecord(rows,afterRow){
  const ordered=rows.filter(x=>Number(x.row)!==Number(afterRow)).slice().sort((a,b)=>Number(a.row)-Number(b.row));
  return ordered.find(x=>Number(x.row)>Number(afterRow))||ordered[0];
 }
+async function clientMailFinishActiveTimer(completed){
+ const active=String(getActiveTaskId()||''),started=getActiveStartedAt();
+ if(!active.startsWith('remote_')||!completed.includes(Number(active.slice(7)))||!started)return;
+ const now=Date.now();
+ const record={id:'mail_complete_'+active+'_'+started,taskId:active,startedAt:new Date(started).toISOString(),endedAt:new Date(now).toISOString(),durationMs:Math.max(0,now-started),progress:{},otherProgress:'',reflection:'',tomorrowGoal:'',reportOnly:false,region:state.preferredRegion||state.region};
+ const sessions=loadSessions();if(!sessions.some(x=>x.id===record.id)){sessions.push(record);saveSessions(sessions);}
+ sessionStorage.removeItem(userSessionKey('active_task_id'));sessionStorage.removeItem(userSessionKey('task_started_at'));state.selectedTaskId=null;
+ // Same offline-safe storage as task switching. Do not submit the daily report or log out.
+ try{await portalFetch('/api/work-sessions',{method:'POST',body:{region:state.region,sessions:[record]}});await loadPersonalWorkSessions();}
+ catch(e){console.warn('Mail task time sync postponed',e);showToast('作業時間は端末に保持しました。次回同期します。');}
+ updateFinishButtonState();
+}
 async function clientMailOpen({afterRow=0}={}){
  if(clientMailState.busy)return;
  clientMailState.busy=true;clientMailRenderButtons();
- const owner=String(state.user?.email||'').toLowerCase();if(owner!==clientMailRecipientOwner){clientMailRecipients.clear();clientMailRecipientOwner=owner;}
+ const owner=String(state.user?.email||'').toLowerCase();if(owner!==clientMailRecipientOwner){clientMailRecipients.clear();clientMailRecipientOwner=owner;for(const id of [...clientMailIds,'clientMailSignature'])clientMailEl(id).value='';}
  clientMailStatus('担当者名を照合中…（本人の担当企業、M・N・OすべてFALSE）');
  try{
   const response=await portalFetch('/api/client/mail/companies');
-  clientMailState.rows=(response.companies||[]).filter(x=>!afterRow||Number(x.row)!==Number(afterRow));clientMailState.canEdit=Boolean(response.can_edit);
+  if(!Array.isArray(response.companies))throw new Error('企業一覧の取得結果が不正です。');
+  clientMailState.rows=response.companies;clientMailState.canEdit=Boolean(response.can_edit);
   const select=clientMailEl('clientMailCompany');
   select.innerHTML='<option value="">会社を選択してください</option>'+clientMailState.rows.map(x=>`<option value="${x.row}">${escapeHtml(x.name)}（${x.row}行）</option>`).join('');
-  const preferred=afterRow?clientMailNextRecord(clientMailState.rows,afterRow):
+  const preferred=afterRow?(clientMailNextRecord(clientMailState.rows,afterRow)||clientMailState.rows[0]):
     clientMailState.rows.find(x=>Number(x.row)===clientMailState.row)||clientMailState.rows[0];
   if(preferred){select.value=String(preferred.row);await clientMailChoose(preferred.row);}
   else{
    ++clientMailState.addressSearchId;
    clientMailState.row=0;clientMailState.name='';clientMailState.verifyStep=0;
-   clientMailState.saved=false;clientMailState.dirty=false;clientMailState.preview=null;clientMailState.sent=null;
+   clientMailState.saved=false;clientMailState.dirty=false;clientMailState.draftReady=false;clientMailState.preview=null;clientMailState.sent=null;
    clientMailState.companyWebsite='';clientMailState.companyContactUrl='';
-   for(const id of [...clientMailIds,'clientMailSignature'])clientMailEl(id).value='';
+   // Only the recipient belongs to the finished company. Keep the last text visible.
+   clientMailEl('clientMailTo').value='';
+   clientMailEl('clientMailCc').value=owner;
+   const active=String(getActiveTaskId()||'');
+   const completion=await portalFetch('/api/client/mail/complete-empty',{method:'POST',body:{region:state.region,active_id:active.startsWith('remote_')?Number(active.slice(7)):0}});
+   if(completion.remaining>0){clientMailStatus('対象企業が更新されました。メール画面を開き直してください。');return;}
+   if(completion.completed?.length){await clientMailFinishActiveTimer(completion.completed);await refreshRemoteTasks();refreshTaskUi();showToast('企業メール送信タスクが完了しました。');}
+   // Fresh visits with zero companies still show saved settings instead of empty fields.
+   try{
+    const settings=await portalFetch('/api/client/mail/settings');
+    if(!clientMailEl('clientMailBody').value){
+      for(const [id,val] of [['clientMailBcc',settings.bcc],['clientMailSubject',settings.subject],['clientMailBody',settings.body]])clientMailEl(id).value=val??'';
+    }
+    clientMailEl('clientMailSignature').value=settings.signature||clientMailEl('clientMailSignature').value;
+    clientMailState.signatureReady=Boolean(settings.signature_ready);
+   }catch(e){clientMailStatus('対象企業なし。保存済み設定の取得に失敗：'+e.message);return;}
    const gmail=await portalFetch('/api/client/mail/gmail/status');
    const setup=clientMailEl('clientMailGmailConnect');
    setup.hidden=!Boolean(gmail.can_connect);
    setup.textContent='送信元を連携';
    setup.title='companytokyo@dot-jp.or.jp のGmail送信権限を許可';
-   clientMailStatus((afterRow?'メール送信済み。次の対象企業はありません。':'担当者欄が本人の名前とほぼ一致し、M・N・OがすべてFALSEの企業はありません。')+(gmail.can_connect?' 共通Gmailの権限設定は可能です。':''));
+   clientMailStatus('送信対象の企業はありません。'+(completion.blocked?' 未同期・送信結果未確定のメールがあるため、タスクは未完了です。':completion.completed?.length?' 企業メール送信タスクを完了しました。':'')+' 件名・本文・署名は保持されています。'+(gmail.can_connect?' 共通Gmailの権限設定は可能です。':''));
    clientMailRenderButtons();
   }
  }catch(e){clientMailStatus((afterRow?'送信済みですが次の企業を取得できませんでした。再送せず、メール画面を開き直してください。 ':'')+(e.message||'企業一覧を取得できませんでした。'));}
@@ -14744,9 +14781,8 @@ async function clientMailChoose(row){
  const record=clientMailState.rows.find(x=>Number(x.row)===row);
  clientMailState.row=row;clientMailState.name=record?.name||'';
  clientMailState.companyWebsite='';clientMailState.companyContactUrl='';
- clientMailState.verifyStep=0;clientMailState.saved=false;clientMailState.dirty=false;
+ clientMailState.verifyStep=0;clientMailState.saved=false;clientMailState.dirty=false;clientMailState.draftReady=false;
  clientMailState.preview=null;clientMailState.sent=null;
- clientMailEl('clientMailSignature').value='';
  const remembered=clientMailRecipients.get(clientMailRecipientKey());
  clientMailEl('clientMailTo').value=remembered?.value||'';
  clientMailState.verifyStep=remembered?.step||0; // only the same company, in this page session
@@ -14757,7 +14793,8 @@ async function clientMailChoose(row){
   if(requestId!==clientMailState.addressSearchId||row!==clientMailState.row)return;
   clientMailState.name=data.company.name;clientMailState.canEdit=Boolean(data.can_edit);
   clientMailState.companyWebsite=data.company.website||'';clientMailState.companyContactUrl=data.company.contact_url||'';
-  clientMailState.template=data.draft.body_template;clientMailState.saved=Boolean(data.draft.saved);
+  if(!data.draft?.body||!data.draft?.subject)throw new Error('保存済み本文を読み込めませんでした。前の表示は保持しています。再読み込みしてください。');
+  clientMailState.template=data.draft.body_template;clientMailState.saved=Boolean(data.draft.saved);clientMailState.draftReady=true;
   if(clientMailState.verifyStep===2&&Number(data.draft.verify_step)!==2)clientMailState.verifyStep=clientMailEl('clientMailTo').value.trim()?1:0;
   clientMailState.dirty=false;
   clientMailState.sender=data.sender;clientMailState.sendReady=Boolean(data.send_ready);clientMailState.signatureReady=Boolean(data.signature_ready);
@@ -14820,7 +14857,7 @@ function clientMailTouch(event){
  clientMailRenderButtons();
 }
 async function clientMailSave(){
- if(clientMailState.busy||!clientMailState.row)return false;
+ if(clientMailState.busy||!clientMailState.row||!clientMailState.draftReady)return false;
  clientMailState.busy=true;clientMailRenderButtons();
  try{
   // The address field is NOT part of the saved email draft.
