@@ -3288,6 +3288,10 @@ a:active {
 }
 
 
+.task-submit.is-logout-only {
+  font-size: 30px !important;
+}
+
 /* Apple / iCloud CalDAV 連携 */
 .apple-calendar-modal {
   position: absolute;
@@ -9482,7 +9486,10 @@ function updateFinishButtonState() {
   if (!button) return;
 
   const hasActiveTask = Boolean(getActiveStartedAt() && getActiveTaskId());
-  button.disabled = !(hasActiveTask || hasReportInput());
+  const logoutOnly = !hasActiveTask && !hasReportInput();
+  button.disabled = false;
+  button.textContent = logoutOnly ? "ログアウト" : "送信";
+  button.classList.toggle("is-logout-only", logoutOnly);
 }
 
 function logoutAfterReport() {
@@ -9509,8 +9516,7 @@ async function finishTask() {
   const hasActiveTask = Boolean(startedAt && activeTaskId);
 
   if (!hasActiveTask && !hasReportInput(snapshot)) {
-    showToast("入力内容がありません");
-    updateFinishButtonState();
+    logoutAfterReport();
     return;
   }
 
