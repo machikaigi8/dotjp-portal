@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
-  <!-- LINEグループ8:30通知・本人連携・代表の通知先選択 -->
-  <!-- dotjp-v54-rp-registration-meeting-auto-task -->
-  <!-- Version v56: 2026-11-09 recurring MTG optional place + per-occurrence editing -->
   <style>
 * {
   box-sizing: border-box;
@@ -973,7 +970,9 @@ button.file-choice-button {
 /* ===== 週次タスク管理 / 7日間タスク時間グラフ ===== */
 
 .task-picker-panel {
-  padding: 28px 60px 30px;
+  left: 50px;
+  width: 1340px;
+  padding: 28px 32px 30px;
   text-align: left;
   border: 2px solid #e4e6f5;
   border-radius: 14px;
@@ -1052,7 +1051,7 @@ height: 315px;
   margin-bottom: 8px;
   padding: 8px 15px;
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 120px minmax(0, 1fr);
   gap: 14px;
   align-items: center;
   border: 2px solid #c8c8df;
@@ -1103,11 +1102,16 @@ height: 315px;
 
 .start-task-title {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.4;
   font-size: 26px;
   font-weight: 600;
+}
+
+.screen-task-start .start-task-title:only-child {
+  grid-column: 1 / -1;
 }
 
 .preset-task-board {
@@ -1161,6 +1165,9 @@ height: 315px;
   text-align: center;
   font-size: 25px;
   line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* The start button sits BELOW the white panel, not inside it. */
@@ -1514,21 +1521,21 @@ button.summary-task-row:hover {
 /* HP編集 */
 
 /* v70: LINE管理はHP編集の独立タブ。表示は代表・開発者に限定。 */
-.screen-hp-edit .figma-hp-line { display:block;overflow-y:auto; }
-.screen-hp-edit .figma-hp-line[hidden] {display:none!important;}
-.screen-hp-edit .figma-hp-line-content { padding:22px 34px 34px;box-sizing:border-box;font-size:19px;line-height:1.55;color:#192b46; }
-.screen-hp-edit .figma-hp-line-admin h3 {font-size:27px;margin:6px 0 10px;}
-.screen-hp-edit .figma-hp-line-admin h3:not(:first-child) {margin-top:30px;border-top:2px solid #c9d7eb;padding-top:18px;}
-.screen-hp-edit .figma-hp-line-admin p {font-size:18px;line-height:1.55;margin:10px 0 18px;}
-.screen-hp-edit .figma-hp-line-admin label {font-size:20px;display:block;}
-.screen-hp-edit .figma-hp-line-admin select {width:100%;min-height:52px;margin:8px 0 14px;padding:9px 14px;font-size:19px;background:white;border:2px solid #7b96c3;border-radius:8px;}
-.screen-hp-edit .figma-hp-line-admin .line-check {display:flex;align-items:flex-start;gap:14px;line-height:1.45;}
-.screen-hp-edit .figma-hp-line-admin .line-check input {width:25px;height:25px;flex:none;margin-top:4px;}
-.screen-hp-edit .figma-hp-line-admin .line-row {display:flex;gap:12px;flex-wrap:wrap;margin:17px 0;}
-.screen-hp-edit .figma-hp-line-admin button {font-size:19px;border:2px solid #3069be;background:#3069d5;color:white;border-radius:8px;min-height:49px;padding:9px 18px;cursor:pointer;}
-.screen-hp-edit .figma-hp-line-admin button.secondary {background:#f2f6ff;color:#25579d;}
-.screen-hp-edit .figma-hp-line-admin button:disabled {opacity:.55;cursor:wait;}
-.screen-hp-edit .figma-hp-line-admin .line-link-status {background:#eff5ff;padding:14px 18px;white-space:pre-wrap;border-radius:8px;overflow-wrap:anywhere;}
+.screen-client-line .figma-hp-line { display:block;overflow-y:auto; }
+.screen-client-line .figma-hp-line[hidden] {display:none!important;}
+.screen-client-line .figma-hp-line-content { padding:22px 34px 34px;box-sizing:border-box;font-size:19px;line-height:1.55;color:#192b46; }
+.screen-client-line .figma-hp-line-admin h3 {font-size:27px;margin:6px 0 10px;}
+.screen-client-line .figma-hp-line-admin h3:not(:first-child) {margin-top:30px;border-top:2px solid #c9d7eb;padding-top:18px;}
+.screen-client-line .figma-hp-line-admin p {font-size:18px;line-height:1.55;margin:10px 0 18px;}
+.screen-client-line .figma-hp-line-admin label {font-size:20px;display:block;}
+.screen-client-line .figma-hp-line-admin select {width:100%;min-height:52px;margin:8px 0 14px;padding:9px 14px;font-size:19px;background:white;border:2px solid #7b96c3;border-radius:8px;}
+.screen-client-line .figma-hp-line-admin .line-check {display:flex;align-items:flex-start;gap:14px;line-height:1.45;}
+.screen-client-line .figma-hp-line-admin .line-check input {width:25px;height:25px;flex:none;margin-top:4px;}
+.screen-client-line .figma-hp-line-admin .line-row {display:flex;gap:12px;flex-wrap:wrap;margin:17px 0;}
+.screen-client-line .figma-hp-line-admin button {font-size:19px;border:2px solid #3069be;background:#3069d5;color:white;border-radius:8px;min-height:49px;padding:9px 18px;cursor:pointer;}
+.screen-client-line .figma-hp-line-admin button.secondary {background:#f2f6ff;color:#25579d;}
+.screen-client-line .figma-hp-line-admin button:disabled {opacity:.55;cursor:wait;}
+.screen-client-line .figma-hp-line-admin .line-link-status {background:#eff5ff;padding:14px 18px;white-space:pre-wrap;border-radius:8px;overflow-wrap:anywhere;}
 .screen-home #lineSettingsOpen[hidden] {display:none!important;}
 
 
@@ -6078,8 +6085,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
 
 /* Mail composer layout. */
-.screen-client-mail,.screen-client-mail-preview{background:#f2f2ff;}
-.screen-client-mail .client-tabs{row-gap:51px;}
+.screen-client-mail,.screen-client-mail-preview,.screen-client-line{background:#f2f2ff;}
+.screen-client-mail .client-tabs,.screen-client-line .client-tabs{row-gap:51px;}
 .screen-client-mail .client-mail-panel{position:absolute;left:70px;top:331px;width:1300px;height:521px;box-sizing:border-box;background:#fff;z-index:1;margin:0;}
 .screen-client-mail .client-mail-field{position:absolute;display:flex;flex-direction:column;gap:4px;font:400 22px/1.15 Inter,'Noto Sans JP',sans-serif;color:#111;}
 .screen-client-mail .client-mail-field>span{display:block;font-size:22px;min-height:25px;white-space:nowrap;}
@@ -6132,7 +6139,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-mail-preview .client-mail-preview-change{bottom:102px;}
 .screen-client-mail-preview .client-mail-preview-send{bottom:16px;}
 .screen-client-mail-preview .client-mail-preview-send:disabled{opacity:.5;cursor:wait;}
-:is(.screen-client-mail,.screen-client-mail-preview)>[data-common-back]{position:absolute!important;left:70px!important;top:898px!important;width:140px!important;height:60px!important;background:#3080ff!important;color:#fff!important;font:400 40px/60px Inter,'Noto Sans JP',sans-serif!important;border:0!important;margin:0!important;padding:0!important;text-align:center!important;}
+:is(.screen-client-mail,.screen-client-mail-preview,.screen-client-line)>[data-common-back]{position:absolute!important;left:70px!important;top:898px!important;width:140px!important;height:60px!important;background:#3080ff!important;color:#fff!important;font:400 40px/60px Inter,'Noto Sans JP',sans-serif!important;border:0!important;margin:0!important;padding:0!important;text-align:center!important;}
 
 
 .screen-client-mail .client-mail-verify{font-size:18px;}
@@ -6218,22 +6225,22 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
 /* v95: The generic HP panel's later `overflow:hidden` overrode LINE panel scrolling.
    Restore an independently scrollable area without moving the fixed Figma canvas. */
-.screen-hp-edit .figma-hp-main.figma-hp-line {
+.screen-client-line .figma-hp-main.figma-hp-line {
   overflow-x: hidden !important;
   overflow-y: auto !important;
   overscroll-behavior-y: contain;
   scrollbar-gutter: stable;
   touch-action: pan-y;
 }
-.screen-hp-edit .figma-hp-line-content { min-height: 100%; }
-.screen-hp-edit .figma-hp-main.figma-hp-line::-webkit-scrollbar { width: 14px; }
-.screen-hp-edit .figma-hp-main.figma-hp-line::-webkit-scrollbar-thumb {
+.screen-client-line .figma-hp-line-content { min-height: 100%; }
+.screen-client-line .figma-hp-main.figma-hp-line::-webkit-scrollbar { width: 14px; }
+.screen-client-line .figma-hp-main.figma-hp-line::-webkit-scrollbar-thumb {
   background: #a1b1ce;
   border: 3px solid #f7f9ff;
   border-radius: 12px;
 }
-.screen-hp-edit .figma-hp-main.figma-hp-line::-webkit-scrollbar-track { background: #f7f9ff; }
-.screen-hp-edit .line-quick-navigation {
+.screen-client-line .figma-hp-main.figma-hp-line::-webkit-scrollbar-track { background: #f7f9ff; }
+.screen-client-line .line-quick-navigation {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -6249,7 +6256,14 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   border-radius: 8px;
   font-size: 15px;
 }
-.screen-hp-edit .line-quick-navigation button { font-size: 17px; min-height: 38px; }
+.screen-client-line .line-quick-navigation button { font-size: 17px; min-height: 38px; }
+
+.screen-client-line #clientLinePanel {
+  position:absolute;left:70px;top:331px;width:1300px;height:521px;
+  box-sizing:border-box;background:#fff;border:2px solid #b8c4df;
+}
+.screen-client-line #clientLineLoadStatus {font-size:20px;line-height:1.5;white-space:pre-wrap;}
+.screen-client-line .client-tab[data-route="client-line"] {background:#bfc5ff;}
 </style>
 </head>
 <body>
@@ -6493,6 +6507,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
             <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
             <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
+            <button class="client-tab" type="button" data-route="client-line">LINE通知</button>
           </nav>
         </section>
 
@@ -6505,6 +6520,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
             <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
             <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
+            <button class="client-tab" type="button" data-route="client-line">LINE通知</button>
           </nav>
           <button type="button" id="clientMaterialsEmailScript" class="client-material-email">メールスクリプト</button>
         </section>
@@ -6519,6 +6535,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
             <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
             <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
+            <button class="client-tab" type="button" data-route="client-line">LINE通知</button>
           </nav>
           <form id="clientMailForm" class="client-mail-panel" autocomplete="off">
             <label class="client-mail-field client-mail-company" for="clientMailCompany"><span>会社</span>
@@ -6569,6 +6586,86 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </dialog>
         </section>
         <!-- Figma 196:1057: 送信前の最終確認表示（実際の送信内容をそのまま表示） -->
+        <section class="screen screen-client-line" data-screen="client-line" aria-label="LINE通知">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
+            <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
+            <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
+            <button class="client-tab" type="button" data-route="client-line">LINE通知</button>
+          </nav>
+          <section class="figma-hp-main figma-hp-line" id="clientLinePanel" aria-label="LINE通知設定">
+            <div class="figma-hp-line-content">
+              <p id="clientLineLoadStatus" role="status">LINE通知設定を読み込んでいます…</p>
+              <section id="lineGroupAdmin" class="line-admin figma-hp-line-admin" hidden>
+                <div class="line-quick-navigation">
+                  <span>設定が下まで続きます。右側のスクロールバーで移動できます。</span>
+                  <button type="button" id="lineJumpManual" class="secondary">LINE手動連携へ移動 ↓</button>
+                </div>
+                <h3>通知先LINEグループ（代表・デベロッパーのみ）</h3>
+                <p>LINE Developersで「グループへの参加を許可」をONにし、公式アカウントを通知先グループへ招待してください。候補が出ない場合は、グループに通常のメッセージを1通送ってから更新してください。</p>
+                <label for="lineGroupPicker">通知先を選択</label>
+                <select id="lineGroupPicker"><option value="">グループを読み込み中…</option></select>
+                <label class="line-check"><input type="checkbox" id="lineGroupConfirm">このグループのメンバーが通知内容を閲覧してよい関係者であることを確認しました。</label>
+                <div class="line-row"><button type="button" id="lineGroupSave">通知先グループを保存</button></div>
+                <div id="lineGroupStatus" class="line-link-status" role="status"></div>
+                <h3>行動量報告グループ（正午の未報告者を自動投稿）</h3>
+                <p>LINEグループで一度メッセージを送ってもらい、管理者が名簿と手動で紐づけます。連携済みの人だけ報告済みかどうかを判定します。未連携の人には、正午の代理投稿を行いません。各人の連携操作は不要です。</p>
+                <label for="lineActivityGroupPicker">行動量報告グループを選択</label>
+                <select id="lineActivityGroupPicker"><option value="">グループを読み込み中…</option></select>
+                <label class="line-check"><input type="checkbox" id="lineActivityGroupConfirm">このグループへの各人の行動量投稿について関係者の了承を確認しました。</label>
+                <div class="line-row"><button type="button" id="lineActivityGroupSave">行動量報告グループを保存</button></div>
+                <div id="lineActivityGroupStatus" class="line-link-status" role="status"></div>
+                <p>本番配信にはCloudflareで <code>LINE_ACTIVITY_AUTO_REPORT_ENABLED=true</code> が必要です。毎日12:00 JSTに判定します。</p>
+                <h3>朝7時の前日行動量メール</h3>
+                <p>送信元は takaaki_souda@dot-jp.or.jp に固定。宛先は各メンバーのポータルログインアドレスです。受信者のGmail連携は不要。送信元の権限が未設定の場合のみ、管理者が本人のGoogleアカウントで1回だけ許可してください。企業メール用のアカウントとは別管理です。</p>
+                <div id="activityMailStatus" class="line-link-status" role="status">送信元と配信先を確認中…</div>
+                <div class="line-row"><button type="button" id="activityMailConnect" class="secondary" hidden>送信元のGmail権限を1回だけ許可</button></div>
+                <h3>行動量報告の手動テスト（代表・デベロッパーのみ）</h3>
+                <p>定時配信に影響させず、最初に内容を確認してから1回ずつ送信できます。メールはログイン中の本人1名宛、LINEは保存済みの行動量報告グループへ1件だけ投稿します。前日の確定集計がなければ明示されたサンプルを使用します。</p>
+                <div class="line-row">
+                  <button type="button" id="activityManualPreview" class="secondary">テスト内容を確認</button>
+                  <button type="button" id="activityManualPopup" class="secondary">ポップアップ表示テスト</button>
+                  <button type="button" id="activityManualEmail" class="secondary">自分宛にテストメール</button>
+                  <button type="button" id="activityManualLine" class="secondary">LINEグループへテスト投稿</button>
+                </div>
+                <div id="activityManualResult" class="line-link-status" role="status" aria-live="polite">テスト未実行。先に「テスト内容を確認」を押してください。</div>
+                <h3 id="lineManualSection">LINEアカウントの手動連携（代表・デベロッパーのみ）</h3>
+                <p>公式LINEが参加している通知先または行動量報告グループで、本人にメッセージを1件送ってもらってください。管理者が「発言者を更新」から選び、名簿と手動で紐づけます。<strong>本人確認・同意は必須。未連携なら正午の自動報告の対象外です。</strong></p>
+                <div class="line-row"><button type="button" id="lineManualRefresh" class="secondary">発言したメンバーを更新</button></div>
+                <div id="lineManualStatus" class="line-link-status" role="status">未読み込み</div>
+                <div id="lineManualCandidatesList" class="line-manual-member-list" aria-label="LINE連携候補"></div>
+                <label for="lineManualCandidateSelect">連携するLINEアカウント</label>
+                <select id="lineManualCandidateSelect"><option value="">LINEアカウントを選択</option></select>
+                <label for="lineManualRosterSelect">対応するポータル名簿</label>
+                <select id="lineManualRosterSelect"><option value="">名簿から選択</option></select>
+                <label class="line-check"><input type="checkbox" id="lineManualConfirm">本人確認と、LINEの発言・行動量をポータルの名簿と紐づけて利用することへの本人の同意を確認しました。</label>
+                <div class="line-row"><button type="button" id="lineManualSave">選択した2件を連携</button></div>
+                <h3>現在のLINE連携一覧・解除</h3>
+                <p>誤連携した場合はここで解除できます。別人への上書きはできません。</p>
+                <div id="lineManualLinkedList" class="line-manual-link-list"></div>
+                <!-- 手動連携方式へ統一。旧リッチメニュー設定は互換性のためDOMのみ保持。 -->
+                <div hidden>
+                  <button type="button" id="lineInstallLinkMenu" class="secondary">旧連携メニューを設置</button>
+                  <div id="lineMenuStatus" class="line-link-status" role="status"></div>
+                </div>
+                <h3>送信チェック（まずここを確認）</h3>
+                <p>送信されない場合、Cronの変更前に「接続診断」を押してください。Cloudflareのシークレット値自体は表示しません。</p>
+                <div class="line-row">
+                  <button type="button" id="lineRunDiagnosis" class="secondary">接続診断</button>
+                  <button type="button" id="lineTestSend" class="secondary">@Allテスト送信</button>
+                  <button type="button" id="lineSendToday">今日の予定を今すぐ送信</button>
+                </div>
+                <div id="lineDiagnosisResult" class="line-link-status" role="status" aria-live="polite">まだ診断していません。</div>
+                <p>自動配信を開始するには、Cloudflareの <code>LINE_SCHEDULE_GROUP_ENABLED</code> を <code>true</code> にしてください。保存だけでは配信されません。</p>
+              </section>
+            </div>
+          </section>
+          <button type="button" class="common-back-button" data-common-back data-back-route="client">←戻る</button>
+        </section>
+
         <section class="screen screen-client-mail-preview" data-screen="client-mail-preview" aria-label="送信前の確認画面">
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="client-mail-preview-panel" role="region" aria-label="送信内容の最終確認">
@@ -6958,72 +7055,6 @@ NPO法人ドットジェイピーの担当者です。
           <section class="figma-hp-main figma-hp-requests" data-hp-view="requests" hidden>
             <div class="figma-hp-request-list" id="figmaHpRequestsList">
               <p class="figma-hp-empty">読み込み中…</p>
-            </div>
-          </section>
-          <section class="figma-hp-main figma-hp-line" data-hp-view="line" hidden>
-            <div class="figma-hp-line-content">
-              <section id="lineGroupAdmin" class="line-admin figma-hp-line-admin" hidden>
-                <div class="line-quick-navigation">
-                  <span>設定が下まで続きます。右側のスクロールバーで移動できます。</span>
-                  <button type="button" id="lineJumpManual" class="secondary">LINE手動連携へ移動 ↓</button>
-                </div>
-                <h3>通知先LINEグループ（代表・デベロッパーのみ）</h3>
-                <p>LINE Developersで「グループへの参加を許可」をONにし、公式アカウントを通知先グループへ招待してください。候補が出ない場合は、グループに通常のメッセージを1通送ってから更新してください。</p>
-                <label for="lineGroupPicker">通知先を選択</label>
-                <select id="lineGroupPicker"><option value="">グループを読み込み中…</option></select>
-                <label class="line-check"><input type="checkbox" id="lineGroupConfirm">このグループのメンバーが通知内容を閲覧してよい関係者であることを確認しました。</label>
-                <div class="line-row"><button type="button" id="lineGroupSave">通知先グループを保存</button></div>
-                <div id="lineGroupStatus" class="line-link-status" role="status"></div>
-                <h3>行動量報告グループ（正午の未報告者を自動投稿）</h3>
-                <p>LINEグループで一度メッセージを送ってもらい、管理者が名簿と手動で紐づけます。連携済みの人だけ報告済みかどうかを判定します。未連携の人には、正午の代理投稿を行いません。各人の連携操作は不要です。</p>
-                <label for="lineActivityGroupPicker">行動量報告グループを選択</label>
-                <select id="lineActivityGroupPicker"><option value="">グループを読み込み中…</option></select>
-                <label class="line-check"><input type="checkbox" id="lineActivityGroupConfirm">このグループへの各人の行動量投稿について関係者の了承を確認しました。</label>
-                <div class="line-row"><button type="button" id="lineActivityGroupSave">行動量報告グループを保存</button></div>
-                <div id="lineActivityGroupStatus" class="line-link-status" role="status"></div>
-                <p>本番配信にはCloudflareで <code>LINE_ACTIVITY_AUTO_REPORT_ENABLED=true</code> が必要です。毎日12:00 JSTに判定します。</p>
-                <h3>朝7時の前日行動量メール</h3>
-                <p>送信元は takaaki_souda@dot-jp.or.jp に固定。宛先は各メンバーのポータルログインアドレスです。受信者のGmail連携は不要。送信元の権限が未設定の場合のみ、管理者が本人のGoogleアカウントで1回だけ許可してください。企業メール用のアカウントとは別管理です。</p>
-                <div id="activityMailStatus" class="line-link-status" role="status">送信元と配信先を確認中…</div>
-                <div class="line-row"><button type="button" id="activityMailConnect" class="secondary" hidden>送信元のGmail権限を1回だけ許可</button></div>
-                <h3>行動量報告の手動テスト（代表・デベロッパーのみ）</h3>
-                <p>定時配信に影響させず、最初に内容を確認してから1回ずつ送信できます。メールはログイン中の本人1名宛、LINEは保存済みの行動量報告グループへ1件だけ投稿します。前日の確定集計がなければ明示されたサンプルを使用します。</p>
-                <div class="line-row">
-                  <button type="button" id="activityManualPreview" class="secondary">テスト内容を確認</button>
-                  <button type="button" id="activityManualPopup" class="secondary">ポップアップ表示テスト</button>
-                  <button type="button" id="activityManualEmail" class="secondary">自分宛にテストメール</button>
-                  <button type="button" id="activityManualLine" class="secondary">LINEグループへテスト投稿</button>
-                </div>
-                <div id="activityManualResult" class="line-link-status" role="status" aria-live="polite">テスト未実行。先に「テスト内容を確認」を押してください。</div>
-                <h3 id="lineManualSection">LINEアカウントの手動連携（代表・デベロッパーのみ）</h3>
-                <p>公式LINEが参加している通知先または行動量報告グループで、本人にメッセージを1件送ってもらってください。管理者が「発言者を更新」から選び、名簿と手動で紐づけます。<strong>本人確認・同意は必須。未連携なら正午の自動報告の対象外です。</strong></p>
-                <div class="line-row"><button type="button" id="lineManualRefresh" class="secondary">発言したメンバーを更新</button></div>
-                <div id="lineManualStatus" class="line-link-status" role="status">未読み込み</div>
-                <div id="lineManualCandidatesList" class="line-manual-member-list" aria-label="LINE連携候補"></div>
-                <label for="lineManualCandidateSelect">連携するLINEアカウント</label>
-                <select id="lineManualCandidateSelect"><option value="">LINEアカウントを選択</option></select>
-                <label for="lineManualRosterSelect">対応するポータル名簿</label>
-                <select id="lineManualRosterSelect"><option value="">名簿から選択</option></select>
-                <label class="line-check"><input type="checkbox" id="lineManualConfirm">本人確認と、LINEの発言・行動量をポータルの名簿と紐づけて利用することへの本人の同意を確認しました。</label>
-                <div class="line-row"><button type="button" id="lineManualSave">選択した2件を連携</button></div>
-                <h3>現在のLINE連携一覧・解除</h3>
-                <p>誤連携した場合はここで解除できます。別人への上書きはできません。</p>
-                <div id="lineManualLinkedList" class="line-manual-link-list"></div>
-                <!-- 手動連携方式へ統一。旧リッチメニュー設定は互換性のためDOMのみ保持。 -->
-                <div hidden>
-                  <button type="button" id="lineInstallLinkMenu" class="secondary">旧連携メニューを設置</button>
-                  <div id="lineMenuStatus" class="line-link-status" role="status"></div>
-                </div>
-                <h3>送信チェック（まずここを確認）</h3>
-                <p>送信されない場合、Cronの変更前に「接続診断」を押してください。Cloudflareのシークレット値自体は表示しません。</p>
-                <div class="line-row">
-                  <button type="button" id="lineRunDiagnosis" class="secondary">接続診断</button>
-                  <button type="button" id="lineTestSend" class="secondary">@Allテスト送信</button>
-                  <button type="button" id="lineSendToday">今日の予定を今すぐ送信</button>
-                </div>
-                <div id="lineDiagnosisResult" class="line-link-status" role="status" aria-live="polite">まだ診断していません。</div>
-                <p>自動配信を開始するには、Cloudflareの <code>LINE_SCHEDULE_GROUP_ENABLED</code> を <code>true</code> にしてください。保存だけでは配信されません。</p>
-              </section>
             </div>
           </section>
           <button type="button" class="figma-hp-back" data-common-back="">←戻る</button>
@@ -7749,6 +7780,7 @@ const screenNames = new Set([
   "client-deals",
   "client-materials",
   "client-mail",
+  "client-line",
   "client-mail-preview",
   "client-send",
   "client-staff-status",
@@ -7861,6 +7893,16 @@ async function init() {
       );
     }
 
+    const activityOAuthUrl = new URL(location.href);
+    const activityOAuthResult = activityOAuthUrl.searchParams.get('activity_gmail');
+    if (activityOAuthResult) {
+      const detail = activityOAuthUrl.searchParams.get('activity_detail');
+      activityOAuthUrl.searchParams.delete('activity_gmail');
+      activityOAuthUrl.searchParams.delete('activity_detail');
+      activityOAuthUrl.hash = 'client-line';
+      history.replaceState(null, '', activityOAuthUrl.pathname + activityOAuthUrl.search + activityOAuthUrl.hash);
+      showToast(activityOAuthResult === 'connected' ? '行動量メールのGmail連携が完了しました' : 'Gmail連携に失敗しました：' + (detail || '設定を確認してください'));
+    }
     const requested = normalizeHash(location.hash);
     const started = getActiveStartedAt();
 
@@ -8164,7 +8206,7 @@ function wireActions() {
   document.getElementById('activityMailConnect').addEventListener('click', () => void activityMailAuthorizeSender());
   document.getElementById('lineManualRefresh').addEventListener('click', () => void refreshLineManualDirectory());
   document.getElementById('lineJumpManual').addEventListener('click', () => {
-    const panel = document.querySelector('.screen-hp-edit .figma-hp-main.figma-hp-line');
+    const panel = document.getElementById('clientLinePanel');
     const heading = document.getElementById('lineManualSection');
     if (!panel || !heading || panel.hidden) return;
     // offsetTop is expressed in unscaled Figma canvas CSS pixels, matching scrollTop.
@@ -8635,6 +8677,11 @@ function showScreen(name, updateHash = true, recordHistory = true) {
     name = "home";
   }
 
+  if (name === "client-line" && !(state.isDeveloper || state.isRepresentative)) {
+    showToast("LINE通知の編集は代表・デベロッパーのみ可能です");
+    name = "client";
+  }
+
   const previousScreen = state.currentScreen;
 
   if (
@@ -8681,6 +8728,11 @@ if (name === "post-confirm") {
   if (name === "client-send") {
     void refreshInquiryProfile();
     loadClientCompanies(true);
+  }
+  if (name === 'client-line') {
+    document.getElementById('clientLineLoadStatus').hidden = false;
+    document.getElementById('clientLineLoadStatus').textContent = 'LINE通知設定を読み込んでいます…';
+    void refreshLineSettings();
   }
   if (name === 'client-won') void loadClientBusiness('won');
   if (name === 'client-deals') void loadClientBusiness('deals');
@@ -10919,6 +10971,7 @@ async function openLineSettings(){
 function closeLineSettings(){document.getElementById('lineSettingsOverlay').hidden=true;}
 async function refreshLineSettings({quiet=false}={}){
   const box=document.getElementById('lineLinkStatus'),area=document.getElementById('lineGroupAdmin');
+  const pageStatus=document.getElementById('clientLineLoadStatus');
   if(!quiet)box.textContent='連携状況を確認中…';
   try{
     const data=await portalFetch('/api/line/status');
@@ -10938,6 +10991,8 @@ async function refreshLineSettings({quiet=false}={}){
     window.dotjpLineOfficialUrl=data.official_account_url||'';
     document.getElementById('lineLinkDisconnect').hidden=!data.linked;
     area.hidden=!data.can_manage;
+    pageStatus.hidden=Boolean(data.can_manage);
+    if(!data.can_manage)pageStatus.textContent='LINE通知の編集は代表・デベロッパーのみ可能です。';
     if(data.can_manage){
       const picker=document.getElementById('lineGroupPicker');
       picker.replaceChildren();
@@ -10962,15 +11017,15 @@ async function refreshLineSettings({quiet=false}={}){
       document.getElementById('lineActivityGroupConfirm').checked=false;
       document.getElementById('lineActivityGroupStatus').textContent=`行動量報告先：${data.selected_activity_group_id?'設定済み':'未設定'} / 正午自動投稿：${data.activity_auto_report_enabled?'ON':'OFF（Cloudflareの設定が必要）'}`;
       void activityMailRefreshStatus();
-      const lineTab=document.querySelector('[data-hp-view="line"]');
-      if(lineTab&&!lineTab.hidden)void refreshLineManualDirectory();
+      if(state.currentScreen==='client-line')void refreshLineManualDirectory();
     }
   }catch(error){
     const message='LINE設定を取得できません：'+(error.message||error);
     box.textContent=message;
     document.getElementById('lineLinkStart').disabled=false;
     document.getElementById('lineLoginSetupNotice').hidden=true;
-    area.hidden=!(state.isDeveloper||state.isRepresentative);
+    area.hidden=true;
+    pageStatus.hidden=false;pageStatus.textContent=message;
     document.getElementById('lineGroupStatus').textContent=message;
     document.getElementById('lineActivityGroupStatus').textContent=message;
   }
@@ -11293,7 +11348,8 @@ function switchFigmaHpTab(tab) {
     return;
   }
   const canManageLine=Boolean(state.isDeveloper||state.isRepresentative);
-  const active=(tab==='line'&&canManageLine)?'line':(tab==='requests'&&state.isDeveloper)?'requests':'roster';
+  if(tab==='line'&&canManageLine){showScreen('client-line');return;}
+  const active=(tab==='requests'&&state.isDeveloper)?'requests':'roster';
   document.querySelectorAll('[data-hp-tab]').forEach(el => {
     if (el.dataset.hpTab === 'requests') {
       el.hidden = !canManageLine;
@@ -11306,7 +11362,6 @@ function switchFigmaHpTab(tab) {
     el.hidden=el.dataset.hpView!==active;
   });
   if(active==='requests'&&state.isDeveloper)void loadHpRequests();
-  if(active==='line')void refreshLineSettings();
 }
 
 function renderFigmaRoster() {
