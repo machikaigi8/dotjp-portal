@@ -1,33 +1,3 @@
-<!-- v107: shared enterprise outreach completion, form and home reconciliation; retain mail settings. -->
-<!-- v106: apply server mail task completion and expose reasons; retain all v105 mail settings. -->
-<!-- v105: preserve mail settings, complete verified empty mail queue, roster-first names. -->
-<!-- v104: advance to the next eligible company after a successful enterprise email send and sheet sync. -->
-<!-- v103: persistent personal email settings and confirmation retained until address change or successful send. -->
-<!-- v102: enterprise signature contact address fixed to companytokyo; exact Japanese name format. -->
-<!-- v101: personal signature settings for enterprise mail; generated from authenticated user. -->
-<!-- v100: shared Gmail signature scope upgrade and safe HTML preview. -->
-<!-- v99: enterprise email automatic signature, shown separately in composer and included in final preview. -->
-<!-- v98: Daily activity report is sent only from takaaki_souda@dot-jp.or.jp; one-time sender authorization in LINE admin. -->
-<!-- v97: LINE admin linking requires an actual message; hide per-person link UI; clarify single Gmail sender authorization. -->
-<!-- v96: LINE current-group participants where LINE API permits, fallback known members; activity email no dedicated linking UI -->
-<!-- v95: LINE notification panel scroll fix and jump to manual account mapping -->
-<!-- v93: editable history calendar + popup preview test + daily template -->
-<!-- v90: One-time shared companytokyo Gmail, CC=current signed-in staff; search stays native. -->
-<!-- v91: activity Gmail 07:00, LINE 12:00 unreported, email verify improvements, form M/N/O strict -->
-<!-- v92: administrator manual activity report delivery testing -->
-<!-- v94: 管理者のLINE手動連携候補・本人連携の併用・誤紐づけ防止 -->
-<!-- v85: M/N/O filter, official company email suggestion, Gmail send OAuth -->
-<!-- v83: calendar account profile photos and Figma client document list -->
-<!-- v81: calendar provider/account service icons instead of empty radio circles -->
-<!-- v80: visual polish for schedule accounts and times; no data/API changes -->
-<!-- v79: activity and schedule UI -->
-<!-- v75: タスク時間は本人の実績のみ表示。関東・関西を合算し、全体集計を廃止 -->
-<!-- v70: MTG直近順、RP転記モード撤去、LINE管理をHP編集へ移動・連携済みボタン非表示 -->
-<!-- v68: matching Workers_v41, sheet two-way sync and MTG times -->
-<!-- v67: staff+task sheet sync, MTG time and optional TT -->
-<!-- v66: sheet edit/delete reflection and review refresh without changing Figma layout -->
-<!-- v65: 管理者向けLINE接続診断／@Allテスト・手動配信機能 -->
-<!-- v64: LINE日次@Allと日曜個人メンションのON/OFFを区別して表示 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -35,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>dotjp portal</title>
-  <!-- v62: LINEグループ8:30通知・本人連携・代表の通知先選択 -->
+  <!-- LINEグループ8:30通知・本人連携・代表の通知先選択 -->
   <!-- dotjp-v54-rp-registration-meeting-auto-task -->
   <!-- Version v56: 2026-11-09 recurring MTG optional place + per-occurrence editing -->
   <style>
@@ -6402,7 +6372,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         </section>
 
 
-        <!-- v79: 行動量の日次差分・昨日のログイン時報告とカレンダー連携表示 -->
+        <!-- 行動量の日次差分・昨日のログイン時報告とカレンダー連携表示 -->
         <!-- Figma 64:637: クライアント -->
         <!-- Figma 2026-11-05: コンス / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-cons" aria-label="コンス">
@@ -6578,6 +6548,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <h2 id="clientMailSignatureTitle">企業メールの署名設定</h2>
               <p style="font-size:14px;margin:0 0 8px">一度登録すると今後の企業メールに自動で付きます。氏名・部署は名簿情報を使用します。署名のMail欄は共通アドレス固定、CCはログイン中の本人です。</p>
               <label>氏名<input id="clientSignatureName" readonly></label>
+              <label>ふりがな（任意・お問い合わせフォーム用）<input id="clientSignatureHiragana" maxlength="80" placeholder="やまだたろう"></label>
               <label>署名のメールアドレス（固定）<input id="clientSignatureEmail" readonly value="companytokyo@dot-jp.or.jp"></label>
               <label>部署<select id="clientSignatureDepartment" required><option value="">選択してください</option><option>コンス部</option><option>マーケティング部</option><option>人事局</option><option>プログラム部</option><option>クライアント部</option><option>事務局</option></select></label>
               <label>大学名<input id="clientSignatureUniversity" required maxlength="80" placeholder="○○大学"></label>
@@ -6601,7 +6572,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </div>
         </section>
 
-        <!-- v47: 03B企業インターン企業管理 E=受注 / B=企業名 / M:Q=詳細 -->
+        <!-- 03B企業インターン企業管理 E=受注 / B=企業名 / M:Q=詳細 -->
         <section class="screen screen-client-won" data-screen="client-won" aria-label="獲得企業一覧">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="client-tabs" aria-label="クライアントメニュー">
@@ -6626,7 +6597,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             </div>
           </div>
         </section>
-        <!-- v47: 03B企業インターン企業管理 E=商談 / B,D,K表示のみ -->
+        <!-- 03B企業インターン企業管理 E=商談 / B,D,K表示のみ -->
         <section class="screen screen-client-deals" data-screen="client-deals" aria-label="商談予定企業">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="client-tabs" aria-label="クライアントメニュー">
@@ -6685,9 +6656,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="client-form-name-row">
             <label class="client-message-label" for="clientNameKanji">名前</label>
             <div class="client-name-inputs">
-              <input id="clientNameKanji" aria-label="氏名" type="text" value="工藤廉汰" readonly aria-readonly="true" data-client-copy-label="氏名" title="クリックしてコピー">
-              <input id="clientNameKana" aria-label="ひらがな" type="text" value="くどうれんた" readonly aria-readonly="true" data-client-copy-label="ふりがな" title="クリックしてコピー">
-              <input id="clientNameKatakana" aria-label="カタカナ" type="text" value="クドウレンタ" readonly aria-readonly="true" data-client-copy-label="カタカナ" title="クリックしてコピー">
+              <input id="clientNameKanji" aria-label="氏名" type="text" value="" placeholder="名簿の氏名" readonly aria-readonly="true" data-client-copy-label="氏名" title="クリックしてコピー">
+              <input id="clientNameKana" aria-label="ひらがな" type="text" value="" placeholder="署名設定で登録" readonly aria-readonly="true" data-client-copy-label="ふりがな" title="クリックしてコピー">
+              <input id="clientNameKatakana" aria-label="カタカナ" type="text" value="" placeholder="署名設定で登録" readonly aria-readonly="true" data-client-copy-label="カタカナ" title="クリックしてコピー">
             </div>
           </div>
           <label class="client-form-control" style="--cf-x:120px;--cf-y:527px;--cf-w:320px;" for="clientEmail">
@@ -6717,7 +6688,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <label class="client-message-region" for="clientMessage">
             <span class="client-message-label">お問い合わせ内容</span>
             <textarea id="clientMessage" spellcheck="false" readonly aria-readonly="true" data-client-copy-label="お問い合わせ内容" title="クリックしてコピー（枠内は縦スクロールできます）">お問い合わせ失礼いたします。
-中央大学の工藤と申します。
+NPO法人ドットジェイピーの担当者です。
 現在、大学生の長期インターンシップの送客・マッチング事業を行っております。
 （弊団体は、全国44拠点・約10,000人の大学生ネットワークを有しており、
 学生自身が学生にアプローチすることで、長期インターンシップを希望する学生のご紹介を行っております。）
@@ -6752,7 +6723,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 ご多忙のところ恐れ入りますが、何卒よろしくお願いいたします。
 
 団体HP：https://www.dot-jp.or.jp/
-工藤</textarea>
+</textarea>
           </label>
           </div>
 
@@ -7031,7 +7002,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <h3>現在のLINE連携一覧・解除</h3>
                 <p>誤連携した場合はここで解除できます。別人への上書きはできません。</p>
                 <div id="lineManualLinkedList" class="line-manual-link-list"></div>
-                <!-- v97: 手動連携方式へ統一。旧リッチメニュー設定は互換性のためDOMのみ保持。 -->
+                <!-- 手動連携方式へ統一。旧リッチメニュー設定は互換性のためDOMのみ保持。 -->
                 <div hidden>
                   <button type="button" id="lineInstallLinkMenu" class="secondary">旧連携メニューを設置</button>
                   <div id="lineMenuStatus" class="line-link-status" role="status"></div>
@@ -7302,7 +7273,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         </section>
 
 
-        <!-- v45: 統合スケジュール管理のRP調整 -->
+        <!-- 統合スケジュール管理のRP調整 -->
         <section class="screen screen-schedule-candidates" data-screen="schedule-candidates">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="schedule-hub-tabs" aria-label="スケジュール管理の機能切り替え">
@@ -7335,9 +7306,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               </section>
             </div>
           </div>
-          <!-- v50: Figma準拠の週間RP調整表。既存の候補と確定RPは、スプシ/D1から読み込みます。 -->
+          <!-- Figma準拠の週間RP調整表。既存の候補と確定RPは、スプシ/D1から読み込みます。 -->
 
-          <!-- v54: Figma「RP時間確認」の週表示は維持し、希望時間を誰でも登録可能にする。 -->
+          <!-- Figma「RP時間確認」の週表示は維持し、希望時間を誰でも登録可能にする。 -->
           <div class="rp-availability-toolbar">
             <button type="button" id="rpAvailabilityOpen">＋ RP希望時間を登録</button>
           </div>
@@ -7389,7 +7360,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <button type="button" class="candidate-page-back" data-common-back>←戻る</button>
         </section>
 
-        <!-- v45: 代表・デベロッパーが状況を把握する専用画面 -->
+        <!-- 代表・デベロッパーが状況を把握する専用画面 -->
         <section class="screen screen-representative" data-screen="representative-dashboard">
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="representative-shell">
@@ -7673,7 +7644,7 @@ const WORKER = "https://dotjp-login.taka-souda516.workers.dev";
 const POST_AI_WORKER = "https://dotjp-post-ai.taka-souda516.workers.dev";
 const PORTAL_API_WORKER = "https://dotjp-portal-api.taka-souda516.workers.dev";
 
-// v72: LINE Messaging API の10分間トークンを、Googleログインへの遷移中も保持。
+// LINE Messaging API の10分間トークンを、Googleログインへの遷移中も保持。
 try {
   const lineUrl=new URL(location.href);
   const pending=lineUrl.searchParams.get('line_link_token');
@@ -7839,11 +7810,13 @@ async function init() {
     const data = await response.json();
     if (!response.ok || !data.ok) throw new Error("unauthorized");
 
-    state.user = data.user;
+    state.user = {...data.user, name: data.user?.email || ""};
     fillUserInfo();
     ensureLoginStartedAt();
 
     await loadPortalProfile();
+    window.addEventListener("focus", () => void refreshPortalIdentity());
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)void refreshPortalIdentity();});
     // 旧版の端末内履歴も、現在の所属地域で安全にD1へ移行する。
     void syncLegacySessionsToD1();
     void loadPersonalWorkSessions();
@@ -8040,8 +8013,9 @@ async function loadClientCompanies(force = false, silent = false) {
 
   clientSheetInFlight = (async () => {
     try {
-      const ctx=clientMailCompletionContext();
+      const ctx=clientMailCompletionContext(), identityAtRequest=identityEpoch;
       const data = await portalFetch("/api/client/companies?"+new URLSearchParams({region:ctx.region,active_id:String(ctx.active_id)}));
+      if(identityAtRequest!==identityEpoch)return;
       clientSheetCompanies = Array.isArray(data.companies) ? data.companies : [];
       clientSheetFetchedAt = Date.now();
       syncClientCompanySelection();
@@ -8345,7 +8319,7 @@ function wireActions() {
   document.getElementById("clientSkipCompany").addEventListener("click", skipClientCompany);
 
   document.querySelector('[data-action="start-task"]').addEventListener("click", startSelectedTask);
-  // v58: 未完了一覧のクリックでは作業を開始せず、まず詳細のみを表示する。
+  // 未完了一覧のクリックでは作業を開始せず、まず詳細のみを表示する。
   document.getElementById("unfinishedTasks").addEventListener("click", (event) => {
     if (event.target.closest('[data-retry-tasks]')) {
       void refreshRemoteTasks().then(refreshTaskUi);
@@ -8698,6 +8672,7 @@ if (name === "post-confirm") {
   }
 
   if (name === "client-send") {
+    void refreshInquiryProfile();
     loadClientCompanies(true);
   }
   if (name === 'client-won') void loadClientBusiness('won');
@@ -8760,7 +8735,7 @@ if (name === "post-confirm") {
 
 
 function goBackScreen(event) {
-  // v55: 戻るは原則トップ画面。個別指定のみ data-back-route で例外を許可。
+  // 戻るは原則トップ画面。個別指定のみ data-back-route で例外を許可。
   const explicitlySpecified = event?.currentTarget?.dataset?.backRoute || '';
   const target = explicitlySpecified && screenNames.has(explicitlySpecified)
     ? explicitlySpecified : 'home';
@@ -8816,6 +8791,68 @@ function fillUserInfo() {
   }
 }
 
+// roster-backed identity is refreshed independently of role/region settings.
+let identityRefreshInFlight=null;
+let identityEpoch=0;
+let inquiryProfile=null;
+let inquiryTemplate=null;
+function renderInquiryIdentity(){
+  const name=String(state.user?.name||'').trim();
+  const actual=name&&name!==state.user?.email?name:'';
+  const same=inquiryProfile&&inquiryProfile.name===actual;
+  const kana=same?String(inquiryProfile.hiragana||''):'';
+  const university=same?String(inquiryProfile.university||''):'';
+  const field=document.getElementById('clientNameKanji');
+  if(!field)return;
+  field.value=actual;
+  document.getElementById('clientNameKana').value=kana;
+  document.getElementById('clientNameKatakana').value=kana.replace(/[ぁ-ゖゝゞ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));
+  const editor=document.getElementById('clientMessage');
+  if(inquiryTemplate===null)inquiryTemplate=editor.defaultValue;
+  const intro=actual?(university?university+'の':'NPO法人ドットジェイピーの')+actual+'と申します。':'NPO法人ドットジェイピーの担当者です。';
+  editor.value=inquiryTemplate.replace('NPO法人ドットジェイピーの担当者です。',()=>intro).trimEnd()+(actual?'\n'+actual:'');
+}
+async function refreshInquiryProfile(){
+  const epoch=identityEpoch;
+  try{
+    const data=await portalFetch('/api/client/mail/signature-profile');
+    if(epoch!==identityEpoch||data.profile?.name!==state.user?.name)return;
+    inquiryProfile=data.profile;renderInquiryIdentity();
+  }catch(e){console.warn('inquiry profile unavailable',e);}
+}
+function applyPortalIdentity(user){
+  if(!user?.email||String(user.email).trim().toLowerCase()!==userIdentity())return;
+  const old=String(state.user?.name||'');
+  const name=String(user.name||user.email).trim();
+  state.user={...state.user,...user,name};
+  fillUserInfo();
+  if(old===name){renderInquiryIdentity();return;}
+  ++identityEpoch;inquiryProfile=null;renderInquiryIdentity();
+  // Existing saved templates already contain {{name}}. Only update the live
+  // self-introduction and signature; do not erase user edits or recipient checks.
+  const editor=document.getElementById('clientMailBody');
+  if(editor&&old&&editor.value){editor.value=editor.value.replace('大学の'+old+'と申します。',()=> '大学の'+name+'と申します。');}
+  const signature=document.getElementById('clientMailSignature');
+  if(signature&&old)signature.value=signature.value.split('\n').map(line=>line.startsWith(old+'（')?name+line.slice(old.length):line).join('\n');
+  const signatureName=document.getElementById('clientSignatureName');if(signatureName)signatureName.value=name;
+  if(clientMailState.preview){clientMailState.preview=null;document.getElementById('clientMailPreviewSend').disabled=true;}
+  if(state.currentScreen==='client-mail-preview'){showScreen('client-mail');clientMailStatus('氏名が更新されました。もう一度送信前の確認をしてください。');}
+  clientSheetFetchedAt=0;clientSheetCompanies=[];syncClientCompanySelection();
+  if(state.currentScreen==='client-send'){
+    void Promise.resolve(clientSheetInFlight).then(()=>loadClientCompanies(true,true));
+    void refreshInquiryProfile();
+  }
+  if(state.currentScreen==='client-mail'&&!clientMailState.busy&&!clientMailState.dirty)void clientMailOpen();
+}
+async function refreshPortalIdentity(force=false){
+  if(!state.user?.email)return;
+  if(identityRefreshInFlight){await identityRefreshInFlight;if(!force)return;}
+  const epoch=identityEpoch;
+  const job=(async()=>{try{const data=await portalFetch('/api/me');if(epoch===identityEpoch)applyPortalIdentity(data.user);}catch(e){console.warn('roster name refresh failed',e);}})();
+  identityRefreshInFlight=job;
+  try{await job;}finally{if(identityRefreshInFlight===job)identityRefreshInFlight=null;}
+}
+
 function currentRequesterName() {
   return String(
     state.user?.name ||
@@ -8836,7 +8873,7 @@ function userSessionKey(name) {
   return `dotjp_portal_session_${name}_${userIdentity()}`;
 }
 
-// v75: 現在ログインしている本人のタスク時間のみ取得（関東・関西の両方を合算）。
+// 現在ログインしている本人のタスク時間のみ取得（関東・関西の両方を合算）。
 async function loadPersonalWorkSessions() {
   try {
     const since = new Date(Date.now()-7*86400000).toISOString();
@@ -8897,7 +8934,7 @@ function isPickerOnlyTask(task) {
          (task.type === "mtg" && task.title === "MTG");
 }
 
-// v74: MTG自動出欠依頼は出欠画面と同じ「今日〜7日後」だけを未完了欄に表示。
+// MTG自動出欠依頼は出欠画面と同じ「今日〜7日後」だけを未完了欄に表示。
 // 日付は必ずJSTの暦日で比較する。通常の依頼・完了履歴には影響させない。
 function isVisiblePendingMeetingTask(task, now = new Date()) {
   if (task?.completedAt || !String(task?.evidence || '').startsWith('mtg:')) return true;
@@ -9248,6 +9285,7 @@ function startTimerLoop() {
   clearInterval(state.timerId);
   refreshTaskUi();
   state.timerId = setInterval(() => {
+    void refreshPortalIdentity();
     if (
       state.currentScreen === "home" ||
       state.currentScreen === "task-start"
@@ -9400,7 +9438,7 @@ function renderTaskTimeChart() {
     </div>`;
   }).join("");
 
-  // v75: 全体集計は表示しない。関東・関西を問わず本人の実績のみを表示。
+  // 全体集計は表示しない。関東・関西を問わず本人の実績のみを表示。
   const totalLabel = `自分 ${formatDuration(total)}`;
   chart.innerHTML = `<div class="task-chart-total" style="font-size:14px;white-space:nowrap" title="自分の直近7日間のタスク時間（関東・関西合算）">${totalLabel}</div><div class="task-chart-bars">${bars}</div>`;
 }
@@ -9611,7 +9649,7 @@ async function loadClientStaffStatus() {
     note.classList.add('is-warning');
   }
 }
-// v78: 支部員タスク状況の緑色の選択ボタンには名字だけを表示する。
+// 支部員タスク状況の緑色の選択ボタンには名字だけを表示する。
 // 統計の参照・選択・本人識別はこれまでどおりemailと名簿フルネームで行う。
 function clientStaffFamilyName(person) {
   const explicit=String(person?.family_name||person?.last_name||person?.surname||'').trim();
@@ -9630,7 +9668,7 @@ function clientStaffFamilyName(person) {
   return chars.length<=2?raw:chars.slice(0,2).join('');
 }
 
-// v93: Activity report archive editor. This is a standalone popup outside the
+// Activity report archive editor. This is a standalone popup outside the
 // scaled Figma canvas so Edge, mobile and tablet clicks land correctly.
 const activityHistoryState={month:'',day:'',busy:false};
 const ACTIVITY_HISTORY_KEYS=['student_voice','student_call','student_connected','student_won',
@@ -10531,7 +10569,7 @@ function deleteCurrentPostCard() {
 
 
 
-// v44: 投函済み依頼の編集。サーバーは依頼者メールかデベロッパー権限を再検証する。
+// 投函済み依頼の編集。サーバーは依頼者メールかデベロッパー権限を再検証する。
 function managedRequestKey(row) {
   return [String(row.requester_email||'').toLowerCase(),row.created_at||'',
     row.content||'',row.deadline||'',row.target_link||''].map(x=>JSON.stringify(x)).join('|');
@@ -10833,6 +10871,7 @@ async function portalFetch(path, options = {}) {
 
   const init = {
     method: options.method || "GET",
+    cache: "no-store",
     headers: {
       Authorization: `Bearer ${token}`,
       ...(options.body
@@ -10862,8 +10901,8 @@ async function portalFetch(path, options = {}) {
   return data;
 }
 
-// v63: 毎朝@all・日曜未登録者メンションの案内を追加（LINE連携UI機能はv62と同一）。
-// v62: LINE通知先管理・LINE Loginでの本人連携。
+// 毎朝@all・日曜未登録者メンションの案内を追加（LINE連携UI機能はv62と同一）。
+// LINE通知先管理・LINE Loginでの本人連携。
 async function openLineSettings(){
   document.getElementById('lineSettingsOverlay').hidden=false;
   await refreshLineSettings();
@@ -10979,7 +11018,7 @@ async function saveLineGroup(){
 }
 
 
-// v94: Manual matching directory. Use DOM textContent to prevent XSS from LINE names.
+// Manual matching directory. Use DOM textContent to prevent XSS from LINE names.
 let lineManualDirectory=null;
 async function refreshLineManualDirectory(){
  const status=document.getElementById('lineManualStatus');
@@ -11099,7 +11138,7 @@ async function activityMailAuthorizeSender(){
   window.location.assign(link);
  }catch(e){showToast('Gmail権限の許可を開始できません：'+e.message);btn.disabled=false;}
 }
-// v92: Safe, administrator-only one-time activity report delivery tests.
+// Safe, administrator-only one-time activity report delivery tests.
 async function activityManualShowPreview(){
  const target=document.getElementById('activityManualResult');
  const btn=document.getElementById('activityManualPreview');
@@ -11129,7 +11168,7 @@ async function activityManualSendTest(channel){
  }catch(e){target.textContent='テスト送信失敗：'+e.message;showToast(e.message);}
  finally{btn.disabled=false;}
 }
-// v65: 管理者用接続診断・Cronを待たない送信テスト。
+// 管理者用接続診断・Cronを待たない送信テスト。
 async function diagnoseLineConnection(){
   const box=document.getElementById('lineDiagnosisResult'),button=document.getElementById('lineRunDiagnosis');
   button.disabled=true;box.textContent='診断中…';
@@ -11178,9 +11217,7 @@ async function sendLineTodayNow(){
 async function loadPortalProfile() {
   try {
     const data = await portalFetch("/api/me");
-    if(data.user?.email && String(data.user.email).toLowerCase()===userIdentity()){
-      state.user={...state.user,...data.user};fillUserInfo();
-    }
+    applyPortalIdentity(data.user);
     state.isDeveloper = Boolean(data.developer);
     state.isRepresentative = Boolean(data.representative);
     state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
@@ -11223,8 +11260,6 @@ async function loadRoster(includeDisabled = false) {
     state.roster = Array.isArray(data.roster)
       ? data.roster
       : [];
-    const own=state.roster.find(r=>String(r.email||'').toLowerCase()===userIdentity()&&Number(r.enabled)!==0);
-    if(own?.name&&state.user&&state.user.name!==own.name){state.user={...state.user,name:own.name};fillUserInfo();}
 
     renderDestinationRosterOptions();
     renderMeetingAudienceChoices();
@@ -11243,7 +11278,7 @@ async function loadRoster(includeDisabled = false) {
 
 // Figmaの「関東・関西名簿」3列と、「要望」空枠を切り替える。
 function switchFigmaHpTab(tab) {
-  // v36: developer sees requests received; representative sees a request submission screen.
+  // developer sees requests received; representative sees a request submission screen.
   if (tab === 'requests' && !state.isDeveloper && state.isRepresentative) {
     showScreen('hp-request');
     return;
@@ -11358,7 +11393,7 @@ async function saveFigmaRosterRow() {
     return;
   }
   try {
-    await portalFetch('/api/roster/save', {
+    const saved=await portalFetch('/api/roster/save', {
       method: 'POST', body: {id,name,email,group_name,role,enabled:Number(old.enabled)!==0,
         ...privilegedChanges}
     });
@@ -11366,8 +11401,8 @@ async function saveFigmaRosterRow() {
     await loadRoster(true);
     // 直近の所属先を反映。現在表示中の地域は手動選択を維持。
     if (String(email).toLowerCase() === userIdentity()) {
-      state.user={...state.user,name};fillUserInfo();
-      clientSheetFetchedAt=0;void loadClientCompanies(true,true);
+      if(saved.member?.name)applyPortalIdentity({email: saved.member.email,name:saved.member.name,name_source:"roster"});
+      await refreshPortalIdentity(true);
       state.preferredRegion = group_name === '関西' ? 'kansai' : group_name === '関東' ? 'kanto' : null;
     }
     showToast('名簿を更新しました');
@@ -11557,6 +11592,7 @@ async function saveRosterRow(id) {
     });
 
     await loadRoster(true);
+    await refreshPortalIdentity(true);
     showToast("名簿を更新しました");
   } catch (error) {
     showToast(error.message || "名簿を更新できませんでした");
@@ -12154,7 +12190,7 @@ function schedulePlanDatetimeRange() {
   return { date, startsAt, endsAt, durationMinutes: (endsAt - startsAt) / 60000 };
 }
 
-// v61: 終了時刻 -> 所要時間（時・分）と、所要時間 -> 終了時刻の双方向連動。
+// 終了時刻 -> 所要時間（時・分）と、所要時間 -> 終了時刻の双方向連動。
 // どちらも同じFigmaの一行に収め、元の登録APIへは計算後の開始・終了日時を送信する。
 function updateSchedulePlanDuration() {
   const hourInput = document.getElementById("planDurationHour");
@@ -12387,7 +12423,7 @@ async function loadScheduleReview() {
     const data = await portalFetch(`/api/calendar/plans?${params.toString()}`);
     // 週や地域を素早く切り替えた場合、古いレスポンスで上書きしない。
     if (requestId !== state.calendar.reviewLoadSeq || state.region !== region) return;
-    // v50: RP関連予定はD1/シートから削除せず、予定確認だけから除外。
+    // RP関連予定はD1/シートから削除せず、予定確認だけから除外。
     // 元データはRP調整（週間表）の候補として保持される。
     state.calendar.reviewPlans = (Array.isArray(data.plans) ? data.plans : []).filter(plan =>
       !plan.rp_manual_id && !/(?:RP|ロープレ)/i.test([plan.title,plan.task_type,plan.memo].filter(Boolean).join(' '))
@@ -12397,7 +12433,7 @@ async function loadScheduleReview() {
     if(note){const s=data.sheetSync||{};note.className='review-sheet-status'+(s.ok===false?' is-warning':'');
       note.textContent=s.ok===false?'スプシの取得に失敗：'+(s.error||'権限を確認してください'):
         'スプシ照合：追加 '+(s.added||0)+'件・更新 '+(s.updated||0)+'件・削除 '+(s.deleted||0)+'件・行移動 '+(s.relinked||0)+'件'+(s.skipped?'（確認待ち '+s.skipped+'件）':'');}
-    // v50: 確定済みRPはRP調整へ集約。予定確認には再掲しない。
+    // 確定済みRPはRP調整へ集約。予定確認には再掲しない。
     document.getElementById('reviewMyRpAssignments').textContent='';
     renderScheduleReviewEvents(range);
   } catch (error) {
@@ -12616,12 +12652,11 @@ function renderScheduleReviewEvents(range) {
       ((endMinutes - startMinutes) / 60) * 56
     );
 
-    const displayName =
-      plan.user_name ||
-      plan.user_email ||
-      "";
-    const isMine = String(plan.user_email || "").toLowerCase() ===
-      String(state.user?.email || "").toLowerCase();
+    const isMine = String(plan.user_email || "").trim().toLowerCase() ===
+      String(state.user?.email || "").trim().toLowerCase();
+    const unlinked = String(plan.user_email || '').startsWith('sheet:unknown:');
+    const displayName = unlinked ? `未紐付け：${plan.user_name || plan.sheet_person_name || '氏名不明'}` :
+      (plan.user_name || (isMine ? state.user?.name : '') || plan.user_email || "");
     const ownAttrs=isMine
       ? ` data-own-plan-id="${Number(plan.id)}" role="button" tabindex="0" aria-label="${escapeHtml(`${displayName} の予定を編集`)}"` : '';
 
@@ -12647,7 +12682,7 @@ function renderScheduleReviewEvents(range) {
 }
 
 
-// v42: 所有者以外の予定はクリック不可。編集権限はWorker側でも検査。
+// 所有者以外の予定はクリック不可。編集権限はWorker側でも検査。
 function closeReviewPlanEdit() {
   const overlay=document.getElementById("scheduleReviewEditOverlay");
   overlay.hidden=true;
@@ -14115,7 +14150,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
 
-// v48: RP configuration in representative view and date-candidate adjustment in schedule view.
+// RP configuration in representative view and date-candidate adjustment in schedule view.
 let rpV48Programs=[], rpV48Roster=[], rpV48Candidates=[], rpV48ConfigEditId=0, rpV48LastRegion='';
 function rpV48Manager(){return Boolean(state.isDeveloper||state.isRepresentative)}
 function rpV48ActiveProgram(){return rpV48Programs.find(p=>String(p.id)===document.getElementById('rpAdjustProgram').value)}
@@ -14230,7 +14265,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // 一括確定は廃止。代表の手動承認のみ有効。
 });
 
-// v47: 03B企業管理 B列が企業名（A列はNo）、E列が営業フェーズ。
+// 03B企業管理 B列が企業名（A列はNo）、E列が営業フェーズ。
 // 編集は表示中の地域ではなく、名簿で確認したログイン者の所属地域に基づく。
 function clientBusinessRegionLabel(){return state.region==='kansai'?'関西':'関東';}
 async function loadClientBusiness(type){
@@ -14334,7 +14369,7 @@ async function setOfficeExpenseReviewed(tab,row,reviewed){
 }
 
   
-// v50: RP-specific Figma weekly calendar and approval-based matching.
+// RP-specific Figma weekly calendar and approval-based matching.
 // The underlying calendar_task_plans and spreadsheet rows are never deleted.
 let rpWeekAnchorDate = '', rpWeekLoadSequence = 0, rpWeekAssignments = [], rpWeekCandidatePlans = [];
 let rpV50EditingProgramId = 0, rpV50SuggestedMatches = [], rpV50MatchLoadSequence = 0;
@@ -14505,7 +14540,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 </script>
 
-<!-- v54: RP時間登録 / Figma 172:52. Source-of-truth is Worker D1. -->
+<!-- RP時間登録 / Figma 172:52. Source-of-truth is Worker D1. -->
 <script>
 (function(){
   'use strict';
@@ -14590,7 +14625,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
 <script>
-// v66: reflect edits/deletes made in Google Sheets even while the review page remains open.
+// reflect edits/deletes made in Google Sheets even while the review page remains open.
 window.addEventListener('DOMContentLoaded',()=>{
   window.setInterval(()=>{
     if(document.visibilityState==='visible' && typeof state!=='undefined' &&
@@ -14602,7 +14637,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
 
-<!-- v93: Day-by-day editor for only the currently signed-in member. -->
+<!-- Day-by-day editor for only the currently signed-in member. -->
 <div id="activityHistoryOverlay" class="activity-history-overlay" hidden role="presentation">
  <section class="activity-history-dialog" role="dialog" aria-modal="true" aria-labelledby="activityHistoryTitle" tabindex="-1">
   <div class="activity-history-head">
@@ -14663,7 +14698,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  </section>
 </div>
 
-<!-- v79: Yesterday's activity, shown only at first signed-in visit each day. -->
+<!-- Yesterday's activity, shown only at first signed-in visit each day. -->
 <div id="dailyActivityOverlay" class="daily-activity-overlay" hidden role="presentation">
   <section class="daily-activity-dialog" role="dialog" aria-modal="true" aria-labelledby="dailyActivityTitle">
     <h2 id="dailyActivityTitle">昨日の行動量</h2>
@@ -14678,7 +14713,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 </div>
 
 <script>
-// v90: Shared fixed Gmail sender, signed-in user CC, and native email lookup.
+// Shared fixed Gmail sender, signed-in user CC, and native email lookup.
 const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',saved:false,dirty:false,verifyStep:0,
   sender:'',sendReady:false,signatureReady:false,signaturePrompted:false,sent:null,preview:null,busy:false,draftReady:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
 const clientMailRecipients=new Map(); // page-memory only; never store raw recipient in localStorage/D1 drafts
@@ -14727,7 +14762,7 @@ function clientMailRenderButtons(){
  for(const id of clientMailIds)clientMailEl(id).disabled=clientMailState.busy||!clientMailState.row||!clientMailState.draftReady;
  clientMailEl('clientMailSignatureSettings').disabled=clientMailState.busy;
 }
-// v104: follow sheet order, wrapping only when no later eligible company remains.
+// follow sheet order, wrapping only when no later eligible company remains.
 function clientMailNextRecord(rows,afterRow){
  const ordered=rows.filter(x=>Number(x.row)!==Number(afterRow)).slice().sort((a,b)=>Number(a.row)-Number(b.row));
  return ordered.find(x=>Number(x.row)>Number(afterRow))||ordered[0];
@@ -15022,7 +15057,7 @@ async function clientMailOpenSignature(){
  save.disabled=true;status.textContent='署名情報を取得中…';dlg.showModal();
  try{
   const data=await portalFetch('/api/client/mail/signature-profile'),p=data.profile;
-  for(const [id,key] of [['clientSignatureName','name'],['clientSignatureEmail','signature_email'],['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureGrade','grade'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])clientMailEl(id).value=p[key]||'';
+  for(const [id,key] of [['clientSignatureName','name'],['clientSignatureHiragana','hiragana'],['clientSignatureEmail','signature_email'],['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureGrade','grade'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])clientMailEl(id).value=p[key]||'';
   clientMailEl('clientSignatureEmail').value='companytokyo@dot-jp.or.jp';
   clientMailEl('clientSignatureDepartment').disabled=Boolean(p.department_locked);
   clientMailState.signatureReady=Boolean(data.ready);clientMailEl('clientMailSignature').value=data.signature||'';
@@ -15034,9 +15069,10 @@ async function clientMailSaveSignature(event){
  const dlg=clientMailEl('clientMailSignatureDialog'),save=clientMailEl('clientSignatureSave'),status=clientMailEl('clientMailSignatureProfileStatus');
  if(save.disabled)return;save.disabled=true;status.textContent='保存中…';
  try{
-  const body={};for(const [id,key] of [['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureGrade','grade'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])body[key]=clientMailEl(id).value;
+  const body={};for(const [id,key] of [['clientSignatureHiragana','hiragana'],['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureGrade','grade'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])body[key]=clientMailEl(id).value;
   const data=await portalFetch('/api/client/mail/signature-profile',{method:'POST',body});
   if(!data.ready)throw new Error('名簿の氏名などを確認してください。');
+  inquiryProfile=data.profile;renderInquiryIdentity();
   clientMailState.signatureReady=true;clientMailState.preview=null;clientMailEl('clientMailSignature').value=data.signature;
   // Do not overwrite existing body edits; fill only the initial university placeholder.
   const editor=clientMailEl('clientMailBody');
