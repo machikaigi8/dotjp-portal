@@ -6077,7 +6077,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
 
 
-/* v84 — Figma 196:955 / 196:1057 mail composer. 1440 x 1024 canvas. */
+/* Mail composer layout. */
 .screen-client-mail,.screen-client-mail-preview{background:#f2f2ff;}
 .screen-client-mail .client-tabs{row-gap:51px;}
 .screen-client-mail .client-mail-panel{position:absolute;left:70px;top:331px;width:1300px;height:521px;box-sizing:border-box;background:#fff;z-index:1;margin:0;}
@@ -6118,6 +6118,9 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-mail .client-mail-signature textarea{height:105px;min-height:105px;resize:none;font:400 15px/1.19 Inter,'Noto Sans JP',sans-serif;white-space:pre-wrap;}
 .screen-client-mail .client-mail-actions{position:absolute;left:686px;top:446px;width:600px;display:flex;justify-content:space-between;align-items:center;}
 .screen-client-mail .client-mail-actions button{width:180px;height:60px;background:#ffd4d5;color:#111;border:0;border-radius:0;font:500 30px Inter,'Noto Sans JP',sans-serif;cursor:pointer;}
+.screen-client-mail #clientMailSave{font-size:21px;}
+.screen-client-mail #clientMailBodyLabel{font-size:16px;}
+.screen-client-mail .client-mail-actions button[hidden]{display:none;}
 .screen-client-mail .client-mail-actions button:disabled{opacity:.4;cursor:not-allowed;}
 .screen-client-mail .client-mail-sync{position:absolute;left:50px;top:457px;font-size:15px;padding:8px 12px;background:#fff0db;border:1px solid #e4a769;cursor:pointer;max-width:610px;}
 .screen-client-mail .client-mail-status{position:absolute;left:50px;top:507px;font-size:14px;margin:0;color:#42516e;max-width:600px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -6528,19 +6531,19 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <a id="clientMailVerify" class="client-mail-verify"
                href="https://www.google.com/search?q=%E4%BC%81%E6%A5%AD+%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%E5%85%88+%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9"
                target="_blank" rel="noopener noreferrer">メールを検索</a>
-            <label class="client-mail-field client-mail-cc" for="clientMailCc"><span>CC（ログイン中の本人）</span>
-              <textarea id="clientMailCc" rows="2" readonly aria-readonly="true" title="CCはログイン中の本人のメールアドレスに自動設定されます"></textarea></label>
-            <label class="client-mail-field client-mail-bcc" for="clientMailBcc"><span>BCC</span>
+            <label class="client-mail-field client-mail-cc" for="clientMailCc"><span>CC（固定）</span>
+              <textarea id="clientMailCc" rows="2" readonly aria-readonly="true" title="CCは takaaki_souda@dot-jp.or.jp に固定されます">takaaki_souda@dot-jp.or.jp</textarea></label>
+            <label class="client-mail-field client-mail-bcc" for="clientMailBcc"><span>BCC（全員共通）</span>
               <textarea id="clientMailBcc" placeholder="なし（複数は改行区切り）" rows="2"></textarea></label>
-            <label class="client-mail-field client-mail-subject" for="clientMailSubject"><span>件名</span>
+            <label class="client-mail-field client-mail-subject" for="clientMailSubject"><span>件名（全員共通）</span>
               <textarea id="clientMailSubject" rows="2" required></textarea></label>
-            <label class="client-mail-field client-mail-body" for="clientMailBody"><span>本文</span>
+            <label class="client-mail-field client-mail-body" for="clientMailBody"><span id="clientMailBodyLabel">本文（全員共通）</span>
               <textarea id="clientMailBody" spellcheck="false" aria-label="メール本文"></textarea></label>
             <div class="client-mail-field client-mail-signature"><span>署名（送信時に自動付与）</span>
               <textarea id="clientMailSignature" readonly aria-readonly="true" rows="5" placeholder="署名設定から本人の情報を登録してください" aria-label="署名（送信時に自動付与）" title="本人の登録情報から署名を自動生成し、送信時に本文末尾へ付与します。"></textarea>
-              <button id="clientMailSignatureSettings" type="button">署名設定</button></div>
+              <button id="clientMailSignatureSettings" type="button">大学名・署名設定</button></div>
             <div class="client-mail-actions">
-              <button id="clientMailSave" type="button">保存</button>
+              <button id="clientMailSave" type="button">共通設定を保存</button>
               <button id="clientMailConfirm" type="button" disabled>確認</button>
               <button id="clientMailSkip" type="button">スキップ</button>
             </div>
@@ -6550,7 +6553,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <dialog id="clientMailSignatureDialog" aria-labelledby="clientMailSignatureTitle">
             <form id="clientMailSignatureProfileForm" autocomplete="off">
               <h2 id="clientMailSignatureTitle">企業メールの署名設定</h2>
-              <p style="font-size:14px;margin:0 0 8px">一度登録すると今後の企業メールに自動で付きます。氏名・部署は名簿情報を使用します。署名のMail欄は共通アドレス固定、CCはログイン中の本人です。</p>
+              <p style="font-size:14px;margin:0 0 8px">一度登録すると今後の企業メールに自動で付きます。氏名・部署は名簿情報を使用します。大学名は本文にも自動反映されます。署名のMail欄は共通アドレス固定、CCは takaaki_souda@dot-jp.or.jp に固定されています。</p>
               <label>氏名<input id="clientSignatureName" readonly></label>
               <label>ふりがな（任意・お問い合わせフォーム用）<input id="clientSignatureHiragana" maxlength="80" placeholder="やまだたろう"></label>
               <label>署名のメールアドレス（固定）<input id="clientSignatureEmail" readonly value="companytokyo@dot-jp.or.jp"></label>
@@ -14719,9 +14722,9 @@ window.addEventListener('DOMContentLoaded',()=>{
 </div>
 
 <script>
-// Shared fixed Gmail sender, signed-in user CC, and native email lookup.
+// Shared Gmail sender, fixed CC, and native email lookup.
 const clientMailState={rows:[],row:0,canEdit:false,template:'',name:'',saved:false,dirty:false,verifyStep:0,
-  sender:'',sendReady:false,signatureReady:false,signaturePrompted:false,sent:null,preview:null,busy:false,draftReady:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
+  sender:'',sharedVersion:'',settingsReady:false,sendReady:false,signatureReady:false,signaturePrompted:false,sent:null,preview:null,busy:false,draftReady:false,addressSearchId:0,companyWebsite:'',companyContactUrl:''};
 const clientMailRecipients=new Map(); // page-memory only; never store raw recipient in localStorage/D1 drafts
 let clientMailRecipientOwner='';
 function clientMailRecipientKey(row=clientMailState.row,name=clientMailState.name){return JSON.stringify([row,name]);}
@@ -14762,10 +14765,13 @@ function clientMailRenderButtons(){
  // Do not disable the search link due to saving/loading/verification state.
  clientMailEl('clientMailConfirm').disabled=clientMailState.busy||!saved||dirty||step!==2||!!clientMailState.sent;
  clientMailEl('clientMailSyncO').hidden=clientMailState.sent?.status!=='sent_unmarked';
- clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.row||!clientMailState.draftReady||!!clientMailState.sent;
+ clientMailEl('clientMailSave').hidden=!clientMailState.canEdit;
+ clientMailEl('clientMailSave').disabled=clientMailState.busy||!clientMailState.canEdit||!clientMailState.settingsReady;
  clientMailEl('clientMailCompany').disabled=clientMailState.busy;
  clientMailEl('clientMailSkip').disabled=clientMailState.busy||!clientMailState.row;
- for(const id of clientMailIds)clientMailEl(id).disabled=clientMailState.busy||!clientMailState.row||!clientMailState.draftReady;
+ clientMailEl('clientMailTo').disabled=clientMailState.busy||!clientMailState.row||!clientMailState.draftReady;
+ for(const id of ['clientMailBcc','clientMailSubject','clientMailBody']){const el=clientMailEl(id);el.disabled=clientMailState.busy||!clientMailState.settingsReady;el.readOnly=!clientMailState.canEdit;}
+ clientMailEl('clientMailBodyLabel').textContent=clientMailState.canEdit?'本文（共通：{{company}} 企業名 / {{name}} 氏名 / {{university}} 大学名）':'本文（全員共通・編集不可）';
  clientMailEl('clientMailSignatureSettings').disabled=clientMailState.busy;
 }
 // follow sheet order, wrapping only when no later eligible company remains.
@@ -14807,7 +14813,7 @@ async function clientMailApplyCompletion(completion){
 async function clientMailOpen({afterRow=0,priorCompletion=null}={}){
  if(clientMailState.busy)return;
  clientMailState.busy=true;clientMailRenderButtons();
- const owner=String(state.user?.email||'').toLowerCase();if(owner!==clientMailRecipientOwner){clientMailRecipients.clear();clientMailRecipientOwner=owner;for(const id of [...clientMailIds,'clientMailSignature'])clientMailEl(id).value='';}
+ const owner=String(state.user?.email||'').toLowerCase();if(owner!==clientMailRecipientOwner){clientMailRecipients.clear();clientMailRecipientOwner=owner;clientMailState.settingsReady=false;clientMailState.sharedVersion='';for(const id of [...clientMailIds,'clientMailSignature'])clientMailEl(id).value='';}
  clientMailStatus('担当者名を照合中…（本人の担当企業、M・N・OすべてFALSE）');
  try{
   const response=await portalFetch('/api/client/mail/companies');
@@ -14825,7 +14831,11 @@ async function clientMailOpen({afterRow=0,priorCompletion=null}={}){
    clientMailState.companyWebsite='';clientMailState.companyContactUrl='';
    // Only the recipient belongs to the finished company. Keep the last text visible.
    clientMailEl('clientMailTo').value='';
-   clientMailEl('clientMailCc').value=owner;
+   clientMailEl('clientMailCc').value='takaaki_souda@dot-jp.or.jp';
+   const settings=await portalFetch('/api/client/mail/settings');
+   clientMailApplyShared(settings);
+   clientMailEl('clientMailSignature').value=settings.signature||'';
+   clientMailState.signatureReady=Boolean(settings.signature_ready);
    const completion=await portalFetch('/api/client/mail/complete-empty',{method:'POST',body:clientMailCompletionContext()});
    if(completion.remaining>0){clientMailStatus('対象企業が更新されました。メール画面を開き直してください。');return;}
    await clientMailApplyCompletion(completion);
@@ -14834,15 +14844,6 @@ async function clientMailOpen({afterRow=0,priorCompletion=null}={}){
      completion.confirmed=[...new Set([...(completion.confirmed||[]),...(priorCompletion.confirmed||[])])];
    }
    if(completion.completed?.length||completion.confirmed?.length)showToast('企業対応タスクが完了しました。');
-   // Fresh visits with zero companies still show saved settings instead of empty fields.
-   try{
-    const settings=await portalFetch('/api/client/mail/settings');
-    if(!clientMailEl('clientMailBody').value){
-      for(const [id,val] of [['clientMailBcc',settings.bcc],['clientMailSubject',settings.subject],['clientMailBody',settings.body]])clientMailEl(id).value=val??'';
-    }
-    clientMailEl('clientMailSignature').value=settings.signature||clientMailEl('clientMailSignature').value;
-    clientMailState.signatureReady=Boolean(settings.signature_ready);
-   }catch(e){clientMailStatus('対象企業なし。保存済み設定の取得に失敗：'+e.message);return;}
    const gmail=await portalFetch('/api/client/mail/gmail/status');
    const setup=clientMailEl('clientMailGmailConnect');
    setup.hidden=!Boolean(gmail.can_connect);
@@ -14878,15 +14879,13 @@ async function clientMailChoose(row){
   clientMailState.sender=data.sender;clientMailState.sendReady=Boolean(data.send_ready);clientMailState.signatureReady=Boolean(data.signature_ready);
   clientMailState.sent=data.sent?.status==='failed'?null:(data.sent||null);
   clientMailEl('clientMailFrom').value='companytokyo@dot-jp.or.jp';
-  // CC is the currently authenticated portal user, not a draft or a manually entered address.
-  clientMailEl('clientMailCc').value=String(state.user?.email||data.draft.cc||'').trim().toLowerCase();
+  // CC is fixed server-side.
+  clientMailEl('clientMailCc').value='takaaki_souda@dot-jp.or.jp';
   clientMailEl('clientMailCc').readOnly=true;
   // The recipient is never loaded from a saved draft; only transient page memory is used.
   clientMailRememberRecipient();
-  for(const [id,val] of [['clientMailBcc',data.draft.bcc],
-    ['clientMailSubject',data.draft.subject],['clientMailBody',data.draft.body],['clientMailSignature',data.draft.signature]])clientMailEl(id).value=val||'';
-  for(const id of ['clientMailBcc','clientMailSubject'])clientMailEl(id).readOnly=!clientMailState.canEdit;
-  clientMailEl('clientMailBody').readOnly=false;
+  clientMailApplyShared({...data.draft,can_edit:data.can_edit});
+  clientMailEl('clientMailSignature').value=data.draft.signature||'';
   // The one-time setup button disappears once the fixed shared account is linked.
   const gmailSetup=clientMailEl('clientMailGmailConnect');
   gmailSetup.hidden=!Boolean(data.gmail?.can_connect);
@@ -14917,7 +14916,8 @@ async function clientMailAutoRecipient(row,requestId){
  }catch(e){if(clientMailState.addressSearchId===requestId)clientMailStatus('サイトから取得できませんでした。宛先は手動入力して確認してください。');}
 }
 function clientMailTouch(event){
- if(!clientMailState.row)return;
+ if(event.target?.id==='clientMailTo'&&!clientMailState.row)return;
+ if(event.target?.id!=='clientMailTo'&&!clientMailState.canEdit)return;
  const isRecipient=event.target?.id==='clientMailTo';
  clientMailState.preview=null;
  if(isRecipient){
@@ -14929,26 +14929,38 @@ function clientMailTouch(event){
     '宛先を空にしました。検索または手動入力してください。');
  }else{
   clientMailState.dirty=true;clientMailState.saved=false;
-  clientMailStatus(event.target?.id==='clientMailBody'?'大学名を本文内で直接修正してください。保存は本文・件名などだけが対象です。':
-    '内容が変更されました。保存すると次の企業にも引き継がれます。宛先確認は維持されます。');
+  clientMailStatus('共通設定が変更されました。保存すると全員に反映されます。宛先確認は維持されます。');
  }
  clientMailRenderButtons();
 }
+function clientMailApplyShared(data){
+ clientMailState.canEdit=Boolean(data.can_edit);clientMailState.sharedVersion=data.updated_at||'';
+ clientMailState.template=data.body_template||'';clientMailState.settingsReady=true;
+ clientMailEl('clientMailBcc').value=data.bcc??'';clientMailEl('clientMailSubject').value=data.subject??'';
+ const rendered=data.university!==undefined?String(data.body_template||'').replace(/{{(company|name|university)}}/g,(_,key)=>({company:clientMailState.name||'〇〇株式会社',name:data.name||state.user?.name||'',university:data.university||'〇〇大学'})[key]):(data.body||'');
+ clientMailEl('clientMailBody').value=clientMailState.canEdit?(data.body_template||''):rendered;
+ clientMailState.saved=Boolean(clientMailState.row);clientMailState.dirty=false;clientMailState.preview=null;
+}
+async function clientMailRefreshShared(){
+ if(state.currentScreen!=='client-mail'||clientMailState.busy||clientMailState.dirty||!clientMailState.settingsReady)return;
+ const owner=String(state.user?.email||'').toLowerCase(),row=clientMailState.row;
+ try{
+  const data=await portalFetch('/api/client/mail/settings');
+  if(state.currentScreen!=='client-mail'||clientMailState.busy||clientMailState.dirty||row!==clientMailState.row||owner!==String(state.user?.email||'').toLowerCase())return;
+  const settings=data;
+  if(settings.updated_at!==clientMailState.sharedVersion||Boolean(settings.can_edit)!==clientMailState.canEdit){
+    clientMailApplyShared(settings);clientMailStatus('共通メール設定が更新されました。宛先確認は維持されています。');clientMailRenderButtons();
+  }
+ }catch(e){console.warn('shared mail settings refresh',e);}
+}
 async function clientMailSave(){
- if(clientMailState.busy||!clientMailState.row||!clientMailState.draftReady)return false;
+ if(clientMailState.busy||!clientMailState.canEdit||!clientMailState.settingsReady)return false;
  clientMailState.busy=true;clientMailRenderButtons();
  try{
-  // The address field is NOT part of the saved email draft.
-  const result=await portalFetch('/api/client/mail/save',{method:'POST',body:{row:clientMailState.row,
-    // CC is generated server-side from the login session and is never editable.
-    bcc:clientMailEl('clientMailBcc').value,
-    subject:clientMailEl('clientMailSubject').value,body:clientMailEl('clientMailBody').value}});
-  clientMailState.saved=true;clientMailState.dirty=false;
-  if(clientMailState.verifyStep===2&&Number(result.verify_step)!==2)clientMailState.verifyStep=clientMailEl('clientMailTo').value.trim()?1:0;
-  clientMailRememberRecipient();
-  clientMailStatus(clientMailState.verifyStep===2?'設定を保存しました。宛先は確認済みです。そのまま「確認」へ進めます。':
-    '設定を保存しました。次の企業にも引き継がれます。宛先は保存していません。');
-  return true;
+  const result=await portalFetch('/api/client/mail/settings',{method:'POST',body:{updated_at:clientMailState.sharedVersion,
+    bcc:clientMailEl('clientMailBcc').value,subject:clientMailEl('clientMailSubject').value,body_template:clientMailEl('clientMailBody').value}});
+  clientMailApplyShared(result);clientMailRememberRecipient();
+  clientMailStatus('共通設定を保存しました。全員の企業メールに反映されます。宛先確認は維持されます。');return true;
  }catch(e){clientMailStatus(e.message||'保存に失敗しました。');return false;}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
@@ -15039,7 +15051,7 @@ async function clientMailSend(){
   clientMailStatus(result.warning||(result.sheet_marked?'Gmail送信成功。O列をTRUEにしました。':'送信済み、O列を再同期してください。'));
   if(result.sheet_marked){await clientMailApplyCompletion(result.completion);clientMailState.busy=false;await clientMailOpen({afterRow:data.row,priorCompletion:result.completion});showToast('Gmail送信成功。O列をTRUEにしました。'+(result.completion?.confirmed?.length?' タスク完了。':''));}
   else showToast('メールは送信済みです。O列の再同期が必要です。');
- }catch(e){showScreen('client-mail');clientMailStatus(e.message);showToast(e.message);}
+ }catch(e){showScreen('client-mail');clientMailStatus(e.message);showToast(e.message);if(/確認後に変更/.test(e.message||'')){clientMailState.busy=false;await clientMailRefreshShared();}}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
 }
 async function clientMailSync(){
@@ -15082,7 +15094,7 @@ async function clientMailSaveSignature(event){
   clientMailState.signatureReady=true;clientMailState.preview=null;clientMailEl('clientMailSignature').value=data.signature;
   // Do not overwrite existing body edits; fill only the initial university placeholder.
   const editor=clientMailEl('clientMailBody');
-  if(clientMailState.row&&editor.value.includes('〇〇大学の')){editor.value=editor.value.replace('〇〇大学の',()=>data.profile.university+'の');clientMailTouch({target:editor});}
+  if(!clientMailState.canEdit&&clientMailState.template)editor.value=clientMailState.template.replace(/{{(company|name|university)}}/g,(_,key)=>({company:clientMailState.name||'〇〇株式会社',name:state.user?.name||'',university:data.profile.university||'〇〇大学'})[key]);
   dlg.close();clientMailStatus('本人の署名を保存しました。今後のメールに自動で付与されます。');clientMailRenderButtons();
  }catch(e){status.textContent=e.message||'署名を保存できませんでした。';}
  finally{save.disabled=false;}
@@ -15114,6 +15126,8 @@ window.addEventListener('DOMContentLoaded',()=>{
  clientMailEl('clientMailPreviewChange').addEventListener('click',()=>showScreen('client-mail'));
  clientMailEl('clientMailPreviewSend').addEventListener('click',()=>void clientMailSend());
  clientMailEl('clientMailGmailConnect').addEventListener('click',()=>void clientMailConnectGmail());
+ setInterval(()=>void clientMailRefreshShared(),30000);
+ window.addEventListener('focus',()=>void clientMailRefreshShared());
  const qs=new URLSearchParams(location.search);if(qs.has('gmail')){
   const info=qs.get('gmail')==='connected'?'companytokyo@dot-jp.or.jp の連携に成功しました。以後、送信元の変更はできません。':'Gmailの連携エラー：'+(qs.get('detail')||'設定を確認してください');
   setTimeout(()=>clientMailStatus(info),900);
