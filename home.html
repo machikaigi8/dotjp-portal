@@ -1,3 +1,4 @@
+<!-- v106: apply server mail task completion and expose reasons; retain all v105 mail settings. -->
 <!-- v105: preserve mail settings, complete verified empty mail queue, roster-first names. -->
 <!-- v104: advance to the next eligible company after a successful enterprise email send and sheet sync. -->
 <!-- v103: persistent personal email settings and confirmation retained until address change or successful send. -->
@@ -6175,7 +6176,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-mail #clientMailCc[readonly]{background:#f4f5f8;color:#26364c;}
 .screen-client-mail .client-mail-to{top:127px;}
 .screen-client-mail .client-mail-to input{font-size:18px;}
-.screen-client-mail .client-mail-status{font-size:14px;white-space:normal;}
+.screen-client-mail .client-mail-status{font-size:14px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35;}
 
 </style>
 <style>
@@ -14730,7 +14731,27 @@ async function clientMailFinishActiveTimer(completed){
  catch(e){console.warn('Mail task time sync postponed',e);showToast('作業時間は端末に保持しました。次回同期します。');}
  updateFinishButtonState();
 }
-async function clientMailOpen({afterRow=0}={}){
+function clientMailCompletionContext(){
+ const active=String(getActiveTaskId()||'');
+ return {region:state.region,active_id:active.startsWith('remote_')?Number(active.slice(7)):0};
+}
+function clientMailCompletionMessage(completion){
+ if(completion?.blocked)return ' 未確定・未同期のメールが'+Number(completion.blocked_count||0)+'件あります。'+(completion.blocked_companies?.length?'対象：'+completion.blocked_companies.join('、')+'。':'')+'タスクは未完了です。';
+ if(completion?.reason==='retry')return ' '+completion.error;
+ if(completion?.completed?.length||completion?.confirmed?.length)return ' 企業メール送信タスクを完了しました。';
+ if(completion?.reason==='no_matching_task')return ' 対応する未完了のメール送信依頼は見つかりませんでした。依頼の担当箇所を「企業メール送信」に設定すると自動完了の対象になります。';
+ return '';
+}
+async function clientMailApplyCompletion(completion){
+ const ids=[...new Set([...(completion?.completed||[]),...(completion?.confirmed||[])])];
+ if(!ids.length)return;
+ // Update the visible list immediately, even if the subsequent refresh fails.
+ const now=new Date().toISOString();
+ state.remoteTasks=state.remoteTasks.map(t=>ids.includes(Number(t.remoteId))?{...t,completedAt:t.completedAt||now}:t);
+ await clientMailFinishActiveTimer(ids);
+ await refreshRemoteTasks();refreshTaskUi();
+}
+async function clientMailOpen({afterRow=0,priorCompletion=null}={}){
  if(clientMailState.busy)return;
  clientMailState.busy=true;clientMailRenderButtons();
  const owner=String(state.user?.email||'').toLowerCase();if(owner!==clientMailRecipientOwner){clientMailRecipients.clear();clientMailRecipientOwner=owner;for(const id of [...clientMailIds,'clientMailSignature'])clientMailEl(id).value='';}
@@ -14752,10 +14773,14 @@ async function clientMailOpen({afterRow=0}={}){
    // Only the recipient belongs to the finished company. Keep the last text visible.
    clientMailEl('clientMailTo').value='';
    clientMailEl('clientMailCc').value=owner;
-   const active=String(getActiveTaskId()||'');
-   const completion=await portalFetch('/api/client/mail/complete-empty',{method:'POST',body:{region:state.region,active_id:active.startsWith('remote_')?Number(active.slice(7)):0}});
+   const completion=await portalFetch('/api/client/mail/complete-empty',{method:'POST',body:clientMailCompletionContext()});
    if(completion.remaining>0){clientMailStatus('対象企業が更新されました。メール画面を開き直してください。');return;}
-   if(completion.completed?.length){await clientMailFinishActiveTimer(completion.completed);await refreshRemoteTasks();refreshTaskUi();showToast('企業メール送信タスクが完了しました。');}
+   await clientMailApplyCompletion(completion);
+   if(priorCompletion?.completed?.length||priorCompletion?.confirmed?.length){
+     completion.completed=[...new Set([...(completion.completed||[]),...(priorCompletion.completed||[])])];
+     completion.confirmed=[...new Set([...(completion.confirmed||[]),...(priorCompletion.confirmed||[])])];
+   }
+   if(completion.completed?.length||completion.confirmed?.length)showToast('企業メール送信タスクが完了しました。');
    // Fresh visits with zero companies still show saved settings instead of empty fields.
    try{
     const settings=await portalFetch('/api/client/mail/settings');
@@ -14770,7 +14795,7 @@ async function clientMailOpen({afterRow=0}={}){
    setup.hidden=!Boolean(gmail.can_connect);
    setup.textContent='送信元を連携';
    setup.title='companytokyo@dot-jp.or.jp のGmail送信権限を許可';
-   clientMailStatus('送信対象の企業はありません。'+(completion.blocked?' 未同期・送信結果未確定のメールがあるため、タスクは未完了です。':completion.completed?.length?' 企業メール送信タスクを完了しました。':'')+' 件名・本文・署名は保持されています。'+(gmail.can_connect?' 共通Gmailの権限設定は可能です。':''));
+   clientMailStatus('送信対象の企業はありません。'+clientMailCompletionMessage(completion)+' 件名・本文・署名は保持されています。'+(gmail.can_connect?' 共通Gmailの権限設定は可能です。':''));
    clientMailRenderButtons();
   }
  }catch(e){clientMailStatus((afterRow?'送信済みですが次の企業を取得できませんでした。再送せず、メール画面を開き直してください。 ':'')+(e.message||'企業一覧を取得できませんでした。'));}
@@ -14952,14 +14977,14 @@ async function clientMailSend(){
  clientMailState.busy=true;clientMailEl('clientMailPreviewSend').disabled=true;
  try{
   // Explicitly pass the already-previewed address: it is not persisted in draft records.
-  const result=await portalFetch('/api/client/mail/send',{method:'POST',body:{row:data.row,recipient:data.recipient,preview_digest:data.preview_digest}});
+  const result=await portalFetch('/api/client/mail/send',{method:'POST',body:{row:data.row,recipient:data.recipient,preview_digest:data.preview_digest,...clientMailCompletionContext()}});
   if(result.sent!==true)throw new Error('送信結果を確認できません。送信済みを確認するまで再送しないでください。');
   ++clientMailState.addressSearchId;
   clientMailRecipients.delete(clientMailRecipientKey(data.row,data.company));
   clientMailState.verifyStep=0;clientMailState.preview=null;clientMailEl('clientMailTo').value='';
   showScreen('client-mail');clientMailState.sent={status:result.sheet_marked?'sent_marked':'sent_unmarked'};
   clientMailStatus(result.warning||(result.sheet_marked?'Gmail送信成功。O列をTRUEにしました。':'送信済み、O列を再同期してください。'));
-  if(result.sheet_marked){clientMailState.busy=false;await clientMailOpen({afterRow:data.row});showToast('Gmail送信成功。O列をTRUEにしました。');}
+  if(result.sheet_marked){await clientMailApplyCompletion(result.completion);clientMailState.busy=false;await clientMailOpen({afterRow:data.row,priorCompletion:result.completion});showToast('Gmail送信成功。O列をTRUEにしました。'+(result.completion?.confirmed?.length?' タスク完了。':''));}
   else showToast('メールは送信済みです。O列の再同期が必要です。');
  }catch(e){showScreen('client-mail');clientMailStatus(e.message);showToast(e.message);}
  finally{clientMailState.busy=false;clientMailRenderButtons();}
@@ -14967,9 +14992,9 @@ async function clientMailSend(){
 async function clientMailSync(){
  if(clientMailState.busy||!clientMailState.row)return;
  const row=clientMailState.row;clientMailState.busy=true;clientMailEl('clientMailSyncO').disabled=true;clientMailRenderButtons();
- try{await portalFetch('/api/client/mail/sync-sheet',{method:'POST',body:{row}});
+ try{const result=await portalFetch('/api/client/mail/sync-sheet',{method:'POST',body:{row,...clientMailCompletionContext()}});await clientMailApplyCompletion(result.completion);
    clientMailState.sent={status:'sent_marked'};
-   clientMailStatus('O列をTRUEに更新しました。');clientMailState.busy=false;await clientMailOpen({afterRow:row});}
+   clientMailStatus('O列をTRUEに更新しました。');clientMailState.busy=false;await clientMailOpen({afterRow:row,priorCompletion:result.completion});}
  catch(e){clientMailStatus(e.message);}
  finally{clientMailState.busy=false;clientMailEl('clientMailSyncO').disabled=false;clientMailRenderButtons();}
 }
