@@ -6163,6 +6163,30 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-mail .client-mail-to input{font-size:18px;}
 .screen-client-mail .client-mail-status{font-size:14px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35;}
 
+
+.screen-client-materials #clientMaterialsEmailScript { left:540px; }
+.screen-client-results {background:#f2f2ff;}
+.screen-client-results .client-tabs {row-gap:51px;}
+.client-results-panel {position:absolute;left:70px;top:332px;width:1300px;height:540px;box-sizing:border-box;background:#fff;padding:22px 30px;overflow:auto;}
+.client-results-heading {display:flex;align-items:center;gap:18px;margin-bottom:12px;}
+.client-results-heading h2 {margin:0;font-size:34px;font-weight:500;color:#111;}
+.client-results-heading span {font-size:20px;color:#555;flex:1;}
+.client-results-heading button,.client-results-settings button {border:0;background:#7577ff;color:white;padding:9px 22px;font:500 21px/1.3 Inter,'Noto Sans JP',sans-serif;cursor:pointer;}
+.client-results-columns {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}
+.client-results-card {border:2px solid #b9b9f4;min-width:0;background:#fff;}
+.client-results-card h3 {background:#d4d5ff;color:#111;text-align:center;font-size:30px;font-weight:500;margin:0;padding:12px 8px;}
+.client-results-card dl {padding:10px 16px;margin:0;display:grid;gap:12px;}
+.client-results-card dl div {border-bottom:1px solid #e0e0f0;padding:4px 0 10px;}
+.client-results-card dt {font-size:20px;color:#333;}
+.client-results-card dd {margin:5px 0 0;text-align:right;font:500 35px/1.2 Inter,'Noto Sans JP',sans-serif;color:#151550;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+.client-results-settings {display:flex;align-items:end;gap:20px;margin:16px 0 6px;flex-wrap:wrap;}
+.client-results-settings label {display:flex;flex-direction:column;gap:5px;font-size:19px;}
+.client-results-settings input,.client-results-settings select {font:400 20px Inter,'Noto Sans JP',sans-serif;padding:8px 12px;height:43px;box-sizing:border-box;border:1px solid #aaaacb;background:#fff;color:#222;}
+.client-results-settings input {width:125px;}
+.client-results-settings select {min-width:265px;}
+#clientResultsStatus {font-size:16px;line-height:1.4;color:#4e4e60;margin:8px 0 0;}
+.screen-client-results > [data-common-back] {position:absolute!important;left:70px!important;top:898px!important;width:140px!important;height:60px!important;background:#3080ff!important;color:#fff!important;font:400 40px/60px Inter,'Noto Sans JP',sans-serif!important;border:0!important;margin:0!important;padding:0!important;text-align:center!important;}
+
 </style>
 <style>
 
@@ -6522,11 +6546,45 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
             <button class="client-tab" type="button" data-route="client-line">LINE通知</button>
           </nav>
+          <button type="button" class="client-material-email client-material-results" data-route="client-results">実績一覧</button>
           <button type="button" id="clientMaterialsEmailScript" class="client-material-email">メールスクリプト</button>
         </section>
 
 
         <!-- Figma 196:955: クライアント／メールを送る（フォームを送るは無変更） -->
+        <section class="screen screen-client-results" data-screen="client-results" aria-label="実績一覧">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="client-tabs" aria-label="クライアントメニュー">
+            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
+            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
+            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
+            <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
+            <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
+            <button class="client-tab" type="button" data-route="client-line">LINE通知</button>
+          </nav>
+          <div class="client-results-panel">
+            <div class="client-results-heading"><h2>実績一覧</h2><span id="clientResultsWeek">東京企業支部</span><button type="button" id="clientResultsRefresh">更新</button></div>
+            <div class="client-results-columns">
+              <section class="client-results-card"><h3>アタック数</h3><dl>
+                <div><dt>アタック完了件数</dt><dd id="clientResultsAttack">—</dd></div>
+                <div><dt>目標件数</dt><dd id="clientResultsTarget">—</dd></div>
+                <div><dt>目標到達度</dt><dd id="clientResultsProgress">—</dd></div>
+              </dl></section>
+              <section class="client-results-card"><h3>アポ確</h3><dl>
+                <div><dt>アポ確定企業数</dt><dd id="clientResultsAppointments">—</dd></div>
+                <div><dt>アポ確定率</dt><dd id="clientResultsAppointmentRate">—</dd></div>
+              </dl></section>
+              <section class="client-results-card"><h3>獲得</h3><dl>
+                <div><dt>獲得企業数</dt><dd id="clientResultsWon">—</dd></div>
+                <div><dt>獲得率</dt><dd id="clientResultsWinRate">—</dd></div>
+                <div><dt>今週のアタック件数（1人あたり）</dt><dd id="clientResultsRequired">—</dd></div>
+              </dl></section>
+            </div>
+            <div class="client-results-settings"><label>人数<input id="clientResultsPeople" type="number" min="1" max="10000" step="1" placeholder="人数"></label><label>完了させたい週<select id="clientResultsDeadline"><option value="">選択してください</option></select></label><button id="clientResultsSave" type="button">保存</button><span id="clientResultsRemaining" aria-live="polite"></span></div>
+            <p id="clientResultsStatus" role="status">読み込み中…</p>
+          </div>
+        </section>
+
         <section class="screen screen-client-mail" data-screen="client-mail" aria-label="メールを送る">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="client-tabs" aria-label="クライアントメニュー">
@@ -6692,15 +6750,15 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="client-panel">
             <div class="client-sheet-toolbar"><h2>獲得企業一覧</h2><span id="clientWonRegion" class="client-region-pill">地域</span><input id="clientWonSearch" type="search" placeholder="企業名で検索" aria-label="獲得企業を検索"><button type="button" id="clientWonRefresh">更新</button></div>
             <p class="client-sheet-note" id="clientWonNote">受注企業の情報を読み込んでいます…</p>
-            <div class="client-sheet-table-scroll"><table class="client-sheet-table" aria-label="受注企業の表"><colgroup><col style="width:19%"><col style="width:17%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:12%"><col style="width:8%"></colgroup><thead><tr><th>企業名</th><th>事業内容（M）</th><th>求める人材像（N）</th><th>その他条件（O）</th><th>希望人数（P）</th><th>活動頻度（Q）</th><th>操作</th></tr></thead><tbody id="clientWonBody"><tr><td colspan="7">読み込み中…</td></tr></tbody></table></div>
+            <div class="client-sheet-table-scroll"><table class="client-sheet-table" aria-label="受注企業の表"><colgroup><col style="width:19%"><col style="width:17%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:12%"><col style="width:8%"></colgroup><thead><tr><th>企業名</th><th>事業内容</th><th>求める人材像</th><th>その他条件</th><th>希望人数</th><th>活動頻度</th><th>操作</th></tr></thead><tbody id="clientWonBody"><tr><td colspan="7">読み込み中…</td></tr></tbody></table></div>
             <div class="client-sheet-editor" id="clientWonEditor" hidden>
-              <h3 id="clientWonEditorTitle">受注企業の情報を編集</h3><p id="clientWonEditorHelp">M～Q列を更新します。受注企業の他の列は変更しません。</p>
+              <h3 id="clientWonEditorTitle">受注企業の情報を編集</h3><p id="clientWonEditorHelp">編集した企業情報をスプレッドシートに保存します。</p>
               <div class="client-sheet-editor-grid">
-                <label>事業内容（M）<textarea id="clientWonM" maxlength="4000" rows="3"></textarea></label>
-                <label>求める人材像（N）<textarea id="clientWonN" maxlength="4000" rows="3"></textarea></label>
-                <label>その他条件（O）<textarea id="clientWonO" maxlength="4000" rows="3"></textarea></label>
-                <label>受入希望人数（P）<input id="clientWonP" inputmode="numeric" maxlength="16"></label>
-                <label>活動頻度（Q）<textarea id="clientWonQ" maxlength="1000" rows="2"></textarea></label>
+                <label>事業内容<textarea id="clientWonM" maxlength="4000" rows="3"></textarea></label>
+                <label>求める人材像<textarea id="clientWonN" maxlength="4000" rows="3"></textarea></label>
+                <label>その他条件<textarea id="clientWonO" maxlength="4000" rows="3"></textarea></label>
+                <label>受入希望人数<input id="clientWonP" inputmode="numeric" maxlength="16"></label>
+                <label>活動頻度<textarea id="clientWonQ" maxlength="1000" rows="2"></textarea></label>
               </div>
               <div class="client-sheet-editor-actions"><button type="button" id="clientWonCancel">キャンセル</button><button type="button" id="clientWonSave">スプレッドシートに保存</button></div>
             </div>
@@ -6717,7 +6775,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="client-panel">
             <div class="client-sheet-toolbar"><h2>商談予定企業</h2><span id="clientDealsRegion" class="client-region-pill">地域</span><button type="button" id="clientDealsRefresh">更新</button></div>
             <p class="client-sheet-note" id="clientDealsNote">商談企業の情報を読み込んでいます…</p>
-            <div class="client-sheet-table-scroll"><table class="client-sheet-table" aria-label="商談予定企業の表" style="min-width:100%"><colgroup><col style="width:38%"><col style="width:18%"><col style="width:44%"></colgroup><thead><tr><th>企業名（B）</th><th>ヨミ（D）</th><th>営業日・予定（K）</th></tr></thead><tbody id="clientDealsBody"><tr><td colspan="3">読み込み中…</td></tr></tbody></table></div>
+            <div class="client-sheet-table-scroll"><table class="client-sheet-table" aria-label="商談予定企業の表" style="min-width:100%"><colgroup><col style="width:38%"><col style="width:18%"><col style="width:44%"></colgroup><thead><tr><th>企業名</th><th>ヨミ</th><th>営業日・予定</th></tr></thead><tbody id="clientDealsBody"><tr><td colspan="3">読み込み中…</td></tr></tbody></table></div>
           </div>
         </section>
 
@@ -7784,6 +7842,7 @@ const screenNames = new Set([
   "client-won",
   "client-deals",
   "client-materials",
+  "client-results",
   "client-mail",
   "client-line",
   "client-mail-preview",
@@ -8233,10 +8292,8 @@ function wireActions() {
     document.getElementById(id).addEventListener('change', () => void loadClientStaffStatus());
   }
   document.getElementById('staffStatusReload').addEventListener('click', () => void loadClientStaffStatus());
-  // Figma 194:886: メールスクリプト。FigmaにURLが未登録のため、
-  // 未設定の資料を架空のURLに開くことはしない。
   document.getElementById("clientMaterialsEmailScript")?.addEventListener("click", () => {
-    const url = ""; // メールスクリプトの正式URLを受領したらここに設定する。
+    const url = "https://docs.google.com/document/d/1UBLNps8_HvnP2osuw6eNcc1_80-dJSBuj_-408PjG48/edit?usp=sharing";
     if (!url) {
       showToast("メールスクリプトのURLは未設定です。デベロッパーに資料URLの登録を依頼してください。");
       return;
@@ -8358,6 +8415,10 @@ function wireActions() {
 
 
   enableClientFieldCopying();
+  document.getElementById('clientResultsRefresh').addEventListener('click',()=>void loadClientResults());
+  document.getElementById('clientResultsSave').addEventListener('click',()=>void saveClientResults());
+  document.getElementById('clientResultsPeople').addEventListener('input',renderClientResults);
+  document.getElementById('clientResultsDeadline').addEventListener('change',renderClientResults);
   document.getElementById('clientWonRefresh').addEventListener('click',()=>void loadClientBusiness('won'));
   document.getElementById('clientDealsRefresh').addEventListener('click',()=>void loadClientBusiness('deals'));
   document.getElementById('clientWonSearch').addEventListener('input',()=>renderClientBusiness('won'));
@@ -8741,6 +8802,7 @@ if (name === "post-confirm") {
     document.getElementById('clientLineLoadStatus').textContent = 'LINE通知設定を読み込んでいます…';
     void refreshLineSettings();
   }
+  if (name === 'client-results') void loadClientResults();
   if (name === 'client-won') void loadClientBusiness('won');
   if (name === 'client-deals') void loadClientBusiness('deals');
   if (name === 'department-office') void loadOfficeExpenses();
@@ -8803,8 +8865,9 @@ if (name === "post-confirm") {
 function goBackScreen(event) {
   // 戻るは原則トップ画面。個別指定のみ data-back-route で例外を許可。
   const explicitlySpecified = event?.currentTarget?.dataset?.backRoute || '';
-  const target = explicitlySpecified && screenNames.has(explicitlySpecified)
-    ? explicitlySpecified : 'home';
+  const current = state.currentScreen;
+  const target = current === 'client' ? 'home' : current?.startsWith('client-') ? 'client' :
+    explicitlySpecified && screenNames.has(explicitlySpecified) ? explicitlySpecified : 'home';
   state.screenHistory.length = 0;
   showScreen(target, true, false);
 }
@@ -8824,7 +8887,7 @@ function installCommonBackButtons() {
     button.dataset.commonBack = "";
     // Figma: クライアント配下の通常画面はスペースなしの「←戻る」。
     // 「フォームを送る」は専用レイアウト・表示を一切変更しない。
-    button.textContent = ["client", "client-contact", "client-won", "client-deals", "client-materials", "client-mail", "client-mail-preview", "client-staff-status"].includes(name)
+    button.textContent = ["client", "client-contact", "client-won", "client-deals", "client-materials", "client-results", "client-mail", "client-line", "client-mail-preview", "client-staff-status"].includes(name)
       ? "←戻る" : "← 戻る";
     button.addEventListener("click", goBackScreen);
     screen.appendChild(button);
@@ -14369,6 +14432,63 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 // 03B企業管理 B列が企業名（A列はNo）、E列が営業フェーズ。
 // 編集は表示中の地域ではなく、名簿で確認したログイン者の所属地域に基づく。
+
+const clientResultsState={data:null,seq:0};
+function clientResultsEl(id){return document.getElementById('clientResults'+id);}
+function clientResultsFmt(n,suffix='件'){
+  if(n===null||n===undefined||!Number.isFinite(n))return '—';
+  return new Intl.NumberFormat('ja-JP',{minimumSignificantDigits:3,maximumSignificantDigits:3}).format(n)+suffix;
+}
+function clientResultsRate(n,d){return Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;}
+function clientResultsCalc(data,people,deadline){
+  const a=data.attack,w=data.won,ap=data.deals+w;
+  const current=data.weeks.findIndex(x=>x.start===data.current_week), end=data.weeks.findIndex(x=>x.start===deadline);
+  const remaining=current>=0&&end>=current?Math.floor((Date.parse(data.weeks[end].start)-Date.parse(data.weeks[current].start))/(7*86400000))+1:null;
+  const rate=clientResultsRate(w,a);
+  const required=w>=10?0:rate>0&&Number.isInteger(people)&&people>0&&remaining>0?(10-w)/rate/people/remaining:null;
+  return {progress:clientResultsRate(a,data.target),appointmentRate:clientResultsRate(ap,a),winRate:rate,appointments:ap,remaining,required};
+}
+function renderClientResults(){
+  const d=clientResultsState.data;if(!d)return;
+  const people=Number(clientResultsEl('People').value), deadline=clientResultsEl('Deadline').value;
+  const c=clientResultsCalc(d,people,deadline);
+  const put=(key,v,suffix='件')=>{const node=clientResultsEl(key);node.textContent=clientResultsFmt(v,suffix);node.title=Number.isFinite(v)?String(v)+suffix:'';};
+  put('Attack',d.attack);put('Target',d.target);put('Progress',c.progress===null?null:c.progress*100,'%');
+  put('Appointments',c.appointments,'社');put('AppointmentRate',c.appointmentRate===null?null:c.appointmentRate*100,'%');
+  put('Won',d.won,'社');put('WinRate',c.winRate===null?null:c.winRate*100,'%');put('Required',c.required,'件');
+  clientResultsEl('Remaining').textContent=c.remaining===null?'残り週数：—':`残り ${c.remaining} 週（今週を含む）`;
+  let note=d.target===null?'今週の目標件数は未設定です。 ':'';
+  if(d.won>=10)note+='目標10社に到達しています。';
+  else if(d.attack===0||d.won===0)note+='獲得率が0または未確定のため、必要件数は算出できません。';
+  else if(c.remaining===null||!Number.isInteger(people)||people<=0)note+='人数と今週以降の完了週を設定してください。';
+  clientResultsEl('Status').textContent=(note?note+' ／ ':'')+'累計実績・週次目標を使用。数値は有効数字3桁。'+(d.fetched_at?'　取得：'+new Date(d.fetched_at).toLocaleString('ja-JP',{timeZone:'Asia/Tokyo'}):'');
+}
+async function loadClientResults(){
+  const seq=++clientResultsState.seq;
+  clientResultsEl('Refresh').disabled=true;clientResultsEl('Save').disabled=true;
+  clientResultsEl('Status').textContent='スプレッドシートから実績を取得しています…';
+  try{
+    const d=await portalFetch('/api/client/results');if(seq!==clientResultsState.seq)return;
+    clientResultsState.data=d;
+    const current=d.weeks.find(x=>x.start===d.current_week);
+    clientResultsEl('Week').textContent=current?'東京企業支部 ／ '+current.label+'（'+current.start+' ～ '+current.end+'）':'東京企業支部 ／ 週次目標の対象期間外';
+    const sel=clientResultsEl('Deadline');sel.replaceChildren(new Option('選択してください',''));
+    for(const week of d.weeks){const option=new Option(week.label+'（'+week.start+'～'+week.end+'）',week.start);sel.add(option);}
+    clientResultsEl('People').value=d.settings.people??'';
+    sel.value=d.settings.deadline||'';
+    renderClientResults();
+  }catch(e){if(seq===clientResultsState.seq){clientResultsState.data=null;for(const key of ['Attack','Target','Progress','Appointments','AppointmentRate','Won','WinRate','Required'])clientResultsEl(key).textContent='—';clientResultsEl('Week').textContent='東京企業支部 ／ 取得失敗';clientResultsEl('Remaining').textContent='残り週数：—';clientResultsEl('Status').textContent='取得できませんでした：'+(e.message||e);}}
+  finally{if(seq===clientResultsState.seq){clientResultsEl('Refresh').disabled=false;clientResultsEl('Save').disabled=!clientResultsState.data;}}
+}
+async function saveClientResults(){
+  const people=Number(clientResultsEl('People').value),deadline=clientResultsEl('Deadline').value;
+  if(!Number.isInteger(people)||people<1||people>10000||!deadline)return showToast('人数と完了させたい週を選択してください。');
+  const button=clientResultsEl('Save');button.disabled=true;
+  try{const r=await portalFetch('/api/client/results/settings',{method:'POST',body:{people,deadline}});if(clientResultsState.data)clientResultsState.data.settings=r.settings;renderClientResults();showToast('実績一覧の設定を保存しました。');}
+  catch(e){showToast(e.message||'保存できませんでした。');}
+  finally{button.disabled=false;}
+}
+
 function clientBusinessRegionLabel(){return state.region==='kansai'?'関西':'関東';}
 async function loadClientBusiness(type){
   const seq=++state.clientBusiness.loadingSeq;
@@ -14385,7 +14505,7 @@ async function loadClientBusiness(type){
   }catch(e){
     if(seq!==state.clientBusiness.loadingSeq)return;
     document.getElementById(type==='won'?'clientWonNote':'clientDealsNote').textContent='取得できませんでした：'+(e.message||e);
-    document.getElementById(type==='won'?'clientWonBody':'clientDealsBody').innerHTML='<tr><td colspan="7">スプレッドシートへの接続権限・サービスアカウント設定を確認してください。</td></tr>';
+    document.getElementById(type==='won'?'clientWonBody':'clientDealsBody').innerHTML=`<tr><td colspan="${type==='won'?7:3}">スプレッドシートへの接続権限・サービスアカウント設定を確認してください。</td></tr>`;
   }
 }
 function renderClientBusiness(type){
@@ -14394,12 +14514,12 @@ function renderClientBusiness(type){
   const search=isWon?document.getElementById('clientWonSearch').value.trim().toLowerCase():'';
   const rows=selected.filter(x=>!search||String(x.name).toLowerCase().includes(search));
   document.getElementById(isWon?'clientWonRegion':'clientDealsRegion').textContent=clientBusinessRegionLabel();
-  document.getElementById(isWon?'clientWonNote':'clientDealsNote').textContent=`${clientBusinessRegionLabel()}の対象企業：${rows.length}件`+(isWon?' ／ 所属を判定できない行は閲覧のみ。保存先はM～Q列。':' ／ B・D・K列を表示しています。');
+  document.getElementById(isWon?'clientWonNote':'clientDealsNote').textContent=`${clientBusinessRegionLabel()}の対象企業：${rows.length}件`+(isWon?' ／ 所属を判定できない企業は閲覧のみ。':'');
   const body=document.getElementById(isWon?'clientWonBody':'clientDealsBody');
   if(!rows.length){body.innerHTML=`<tr><td colspan="${isWon?7:3}">該当する企業はありません。</td></tr>`;return;}
   if(isWon){
     body.innerHTML=rows.map(x=>`<tr>
-      <td><strong>${escapeHtml(x.name)}</strong><div class="client-sheet-muted">${escapeHtml(x.assignee||'担当者未設定')}${x.region_unknown?'・所属未判定':''}</div></td>
+      <td><strong>${escapeHtml(x.name)}</strong></td>
       ${[...x.details].map(v=>`<td>${escapeHtml(v||'—')}</td>`).join('')}
       <td><button type="button" data-edit-corporate-row="${Number(x.row)}" ${x.can_edit?'':'disabled title="本人の所属地域と企業担当者の所属地域が一致しないため編集できません"'}>${x.can_edit?'編集':'閲覧のみ'}</button></td></tr>`).join('');
   }else{
