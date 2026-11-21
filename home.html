@@ -6359,6 +6359,46 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-marketing [hidden]{display:none!important}
 .screen-marketing > [data-common-back]{position:absolute;left:70px;top:898px;width:140px;height:60px;background:#3080ff;color:white;border:0;font:400 34px/60px Inter,'Noto Sans JP',sans-serif;cursor:pointer}
 
+.screen-department-materials,.screen-client-materials{background:#f2f2ff}
+.department-materials-stage{position:absolute;top:161px;left:85px;width:1270px;height:714px;box-sizing:border-box;padding:27px 32px 28px;background:#fff;border:1px solid #ddddf6;overflow:hidden;color:#202555;font-family:Inter,'Noto Sans JP',sans-serif}
+.department-materials-heading{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:0 0 15px;border-bottom:1px solid #e4e4f2}
+.department-materials-heading h2{font-size:32px;font-weight:600;line-height:1.3;margin:3px 0 6px}
+.department-materials-heading small{font-size:15px;color:#6266a4}
+.department-materials-heading p{font-size:16px;color:#737694;margin:0}
+.dept-material-action{padding:11px 19px;background:#7577ff;border:0;color:#fff;cursor:pointer;border-radius:5px;font:500 20px/1.35 Inter,'Noto Sans JP',sans-serif;white-space:nowrap}
+.dept-material-action:hover{background:#6065d5}
+.dept-material-action[hidden],.dept-material-dialog[hidden]{display:none!important}
+.department-material-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:17px 23px;overflow:auto;height:535px;margin-top:20px;padding:3px 5px 20px 0}
+.department-material-entry{position:relative;min-height:112px;background:#f7f7ff;border:1px solid #d6d7f9;border-radius:8px;padding:0;display:flex;flex-direction:column;overflow:hidden}
+.department-material-link{display:flex;flex:1;justify-content:center;align-items:center;text-align:center;padding:13px 19px;background:#7577ff;color:white;text-decoration:none;font:500 23px/1.4 Inter,'Noto Sans JP',sans-serif;overflow-wrap:anywhere}
+.department-material-link:hover{background:#6568de}
+.department-material-admin{display:flex;gap:7px;justify-content:flex-end;background:#f3f3fe;padding:6px 10px}
+.department-material-admin button{font:500 14px Inter,'Noto Sans JP',sans-serif;border:1px solid #bbbfe9;background:#fff;color:#3f4696;cursor:pointer;border-radius:3px;padding:4px 10px}
+.department-material-admin button[data-action="delete"]{color:#b33246;border-color:#e2b4bc}
+.department-material-empty{grid-column:1/-1;color:#72769a;text-align:center;padding:90px 10px;font-size:22px}
+.department-material-status{color:#6169a1;font-size:16px;min-height:22px;margin:7px 0}
+.dept-material-entry-button{position:absolute;right:78px;top:132px;z-index:55;min-width:186px;height:56px;padding:0 20px;border:0;border-radius:4px;background:#7577ff;color:#fff;cursor:pointer;font:600 24px Inter,'Noto Sans JP',sans-serif}
+.screen-marketing .dept-material-mark-button{flex:none;background:#eceeff;color:#474eb0;border:1px solid #a6ace9}
+.screen-department-hr .dept-material-entry-button,.screen-department-office .dept-material-entry-button{top:126px}
+.screen-client-materials .client-material-custom{position:absolute;left:120px;top:470px;width:1230px;height:390px;background:#fff;box-sizing:border-box;padding:10px 14px;overflow:hidden;border:1px solid #d9daf4}
+.screen-client-materials .client-material-custom-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.screen-client-materials .client-material-custom-head h2{margin:0;font-size:23px;color:#27275e;font-weight:600}
+.screen-client-materials .client-material-custom-head button{font-size:17px;padding:9px 14px}
+.screen-client-materials .client-material-custom .department-material-grid{height:278px;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 16px;margin-top:10px}
+.screen-client-materials .client-material-custom .department-material-entry{min-height:88px}
+.screen-client-materials .client-material-custom .department-material-link{font-size:21px}
+.dept-material-dialog{position:fixed;inset:auto;margin:auto;width:min(620px,calc(100vw - 35px));max-height:90vh;overflow:auto;padding:26px 30px;border:1px solid #c3c8e8;border-radius:11px;background:#fff;box-sizing:border-box;font:18px/1.5 Inter,'Noto Sans JP',sans-serif;color:#242952;box-shadow:0 14px 65px #0003;z-index:200000}
+.dept-material-dialog::backdrop{background:rgba(13,21,54,.55)}
+.dept-material-dialog h2{font-size:26px;margin:0 0 7px}
+.dept-material-dialog p{font-size:15px;color:#727798;margin:0 0 18px}
+.dept-material-dialog form{display:flex;flex-direction:column;gap:15px}
+.dept-material-dialog label{display:flex;flex-direction:column;gap:5px;font-weight:600}
+.dept-material-dialog input{font:18px/1.4 Inter,'Noto Sans JP',sans-serif;box-sizing:border-box;width:100%;padding:11px 12px;border:1px solid #bfc4e1;border-radius:6px}
+.dept-material-dialog .dept-material-dialog-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:9px}
+.dept-material-dialog button{padding:9px 20px;font:500 17px Inter,'Noto Sans JP',sans-serif;cursor:pointer;border-radius:6px;border:1px solid #a9b1d5;background:#fff;color:#313877}
+.dept-material-dialog button[type=submit]{background:#676de0;color:#fff;border-color:#676de0}
+.screen-department-materials > [data-common-back]{position:absolute!important;left:70px!important;top:898px!important;width:140px!important;height:60px!important;padding:0!important;background:#3080ff!important;border:0!important;color:#fff!important;font:400 34px/60px Inter,'Noto Sans JP',sans-serif!important;cursor:pointer}
+
 </style>
 </head>
 <body>
@@ -6493,6 +6533,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <!-- Figma 2026-11-05: コンス / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-cons" aria-label="コンス">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="cons">資料一覧</button>
           <div class="department-placeholder-panel" aria-label="コンス：準備中"></div>
         </section>
         <section class="screen screen-marketing" data-screen="department-mark" aria-label="マーケティング・ナレッジ共有">
@@ -6500,6 +6541,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="marketing-shell">
             <div class="marketing-top">
               <div><small>CP MARKETING / KNOWLEDGE HUB</small><h2>マーケティング・ナレッジ共有</h2><p>事例・質問・広告画像を、支部を越えて共有しよう</p></div>
+              <button type="button" class="marketing-btn dept-material-mark-button" data-route="department-materials" data-material-department="mark">資料一覧</button>
               <button type="button" class="marketing-btn" id="markNewPost">＋ 新規投稿・資料共有</button>
             </div>
             <div class="marketing-content">
@@ -6553,6 +6595,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <!-- Figma 2026-11-05: 人事局 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-hr" aria-label="人事局">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="hr">資料一覧</button>
           <div class="department-placeholder-panel mtg-staff-shell" aria-label="人事局のMTG登録">
             <div class="mtg-staff-header"><h2>MTG登録</h2><p>所属地域のMTGを登録できます。どのスタッフでも登録可能です。</p></div>
             <div id="mtgManagerUnavailable" class="mtg-manager-unavailable" hidden>登録用APIに接続できません。Workerを更新してください。</div>
@@ -6621,11 +6664,13 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <!-- Figma 2026-11-05: プログラム / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-pg" aria-label="プログラム">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="pg">資料一覧</button>
           <div class="department-placeholder-panel" aria-label="プログラム：準備中"></div>
         </section>
         <!-- Figma 2026-11-05: 事務局 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-office" aria-label="事務局">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="office">資料一覧</button>
           <div class="department-placeholder-panel" aria-label="事務局の経費記入チェック">
             <div class="office-expense-top"><h2>経費記入ミス・確認待ち</h2><select id="officeExpenseFilter" aria-label="チェック対象の絞り込み"><option value="open">未解決・未確認</option><option value="error">自動チェックで指摘</option><option value="pending">目視確認待ち</option><option value="all">すべて</option></select><button id="officeExpenseRefresh" type="button">スプシを再確認</button></div>
             <div class="office-expense-summary" id="officeExpenseSummary"><span>チェック待機中</span></div>
@@ -6656,6 +6701,18 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </nav>
         </section>
 
+        <section class="screen screen-department-materials" data-screen="department-materials" aria-label="部署の資料一覧">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="department-materials-stage">
+            <header class="department-materials-heading">
+              <div><small id="departmentMaterialsRegion">関東</small><h2 id="departmentMaterialsTitle">部署｜資料一覧</h2><p>部署で使う資料やマニュアルを、ボタンからすぐに開けます。</p></div>
+              <button type="button" id="departmentMaterialsAddButton" class="dept-material-action" hidden>＋ 資料ボタンを追加</button>
+            </header>
+            <div id="departmentMaterialsGrid" class="department-material-grid" aria-live="polite"></div>
+            <p id="departmentMaterialsStatus" class="department-material-status" role="status"></p>
+          </div>
+        </section>
+
         <!-- Figma 194:886 — クライアント資料一覧 -->
         <section class="screen screen-client-materials" data-screen="client-materials" aria-label="資料一覧">
           <div class="user-name" data-user-name>＜名前＞</div>
@@ -6669,6 +6726,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </nav>
           <button type="button" class="client-material-email client-material-results" data-route="client-results">実績一覧</button>
           <button type="button" id="clientMaterialsEmailScript" class="client-material-email">メールスクリプト</button>
+          <div class="client-material-custom"><div class="client-material-custom-head"><h2>共有資料</h2><button type="button" id="clientMaterialsAddButton" class="dept-material-action" hidden>＋ 資料ボタンを追加</button></div>
+            <div id="clientMaterialsCustomGrid" class="department-material-grid" aria-live="polite"></div><p id="clientMaterialsStatus" class="department-material-status" role="status"></p></div>
         </section>
 
 
@@ -7973,6 +8032,7 @@ const screenNames = new Set([
   "client-won",
   "client-deals",
   "client-materials",
+  "department-materials",
   "client-results",
   "client-mail",
   "client-line",
@@ -8494,6 +8554,9 @@ function wireActions() {
         state.calendar.reviewAnchorDate = "";
       }
 
+      if (element.dataset.materialDepartment) {
+        departmentMaterialState.department = element.dataset.materialDepartment;
+      }
       showScreen(element.dataset.route);
     });
   });
@@ -8529,6 +8592,7 @@ function wireActions() {
       if (state.currentScreen === 'meeting-attendance') void loadMeetings();
       if (state.currentScreen === 'department-hr') setupMeetingManager();
       if (state.currentScreen === 'client-staff-status') void loadClientStaffStatus();
+      if (['department-materials','client-materials'].includes(state.currentScreen)) void deptMaterialLoad(deptMaterialCurrentDepartment());
       if (state.currentScreen === 'client-won') void loadClientBusiness('won');
       if (state.currentScreen === 'client-deals') void loadClientBusiness('deals');
       if (state.currentScreen === 'hp-edit' && state.isDeveloper &&
@@ -8998,7 +9062,7 @@ function goBackScreen(event) {
   // 戻るは原則トップ画面。個別指定のみ data-back-route で例外を許可。
   const explicitlySpecified = event?.currentTarget?.dataset?.backRoute || '';
   const current = state.currentScreen;
-  const target = current === 'client' ? 'home' : current?.startsWith('client-') ? 'client' :
+  const target = current === 'department-materials' ? ('department-'+departmentMaterialState.department) : current === 'client' ? 'home' : current?.startsWith('client-') ? 'client' :
     explicitlySpecified && screenNames.has(explicitlySpecified) ? explicitlySpecified : 'home';
   state.screenHistory.length = 0;
   showScreen(target, true, false);
@@ -15696,7 +15760,120 @@ showScreen=function(name,...args){
   return result;
 };
 
+const DEPT_MATERIAL_LABELS={cons:'コンス',mark:'マーケティング',hr:'人事局',pg:'プログラム',client:'クライアント',office:'事務局'};
+const departmentMaterialState={department:'cons',scope:'',items:[],canEdit:false,seq:0,editing:0};
+function deptMaterialEl(id){return document.getElementById(id)}
+function deptMaterialRegion(){return state.region==='kansai'?'kansai':'kanto'}
+function deptMaterialCurrentDepartment(){return state.currentScreen==='client-materials'?'client':departmentMaterialState.department}
+function deptMaterialValidHref(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:'';}catch{return '';}}
+function deptMaterialStatus(message,error=false){
+  const node=deptMaterialEl(state.currentScreen==='client-materials'?'clientMaterialsStatus':'departmentMaterialsStatus');
+  if(node){node.textContent=message;node.style.color=error?'#b12c45':'#6169a1';}
+}
+function deptMaterialCard(item){
+  const card=document.createElement('div');card.className='department-material-entry';
+  const link=document.createElement('a');link.className='department-material-link';link.href=deptMaterialValidHref(item.url)||'#';
+  link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.title;
+  card.append(link);
+  if(departmentMaterialState.canEdit){
+    const admin=document.createElement('div');admin.className='department-material-admin';
+    const edit=document.createElement('button');edit.type='button';edit.textContent='編集';edit.dataset.action='edit';
+    const del=document.createElement('button');del.type='button';del.textContent='削除';del.dataset.action='delete';
+    edit.addEventListener('click',()=>deptMaterialOpenDialog(item));
+    del.addEventListener('click',()=>void deptMaterialDelete(item));
+    admin.append(edit,del);card.append(admin);
+  }
+  return card;
+}
+function deptMaterialRender(){
+  const isClient=state.currentScreen==='client-materials';
+  const grid=deptMaterialEl(isClient?'clientMaterialsCustomGrid':'departmentMaterialsGrid');
+  if(!grid)return;
+  grid.replaceChildren();
+  if(!departmentMaterialState.items.length){const empty=document.createElement('p');empty.className='department-material-empty';empty.textContent='まだ資料ボタンがありません。';grid.append(empty);}
+  else departmentMaterialState.items.forEach(item=>grid.append(deptMaterialCard(item)));
+  const add=deptMaterialEl(isClient?'clientMaterialsAddButton':'departmentMaterialsAddButton');
+  if(add)add.hidden=!departmentMaterialState.canEdit;
+  if(!isClient){
+    deptMaterialEl('departmentMaterialsTitle').textContent=DEPT_MATERIAL_LABELS[departmentMaterialState.department]+'｜資料一覧';
+    deptMaterialEl('departmentMaterialsRegion').textContent=deptMaterialRegion()==='kansai'?'関西':'関東';
+  }
+}
+async function deptMaterialLoad(department){
+  if(!Object.hasOwn(DEPT_MATERIAL_LABELS,department))return;
+  const requestSeq=++departmentMaterialState.seq, region=deptMaterialRegion();
+  departmentMaterialState.department=department;
+  departmentMaterialState.canEdit=false;
+  departmentMaterialState.items=[];
+  deptMaterialRender();deptMaterialStatus('資料一覧を読み込んでいます…');
+  try{
+    const params=new URLSearchParams({region,department});
+    const data=await portalFetch('/api/department-materials?'+params.toString());
+    if(requestSeq!==departmentMaterialState.seq||region!==deptMaterialRegion()||department!==deptMaterialCurrentDepartment())return;
+    departmentMaterialState.items=Array.isArray(data.items)?data.items:[];
+    departmentMaterialState.canEdit=Boolean(data.can_edit);
+    deptMaterialRender();deptMaterialStatus('');
+  }catch(error){if(requestSeq===departmentMaterialState.seq)deptMaterialStatus(error.message||'資料一覧の取得に失敗しました',true);}
+}
+function deptMaterialOpenDialog(item=null){
+  if(!departmentMaterialState.canEdit)return;
+  departmentMaterialState.editing=item?.id||0;
+  deptMaterialEl('deptMaterialDialogTitle').textContent=item?'資料ボタンを編集':'資料ボタンを追加';
+  deptMaterialEl('deptMaterialTitle').value=item?.title||'';
+  deptMaterialEl('deptMaterialUrl').value=item?.url||'';
+  const dialog=deptMaterialEl('deptMaterialDialog');dialog.showModal();
+  deptMaterialEl('deptMaterialTitle').focus();
+}
+async function deptMaterialDelete(item){
+  if(!departmentMaterialState.canEdit||!confirm('「'+item.title+'」を資料一覧から削除しますか？'))return;
+  try{
+    await portalFetch('/api/department-materials',{method:'POST',body:{action:'delete',id:item.id}});
+    await deptMaterialLoad(deptMaterialCurrentDepartment());showToast('資料ボタンを削除しました');
+  }catch(error){deptMaterialStatus(error.message||'削除できませんでした',true);}
+}
+async function deptMaterialSubmit(event){
+  event.preventDefault();
+  const button=deptMaterialEl('deptMaterialSave');
+  if(button.disabled||!departmentMaterialState.canEdit)return;
+  const title=deptMaterialEl('deptMaterialTitle').value.trim(),url=deptMaterialEl('deptMaterialUrl').value.trim();
+  if(!title||title.length>45){alert('ボタン名を1〜45文字で入力してください。');return;}
+  if(!deptMaterialValidHref(url)){alert('https://から始まるURLを入力してください。');return;}
+  const department=deptMaterialCurrentDepartment(),region=deptMaterialRegion();
+  const body=departmentMaterialState.editing?{action:'update',id:departmentMaterialState.editing,title,url}:{action:'create',department,region,title,url};
+  button.disabled=true;
+  try{
+    await portalFetch('/api/department-materials',{method:'POST',body});
+    deptMaterialEl('deptMaterialDialog').close();
+    await deptMaterialLoad(department);
+    showToast('資料一覧を保存しました');
+  }catch(error){alert(error.message||'保存できませんでした');}
+  finally{button.disabled=false;}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  deptMaterialEl('departmentMaterialsAddButton').addEventListener('click',()=>deptMaterialOpenDialog());
+  deptMaterialEl('clientMaterialsAddButton').addEventListener('click',()=>deptMaterialOpenDialog());
+  deptMaterialEl('deptMaterialCancel').addEventListener('click',()=>deptMaterialEl('deptMaterialDialog').close());
+  deptMaterialEl('deptMaterialForm').addEventListener('submit',deptMaterialSubmit);
+});
+const departmentMaterialPreviousShowScreen=showScreen;
+showScreen=function(name,...args){
+  const result=departmentMaterialPreviousShowScreen(name,...args);
+  if(name==='department-materials')void deptMaterialLoad(departmentMaterialState.department);
+  if(name==='client-materials')void deptMaterialLoad('client');
+  return result;
+};
+
 </script>
+
+<dialog id="deptMaterialDialog" class="dept-material-dialog" aria-labelledby="deptMaterialDialogTitle">
+  <h2 id="deptMaterialDialogTitle">資料ボタンを追加</h2>
+  <p>登録したボタンは、同じ地域・部署の資料一覧に共有されます。</p>
+  <form id="deptMaterialForm">
+    <label>ボタン名<input id="deptMaterialTitle" type="text" maxlength="45" placeholder="例：広報マニュアル" autocomplete="off" required></label>
+    <label>リンク先URL<input id="deptMaterialUrl" type="url" maxlength="1800" placeholder="https://docs.google.com/..." autocomplete="off" required></label>
+    <div class="dept-material-dialog-actions"><button type="button" id="deptMaterialCancel">キャンセル</button><button type="submit" id="deptMaterialSave">保存</button></div>
+  </form>
+</dialog>
 
 </body>
 </html>
