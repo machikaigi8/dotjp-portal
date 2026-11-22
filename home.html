@@ -10191,7 +10191,7 @@ function activityHistoryPreviewUpdate(){
 function activityHistoryShowCalendar(){
  document.getElementById('activityHistoryCalendar').hidden=false;
  document.getElementById('activityHistoryForm').hidden=true;
- document.getElementById('activityHistoryTitle').textContent='過去の行動量を編集';
+ document.getElementById('activityHistoryTitle').textContent='行動量・タスク時間を編集';
 }
 function activityHistoryClose(){document.getElementById('activityHistoryOverlay').hidden=true;}
 async function activityHistoryOpen(){
@@ -10220,7 +10220,7 @@ async function activityHistoryRenderMonth(){
  for(let d=1;d<=count;d++){
   const day=`${month}-${String(d).padStart(2,'0')}`;
   const b=document.createElement('button');b.type='button';b.className='activity-history-date';b.textContent=String(d);
-  b.disabled=day>=staffStatusToday()||day<earliest;
+  b.disabled=day>staffStatusToday()||day<earliest;
   b.dataset.day=day;
   b.addEventListener('click',()=>void activityHistoryOpenDay(day));
   root.append(b);dateButtons.push(b);
@@ -10256,11 +10256,19 @@ async function activityHistoryOpenDay(day){
   for(const input of document.querySelectorAll('[data-edit-activity]'))input.value=String(record.metrics?.[input.dataset.editActivity]||0);
   document.getElementById('activityHistoryReflection').value=record.reflection||'';
   document.getElementById('activityHistoryGoal').value=record.tomorrowGoal||'';
+  // 当日は自動集計中なので、行動量や振り返りを手動確定させない。
+  // 時間の補正だけを許し、翌日以降の自動集計を妨げない。
+  const todayOnlyTime=day===staffStatusToday();
+  for(const input of document.querySelectorAll('[data-edit-activity]'))input.disabled=todayOnlyTime;
+  document.getElementById('activityHistoryReflection').disabled=todayOnlyTime;
+  document.getElementById('activityHistoryGoal').disabled=todayOnlyTime;
+  const submit=document.getElementById('activityHistorySave');
+  submit.textContent=todayOnlyTime?'今日のタスク時間を保存':'この日の報告を保存';
   document.getElementById('activityHistoryTimeOverride').checked=Boolean(record.time_overridden);
   const time=document.getElementById('activityHistoryMinutes');
   time.value=String(record.task_minutes||0);
   time.disabled=!record.time_overridden;
-  status.textContent=record.edited?'編集済みの内容を読み込みました。':(record.has_record?'既存の記録を読み込みました。':'この日の記録はありません。数値を入力して保存できます。');
+  status.textContent=todayOnlyTime?'今日の行動量は自動集計のため変更できません。タスク時間を変更する場合は「手動補正する」をチェックしてください。':(record.edited?'編集済みの内容を読み込みました。':(record.has_record?'既存の記録を読み込みました。':'この日の記録はありません。数値を入力して保存できます。'));
   activityHistoryPreviewUpdate();
  }catch(e){status.textContent='読み込み失敗：'+e.message;form.hidden=true;activityHistoryShowCalendar();showToast(e.message);}
  finally{activityHistoryState.busy=false;}
@@ -10280,7 +10288,7 @@ async function activityHistorySave(event){
  try{
   await portalFetch('/api/client/activity/day',{method:'POST',body:p});
   document.getElementById('activityHistoryStatus').textContent='保存しました。';
-  showToast(`${p.day} の行動量を保存しました。`);
+  showToast(p.day===staffStatusToday()?'今日のタスク時間を保存しました。':`${p.day} の行動量を保存しました。`);
   await loadPersonalWorkSessions();
   activityHistoryShowCalendar();
   void activityHistoryRenderMonth();
@@ -15215,7 +15223,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 <div id="activityHistoryOverlay" class="activity-history-overlay" hidden role="presentation">
  <section class="activity-history-dialog" role="dialog" aria-modal="true" aria-labelledby="activityHistoryTitle" tabindex="-1">
   <div class="activity-history-head">
-   <h2 id="activityHistoryTitle">過去の行動量を編集</h2>
+   <h2 id="activityHistoryTitle">行動量・タスク時間を編集</h2>
    <button type="button" id="activityHistoryClose" class="activity-history-close" aria-label="閉じる">×</button>
   </div>
   <div id="activityHistoryCalendar" class="activity-history-calendar">
@@ -15225,7 +15233,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     <button type="button" id="activityHistoryNext">次月</button>
    </div>
    <div id="activityHistoryDays" class="activity-history-grid" aria-label="編集する日付を選択"></div>
-   <p class="activity-history-note">● 記録がある日／青枠 編集済み。昨日までの過去730日を編集できます。編集は本人の記録だけに反映されます。</p>
+   <p class="activity-history-note">● 記録がある日／青枠 編集済み。過去730日と今日を選択できます。今日編集できるのはタスク時間だけです。編集は本人の記録だけに反映されます。</p>
   </div>
   <form id="activityHistoryForm" class="activity-history-form" hidden>
    <button type="button" id="activityHistoryBack" class="activity-history-back">← カレンダーに戻る</button>
