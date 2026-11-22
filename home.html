@@ -6399,6 +6399,109 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .dept-material-dialog button[type=submit]{background:#676de0;color:#fff;border-color:#676de0}
 .screen-department-materials > [data-common-back]{position:absolute!important;left:70px!important;top:898px!important;width:140px!important;height:60px!important;padding:0!important;background:#3080ff!important;border:0!important;color:#fff!important;font:400 34px/60px Inter,'Noto Sans JP',sans-serif!important;cursor:pointer}
 
+
+/* Common department document buttons match the fixed client-materials buttons. */
+.screen-department-materials .department-material-grid,
+.screen-client-materials .client-material-custom .department-material-grid {
+  grid-template-columns:repeat(3,360px);
+  justify-content:space-between;
+  align-content:start;
+  column-gap:20px;
+  row-gap:22px;
+  padding:4px 1px 20px;
+}
+.screen-department-materials .department-material-entry,
+.screen-client-materials .client-material-custom .department-material-entry {
+  display:flex;
+  flex-direction:column;
+  min-height:100px;
+  width:360px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  overflow:visible;
+}
+.screen-department-materials .department-material-link,
+.screen-client-materials .client-material-custom .department-material-link {
+  display:flex;
+  flex:none;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  width:360px;
+  height:100px;
+  min-height:100px;
+  padding:10px 15px;
+  border:0;
+  border-radius:0;
+  background:#7577ff;
+  color:#fff;
+  text-align:center;
+  font:500 35px/1.15 Inter,'Noto Sans JP',sans-serif;
+  text-decoration:none;
+  overflow-wrap:anywhere;
+}
+.screen-department-materials .department-material-link:hover,
+.screen-client-materials .client-material-custom .department-material-link:hover {
+  background:#686bf0;
+}
+.screen-department-materials .department-material-admin,
+.screen-client-materials .client-material-custom .department-material-admin {
+  justify-content:flex-end;
+  background:transparent;
+  padding:6px 0 0;
+}
+.screen-department-materials .department-material-empty,
+.screen-client-materials .client-material-custom .department-material-empty {
+  padding:75px 10px;
+}
+.screen-department-cons .cons-call-panel {padding:46px 50px;box-sizing:border-box;}
+.screen-department-cons .cons-call-heading {font:600 37px/1.3 Inter,'Noto Sans JP',sans-serif;margin:0 0 12px;color:#232558;}
+.screen-department-cons .cons-call-description {font:400 21px/1.5 Inter,'Noto Sans JP',sans-serif;color:#666b8b;margin:0 0 45px;}
+.screen-department-cons .cons-call-record {
+  display:flex;align-items:center;justify-content:center;width:360px;height:100px;
+  border:0;border-radius:0;background:#7577ff;color:white;
+  font:500 35px/1.2 Inter,'Noto Sans JP',sans-serif;cursor:pointer;
+}
+.screen-department-cons .cons-call-record:hover:not(:disabled){background:#686bf0;}
+.screen-department-cons .cons-call-record:disabled{opacity:.55;cursor:default;}
+.screen-department-cons .cons-call-count{font:500 27px/1.5 Inter,'Noto Sans JP',sans-serif;color:#25275b;margin:30px 0 10px;}
+.screen-department-cons .cons-call-count strong{font-size:35px;font-weight:650;color:#5055c6;}
+.screen-department-cons .cons-call-status{font:400 18px/1.5 Inter,'Noto Sans JP',sans-serif;color:#555d83;min-height:30px;margin:0 0 18px;}
+.screen-department-cons .cons-call-tip{font:400 16px/1.6 Inter,'Noto Sans JP',sans-serif;color:#767a92;max-width:850px;}
+
+
+.screen-department-cons .cons-call-panel {
+  padding:30px 45px; overflow-y:auto;
+}
+.screen-department-cons .cons-call-heading {font-size:35px;margin-bottom:9px;}
+.screen-department-cons .cons-call-description {font-size:19px;margin-bottom:20px;}
+.screen-department-cons .cons-contact-current {font:600 25px/1.4 Inter,'Noto Sans JP',sans-serif;color:#30367d;margin:0 0 15px;}
+.screen-department-cons .cons-contact-methods {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.screen-department-cons .cons-contact-method {
+  display:flex;align-items:center;justify-content:center;height:79px;min-width:0;
+  border:2px solid #8c8eed;border-radius:0;background:#eeeefe;color:#4144a1;
+  font:500 30px/1.2 Inter,'Noto Sans JP',sans-serif;cursor:pointer;
+}
+.screen-department-cons .cons-contact-method[aria-pressed="true"] {background:#7577ff;color:#fff;border-color:#7577ff;}
+.screen-department-cons .cons-contact-method:hover:not(:disabled) {border-color:#4f50d2;}
+.screen-department-cons .cons-contact-method:disabled {opacity:.55;cursor:default;}
+.screen-department-cons .cons-contact-help {font:400 17px/1.5 Inter,'Noto Sans JP',sans-serif;color:#616782;margin:15px 0 15px;}
+.screen-department-cons .cons-contact-outcomes {display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:0 0 17px;}
+.screen-department-cons .cons-contact-outcome {
+  display:flex;align-items:center;justify-content:center;height:85px;border:0;border-radius:0;
+  font:600 27px/1.3 Inter,'Noto Sans JP',sans-serif;color:#fff;cursor:pointer;
+}
+.screen-department-cons .cons-contact-outcome.is-won {background:#247bc5;}
+.screen-department-cons .cons-contact-outcome.is-lost {background:#737898;}
+.screen-department-cons .cons-contact-outcome:disabled {opacity:.42;cursor:default;}
+.screen-department-cons .cons-contact-summary {display:grid;grid-template-columns:repeat(3,1fr);gap:7px 13px;padding:14px 16px;background:#f1f2ff;margin:0 0 12px;}
+.screen-department-cons .cons-contact-summary span {font:400 18px/1.45 Inter,'Noto Sans JP',sans-serif;color:#41476e;}
+.screen-department-cons .cons-contact-summary strong {font-weight:650;color:#3f46a8;font-size:24px;}
+.screen-department-cons .cons-call-status {margin:0 0 8px;font-size:17px;}
+.screen-department-cons .cons-call-tip {font-size:15px;margin:0;}
+.screen-task-end .progress-group:first-child label {font-size:19px!important;line-height:1.3;margin:0;}
+.screen-task-end .progress-group:first-child input {width:60px;font-size:22px;}
 </style>
 </head>
 <body>
@@ -6531,10 +6634,35 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <!-- 行動量の日次差分・昨日のログイン時報告とカレンダー連携表示 -->
         <!-- Figma 64:637: クライアント -->
         <!-- Figma 2026-11-05: コンス / white placeholder -->
-        <section class="screen screen-department-placeholder" data-screen="department-cons" aria-label="コンス">
+        <section class="screen screen-department-placeholder screen-department-cons" data-screen="department-cons" aria-label="コンス">
           <div class="user-name" data-user-name>＜名前＞</div>
           <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="cons">資料一覧</button>
-          <div class="department-placeholder-panel" aria-label="コンス：準備中"></div>
+          <div class="department-placeholder-panel cons-call-panel" aria-label="コンスの学生アプローチ記録">
+            <h2 class="cons-call-heading">コンス｜学生アプローチ記録</h2>
+            <p class="cons-call-description">1人の学生への連絡手段を選び、獲得結果を押して記録します。複数の手段を選べます。</p>
+            <div class="cons-contact-current" id="consContactCurrent" aria-live="polite">1人目を記録</div>
+            <div class="cons-contact-methods" role="group" aria-label="この学生に使った連絡手段">
+              <button type="button" class="cons-contact-method" data-cons-method="call" aria-pressed="false" disabled>架電</button>
+              <button type="button" class="cons-contact-method" data-cons-method="email" aria-pressed="false" disabled>メール</button>
+              <button type="button" class="cons-contact-method" data-cons-method="review" aria-pressed="false" disabled>口コミ</button>
+              <button type="button" class="cons-contact-method" data-cons-method="dm" aria-pressed="false" disabled>DM</button>
+            </div>
+            <p class="cons-contact-help">使用した手段を選んでから、下の結果を押すと1人分が確定し、次の人に進みます。</p>
+            <div class="cons-contact-outcomes" role="group" aria-label="この学生の獲得結果">
+              <button type="button" id="consContactWon" class="cons-contact-outcome is-won" disabled>獲得した</button>
+              <button type="button" id="consContactLost" class="cons-contact-outcome is-lost" disabled>獲得できなかった</button>
+            </div>
+            <div class="cons-contact-summary" aria-label="本日の記録件数">
+              <span>対応人数：<strong id="consContactPeople">—</strong>人</span>
+              <span>架電：<strong id="consCallTodayCount">—</strong>件</span>
+              <span>メール：<strong id="consEmailTodayCount">—</strong>件</span>
+              <span>口コミ：<strong id="consReviewTodayCount">—</strong>件</span>
+              <span>DM：<strong id="consDmTodayCount">—</strong>件</span>
+              <span>獲得：<strong id="consWonTodayCount">—</strong>件</span>
+            </div>
+            <p id="consCallStatus" class="cons-call-status" role="status" aria-live="polite">記録状況を確認しています…</p>
+            <p class="cons-call-tip">結果を確定した時点で記録します。タスク終了時の入力と重複しないようにしてください。</p>
+          </div>
         </section>
         <section class="screen screen-marketing" data-screen="department-mark" aria-label="マーケティング・ナレッジ共有">
           <div class="user-name" data-user-name>＜名前＞</div>
@@ -7784,9 +7912,10 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <div class="progress-columns">
               <div class="progress-group">
                 <h2>🎓 学生向けアプローチ</h2>
-                <label>・声掛け数：<input type="number" min="0" value="0" data-progress="student_voice">件</label>
                 <label>・架電数：<input type="number" min="0" value="0" data-progress="student_call">件</label>
-                <label>・通電数：<input type="number" min="0" value="0" data-progress="student_connected">件</label>
+                <label>・メール数：<input type="number" min="0" value="0" data-progress="student_email">件</label>
+                <label>・口コミ数：<input type="number" min="0" value="0" data-progress="student_review">件</label>
+                <label>・DM数：<input type="number" min="0" value="0" data-progress="student_dm">件</label>
                 <label>・獲得数：<input type="number" min="0" value="0" data-progress="student_won">件</label>
               </div>
 
@@ -9983,7 +10112,7 @@ function clientStaffFamilyName(person) {
 // Activity report archive editor. This is a standalone popup outside the
 // scaled Figma canvas so Edge, mobile and tablet clicks land correctly.
 const activityHistoryState={month:'',day:'',busy:false};
-const ACTIVITY_HISTORY_KEYS=['student_voice','student_call','student_connected','student_won',
+const ACTIVITY_HISTORY_KEYS=['student_call','student_email','student_review','student_dm','student_won',
   'company_list','company_call','company_mail','company_won'];
 function activityHistoryDateLabel(day){
  const x=String(day).split('-');return `${Number(x[1])}/${Number(x[2])}`;
@@ -10003,9 +10132,10 @@ function activityHistoryReportText(day,values,reflection,goal){
 ━━━━━━━━━━━━
 🎓 学生向けアプローチ
 ━━━━━━━━━━━━
-・声掛け数：${n('student_voice')}件
 ・架電数：${n('student_call')}件
-・通電数：${n('student_connected')}件
+・メール数：${n('student_email')}件
+・口コミ数：${n('student_review')}件
+・DM数：${n('student_dm')}件
 ・獲得数：${n('student_won')}件
 
 ━━━━━━━━━━━━
@@ -15079,9 +15209,10 @@ window.addEventListener('DOMContentLoaded',()=>{
    <div class="activity-history-section">
     <h3>🎓 学生向けアプローチ</h3>
     <div class="activity-history-fields">
-     <label>声掛け数 <input type="number" data-edit-activity="student_voice" min="0" max="1000000" step="1" required> 件</label>
      <label>架電数 <input type="number" data-edit-activity="student_call" min="0" max="1000000" step="1" required> 件</label>
-     <label>通電数 <input type="number" data-edit-activity="student_connected" min="0" max="1000000" step="1" required> 件</label>
+     <label>メール数 <input type="number" data-edit-activity="student_email" min="0" max="1000000" step="1" required> 件</label>
+     <label>口コミ数 <input type="number" data-edit-activity="student_review" min="0" max="1000000" step="1" required> 件</label>
+     <label>DM数 <input type="number" data-edit-activity="student_dm" min="0" max="1000000" step="1" required> 件</label>
      <label>獲得数 <input type="number" data-edit-activity="student_won" min="0" max="1000000" step="1" required> 件</label>
     </div>
    </div>
@@ -15860,6 +15991,88 @@ showScreen=function(name,...args){
   const result=departmentMaterialPreviousShowScreen(name,...args);
   if(name==='department-materials')void deptMaterialLoad(departmentMaterialState.department);
   if(name==='client-materials')void deptMaterialLoad('client');
+  return result;
+};
+
+
+const consContactState={selected:new Set(),pending:null,busy:false,ready:false,requestSeq:0,people:0};
+const CONS_CONTACT_METRICS={student_call:'consCallTodayCount',student_email:'consEmailTodayCount',student_review:'consReviewTodayCount',student_dm:'consDmTodayCount',student_won:'consWonTodayCount'};
+function consCallElt(id){return document.getElementById(id);}
+function consCallSetStatus(message,error=false){
+  const el=consCallElt('consCallStatus');if(el){el.textContent=message;el.style.color=error?'#bd3446':'#555d83';}
+}
+function consContactRender(){
+  const locked=consContactState.busy||!consContactState.ready||Boolean(consContactState.pending);
+  document.querySelectorAll('[data-cons-method]').forEach(button=>{
+    button.setAttribute('aria-pressed',String(consContactState.selected.has(button.dataset.consMethod)));
+    button.disabled=locked;
+  });
+  ['consContactWon','consContactLost'].forEach(id=>{
+    const el=consCallElt(id);
+    const outcome=id==='consContactWon'?'won':'lost';
+    if(el)el.disabled=consContactState.busy||!consContactState.ready||(consContactState.pending?consContactState.pending.outcome!==outcome:consContactState.selected.size===0);
+  });
+  const heading=consCallElt('consContactCurrent');
+  if(heading)heading.textContent=`${consContactState.people+1}人目を記録`;
+}
+function consContactUpdateCounts(data){
+  for(const [key,id] of Object.entries(CONS_CONTACT_METRICS)){
+    const el=consCallElt(id);if(el)el.textContent=Number(data?.[key]||0).toLocaleString('ja-JP');
+  }
+  consContactState.people=Math.max(0,Number(data?.cons_person_total||0));
+  const person=consCallElt('consContactPeople');if(person)person.textContent=consContactState.people.toLocaleString('ja-JP');
+  consContactRender();
+}
+async function consContactLoad(){
+  const seq=++consContactState.requestSeq;
+  consContactState.ready=false;consContactRender();consCallSetStatus('本日のアプローチ記録を読み込んでいます…');
+  try{
+    const data=await portalFetch('/api/cons/calls');
+    if(seq!==consContactState.requestSeq)return;
+    consContactState.ready=true;consContactUpdateCounts(data);
+    consCallSetStatus(consContactState.pending?'保存結果が不明です。同じ結果ボタンで再試行してください。':'連絡手段を選択し、最後に獲得結果を押してください。');
+  }catch(error){
+    if(seq!==consContactState.requestSeq)return;
+    consCallSetStatus('記録を読み込めません：'+(error.message||error),true);
+    consContactState.ready=false;consContactRender();
+  }
+}
+function consContactToggle(method){
+  if(!consContactState.ready||consContactState.busy||consContactState.pending)return;
+  if(!['call','email','review','dm'].includes(method))return;
+  if(consContactState.selected.has(method))consContactState.selected.delete(method);
+  else consContactState.selected.add(method);
+  consContactRender();
+}
+async function consContactSubmit(outcome){
+  if(!consContactState.ready||consContactState.busy||!['won','lost'].includes(outcome))return;
+  if(!consContactState.pending){
+    if(!consContactState.selected.size){consCallSetStatus('先に連絡手段を選択してください。',true);return;}
+    consContactState.pending={event_id:crypto.randomUUID(),channels:[...consContactState.selected],outcome};
+  }else if(consContactState.pending.outcome!==outcome){
+    consCallSetStatus('保存結果が不明です。最初に押した結果ボタンで再試行してください。',true);return;
+  }
+  consContactState.busy=true;consContactRender();consCallSetStatus('1人分の記録を確定しています…');
+  try{
+    const data=await portalFetch('/api/cons/calls',{method:'POST',body:consContactState.pending});
+    consContactState.pending=null;
+    consContactState.selected.clear();
+    consContactUpdateCounts(data);
+    const message=data.recorded?'1人分を保存しました。次の人を記録できます。':'この人は登録済みです（二重計上なし）。次の人を記録できます。';
+    consCallSetStatus(message);showToast(message);
+  }catch(error){
+    consCallSetStatus('結果を確認できませんでした。元の結果ボタンで再試行してください：'+(error.message||error),true);
+  }finally{consContactState.busy=false;consContactRender();}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('[data-cons-method]').forEach(button=>button.addEventListener('click',()=>consContactToggle(button.dataset.consMethod)));
+  consCallElt('consContactWon')?.addEventListener('click',()=>void consContactSubmit('won'));
+  consCallElt('consContactLost')?.addEventListener('click',()=>void consContactSubmit('lost'));
+});
+const consContactOriginalShowScreen=showScreen;
+showScreen=function(name,...args){
+  const result=consContactOriginalShowScreen(name,...args);
+  if(name==='department-cons')void consContactLoad();
   return result;
 };
 
