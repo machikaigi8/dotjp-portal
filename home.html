@@ -6202,6 +6202,51 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-client-staff-status [data-staff-period='total'] .staff-status-metric span,.screen-client-staff-status [data-staff-period='total'] .staff-status-metric strong{font-size:29px;}
 #figmaRosterReset2fa[hidden]{display:none!important;}
 #figmaRosterReset2fa{background:#fff1ed;color:#9c271c;border:1px solid #c86a5d;border-radius:5px;padding:7px 12px;cursor:pointer;font:inherit;}
+
+/* v128: Figma node 238:70 毎日タスク状況 and 151:19 人事局. */
+:is(.screen-hr-boats, .screen-department-placeholder[data-screen="department-hr"]) {
+  background:#f2f2ff!important;
+}
+:is(.screen-hr-boats, .screen-department-placeholder[data-screen="department-hr"]) > .user-name{
+  position:absolute;left:75px;top:40px;width:520px;height:36px;
+  font:400 24px/32px Inter,'Noto Sans JP','Yu Gothic',sans-serif;
+}
+.hr-figma-tabs{
+  position:absolute;left:120px;top:110px;width:1200px;height:60px;
+  display:grid;grid-template-columns:repeat(3,360px);column-gap:60px;z-index:45;
+}
+.hr-figma-tab{
+  width:360px;height:60px;margin:0;padding:0;border:0;border-radius:0;
+  background:#d4d5ff;color:#000;text-align:center;white-space:nowrap;
+  font:400 35px/60px Inter,'Noto Sans JP','Yu Gothic',sans-serif;cursor:pointer;
+}
+.hr-figma-tab:hover{background:#c5c7f8}
+.hr-figma-tab:focus-visible{outline:3px solid #3080ff;outline-offset:3px}
+/* The Figma frame leaves the content area intentionally open. Place the race only there. */
+.screen-hr-boats .hr-boat-page{
+  position:absolute;left:70px;top:198px;width:1300px;height:678px;
+  padding:17px 22px 14px;background:#fff;overflow-y:auto;overflow-x:hidden;
+  border:0;box-sizing:border-box;
+}
+.screen-hr-boats .hr-boat-header h1{font-size:29px}
+.screen-hr-boats .hr-boat-header p{font-size:15px}
+.screen-hr-boats .hr-boat-main{min-height:408px}
+.screen-hr-boats .hr-boat-water{min-height:408px}
+.screen-hr-boats .hr-boat-admin{padding-bottom:20px}
+.screen-department-placeholder[data-screen="department-hr"] .mtg-staff-shell{
+  position:absolute;left:70px;top:198px;width:1300px;height:678px;
+  padding:25px 28px 20px;box-sizing:border-box;
+}
+.screen-department-placeholder[data-screen="department-hr"] .mtg-staff-shell[hidden]{display:none!important}
+:is(.screen-hr-boats,.screen-department-placeholder[data-screen="department-hr"]) > [data-common-back]{
+  position:absolute!important;left:70px!important;top:898px!important;
+  width:140px!important;height:60px!important;min-width:140px!important;
+  padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+  background:#3080ff!important;color:#fff!important;z-index:160!important;
+  font:400 40px/60px Inter,'Noto Sans JP','Yu Gothic',sans-serif!important;
+  text-align:center!important;box-shadow:none!important;cursor:pointer;
+}
+
 </style>
 <style>
 
@@ -6795,6 +6840,11 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <!-- HR weekly team river race: originally authored, no external game assets -->
         <section class="screen screen-hr-boats" data-screen="hr-daily-tasks" aria-label="人事局の毎日タスク状況・週間船レース">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="hr-figma-tabs" aria-label="人事局のメニュー">
+            <button type="button" class="hr-figma-tab" data-route="department-hr" data-hr-open-mtg="1">MTG設定</button>
+            <button type="button" class="hr-figma-tab" aria-current="page">毎日タスク状況</button>
+            <button type="button" class="hr-figma-tab" data-route="department-materials" data-material-department="hr">資料一覧</button>
+          </nav>
           <div class="hr-boat-page">
             <header class="hr-boat-header">
               <div><h1>毎日タスク状況｜週間船レース</h1><p id="hrBoatWeek">毎週日曜 0:00（日本時間）にスタート地点へ戻ります</p></div>
@@ -6816,15 +6866,18 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               </div>
             </section>
           </div>
-          <button type="button" class="common-back-button" data-common-back>戻る</button>
+          <button type="button" class="common-back-button" data-common-back>←戻る</button>
         </section>
 
         <!-- Figma 2026-11-05: 人事局 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-hr" aria-label="人事局">
           <div class="user-name" data-user-name>＜名前＞</div>
-          <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="hr">資料一覧</button>
-          <button type="button" class="hr-boat-open" data-route="hr-daily-tasks">毎日タスク状況 ⛵</button>
-          <div class="department-placeholder-panel mtg-staff-shell" aria-label="人事局のMTG登録">
+          <nav class="hr-figma-tabs" aria-label="人事局のメニュー">
+            <button type="button" class="hr-figma-tab" id="hrMtgSettingsOpen">MTG設定</button>
+            <button type="button" class="hr-figma-tab" data-route="hr-daily-tasks">毎日タスク状況</button>
+            <button type="button" class="hr-figma-tab" data-route="department-materials" data-material-department="hr">資料一覧</button>
+          </nav>
+          <div class="department-placeholder-panel mtg-staff-shell" aria-label="人事局のMTG登録" hidden>
             <div class="mtg-staff-header"><h2>MTG登録</h2><p>所属地域のMTGを登録できます。どのスタッフでも登録可能です。</p></div>
             <div id="mtgManagerUnavailable" class="mtg-manager-unavailable" hidden>登録用APIに接続できません。Workerを更新してください。</div>
             <nav class="mtg-manager-tabs" aria-label="MTG管理メニュー">
@@ -9268,7 +9321,12 @@ if (name === "post-confirm") {
   }
 
   if (name === "meeting-attendance") void loadMeetings();
-  if (name === "department-hr") setupMeetingManager();
+  if (name === "department-hr") {
+    const mtgPanel = document.querySelector('[data-screen="department-hr"] .mtg-staff-shell');
+    if (mtgPanel) mtgPanel.hidden = true;
+    document.getElementById('hrMtgSettingsOpen')?.classList.remove('is-active');
+    setupMeetingManager();
+  }
   if (name === "hr-daily-tasks") void hrBoatLoad();
 
   if (name === "hp-request") {
@@ -9327,7 +9385,7 @@ function installCommonBackButtons() {
     // Figma: クライアント配下の通常画面はスペースなしの「←戻る」。
     // 「フォームを送る」は専用レイアウト・表示を一切変更しない。
     button.textContent = ["client", "client-contact", "client-won", "client-deals", "client-materials", "client-results", "client-mail", "client-line", "client-mail-preview", "client-staff-status"].includes(name)
-      ? "←戻る" : "← 戻る";
+      || name === "department-hr" ? "←戻る" : "← 戻る";
     button.addEventListener("click", goBackScreen);
     screen.appendChild(button);
   });
@@ -16329,6 +16387,15 @@ async function hrBoatWrite(body){
 }
 document.addEventListener('DOMContentLoaded',()=>{
  document.getElementById('hrBoatRefresh')?.addEventListener('click',()=>void hrBoatLoad());
+ const openMtgSettings = () => {
+   const panel = document.querySelector('[data-screen="department-hr"] .mtg-staff-shell');
+   if (!panel) return;
+   panel.hidden = false;
+   document.getElementById('hrMtgSettingsOpen')?.classList.add('is-active');
+   setupMeetingManager();
+ };
+ document.getElementById('hrMtgSettingsOpen')?.addEventListener('click',openMtgSettings);
+ document.querySelector('[data-screen="hr-daily-tasks"] [data-hr-open-mtg]')?.addEventListener('click',openMtgSettings);
  // Refresh only while viewing the board; no Cloudflare Cron required.
  window.setInterval(()=>{if(state.currentScreen==='hr-daily-tasks'&&!hrBoatData.pending)void hrBoatLoad();},120000);
  document.getElementById('hrBoatAddForm')?.addEventListener('submit',e=>{
