@@ -6510,6 +6510,68 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 #portal2faDialog input{width:160px;padding:10px;font-size:20px;border:1px solid #a2a5bd}
 #portal2faDialog [hidden]{display:none!important}
 
+
+/* v126 weekly boat race: the existing 1440x1024 fixed canvas is preserved. */
+.screen-department-hr .hr-boat-open{position:absolute;right:300px;top:126px;z-index:56;min-width:240px;height:56px;border:0;background:#7577ff;color:#fff;font:600 23px/1.2 Inter,'Noto Sans JP',sans-serif;cursor:pointer}
+.screen-hr-boats{background:#f2f2ff}
+.hr-boat-page{position:absolute;left:70px;top:95px;width:1300px;height:800px;box-sizing:border-box;background:#fff;padding:24px 28px 15px;overflow:auto;font-family:Inter,'Noto Sans JP',sans-serif;color:#182746}
+.hr-boat-header{display:flex;justify-content:space-between;align-items:center;gap:18px}
+.hr-boat-header h1{margin:0;font-size:34px;line-height:1.2;color:#0c2750}
+.hr-boat-header p{margin:7px 0 0;font-size:17px;color:#577087}
+.hr-boat-header button{padding:11px 17px;border:0;background:#2a70d6;color:#fff;font:600 18px Inter,sans-serif;cursor:pointer}
+.hr-boat-status{font-size:16px;margin:9px 0 12px;color:#55658a;min-height:23px}
+.hr-boat-main{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:stretch;min-height:345px}
+.hr-boat-water{position:relative;min-width:0;padding:13px 13px 19px;background:linear-gradient(180deg,#b1e2f1,#77c7db 55%,#a5dcea);border:4px solid #679bb0;overflow:hidden}
+.hr-boat-water::before{content:'';pointer-events:none;position:absolute;inset:0;background:repeating-linear-gradient(168deg,transparent 0px,transparent 27px,#f0ffff44 29px,#f0ffff44 32px,transparent 34px,transparent 70px)}
+.hr-boat-water-head{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:17px;font-weight:bold;color:#224762}
+.hr-boat-water-head strong{font-size:22px}
+.hr-boat-lanes{position:relative;z-index:2;display:flex;flex-direction:column;gap:10px;margin-top:11px;max-height:420px;overflow:auto}
+.hr-boat-lane{min-height:52px;position:relative;background:#edfaff52;border:1px solid #efffff91;overflow:hidden}
+.hr-boat-lane::before{content:'';position:absolute;left:8px;top:0;bottom:0;border-left:3px dashed #fff}
+.hr-boat-lane::after{content:'';position:absolute;right:10px;top:0;bottom:0;border-left:4px dashed #fdfdfd}
+.hr-boat-vessel{position:absolute;top:3px;left:calc(10px + var(--boat-progress) * (100% - 84px) / 100);transition:left .7s ease;z-index:3;display:flex;align-items:center;flex-direction:column;gap:1px;text-align:center;min-width:63px}
+.hr-boat-vessel svg{width:54px;height:36px;filter:drop-shadow(0px 3px 2px #1d3c5155)}
+.hr-boat-name{position:absolute;top:5px;left:83px;max-width:245px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#173959;font-size:15px;font-weight:700;pointer-events:none}
+.hr-boat-vessel.is-sunk{top:6px;left:12px !important;transform:rotate(-31deg);opacity:.7;filter:grayscale(1)}
+.hr-boat-sunk{position:absolute;right:15px;top:15px;font-size:15px;font-weight:800;color:#ab183e;background:#fff6;padding:3px 7px}
+.hr-boat-standings{background:#f6f9ff;border:2px solid #d2ddf4;padding:12px 14px;min-width:0;overflow:auto}
+.hr-boat-standings h2{font-size:24px;margin:0 0 10px}
+.hr-boat-rank{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #dae2f1;font-size:17px}
+.hr-boat-rank strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hr-boat-rank small{grid-column:2 / 4;color:#5e6b82;white-space:normal;font-size:13px}
+.hr-boat-rank.is-sunk{color:#a02844}
+.hr-boat-legend{font-size:14px;font-weight:600;color:#3d5776;padding:10px 2px 12px;line-height:1.5}
+.hr-boat-admin{border-top:2px solid #d7e1ee;padding-top:11px}
+.hr-boat-admin h2{font-size:21px;margin:3px 0 12px;color:#213461}
+.hr-boat-admin h2 span{font-size:14px;font-weight:400;color:#6f7b92}
+.hr-boat-admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hr-boat-admin-grid form{border:1px solid #ccd6eb;background:#f8faff;padding:12px;display:flex;flex-wrap:wrap;gap:7px;align-items:flex-end}
+.hr-boat-admin-grid label{font-size:15px;flex:1 1 130px;min-width:0;display:flex;flex-direction:column;gap:4px}
+.hr-boat-admin-grid input,.hr-boat-admin-grid select{width:100%;height:34px;border:1px solid #adb8d2;background:#fff;padding:4px 7px;font-size:15px;min-width:0}
+.hr-boat-admin-grid button{background:#485fce;color:#fff;border:0;padding:9px 10px;font-size:14px;cursor:pointer}
+.hr-boat-admin-grid button:disabled{opacity:.55;cursor:default}
+
+/* v127: detailed ships and sea lanes; administrative violation / restoration forms removed. */
+.hr-boat-main{min-height:420px}
+.hr-boat-water{border-color:#446b8b;background:linear-gradient(180deg,#3e8fb0 0%,#1f789c 48%,#125c87 100%);box-shadow:inset 0 3px 18px #143a6333,inset 0 -9px 20px #092e5540}
+.hr-boat-water::before{background:repeating-linear-gradient(171deg,transparent 0px,transparent 24px,#efffff1c 25px,#efffff1c 27px,transparent 29px,transparent 52px)}
+.hr-boat-water::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 20% 18%,#d1f8ff26,transparent 42%),radial-gradient(ellipse at 77% 68%,#e3faff14,transparent 46%)}
+.hr-boat-water-head{color:#f3fdff;text-shadow:0 1px 3px #164865;font-size:17px;letter-spacing:.03em}
+.hr-boat-water-head strong{color:#fff;font-size:22px}
+.hr-boat-lanes{gap:11px;max-height:470px;margin-top:14px}
+.hr-boat-lane{min-height:102px;border:1px solid #dff9ff57;background:linear-gradient(180deg,#d3f8ff1c,#65afca23 60%,#113e6a19);box-shadow:inset 0 1px 0 #ffffff33;isolation:isolate}
+.hr-boat-lane::before{left:150px;border-left:3px dashed #dff8ffb2}
+.hr-boat-lane::after{right:7px;border-left:4px dashed #ffefaa}
+.hr-boat-vessel{top:1px;left:calc(150px + var(--boat-progress) * (100% - 283px) / 100);min-width:128px;width:128px;height:96px;display:block;transform-origin:60% 70%;transition:left 1.2s cubic-bezier(.25,.7,.23,1), transform .4s ease;filter:drop-shadow(0 7px 3px #053b5255)}
+.hr-boat-vessel svg{width:128px;height:96px;overflow:visible;filter:none;animation:hr-boat-bob 4.8s ease-in-out infinite;transform-origin:center 75%}
+.hr-boat-name{left:12px;top:35px;max-width:130px;padding:6px 9px;color:#f7fcff;background:#073958ad;border:1px solid #d9f8ff4a;border-radius:5px;text-shadow:0 1px 1px #043553;font-size:16px;letter-spacing:.02em}
+.hr-boat-vessel.is-sunk{top:20px;left:150px !important;opacity:.65;filter:grayscale(.75) drop-shadow(0 4px 3px #173b58);transform:rotate(-28deg) translateY(15px)}
+.hr-boat-vessel.is-sunk svg{animation:none}
+.hr-boat-sunk{top:12px;right:21px;z-index:4;background:#fff2f2e9;border:1px solid #e88796;border-radius:4px;color:#9a1937}
+.hr-boat-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@keyframes hr-boat-bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-3px) rotate(1deg)}}
+@media (prefers-reduced-motion:reduce){.hr-boat-vessel,.hr-boat-vessel svg{animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body>
@@ -6729,10 +6791,39 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </div>
           <div class="marketing-modal" id="markImageModal" hidden><button type="button" id="markCloseImage">閉じる ×</button><img id="markLargeImage" alt="投稿画像の拡大表示"></div>
         </section>
+
+        <!-- HR weekly team river race: originally authored, no external game assets -->
+        <section class="screen screen-hr-boats" data-screen="hr-daily-tasks" aria-label="人事局の毎日タスク状況・週間船レース">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="hr-boat-page">
+            <header class="hr-boat-header">
+              <div><h1>毎日タスク状況｜週間船レース</h1><p id="hrBoatWeek">毎週日曜 0:00（日本時間）にスタート地点へ戻ります</p></div>
+              <button type="button" id="hrBoatRefresh">最新の状況に更新</button>
+            </header>
+            <p id="hrBoatStatus" class="hr-boat-status" role="status">読み込み中…</p>
+            <div class="hr-boat-main">
+              <div class="hr-boat-water"><div class="hr-boat-water-head"><span>⚓ START</span><strong>チーム航路</strong><span>🏁 GOAL / 500pt</span></div>
+                <div id="hrBoatLanes" class="hr-boat-lanes" aria-live="polite"></div>
+              </div>
+              <aside class="hr-boat-standings"><h2>今週の順位</h2><div id="hrBoatRanking"></div></aside>
+            </div>
+            <footer class="hr-boat-legend">コンス：架電 +1 / メール +1 / 口コミ +2 / 獲得 +10　｜　クライアント：架電 +1 / お問い合わせメール +2　｜　その他 0pt</footer>
+            <section id="hrBoatAdmin" class="hr-boat-admin" hidden>
+              <h2>チーム編成 <span>代表・デベロッパー・人事統括のみ</span></h2>
+              <div class="hr-boat-admin-grid">
+                <form id="hrBoatAddForm"><label>新規チーム名 <input id="hrBoatName" maxlength="28" placeholder="例：青チーム" required></label><button type="submit">チームを追加</button></form>
+                <form id="hrBoatAssignForm"><label>対象チーム <select id="hrBoatTeamSelect" required></select></label><label>メンバー <select id="hrBoatMemberSelect" required></select></label><button type="submit">このチームに所属させる</button><button type="button" id="hrBoatRemoveMember">所属解除</button></form>
+              </div>
+            </section>
+          </div>
+          <button type="button" class="common-back-button" data-common-back>戻る</button>
+        </section>
+
         <!-- Figma 2026-11-05: 人事局 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-hr" aria-label="人事局">
           <div class="user-name" data-user-name>＜名前＞</div>
           <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="hr">資料一覧</button>
+          <button type="button" class="hr-boat-open" data-route="hr-daily-tasks">毎日タスク状況 ⛵</button>
           <div class="department-placeholder-panel mtg-staff-shell" aria-label="人事局のMTG登録">
             <div class="mtg-staff-header"><h2>MTG登録</h2><p>所属地域のMTGを登録できます。どのスタッフでも登録可能です。</p></div>
             <div id="mtgManagerUnavailable" class="mtg-manager-unavailable" hidden>登録用APIに接続できません。Workerを更新してください。</div>
@@ -8183,6 +8274,7 @@ const screenNames = new Set([
   "department-cons",
   "department-mark",
   "department-hr",
+  "hr-daily-tasks",
   "department-pg",
   "department-office",
   "meeting-attendance",
@@ -9177,6 +9269,7 @@ if (name === "post-confirm") {
 
   if (name === "meeting-attendance") void loadMeetings();
   if (name === "department-hr") setupMeetingManager();
+  if (name === "hr-daily-tasks") void hrBoatLoad();
 
   if (name === "hp-request") {
     const representativeView = Boolean(state.isRepresentative && !state.isDeveloper);
@@ -16169,6 +16262,90 @@ document.addEventListener('DOMContentLoaded',()=>{
    showToast('2段階認証を無効化しました');
   }catch(e){document.getElementById('portal2faStatus').textContent=e.message;}finally{b.disabled=false;}
  });
+});
+
+
+// ===================== v126 HR Boat Race =====================
+const hrBoatData={pending:false,result:null};
+const hrBoatSvg="<svg viewBox=\"0 0 158 112\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n<defs>\n<linearGradient id=\"hrWood\" x1=\"0\" y1=\"0\" x2=\"0.2\" y2=\"1\"><stop offset=\"0\" stop-color=\"#bf8550\"/><stop offset=\".34\" stop-color=\"#82502e\"/><stop offset=\".72\" stop-color=\"#40241c\"/><stop offset=\"1\" stop-color=\"#201b20\"/></linearGradient>\n<linearGradient id=\"hrDeck\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#d8a66a\"/><stop offset=\"1\" stop-color=\"#785037\"/></linearGradient>\n<linearGradient id=\"hrCanvas\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\".25\"><stop stop-color=\"#fffced\"/><stop offset=\".55\" stop-color=\"#e5d7b6\"/><stop offset=\".86\" stop-color=\"#c3ae8f\"/><stop offset=\"1\" stop-color=\"#fcf4df\"/></linearGradient>\n<linearGradient id=\"hrCanvasShade\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\".5\"><stop stop-color=\"#e5d5b2\"/><stop offset=\".42\" stop-color=\"#fff9e9\"/><stop offset=\"1\" stop-color=\"#ad9675\"/></linearGradient>\n<linearGradient id=\"hrSeaFoam\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#ffffff\" stop-opacity=\".87\"/><stop offset=\"1\" stop-color=\"#c0f4ff\" stop-opacity=\"0\"/></linearGradient>\n</defs>\n<ellipse cx=\"82\" cy=\"99\" rx=\"54\" ry=\"7\" fill=\"#0a3450\" opacity=\".22\"/>\n<path d=\"M11 91 Q26 86 41 92 T72 91 T101 92 T142 92\" fill=\"none\" stroke=\"url(#hrSeaFoam)\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n<path d=\"M21 97 Q40 92 53 96 M102 98 Q120 93 146 99\" fill=\"none\" stroke=\"#e4fcff\" stroke-opacity=\".8\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n<!-- curved bow, stern and layered timber hull -->\n<path d=\"M20 71 Q29 73 42 71 L122 69 L151 63 Q143 82 126 91 Q91 101 45 94 Q27 89 20 71Z\" fill=\"url(#hrWood)\" stroke=\"#29242b\" stroke-width=\"2.6\" stroke-linejoin=\"round\"/>\n<path d=\"M28 73 Q79 79 144 68\" stroke=\"#dfb478\" stroke-width=\"3\" fill=\"none\" opacity=\".95\"/>\n<path d=\"M30 79 Q87 86 137 75\" stroke=\"#251e1c\" stroke-width=\"1.5\" fill=\"none\" opacity=\".5\"/>\n<path d=\"M35 85 Q90 92 131 82\" stroke=\"#e3aa64\" stroke-width=\"1.2\" fill=\"none\" opacity=\".55\"/>\n<path d=\"M43 93 Q92 98 125 88\" stroke=\"#1d1518\" stroke-width=\"1.3\" fill=\"none\"/>\n<!-- continuous deck line, rails, portholes and stern gallery -->\n<path d=\"M22 69 Q80 64 124 65 L146 59 L148 66 Q92 73 24 74Z\" fill=\"url(#hrDeck)\" stroke=\"#4a3024\" stroke-width=\"1.8\"/>\n<path d=\"M31 63 L31 71 M49 63 L49 71 M68 61 L68 70 M86 61 L86 69 M104 61 L104 68 M121 61 L121 66\" stroke=\"#463127\" stroke-width=\"2\"/>\n<path d=\"M23 64 Q82 60 127 60 L145 54\" stroke=\"#2d292b\" stroke-width=\"2.5\" fill=\"none\"/>\n<path d=\"M139 59 L151 49\" stroke=\"#5f4633\" stroke-width=\"2.7\"/>\n<path d=\"M142 65 L150 66\" stroke=\"#f7cf8c\" stroke-width=\"1.5\"/>\n<circle cx=\"51\" cy=\"83\" r=\"3\" fill=\"#0e344a\" stroke=\"#e5bd72\" stroke-width=\"1.5\"/>\n<circle cx=\"74\" cy=\"86\" r=\"3\" fill=\"#0e344a\" stroke=\"#e5bd72\" stroke-width=\"1.5\"/>\n<circle cx=\"97\" cy=\"86\" r=\"3\" fill=\"#0e344a\" stroke=\"#e5bd72\" stroke-width=\"1.5\"/>\n<!-- mast and yardarms -->\n<path d=\"M60 13 L60 67 M102 9 L102 66\" stroke=\"#4a2e24\" stroke-width=\"3.6\" stroke-linecap=\"round\"/>\n<path d=\"M57 29 L86 30 M100 23 L129 24\" stroke=\"#62432b\" stroke-width=\"2.2\"/>\n<!-- billowing stitched sails -->\n<path d=\"M58 15 Q35 29 30 60 Q44 56 59 61 Z\" fill=\"url(#hrCanvasShade)\" stroke=\"#755e4b\" stroke-width=\"1.6\"/>\n<path d=\"M63 17 Q84 28 88 59 Q73 57 63 61Z\" fill=\"url(#hrCanvas)\" stroke=\"#755e4b\" stroke-width=\"1.6\"/>\n<path d=\"M100 12 Q79 28 78 57 Q91 53 101 58Z\" fill=\"url(#hrCanvasShade)\" stroke=\"#755e4b\" stroke-width=\"1.6\"/>\n<path d=\"M105 12 Q127 25 130 55 Q119 52 105 58Z\" fill=\"url(#hrCanvas)\" stroke=\"#755e4b\" stroke-width=\"1.6\"/>\n<path d=\"M48 26 Q45 39 40 54 M72 28 Q78 40 81 55 M89 26 Q85 38 84 50 M113 25 Q119 38 124 49\" fill=\"none\" stroke=\"#ab987e\" stroke-opacity=\".75\" stroke-width=\".9\" stroke-dasharray=\"2.2 2.5\"/>\n<!-- taut rigging -->\n<path d=\"M60 13L22 69 M60 13L96 68 M102 9L67 67 M102 9L145 59 M60 13L99 9 M105 15L142 58\" fill=\"none\" stroke=\"#574d44\" stroke-opacity=\".9\" stroke-width=\".9\"/>\n<!-- distinguishing flag and golden trim -->\n<path d=\"M103 9L103 0\" stroke=\"#3d312c\" stroke-width=\"1.8\"/>\n<path d=\"M104 1 Q117 -1 130 5 L105 8Z\" fill=\"var(--boat-accent,#4168a5)\" stroke=\"#fbdd99\" stroke-width=\"1\"/>\n<path d=\"M23 73 Q84 78 144 67\" fill=\"none\" stroke=\"var(--boat-accent,#4168a5)\" stroke-width=\"2.2\" opacity=\".9\"/>\n</svg>";
+function hrBoatNode(tag,className,text){const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=String(text);return el;}
+function hrBoatSelect(id,items,valueOf,labelOf,placeholder){
+ const el=document.getElementById(id);if(!el)return;
+ const old=el.value;el.replaceChildren();
+ const empty=document.createElement('option');empty.value='';empty.textContent=placeholder;el.appendChild(empty);
+ for(const item of items){const o=document.createElement('option');o.value=String(valueOf(item));o.textContent=labelOf(item);el.appendChild(o);}
+ if([...el.options].some(o=>o.value===old))el.value=old;
+}
+function hrBoatRender(){
+ const r=hrBoatData.result;if(!r)return;
+ const label=document.getElementById('hrBoatWeek');
+ label.textContent=`${r.week_start}（日）〜${r.week_end}（土）｜毎週日曜0:00に新しいレースが開始`;
+ const water=document.getElementById('hrBoatLanes');water.replaceChildren();
+ const ranking=document.getElementById('hrBoatRanking');ranking.replaceChildren();
+ const teams=Array.isArray(r.teams)?r.teams:[];
+ if(!teams.length){water.appendChild(hrBoatNode('p','','チームが未登録です。管理者が下のフォームから登録してください。'));}
+ teams.forEach((team,i)=>{
+   const lane=hrBoatNode('div','hr-boat-lane');
+   const progress=team.sunk?0:Math.max(0,Math.min(100,100*Number(team.points||0)/Number(r.goal_points||500)));
+   const boat=hrBoatNode('div','hr-boat-vessel'+(team.sunk?' is-sunk':''));
+   boat.style.setProperty('--boat-progress',progress);
+   boat.style.setProperty('--boat-accent',['#5375b2','#cb7c32','#8660ac','#397b78','#b55a65'][i%5]);
+   boat.innerHTML=hrBoatSvg;
+   boat.setAttribute('title',`${team.name} ${team.points}pt${team.sunk?'（沈没）':''}`);
+   lane.appendChild(boat);lane.appendChild(hrBoatNode('span','hr-boat-name',team.name));
+   if(team.sunk)lane.appendChild(hrBoatNode('span','hr-boat-sunk','沈没'));
+   water.appendChild(lane);
+   const row=hrBoatNode('div','hr-boat-rank'+(team.sunk?' is-sunk':''));
+   row.appendChild(hrBoatNode('span','',team.sunk?'✕':String(i+1)));
+   row.appendChild(hrBoatNode('strong','',team.name));
+   row.appendChild(hrBoatNode('b','',`${team.points} pt`));
+   const detail=hrBoatNode('small','',`${team.members?.length||0}名｜${team.sunk?'今週は航行停止':`${progress.toFixed(1)}%進行`}`);
+   row.appendChild(detail);ranking.appendChild(row);
+ });
+ const adm=document.getElementById('hrBoatAdmin');adm.hidden=!r.can_manage;
+ if(!r.can_manage)return;
+ const roster=Array.isArray(r.roster)?r.roster:[];
+ hrBoatSelect('hrBoatTeamSelect',teams,t=>t.id,t=>t.name,'チームを選択');
+ hrBoatSelect('hrBoatMemberSelect',roster,m=>m.email,m=>`${m.name}（${m.role||'所属未設定'}）${m.team_id?' / 登録済み':''}`,'メンバーを選択');
+}
+async function hrBoatLoad(){
+ const status=document.getElementById('hrBoatStatus');if(!status||hrBoatData.pending)return;
+ hrBoatData.pending=true;status.textContent='週間の記録を集計しています…';
+ try{
+   hrBoatData.result=await portalFetch('/api/hr/boat-race');
+   hrBoatRender();status.textContent='今週のポイントと船の位置を更新しました。';
+ }catch(e){status.textContent='船レースの取得に失敗：'+(e.message||e);}
+ finally{hrBoatData.pending=false;}
+}
+async function hrBoatWrite(body){
+ if(hrBoatData.pending)return;
+ hrBoatData.pending=true;
+ const status=document.getElementById('hrBoatStatus');status.textContent='更新しています…';
+ try{
+   await portalFetch('/api/hr/boat-race',{method:'POST',body});
+   hrBoatData.pending=false;
+   await hrBoatLoad();
+ }catch(error){status.textContent='保存できません：'+(error.message||error);hrBoatData.pending=false;}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ document.getElementById('hrBoatRefresh')?.addEventListener('click',()=>void hrBoatLoad());
+ // Refresh only while viewing the board; no Cloudflare Cron required.
+ window.setInterval(()=>{if(state.currentScreen==='hr-daily-tasks'&&!hrBoatData.pending)void hrBoatLoad();},120000);
+ document.getElementById('hrBoatAddForm')?.addEventListener('submit',e=>{
+   e.preventDefault();const name=document.getElementById('hrBoatName').value.trim();if(!name)return;
+   void hrBoatWrite({action:'create',name});
+ });
+ document.getElementById('hrBoatAssignForm')?.addEventListener('submit',e=>{
+   e.preventDefault();const team_id=Number(document.getElementById('hrBoatTeamSelect').value),email=document.getElementById('hrBoatMemberSelect').value;
+   if(team_id&&email)void hrBoatWrite({action:'assign',team_id,email});
+ });
+ document.getElementById('hrBoatRemoveMember')?.addEventListener('click',()=>{
+   const team_id=Number(document.getElementById('hrBoatTeamSelect').value),email=document.getElementById('hrBoatMemberSelect').value;
+   const entry=hrBoatData.result?.roster?.find(x=>x.email===email);
+   if(!entry||entry.team_id!==team_id){document.getElementById('hrBoatStatus').textContent='選択したメンバーはこのチームに所属していません。';return;}
+   if(confirm('このメンバーの所属を解除しますか？'))void hrBoatWrite({action:'unassign',team_id,email});
+ });
+
 });
 
 </script>
