@@ -16704,16 +16704,40 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 .screen-hr-boats .hr-boat-water{
   isolation:isolate !important;
-  background:radial-gradient(ellipse at 16% 21%,rgba(184,239,249,.18),transparent 25%),linear-gradient(180deg,#5ABAD9 0%,#2294BA 35%,#11749E 70%,#0A597E 100%) !important;
-  box-shadow:inset 0 2px 0 rgba(228,252,255,.48),inset 0 0 0 2px rgba(127,207,232,.75),inset 0 -24px 28px rgba(7,52,80,.22) !important;
+  border-color:#5cc4dc !important;
+  background:
+    radial-gradient(ellipse 37% 24% at 9% 9%,rgba(223,255,249,.36),transparent 85%),
+    radial-gradient(ellipse 30% 22% at 82% 16%,rgba(147,246,224,.26),transparent 83%),
+    radial-gradient(ellipse 35% 26% at 29% 79%,rgba(87,230,223,.19),transparent 80%),
+    linear-gradient(180deg,#62D3E6 0%,#35BFD6 25%,#1AA6C6 51%,#128DB7 76%,#0D7BA8 100%) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(241,255,255,.67),
+    inset 0 0 0 2px rgba(119,231,238,.66),
+    inset 0 -20px 30px rgba(10,92,139,.13),
+    0 2px 7px rgba(26,115,151,.09) !important;
 }
 .screen-hr-boats .hr-boat-water::before{
-  background:radial-gradient(36px 9px at 20% 24%,rgba(215,249,255,.28),transparent 80%),radial-gradient(48px 9px at 58% 57%,rgba(215,249,255,.26),transparent 80%),radial-gradient(40px 8px at 31% 85%,rgba(215,249,255,.23),transparent 80%) !important;
+  background:
+    radial-gradient(ellipse 35px 7px at 16% 23%,rgba(236,255,255,.38),transparent 85%),
+    radial-gradient(ellipse 50px 8px at 57% 52%,rgba(237,255,255,.35),transparent 85%),
+    radial-gradient(ellipse 27px 7px at 35% 77%,rgba(241,255,255,.29),transparent 85%),
+    radial-gradient(ellipse 40px 7px at 88% 71%,rgba(242,255,255,.33),transparent 85%),
+    radial-gradient(ellipse 25px 5px at 72% 38%,rgba(236,255,255,.2),transparent 82%) !important;
   z-index:0 !important;
 }
 .screen-hr-boats .hr-boat-water::after{
-  background:repeating-linear-gradient(180deg,transparent 0 39px,rgba(219,249,255,.055) 40px,transparent 42px,transparent 78px) !important;
+  background:
+    radial-gradient(ellipse 28% 4% at 14% 38%,rgba(222,255,255,.09),transparent 86%),
+    radial-gradient(ellipse 34% 5% at 73% 66%,rgba(213,255,255,.075),transparent 84%),
+    linear-gradient(180deg,rgba(240,255,255,.055),transparent 24%,transparent 76%,rgba(7,87,127,.055)) !important;
   z-index:0 !important;
+}
+.screen-hr-boats .hr-boat-lane{
+  background:transparent !important;
+  border-top-color:rgba(225,254,255,.43) !important;
+}
+.screen-hr-boats .hr-boat-lane:last-child{
+  border-bottom-color:rgba(225,254,255,.43) !important;
 }
 .screen-hr-boats .hr-boat-scenery{
   position:absolute !important;inset:0 !important;z-index:1 !important;
