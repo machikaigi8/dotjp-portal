@@ -6617,6 +6617,10 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 @keyframes hr-boat-bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-3px) rotate(1deg)}}
 @media (prefers-reduced-motion:reduce){.hr-boat-vessel,.hr-boat-vessel svg{animation:none!important;transition:none!important}}
 
+.screen-client-staff-status[data-staff-load-error="true"] #staffStatusReload{
+  display:inline-flex !important;align-items:center;justify-content:center;
+  background:#ecf3ff !important;border:1px solid #7799d5 !important;color:#174e96 !important;
+}
 </style>
 </head>
 <body>
@@ -10279,6 +10283,9 @@ async function loadClientStaffStatus() {
   const seq=++data.requestSeq;
   const query=new URLSearchParams({region:state.region,day:document.getElementById('staffStatusDay').value,
     week:document.getElementById('staffStatusWeek').value,month:document.getElementById('staffStatusMonth').value});
+  const statusScreen=document.querySelector('.screen-client-staff-status');
+  statusScreen?.removeAttribute('data-staff-load-error');
+  document.getElementById('staffStatusNote').classList.remove('is-warning');
   document.getElementById('staffStatusNote').textContent='実績を読み込んでいます…';
   try {
     const response=await portalFetch('/api/client/staff-status?'+query.toString());
@@ -10292,14 +10299,18 @@ async function loadClientStaffStatus() {
     renderClientStaffStatus();
   } catch(e) {
     if (seq!==data.requestSeq) return;
-    data.members=[];
-    document.getElementById('staffStatusPeople').innerHTML='';
-    for(const id of ['staffStatusDayMetrics','staffStatusWeekMetrics','staffStatusMonthMetrics','staffStatusTotalMetrics']){
-      document.getElementById(id).textContent='読み込めませんでした';
+    const hasPrevious=data.members.length>0;
+    if(!hasPrevious){
+      document.getElementById('staffStatusPeople').innerHTML='';
+      for(const id of ['staffStatusDayMetrics','staffStatusWeekMetrics','staffStatusMonthMetrics','staffStatusTotalMetrics']){
+        document.getElementById(id).textContent='読み込めませんでした';
+      }
     }
     const note=document.getElementById('staffStatusNote');
-    note.textContent=e.message||'読み込みに失敗しました。';
+    note.textContent=(hasPrevious?'前回の集計を表示中。再取得できません：':'読み込みに失敗しました：')+
+      (e.message||'通信に失敗しました。')+'　「再読み込み」を押してください。';
     note.classList.add('is-warning');
+    statusScreen?.setAttribute('data-staff-load-error','true');
   }
 }
 // 支部員タスク状況の緑色の選択ボタンには名字だけを表示する。
@@ -11536,7 +11547,7 @@ async function portalFetch(path, options = {}) {
     const attempts=isGet?2:1;
     for(let attempt=0;attempt<attempts;attempt++){
       const controller=new AbortController();
-      const maxWait=Number(options.timeoutMs)|| (path.startsWith('/api/hr/boat-race')?25000:16000);
+      const maxWait=Number(options.timeoutMs)|| (path.startsWith('/api/hr/boat-race')||path.startsWith('/api/client/staff-status')?25000:16000);
       const timeout=setTimeout(()=>controller.abort(),maxWait);
       let response, data;
       try{
