@@ -19,10 +19,7 @@ input[type=text]{width:100%;padding:13px 16px;border:1px solid #97a9cc;border-ra
 input[type=text]:focus{outline:3px solid #d2e5ff;border-color:#397bd3}
 button.primary{display:block;width:100%;padding:15px 20px;background:#345ce9;color:#fff;border:0;border-radius:7px;font-size:18px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:21px}
 button.primary:disabled{opacity:.58;cursor:wait}
-.check{display:flex;align-items:flex-start;gap:13px;padding:14px;background:#f3f6ff;border-radius:8px;margin-top:18px;cursor:pointer}
-.check input{width:20px;height:20px;flex-shrink:0;accent-color:#345ce9;margin-top:4px}
-.check strong{display:block;font-size:16px}
-.check small{display:block;color:#63708b;line-height:1.6;margin-top:4px}
+.auto-trust{padding:12px 15px;background:#f3f6ff;border-radius:8px;margin:18px 0 0;font-size:14px;line-height:1.65;color:#526284}
 #setupBlock{margin-top:16px;background:#f8fbff;border:1px solid #dae5f4;border-radius:9px;padding:20px}
 #setupBlock h2{font-size:18px;margin:0 0 8px}
 .secret{display:flex;gap:8px;align-items:stretch}
@@ -52,7 +49,7 @@ footer{margin-top:18px;font-size:13px;text-align:center;color:#79839b}
 <form id="verifyForm" autocomplete="off" hidden>
 <label class="field" for="code">認証アプリの6桁コード</label>
 <input id="code" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
-<label class="check"><input id="trustDevice" type="checkbox"><span><strong>この端末を信頼する</strong><small>次回以降は原則として認証アプリの入力を省略します。共用端末ではチェックしないでください。</small></span></label>
+<p class="auto-trust">認証が完了すると、このブラウザは自動的に信頼済み端末として登録されます。次回以降は原則として6桁コードの入力を省略します。共用端末での利用は避けてください。</p>
 <button class="primary" type="submit" id="verifyButton">認証してログイン</button>
 </form>
 <p id="status" role="status">認証情報を確認しています…</p>
@@ -272,7 +269,7 @@ function localQrSvg(input){
           ?'登録済みの認証アプリを開いて、6桁コードを入力してください。'
           :'以前登録した認証アプリの6桁コードを入力してください。';
       }
-      setStatus('この端末を信頼すると、次回以降は原則として認証コードを省略できます。ブラウザの保存データを消すと、再認証が必要になります。');
+      setStatus('認証後、この端末を自動登録します。ブラウザの保存データを消した場合は再認証が必要になります。');
       $('code').focus();
     }catch(e){setStatus(e.message,true);setBusy(true);}
   }
@@ -287,14 +284,12 @@ function localQrSvg(input){
     setBusy(true);setStatus('認証中です…');
     try{
       let generated=null;
-      if($('trustDevice').checked){
-        try{
-          const pair=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
-          const db=await deviceDatabase();db.close();
-          generated={privateKey:pair.privateKey,publicJwk:await crypto.subtle.exportKey('jwk',pair.publicKey)};
-        }catch{generated=null;}
-      }
-      const d=await api('/api/2fa/verify',{ticket,code,trust_device:$('trustDevice').checked,
+      try{
+        const pair=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
+        const db=await deviceDatabase();db.close();
+        generated={privateKey:pair.privateKey,publicJwk:await crypto.subtle.exportKey('jwk',pair.publicKey)};
+      }catch{generated=null;}
+      const d=await api('/api/2fa/verify',{ticket,code,trust_device:true,
         ...(generated?{trust_public_key:generated.publicJwk}:{})});
       if(!d.token)throw new Error('ログイン情報を発行できませんでした。');
       if(d.trusted_device_key_id){
@@ -313,7 +308,7 @@ function localQrSvg(input){
         }
         sessionStorage.removeItem('dotjp_2fa_ticket_v2');
         location.replace(HOME+'#login_token='+encodeURIComponent(d.token));
-      }else if($('trustDevice').checked&&d.trust_activation_url){
+      }else if(d.trust_activation_url){
         sessionStorage.removeItem('dotjp_2fa_ticket_v2');
         const url=new URL(d.trust_activation_url);
         if(url.origin!==WORKER)throw new Error('認証先を確認できませんでした。');
