@@ -6867,7 +6867,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                   <h2>チーム編成 <span>代表・デベロッパー・人事統括のみ</span></h2>
                   <div class="hr-boat-admin-grid">
                     <form id="hrBoatAddForm"><label>新規チーム名 <input id="hrBoatName" maxlength="28" placeholder="例：青チーム" required></label><button type="submit">チームを追加</button></form>
-                    <form id="hrBoatAssignForm"><label>対象チーム <select id="hrBoatTeamSelect" required></select></label><label>メンバー <select id="hrBoatMemberSelect" required></select></label><button type="submit">このチームに所属させる</button><button type="button" id="hrBoatRemoveMember">所属解除</button></form>
+                    <form id="hrBoatAssignForm"><label>対象チーム <select id="hrBoatTeamSelect" required></select></label><label>メンバー <select id="hrBoatMemberSelect" required></select></label><p id="hrBoatMembershipState" class="hr-boat-membership-state" aria-live="polite">チームとメンバーを選択してください。</p><button type="submit">チームに追加</button><button type="button" id="hrBoatRemoveMember">このチームから解除</button></form>
                   </div>
                 </section>
               </aside>
@@ -16342,6 +16342,17 @@ function hrBoatSelect(id,items,valueOf,labelOf,placeholder){
  for(const item of items){const o=document.createElement('option');o.value=String(valueOf(item));o.textContent=labelOf(item);el.appendChild(o);}
  if([...el.options].some(o=>o.value===old))el.value=old;
 }
+function hrBoatUpdateMembershipState(){
+ const current=hrBoatData.result;
+ const message=document.getElementById('hrBoatMembershipState');if(!message||!current)return;
+ const teamId=Number(document.getElementById('hrBoatTeamSelect')?.value);
+ const email=document.getElementById('hrBoatMemberSelect')?.value;
+ const person=current.roster?.find(item=>item.email===email);
+ const team=current.teams?.find(item=>item.id===teamId);
+ if(!email||!team){message.textContent='チームとメンバーを選択してください。';return;}
+ const belongs=!!person?.team_ids?.includes(teamId);
+ message.textContent=belongs?`${person.name}は「${team.name}」に所属しています。所属解除もできます。`:`${person?.name||email}を「${team.name}」に追加できます。ほかのチームからは外れません。`;
+}
 function hrBoatRender(){
  const r=hrBoatData.result;if(!r)return;
  const label=document.getElementById('hrBoatWeek');
@@ -16366,13 +16377,22 @@ function hrBoatRender(){
    row.appendChild(hrBoatNode('strong','',team.name));
    row.appendChild(hrBoatNode('b','',`${team.points} pt`));
    const detail=hrBoatNode('small','',`${team.members?.length||0}名｜${team.sunk?'今週は航行停止':`${progress.toFixed(1)}%進行`}`);
-   row.appendChild(detail);ranking.appendChild(row);
+   row.appendChild(detail);
+   const names=(team.members||[]).map(member=>String(member.name||member.email||'').trim()).filter(Boolean);
+   const membersLabel=hrBoatNode('div','hr-boat-members',names.length?'所属：'+names.join('・'):'所属：未登録');
+   membersLabel.title=names.length?names.join('、'):'所属メンバーなし';
+   row.appendChild(membersLabel);
+   ranking.appendChild(row);
  });
  const adm=document.getElementById('hrBoatAdmin');adm.hidden=!r.can_manage;
  if(!r.can_manage)return;
  const roster=Array.isArray(r.roster)?r.roster:[];
  hrBoatSelect('hrBoatTeamSelect',teams,t=>t.id,t=>t.name,'チームを選択');
- hrBoatSelect('hrBoatMemberSelect',roster,m=>m.email,m=>`${m.name}（${m.role||'所属未設定'}）${m.team_id?' / 登録済み':''}`,'メンバーを選択');
+ hrBoatSelect('hrBoatMemberSelect',roster,m=>m.email,m=>{
+   const names=(m.team_ids||[]).map(id=>teams.find(t=>t.id===id)?.name).filter(Boolean);
+   return `${m.name}（${m.role||'所属未設定'}）${names.length?' / '+names.join('・'):' / 未所属'}`;
+ },'メンバーを選択');
+ hrBoatUpdateMembershipState();
 }
 async function hrBoatLoad(){
  const status=document.getElementById('hrBoatStatus');if(!status||hrBoatData.pending)return;
@@ -16414,10 +16434,12 @@ document.addEventListener('DOMContentLoaded',()=>{
    e.preventDefault();const team_id=Number(document.getElementById('hrBoatTeamSelect').value),email=document.getElementById('hrBoatMemberSelect').value;
    if(team_id&&email)void hrBoatWrite({action:'assign',team_id,email});
  });
+ document.getElementById('hrBoatTeamSelect')?.addEventListener('change',hrBoatUpdateMembershipState);
+ document.getElementById('hrBoatMemberSelect')?.addEventListener('change',hrBoatUpdateMembershipState);
  document.getElementById('hrBoatRemoveMember')?.addEventListener('click',()=>{
    const team_id=Number(document.getElementById('hrBoatTeamSelect').value),email=document.getElementById('hrBoatMemberSelect').value;
    const entry=hrBoatData.result?.roster?.find(x=>x.email===email);
-   if(!entry||entry.team_id!==team_id){document.getElementById('hrBoatStatus').textContent='選択したメンバーはこのチームに所属していません。';return;}
+   if(!entry||!(entry.team_ids||[]).includes(team_id)){document.getElementById('hrBoatStatus').textContent='選択したメンバーはこのチームに所属していません。';return;}
    if(confirm('このメンバーの所属を解除しますか？'))void hrBoatWrite({action:'unassign',team_id,email});
  });
 
@@ -16540,6 +16562,37 @@ document.addEventListener('DOMContentLoaded',()=>{
 .screen-hr-boats #hrBoatAssignForm{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .screen-hr-boats #hrBoatAssignForm label{grid-column:1 / -1}
 .screen-hr-boats .hr-boat-legend{flex:0 0 auto !important;padding:7px 2px 0 !important;font-size:13px !important;line-height:1.4 !important}
+.screen-hr-boats .hr-boat-name{
+  width:168px !important;max-width:168px !important;left:9px !important;top:9px !important;
+  white-space:normal !important;overflow:visible !important;text-overflow:clip !important;
+  overflow-wrap:anywhere !important;word-break:normal !important;
+  color:#fff !important;font-size:16px !important;line-height:1.3 !important;
+  padding:5px 6px !important;border-radius:6px !important;background:#0d4868d9 !important;
+  text-shadow:0 1px 2px #09334d !important;pointer-events:none !important;
+}
+.screen-hr-boats .hr-boat-lane::before{left:181px !important}
+.screen-hr-boats .hr-boat-vessel{left:calc(181px + var(--boat-progress) * (100% - 313px) / 100) !important}
+.screen-hr-boats .hr-boat-rank strong{
+  white-space:normal !important;overflow:visible !important;text-overflow:clip !important;
+  overflow-wrap:anywhere !important;word-break:normal !important;line-height:1.3 !important;
+}
+.screen-hr-boats .hr-boat-rank{grid-template-columns:27px minmax(0,1fr) auto !important;gap:3px 7px !important;align-content:center !important}
+.screen-hr-boats .hr-boat-rank small{grid-column:2 / 4 !important;line-height:1.3 !important}
+.screen-hr-boats .hr-boat-members{
+  grid-column:1 / -1 !important;min-width:0 !important;overflow-wrap:anywhere !important;
+  white-space:normal !important;line-height:1.4 !important;font-size:13px !important;
+  color:#415874 !important;font-weight:500 !important;
+}
+.screen-hr-boats #hrBoatRanking{gap:2px !important}
+.screen-hr-boats .hr-boat-membership-state{
+  grid-column:1/-1;margin:0;padding:7px 8px;border-radius:6px;
+  background:#edf4ff;color:#34537f;font-size:13px;line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.screen-hr-boats #hrBoatAssignForm .hr-boat-membership-state{grid-column:1/-1}
+.screen-hr-boats .hr-boat-admin-grid{gap:9px !important}
+.screen-hr-boats .hr-boat-admin-grid form{gap:6px !important;padding:9px 10px !important}
+.screen-hr-boats .hr-boat-admin h2{margin:0 0 7px !important}
 .screen-hr-boats [data-common-back]{
   position:absolute !important;left:70px !important;top:898px !important;right:auto !important;bottom:auto !important;
   z-index:160 !important;width:140px !important;height:60px !important;
