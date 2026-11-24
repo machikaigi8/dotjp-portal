@@ -6641,6 +6641,61 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   #portalInitialRegionSetup button{font-size:21px;min-height:90px}
   #portalInitialRegionSetup .portal-initial-region-choices{gap:10px}
 }
+
+/* Figma latest homepage: header branch label / five-branch navigation / eleven buttons. */
+.screen-home .home-region-current {
+  position:absolute;left:1240px;top:19px;width:160px;height:60px;
+  display:flex;align-items:center;justify-content:center;
+  background:#000060;color:#fff;font:500 50px/60px Inter,'Noto Sans JP',sans-serif;
+}
+.screen-home .region-switch {
+  position:absolute;right:-6px;top:-6px;width:320px;height:160px;
+  display:grid;grid-template-columns:repeat(2,154px);grid-template-rows:repeat(2,74px);
+  z-index:8;background:#fff;box-sizing:border-box;border:6px solid #000060;
+}
+.screen-home .region-switch .region-button {
+  width:154px;height:74px;box-sizing:border-box;border:0;
+  background:#fff;color:#000060;font:500 49px/1 Inter,'Noto Sans JP',sans-serif;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+}
+.screen-home .region-switch .region-button:nth-child(odd) {border-right:6px solid #000060}
+.screen-home .region-switch .region-button:nth-child(-n+2) {border-bottom:6px solid #000060}
+.screen-home .region-switch .region-button.is-active {background:#fff;color:#000060}
+.screen-home .region-switch .region-button:hover,.screen-home .region-switch .region-button:focus-visible {background:#eef1ff}
+.screen-home .department-grid > :nth-child(1) {grid-column:1;grid-row:1}
+.screen-home .department-grid > :nth-child(2) {grid-column:2;grid-row:1}
+.screen-home .department-grid > :nth-child(3) {grid-column:3;grid-row:1}
+.screen-home .department-grid > :nth-child(4) {grid-column:1;grid-row:2}
+.screen-home .department-grid > :nth-child(5) {grid-column:2;grid-row:2}
+.screen-home .department-grid > :nth-child(6) {grid-column:3;grid-row:2}
+.screen-home .department-grid > :nth-child(7) {grid-column:1;grid-row:3}
+.screen-home .department-grid > :nth-child(8) {grid-column:2;grid-row:3}
+.screen-home .department-grid > :nth-child(9) {grid-column:3;grid-row:3}
+.screen-home .department-grid > :nth-child(10) {grid-column:4;grid-row:3}
+.screen-home .department-grid > :nth-child(11) {grid-column:4;grid-row:2}
+.screen-home .home-manager-shortcut {
+  position:absolute;top:15px;right:15px;z-index:4;
+  background:#e8edff;color:#264b93;border:1px solid #6b85c2;border-radius:6px;
+  font:600 18px/1.3 Inter,'Noto Sans JP',sans-serif;padding:6px 15px;cursor:pointer;
+}
+.screen-home .home-manager-shortcut[hidden] {display:none !important}
+.screen-schedule .schedule-manual-entry-button {
+  position:absolute!important;left:216px!important;bottom:10px!important;
+  height:42px!important;padding:0 9px!important;
+  border:1.5px solid #5271d3!important;border-radius:7px!important;
+  background:#f0f4ff!important;color:#2648a6!important;
+  font:600 16px/39px Inter,'Noto Sans JP',sans-serif!important;
+  white-space:nowrap;cursor:pointer!important;
+}
+.screen-schedule .work-hours-open-button {left:12px!important;padding:0 9px!important;font-size:17px!important}
+.screen-schedule .schedule-manual-entry-button:hover,.screen-schedule .schedule-manual-entry-button:focus-visible {background:#dbe6ff!important}
+.screen-schedule-plan .manual-plan-date-row {
+  position:absolute;left:128px;top:109px;display:flex;align-items:center;gap:18px;
+  font:500 24px/42px Inter,'Noto Sans JP',sans-serif;z-index:2;
+}
+.screen-schedule-plan .manual-plan-date-row[hidden] {display:none!important}
+.screen-schedule-plan .manual-plan-date-row input {font:500 23px/36px Inter,'Noto Sans JP',sans-serif;padding:2px 12px;border:2px solid #8aa5d4;border-radius:6px;color:#14274f}
+.screen-schedule-plan #planRpAvailabilityButton[hidden] {display:none!important}
 </style>
 </head>
 <body>
@@ -6690,6 +6745,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
         <section class="screen screen-home" data-screen="home">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <div class="home-region-current" id="homeRegionCurrent" aria-label="現在の表示支部">東京</div>
 
           <div class="home-summary">
             <div class="summary-cell">
@@ -6732,9 +6788,11 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <section class="department-panel">
             <h2>部署関連</h2>
 
-            <div class="region-switch">
-              <button type="button" class="region-button" data-region="kanto">関東</button>
-              <button type="button" class="region-button" data-region="kansai" title="関西のポータルを開く">関西</button>
+            <div class="region-switch" aria-label="支部の切り替え">
+              <button type="button" class="region-button" data-home-branch="miyagi">宮城</button>
+              <button type="button" class="region-button" data-region="kansai" data-home-branch="kansai" title="関西のポータルを開く">関西</button>
+              <button type="button" class="region-button" data-home-branch="hiroshima">広島</button>
+              <button type="button" class="region-button" data-home-branch="kumamoto">熊本</button>
             </div>
 
             <div class="department-grid">
@@ -6746,14 +6804,15 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <button type="button" class="blue-menu" data-route="department-office">事務局</button>
               <button type="button" class="blue-menu" data-route="meeting-attendance">MTG出欠登録</button>
               <button type="button" class="blue-menu" data-route="post">〒依頼出しPOST</button>
-              <button type="button" class="blue-menu" data-route="schedule">スケジュール管理</button>
+              <button type="button" class="blue-menu" data-route="schedule">スケジュール登録</button>
               <button id="hpEditButton" type="button" class="blue-menu">HPへの要望</button>
-              <button type="button" id="representativeDashboardEntry" class="blue-menu schedule-button" data-route="representative-dashboard" hidden>代表</button>
+              <button id="homeReviewButton" type="button" class="blue-menu" data-route="schedule-review">タスク予定確認</button>
             </div>
           </section>
 
           <section class="links-panel">
             <h2>リンク集</h2>
+            <button type="button" id="representativeDashboardEntry" class="home-manager-shortcut" data-route="representative-dashboard" hidden>代表画面</button>
             <button type="button" id="lineSettingsOpen" class="line-settings-entry" hidden>LINE連携</button>
 
             <button type="button" id="lineUnlinkEntry" class="line-unlink-entry" hidden>LINE連携を解除する</button>
@@ -7859,6 +7918,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 type="button"
                 data-route="schedule-hours"
               >稼働時間を登録する</button>
+              <button type="button" id="scheduleManualEntryButton" class="schedule-manual-entry-button">その他の時間でタスクを入力</button>
             </section>
           </div>
         </section>
@@ -8070,6 +8130,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 
           <div class="schedule-plan-panel">
             <div id="selectedAvailabilityLabel" class="selected-availability-label">11/4(水)10:00～16:00</div>
+            <label id="manualPlanDateRow" class="manual-plan-date-row" hidden>入力する日付 <input id="manualPlanDate" type="date" aria-label="タスク時間を入力する日付"></label>
 
             <div class="sp-time-row" aria-label="タスク開始時刻・終了時刻">
               <span class="sp-time-caption">タスク開始時間：</span>
@@ -8345,6 +8406,7 @@ const state = {
     providerAvailability: {},
     availability: [],
     selectedSlot: null,
+    manualPlanMode: false,
     workDays: [],
     selectedWorkDay: 0,
     selectedTaskTitle: "",
@@ -8955,6 +9017,9 @@ function wireActions() {
     });
   });
 
+  document.querySelectorAll("[data-home-branch]:not([data-region])").forEach(element => {
+    element.addEventListener("click", () => showToast(`${element.textContent.trim()}支部の切り替えは、所属名簿・DB側の対応後に利用できます。現在のデータは変更していません。`));
+  });
   document.querySelectorAll("[data-region]").forEach((element) => {
     element.addEventListener("click", () => {
       if (element.dataset.region === 'kansai') {
@@ -9249,6 +9314,8 @@ function wireActions() {
     "click",
     registerSchedulePlan
   );
+  document.getElementById("scheduleManualEntryButton")?.addEventListener("click", openManualSchedulePlan);
+  document.getElementById("manualPlanDate")?.addEventListener("change", event => updateManualPlanDate(event.target.value));
   // 開始・終了時刻を編集したときは、終了時刻を保持して所要時間を更新。
   ["planStartHour", "planStartMinute", "planEndHour", "planEndMinute"].forEach(id => {
     document.getElementById(id)?.addEventListener("input", updateSchedulePlanDuration);
@@ -10663,6 +10730,8 @@ function updateRegion() {
   document.querySelectorAll("[data-region]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.region === state.region);
   });
+  const current=document.getElementById('homeRegionCurrent');
+  if(current)current.textContent=state.region==='kansai'?'関西':'東京';
 }
 
 // POST v41: 複数個人・関東全員・関西全員。過去のAIカードも誤配信しない。
@@ -12027,6 +12096,7 @@ async function loadPortalProfile() {
     state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
     state.canManageMeetings = Boolean(data.can_manage_meetings);
     document.getElementById("representativeDashboardEntry").hidden = !(state.isRepresentative || state.isDeveloper);
+    document.getElementById("homeReviewButton").textContent = state.isRepresentative || state.isDeveloper ? "予定確認" : "タスク予定確認";
     // 同じログイン中に手動で変えた地域は維持し、新規ログイン時は名簿を優先。
     const email = userIdentity();
     const regionSessionOwnerKey = 'dotjp_region_preference_applied_for';
@@ -12972,6 +13042,7 @@ function renderCalendarAvailability() {
       const slot = slots[Number(button.dataset.slotIndex)];
       if (!slot) return;
       state.calendar.selectedSlot = slot;
+      state.calendar.manualPlanMode = false;
       state.calendar.selectedTaskTitle = "";
       showScreen("schedule-plan");
     });
@@ -13055,6 +13126,30 @@ function updateSchedulePlanEndFromDuration() {
   }
 }
 
+function openManualSchedulePlan() {
+  const today = todayTokyoDateIso();
+  const selected = state.calendar.selectedAvailabilityDate;
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(selected || "") && selected >= today ? selected : today;
+  state.calendar.manualPlanMode = true;
+  state.calendar.selectedSlot = {
+    start: new Date(`${date}T09:00:00+09:00`).toISOString(),
+    end: new Date(`${date}T23:59:00+09:00`).toISOString(),
+    label: "日時を直接入力",
+    manual: true
+  };
+  state.calendar.selectedTaskTitle = "";
+  showScreen("schedule-plan");
+}
+function updateManualPlanDate(value) {
+  if (!state.calendar.manualPlanMode || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return;
+  const start = new Date(`${value}T09:00:00+09:00`);
+  const end = new Date(`${value}T23:59:00+09:00`);
+  if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) return;
+  state.calendar.selectedSlot = {
+    start: start.toISOString(), end: end.toISOString(), label: "日時を直接入力", manual: true
+  };
+  updateSchedulePlanDuration();
+}
 function renderSchedulePlanScreen() {
   const slot = state.calendar.selectedSlot;
   if (!slot) {
@@ -13062,7 +13157,12 @@ function renderSchedulePlanScreen() {
     showScreen("schedule", true, false);
     return;
   }
-  document.getElementById("selectedAvailabilityLabel").textContent = slot.label;
+  const manual = Boolean(state.calendar.manualPlanMode && slot.manual);
+  document.getElementById("selectedAvailabilityLabel").textContent = manual ? "その他の時間でタスクを入力" : slot.label;
+  const manualDateRow = document.getElementById("manualPlanDateRow");
+  manualDateRow.hidden = !manual;
+  if (manual) document.getElementById("manualPlanDate").value = tokyoDateFromIso(slot.start);
+  document.getElementById("planRpAvailabilityButton").hidden = manual;
   const begin = new Date(slot.start);
   // 選択済みの空き時間に収まるように、初期終了時刻は60分後または空き時間の末尾。
   const finish = new Date(Math.min(new Date(slot.end).getTime(), begin.getTime() + 60 * 60000));
@@ -13107,7 +13207,7 @@ async function registerSchedulePlan() {
   if (!slot) { showToast("空き時間を選択してください"); return; }
   const range = schedulePlanDatetimeRange();
   if (!range) { showToast("開始・終了の時刻を正しく入力してください"); return; }
-  if (range.startsAt < new Date(slot.start) || range.endsAt > new Date(slot.end)) {
+  if (!state.calendar.manualPlanMode && (range.startsAt < new Date(slot.start) || range.endsAt > new Date(slot.end))) {
     showToast("選択した空き時間の範囲内で登録してください"); return;
   }
   const rpMode = schedulePlanRpMode;
