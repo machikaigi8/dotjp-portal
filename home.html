@@ -8447,7 +8447,7 @@ async function init() {
     void loadPersonalWorkSessions();
     // Prefetch the assigned company queue while other dashboard data loads.
     void loadClientCompanies(false, true);
-    await refreshRemoteTasks();
+    void refreshRemoteTasks().then(()=>refreshTaskUi()).catch(error=>console.warn('Background task fetch failed',error));
 
     document.getElementById("loading").hidden = true;
     document.getElementById("app").hidden = false;
@@ -11524,49 +11524,50 @@ function sleep(ms) {
 
 
 
+const portalPendingGets=new Map();
 async function portalFetch(path, options = {}) {
-  const token = sessionStorage.getItem("dotjp_access_token");
-
-  if (!token) {
-    throw new Error("ログイン情報がありません。");
-  }
-
-  const init = {
-    method: options.method || "GET",
-    cache: "no-store",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      ...(options.body
-        ? { "Content-Type": "application/json" }
-        : {})
+  const token=sessionStorage.getItem('dotjp_access_token');
+  if(!token)throw new Error('ログイン情報がありません。');
+  const method=options.method||'GET';
+  const isGet=method==='GET';
+  const key=isGet?`${token}|${path}`:null;
+  if(key&&portalPendingGets.has(key))return portalPendingGets.get(key);
+  const operation=(async()=>{
+    const attempts=isGet?2:1;
+    for(let attempt=0;attempt<attempts;attempt++){
+      const controller=new AbortController();
+      const maxWait=Number(options.timeoutMs)|| (path.startsWith('/api/hr/boat-race')?25000:16000);
+      const timeout=setTimeout(()=>controller.abort(),maxWait);
+      let response, data;
+      try{
+        response=await fetch(`${PORTAL_API_WORKER}${path}`,{
+          method,cache:'no-store',signal:controller.signal,
+          headers:{Authorization:`Bearer ${token}`,...(options.body?{'Content-Type':'application/json'}:{})},
+          ...(options.body?{body:JSON.stringify(options.body)}:{})
+        });
+        data=await response.json().catch(()=>({}));
+      }catch(error){
+        if(isGet&&attempt+1<attempts){await sleep(450*(attempt+1));continue;}
+        throw new Error(error?.name==='AbortError'?'読み込みがタイムアウトしました。更新を押して再試行してください。':String(error?.message||'通信に失敗しました。'));
+      }finally{clearTimeout(timeout);}
+      if(response.status===401&&/2段階認証が再設定されました|ユーザー情報がありません/.test(String(data.error||''))){
+        sessionStorage.removeItem('dotjp_access_token');
+        sessionStorage.removeItem('dotjp_2fa_ticket');
+        sessionStorage.removeItem('dotjp_2fa_ticket_v1');
+        location.replace('./');
+      }
+      if(!response.ok||!data.ok){
+        if(isGet&&attempt+1<attempts&&[429,502,503,504].includes(response.status)){
+          await sleep(450*(attempt+1));continue;
+        }
+        throw new Error(data.error||`ポータルAPIから正常な応答を受け取れませんでした（${response.status}）。`);
+      }
+      return data;
     }
-  };
-
-  if (options.body) {
-    init.body = JSON.stringify(options.body);
-  }
-
-  const response = await fetch(
-    `${PORTAL_API_WORKER}${path}`,
-    init
-  );
-
-  const data = await response.json().catch(() => ({}));
-
-  if(response.status===401&&/2段階認証が再設定されました|ユーザー情報がありません/.test(String(data.error||''))){
-    sessionStorage.removeItem('dotjp_access_token');
-    sessionStorage.removeItem('dotjp_2fa_ticket');
-    sessionStorage.removeItem('dotjp_2fa_ticket_v1');
-    location.replace('./');
-  }
-  if (!response.ok || !data.ok) {
-    throw new Error(
-      data.error ||
-      "ポータルAPIから正常な応答を受け取れませんでした。"
-    );
-  }
-
-  return data;
+  })();
+  if(key)portalPendingGets.set(key,operation);
+  try{return await operation;}
+  finally{if(key&&portalPendingGets.get(key)===operation)portalPendingGets.delete(key);}
 }
 
 // 毎朝@all・日曜未登録者メンションの案内を追加（LINE連携UI機能はv62と同一）。
@@ -11949,7 +11950,7 @@ async function loadPortalProfile() {
 
     button.textContent = state.canEditRoster ? "HP編集" : "HPへの要望";
 
-    await loadRoster(false);
+    void loadRoster(false);
   } catch (error) {
     console.warn("Portal API profile unavailable", error);
     state.isDeveloper = false;
@@ -16429,13 +16430,15 @@ function hrBoatRender(){
  },'メンバーを選択');
  hrBoatUpdateMembershipState();
 }
-async function hrBoatLoad(){
+async function hrBoatLoad(force=false){
  const status=document.getElementById('hrBoatStatus');if(!status||hrBoatData.pending)return;
- hrBoatData.pending=true;status.textContent='週間の記録を集計しています…';
+ hrBoatData.pending=true;
+ status.textContent=hrBoatData.result?'保存済みの表示を維持して最新データを確認中…':'保存済みの集計結果を読み込んでいます…';
  try{
-   hrBoatData.result=await portalFetch('/api/hr/boat-race');
-   hrBoatRender();status.textContent='今週のポイントと船の位置を更新しました。';
- }catch(e){status.textContent='船レースの取得に失敗：'+(e.message||e);}
+   hrBoatData.result=await portalFetch(force?'/api/hr/boat-race?fresh=1':'/api/hr/boat-race');
+   hrBoatRender();
+   status.textContent=hrBoatData.result.stale?(hrBoatData.result.background_refreshing?'前回保存した集計結果を表示中（新しい集計はバックグラウンドで更新しています）':'前回保存した集計結果を表示中です。更新ボタンから再取得できます。'):'累計ポイント・船の位置を更新しました。';
+ }catch(e){status.textContent=(hrBoatData.result?'前回の情報を表示中｜':'船レースを取得できません：')+(e.message||e);}
  finally{hrBoatData.pending=false;}
 }
 async function hrBoatWrite(body){
@@ -16449,7 +16452,7 @@ async function hrBoatWrite(body){
  }catch(error){status.textContent='保存できません：'+(error.message||error);hrBoatData.pending=false;}
 }
 document.addEventListener('DOMContentLoaded',()=>{
- document.getElementById('hrBoatRefresh')?.addEventListener('click',()=>void hrBoatLoad());
+ document.getElementById('hrBoatRefresh')?.addEventListener('click',()=>void hrBoatLoad(true));
  const openMtgSettings = () => {
    const panel = document.querySelector('[data-screen="department-hr"] .mtg-staff-shell');
    if (!panel) return;
@@ -16855,7 +16858,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       await originalLoad(...args);
       if(typeof hrBoatData!=='undefined'&&hrBoatData.result&&!hrBoatData.pending){
         const status=document.getElementById('hrBoatStatus');
-        if(status&&!status.textContent.includes('失敗'))status.textContent='累計ポイントを反映｜15時の前日分未提出者を累計し、10件ごとに沈没';
+        if(status&&!hrBoatData.result.stale&&status.textContent==='累計ポイント・船の位置を更新しました。')status.textContent='累計ポイントを反映｜15時の前日分未提出者を累計し、10件ごとに沈没';
       }
     };
   }
