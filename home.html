@@ -6838,7 +6838,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         </section>
 
         <!-- HR weekly team river race: originally authored, no external game assets -->
-        <section class="screen screen-hr-boats" data-screen="hr-daily-tasks" aria-label="人事局の毎日タスク状況・週間船レース">
+        <section class="screen screen-hr-boats" data-screen="hr-daily-tasks" aria-label="人事局の毎日タスク状況・累計船レース">
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="hr-figma-tabs" aria-label="人事局のメニュー">
             <button type="button" class="hr-figma-tab" data-route="department-hr" data-hr-open-mtg="1">MTG設定</button>
@@ -6847,17 +6847,17 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </nav>
           <div class="hr-boat-page">
             <header class="hr-boat-header">
-              <div><h1>毎日タスク状況｜週間船レース</h1><p id="hrBoatWeek">毎週日曜 0:00（日本時間）にスタート地点へ戻ります</p></div>
+              <div><h1>毎日タスク状況｜累計船レース</h1><p id="hrBoatWeek">累計ポイントで先頭との差を表示します</p></div>
               <button type="button" id="hrBoatRefresh">最新の状況に更新</button>
             </header>
             <p id="hrBoatStatus" class="hr-boat-status" role="status">読み込み中…</p>
             <div class="hr-boat-main">
-              <div class="hr-boat-water"><div class="hr-boat-water-head"><span>⚓ START</span><strong>チーム航路</strong><span>🏁 GOAL / 500pt</span></div>
+              <div class="hr-boat-water"><div class="hr-boat-water-head"><span>⚓ START</span><strong>チーム航路</strong><span id="hrBoatReferenceLabel">🏆 先頭との差</span></div>
                 <div id="hrBoatLanes" class="hr-boat-lanes" aria-live="polite"></div>
               </div>
               <aside class="hr-boat-side" aria-label="順位とチーム編成">
                 <div class="hr-boat-side-tabs" role="tablist" aria-label="右側の表示">
-                  <button type="button" id="hrBoatStandingsTab" role="tab" aria-selected="true" aria-controls="hrBoatStandingsPanel">今週の順位</button>
+                  <button type="button" id="hrBoatStandingsTab" role="tab" aria-selected="true" aria-controls="hrBoatStandingsPanel">累計順位</button>
                   <button type="button" id="hrBoatAdminTab" role="tab" aria-selected="false" aria-controls="hrBoatAdmin" hidden>チーム編成・編集</button>
                 </div>
                 <div class="hr-boat-standings" id="hrBoatStandingsPanel" role="tabpanel" aria-labelledby="hrBoatStandingsTab">
@@ -16356,27 +16356,29 @@ function hrBoatUpdateMembershipState(){
 function hrBoatRender(){
  const r=hrBoatData.result;if(!r)return;
  const label=document.getElementById('hrBoatWeek');
- label.textContent=`${r.week_start}（日）〜${r.week_end}（土）｜毎週日曜0:00に新しいレースが開始`;
+ label.textContent='累計ポイントで先頭との差を表示｜15時の前日分未提出者を累計し、10件ごとに沈没';
  const water=document.getElementById('hrBoatLanes');water.replaceChildren();
  const ranking=document.getElementById('hrBoatRanking');ranking.replaceChildren();
  const teams=Array.isArray(r.teams)?r.teams:[];
+ const leaderPoints=Math.max(0,...teams.map(team=>Number(team.points||0)));
  if(!teams.length){water.appendChild(hrBoatNode('p','','チームが未登録です。管理者が下のフォームから登録してください。'));}
  teams.forEach((team,i)=>{
    const lane=hrBoatNode('div','hr-boat-lane');
-   const progress=team.sunk?0:Math.max(0,Math.min(100,100*Number(team.points||0)/Number(r.goal_points||500)));
+   const teamPoints=Math.max(0,Number(team.points||0));
+   const leaderGap=Math.max(0,leaderPoints-teamPoints);
+   const progress=team.sunk?0:(leaderPoints>0?Math.max(0,Math.min(100,100*teamPoints/leaderPoints)):0);
    const boat=hrBoatNode('div','hr-boat-vessel'+(team.sunk?' is-sunk':''));
    boat.style.setProperty('--boat-progress',progress);
    boat.style.setProperty('--boat-accent',['#5375b2','#cb7c32','#8660ac','#397b78','#b55a65'][i%5]);
    boat.innerHTML=hrBoatSvg;
-   boat.setAttribute('title',`${team.name} ${team.points}pt${team.sunk?'（沈没）':''}`);
+   boat.setAttribute('title',`${team.name} ${team.points}pt｜先頭差 ${leaderGap}pt${team.sunk?'（沈没）':''}`);
    lane.appendChild(boat);lane.appendChild(hrBoatNode('span','hr-boat-name',team.name));
-   if(team.sunk)lane.appendChild(hrBoatNode('span','hr-boat-sunk','沈没'));
    water.appendChild(lane);
    const row=hrBoatNode('div','hr-boat-rank'+(team.sunk?' is-sunk':''));
-   row.appendChild(hrBoatNode('span','',team.sunk?'✕':String(i+1)));
+   row.appendChild(hrBoatNode('span','',String(i+1)));
    row.appendChild(hrBoatNode('strong','',team.name));
    row.appendChild(hrBoatNode('b','',`${team.points} pt`));
-   const detail=hrBoatNode('small','',`${team.members?.length||0}名｜${team.sunk?'今週は航行停止':`${progress.toFixed(1)}%進行`}`);
+   const detail=hrBoatNode('small','',`${team.members?.length||0}名｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}`);
    row.appendChild(detail);
    const names=(team.members||[]).map(member=>String(member.name||member.email||'').trim()).filter(Boolean);
    const membersLabel=hrBoatNode('div','hr-boat-members',names.length?'所属：'+names.join('・'):'所属：未登録');
@@ -16485,6 +16487,36 @@ document.addEventListener('DOMContentLoaded',()=>{
 .screen-hr-boats .hr-boat-header p{font-size:14px !important;margin:5px 0 0 !important}
 .screen-hr-boats .hr-boat-header #hrBoatRefresh{padding:9px 15px !important;font-size:16px !important;border-radius:6px !important}
 .screen-hr-boats .hr-boat-status{font-size:14px !important;line-height:21px !important;min-height:21px !important;margin:3px 0 8px !important;flex:0 0 auto !important}
+.screen-hr-boats .hr-boat-page{font-family:inherit !important}
+.screen-hr-boats .hr-boat-header h1,.screen-hr-boats .hr-boat-header p,.screen-hr-boats .hr-boat-water-head,.screen-hr-boats .hr-boat-side,.screen-hr-boats .hr-boat-rank,.screen-hr-boats .hr-boat-admin{font-family:inherit !important}
+.screen-hr-boats .hr-boat-water{position:relative !important;background:
+  radial-gradient(circle at 18% 16%,rgba(255,255,255,.18),transparent 16%),
+  radial-gradient(circle at 82% 26%,rgba(255,255,255,.12),transparent 12%),
+  linear-gradient(180deg,#62b8d8 0%,#2b95c0 24%,#13769f 58%,#0f5a86 100%) !important;
+  box-shadow:inset 0 0 0 2px #86cde1,inset 0 -24px 30px rgba(6,55,92,.25),inset 0 14px 20px rgba(255,255,255,.08) !important}
+.screen-hr-boats .hr-boat-water::before{content:'' !important;position:absolute !important;inset:0 !important;pointer-events:none !important;background:
+  radial-gradient(80px 32px at 84% 14%,#d7cb8c 0%,#b69b5b 42%,transparent 46%),
+  radial-gradient(58px 24px at 80% 13%,#6f9f52 0%,#4d7a36 45%,transparent 52%),
+  radial-gradient(54px 22px at 88% 11%,#7faf58 0%,#55813b 42%,transparent 52%),
+  radial-gradient(60px 24px at 19% 86%,#d8ca92 0%,#af965f 40%,transparent 46%),
+  radial-gradient(44px 18px at 15% 84%,#79a85a 0%,#4b7d38 44%,transparent 54%),
+  radial-gradient(40px 16px at 23% 82%,#78a758 0%,#4a7b36 44%,transparent 54%),
+  radial-gradient(26px 10px at 22% 32%,rgba(255,255,255,.28),transparent 72%),
+  radial-gradient(24px 10px at 48% 62%,rgba(255,255,255,.24),transparent 72%),
+  radial-gradient(28px 10px at 73% 46%,rgba(255,255,255,.2),transparent 72%) !important;opacity:.95 !important}
+.screen-hr-boats .hr-boat-water::after{content:'' !important;position:absolute !important;inset:0 !important;pointer-events:none !important;background:
+  repeating-linear-gradient(180deg,transparent 0 18px,rgba(255,255,255,.06) 18px 20px,transparent 20px 44px),
+  linear-gradient(180deg,rgba(255,255,255,.08),transparent 18%,transparent 82%,rgba(5,48,79,.14)) !important}
+.screen-hr-boats .hr-boat-water-head{position:relative !important;z-index:2 !important;height:32px !important;color:#f7feff !important;text-shadow:0 1px 2px rgba(8,62,90,.45) !important}
+.screen-hr-boats .hr-boat-lanes{position:relative !important;z-index:2 !important;gap:0 !important;height:calc(100% - 38px) !important;margin-top:8px !important}
+.screen-hr-boats .hr-boat-lane{min-height:0 !important;box-sizing:border-box !important;border:none !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important;border-top:1px solid rgba(216,247,255,.55) !important}
+.screen-hr-boats .hr-boat-lane:last-child{border-bottom:1px solid rgba(216,247,255,.55) !important}
+.screen-hr-boats .hr-boat-lane::before{left:181px !important;border-left:3px dashed rgba(255,255,255,.72) !important}
+.screen-hr-boats .hr-boat-lane::after{right:8px !important;border-left:3px dashed rgba(255,255,255,.42) !important}
+.screen-hr-boats .hr-boat-vessel{top:7px !important;min-width:120px !important;width:120px !important;height:88px !important;filter:drop-shadow(0 8px 5px rgba(8,55,84,.28)) !important}
+.screen-hr-boats .hr-boat-vessel svg{width:120px !important;height:88px !important}
+.screen-hr-boats .hr-boat-name{width:168px !important;max-width:168px !important;left:9px !important;top:12px !important}
+.screen-hr-boats .hr-boat-sink-counter{right:10px !important;bottom:8px !important;font-size:12px !important;padding:4px 8px !important;max-width:160px !important;white-space:normal !important;line-height:1.35 !important;text-align:right !important}
 .screen-hr-boats .hr-boat-main{
   display:grid !important;grid-template-columns:minmax(0,1fr) 380px !important;gap:14px !important;
   height:auto !important;min-height:0 !important;flex:1 1 auto !important;overflow:hidden !important;
@@ -16597,6 +16629,37 @@ document.addEventListener('DOMContentLoaded',()=>{
   position:absolute !important;left:70px !important;top:898px !important;right:auto !important;bottom:auto !important;
   z-index:160 !important;width:140px !important;height:60px !important;
 }
+.screen-hr-boats .hr-boat-page{font-family:inherit !important}
+.screen-hr-boats .hr-boat-header h1,.screen-hr-boats .hr-boat-header p,.screen-hr-boats .hr-boat-water-head,.screen-hr-boats .hr-boat-side,.screen-hr-boats .hr-boat-rank,.screen-hr-boats .hr-boat-admin{font-family:inherit !important}
+.screen-hr-boats .hr-boat-water{position:relative !important;background:
+  radial-gradient(circle at 18% 16%,rgba(255,255,255,.18),transparent 16%),
+  radial-gradient(circle at 82% 26%,rgba(255,255,255,.12),transparent 12%),
+  linear-gradient(180deg,#62b8d8 0%,#2b95c0 24%,#13769f 58%,#0f5a86 100%) !important;
+  box-shadow:inset 0 0 0 2px #86cde1,inset 0 -24px 30px rgba(6,55,92,.25),inset 0 14px 20px rgba(255,255,255,.08) !important}
+.screen-hr-boats .hr-boat-water::before{content:'' !important;position:absolute !important;inset:0 !important;pointer-events:none !important;background:
+  radial-gradient(80px 32px at 84% 14%,#d7cb8c 0%,#b69b5b 42%,transparent 46%),
+  radial-gradient(58px 24px at 80% 13%,#6f9f52 0%,#4d7a36 45%,transparent 52%),
+  radial-gradient(54px 22px at 88% 11%,#7faf58 0%,#55813b 42%,transparent 52%),
+  radial-gradient(60px 24px at 19% 86%,#d8ca92 0%,#af965f 40%,transparent 46%),
+  radial-gradient(44px 18px at 15% 84%,#79a85a 0%,#4b7d38 44%,transparent 54%),
+  radial-gradient(40px 16px at 23% 82%,#78a758 0%,#4a7b36 44%,transparent 54%),
+  radial-gradient(26px 10px at 22% 32%,rgba(255,255,255,.28),transparent 72%),
+  radial-gradient(24px 10px at 48% 62%,rgba(255,255,255,.24),transparent 72%),
+  radial-gradient(28px 10px at 73% 46%,rgba(255,255,255,.2),transparent 72%) !important;opacity:.95 !important}
+.screen-hr-boats .hr-boat-water::after{content:'' !important;position:absolute !important;inset:0 !important;pointer-events:none !important;background:
+  repeating-linear-gradient(180deg,transparent 0 18px,rgba(255,255,255,.06) 18px 20px,transparent 20px 44px),
+  linear-gradient(180deg,rgba(255,255,255,.08),transparent 18%,transparent 82%,rgba(5,48,79,.14)) !important}
+.screen-hr-boats .hr-boat-water-head{position:relative !important;z-index:2 !important;height:32px !important;color:#f7feff !important;text-shadow:0 1px 2px rgba(8,62,90,.45) !important}
+.screen-hr-boats .hr-boat-lanes{position:relative !important;z-index:2 !important;gap:0 !important;height:calc(100% - 38px) !important;margin-top:8px !important}
+.screen-hr-boats .hr-boat-lane{min-height:0 !important;box-sizing:border-box !important;border:none !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important;border-top:1px solid rgba(216,247,255,.55) !important}
+.screen-hr-boats .hr-boat-lane:last-child{border-bottom:1px solid rgba(216,247,255,.55) !important}
+.screen-hr-boats .hr-boat-lane::before{left:181px !important;border-left:3px dashed rgba(255,255,255,.72) !important}
+.screen-hr-boats .hr-boat-lane::after{right:8px !important;border-left:3px dashed rgba(255,255,255,.42) !important}
+.screen-hr-boats .hr-boat-vessel{top:7px !important;min-width:120px !important;width:120px !important;height:88px !important;filter:drop-shadow(0 8px 5px rgba(8,55,84,.28)) !important}
+.screen-hr-boats .hr-boat-vessel svg{width:120px !important;height:88px !important}
+.screen-hr-boats .hr-boat-name{width:168px !important;max-width:168px !important;left:9px !important;top:12px !important}
+.screen-hr-boats .hr-boat-sink-counter{right:10px !important;bottom:8px !important;font-size:12px !important;padding:4px 8px !important;max-width:160px !important;white-space:normal !important;line-height:1.35 !important;text-align:right !important}
+
 `;
   document.head.appendChild(style);
   const priorStages = new Map();
@@ -16641,9 +16704,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       const lanes=screen.querySelector('#hrBoatLanes');
       if(lanes)lanes.style.setProperty('--boat-row-count',String(Math.max(1,teams.length)));
       const week=screen.querySelector('#hrBoatWeek');
-      if(week)week.textContent=`${data.week_start}（日）〜${data.week_end}（土）｜日曜はポイントと航行位置のみリセット・沈没累計は継続`;
+      if(week)week.textContent='累計ポイントで先頭との差を表示｜沈没回数は累計、10件ごとに沈没';
       const vessels=screen.querySelectorAll('.hr-boat-lane');
       const ranks=screen.querySelectorAll('.hr-boat-rank');
+      const leaderPoints=Math.max(0,...teams.map(t=>Number(t.points||0)));
       teams.forEach((team,i)=>{
         const lane=vessels[i],rank=ranks[i];if(!lane)return;
         const vessel=lane.querySelector('.hr-boat-vessel');
@@ -16651,11 +16715,13 @@ document.addEventListener('DOMContentLoaded',()=>{
         const initial=priorStages.has(team.id)?priorStages.get(team.id):target;
         const oldTotal=priorTotals.get(team.id);
         const newTotal=Math.max(0,Number(team.missed_total)||0);
+        const teamPoints=Math.max(0,Number(team.points||0));
+        const leaderGap=Math.max(0,leaderPoints-teamPoints);
         if(vessel){
           vessel.classList.remove('is-sunk');
-          vessel.style.setProperty('--boat-progress',Math.min(100,100*Number(team.points||0)/Number(data.goal_points||500)));
+          vessel.style.setProperty('--boat-progress',leaderPoints>0?Math.min(100,100*teamPoints/leaderPoints):0);
           vessel.style.setProperty('--boat-sink',String(initial));
-          vessel.setAttribute('title',`${team.name}：${team.points}pt｜未提出${team.sink_count||0}/10件｜沈没${team.sink_cycles||0}回`);
+          vessel.setAttribute('title',`${team.name}：${team.points}pt｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}｜未提出${team.sink_count||0}/10件｜沈没${team.sink_cycles||0}回`);
           if(oldTotal!==undefined&&newTotal>oldTotal&&newTotal-oldTotal<=20){
             const steps=[];
             for(let n=oldTotal+1;n<=newTotal;n++){
@@ -16672,13 +16738,13 @@ document.addEventListener('DOMContentLoaded',()=>{
         priorStages.set(team.id,target);
         priorTotals.set(team.id,newTotal);
         const counter=document.createElement('span');counter.className='hr-boat-sink-counter';
-        counter.textContent=team.sunk?'🌊 完全沈没':`沈没 ${Number(team.sink_count||0)}/10`;
+        counter.textContent=team.sunk?`🌊 完全沈没｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}`:`${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}｜沈没 ${Number(team.sink_count||0)}/10`; 
         lane.append(counter);
         rank?.classList.remove('is-sunk');
         if(rank){
           const first=rank.querySelector('span');if(first)first.textContent=String(i+1);
           const detail=rank.querySelector('small');
-          if(detail)detail.textContent=`${team.members?.length||0}名｜未提出 ${team.sink_count||0}/10｜沈没累計 ${team.sink_cycles||0}回`;
+          if(detail)detail.textContent=`${team.members?.length||0}名｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}｜沈没累計 ${team.sink_cycles||0}回`; 
         }
       });
     };
@@ -16689,7 +16755,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       await originalLoad(...args);
       if(typeof hrBoatData!=='undefined'&&hrBoatData.result&&!hrBoatData.pending){
         const status=document.getElementById('hrBoatStatus');
-        if(status&&!status.textContent.includes('失敗'))status.textContent='15時の前日分未提出者を集計｜10件で沈没・自動リセット';
+        if(status&&!status.textContent.includes('失敗'))status.textContent='累計ポイントを反映｜15時の前日分未提出者を累計し、10件ごとに沈没';
       }
     };
   }
