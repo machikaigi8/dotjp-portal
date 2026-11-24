@@ -8407,7 +8407,11 @@ async function init() {
     fillUserInfo();
     ensureLoginStartedAt();
 
-    await loadPortalProfile();
+    const profileResult = await loadPortalProfile();
+    if (profileResult === 'redirect_kansai') {
+      window.location.replace(KANSAI_EXTERNAL_APP_URL);
+      return;
+    }
     window.addEventListener("focus", () => void refreshPortalIdentity());
     document.addEventListener("visibilitychange",()=>{if(!document.hidden)void refreshPortalIdentity();});
     // 旧版の端末内履歴も、現在の所属地域で安全にD1へ移行する。
@@ -11908,6 +11912,7 @@ async function loadPortalProfile() {
       sessionStorage.setItem(regionSessionOwnerKey, email);
     }
     state.preferredRegion = data.preferred_region || null;
+    if (state.preferredRegion === 'kansai') return 'redirect_kansai';
     state.region = 'kanto';
     sessionStorage.setItem('dotjp_region','kanto');
     updateRegion();
