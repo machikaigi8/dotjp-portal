@@ -6614,10 +6614,49 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   display:inline-flex !important;align-items:center;justify-content:center;
   background:#ecf3ff !important;border:1px solid #7799d5 !important;color:#174e96 !important;
 }
+
+#portalInitialRegionSetup{
+  position:fixed;inset:0;z-index:12000;display:flex;justify-content:center;align-items:center;
+  background:linear-gradient(135deg,#e9efff 0%,#f2f2ff 55%,#e5faff 100%);
+  font-family:Inter,"Noto Sans JP",system-ui,sans-serif;color:#1b2d57;padding:24px;
+}
+#portalInitialRegionSetup .portal-initial-region-card{
+  width:min(100%,590px);background:#fff;border:1px solid #d6e2f8;border-radius:16px;
+  padding:35px 37px 33px;box-shadow:0 18px 45px rgba(40,63,130,.13);
+}
+#portalInitialRegionSetup h1{font-size:28px;line-height:1.4;margin:0 0 12px;font-weight:700}
+#portalInitialRegionSetup p{font-size:16px;line-height:1.8;margin:0 0 20px;color:#516382}
+#portalInitialRegionSetup .portal-initial-region-choices{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0 20px}
+#portalInitialRegionSetup button{
+  cursor:pointer;font:700 24px Inter,"Noto Sans JP",system-ui,sans-serif;min-height:104px;border-radius:12px;
+  color:#123877;background:#f1f5ff;border:2px solid #a9c4ea;
+}
+#portalInitialRegionSetup button:hover,#portalInitialRegionSetup button:focus-visible{background:#e0eeff;border-color:#317ce1;outline:none}
+#portalInitialRegionSetup button:disabled{opacity:.55;cursor:wait}
+#portalInitialRegionSetup #portalInitialRegionStatus{min-height:24px;font-size:14px;margin:0;color:#ab2745}
+#portalInitialRegionSetup .portal-initial-region-note{font-size:13px;color:#64718e;margin:16px 0 0}
+@media(max-width:520px){
+  #portalInitialRegionSetup .portal-initial-region-card{padding:26px 22px}
+  #portalInitialRegionSetup h1{font-size:23px}
+  #portalInitialRegionSetup button{font-size:21px;min-height:90px}
+  #portalInitialRegionSetup .portal-initial-region-choices{gap:10px}
+}
 </style>
 </head>
 <body>
   <div id="loading" class="loading-screen">認証情報を確認しています…</div>
+  <section id="portalInitialRegionSetup" role="dialog" aria-modal="true" aria-labelledby="portalInitialRegionTitle" hidden>
+    <div class="portal-initial-region-card">
+      <h1 id="portalInitialRegionTitle">所属支部の初期設定</h1>
+      <p>活動する支部を選んでください。最初の設定時だけ表示されます。</p>
+      <div class="portal-initial-region-choices" role="group" aria-label="所属支部">
+        <button type="button" data-portal-initial-region="kanto">関東</button>
+        <button type="button" data-portal-initial-region="kansai">関西</button>
+      </div>
+      <p id="portalInitialRegionStatus" role="status" aria-live="polite"></p>
+      <p class="portal-initial-region-note">すでに名簿で所属が決まっている場合はその設定を優先します。変更は代表・デベロッパーが名簿から行えます。</p>
+    </div>
+  </section>
 
   <div id="app" class="app-shell" hidden>
     <div id="canvasHolder" class="canvas-holder">
@@ -8432,9 +8471,23 @@ async function init() {
     fillUserInfo();
     ensureLoginStartedAt();
 
-    const profileResult = await loadPortalProfile();
+    let profileResult = await loadPortalProfile();
+    if (profileResult === 'choose_region') {
+      const selectedRegion = await chooseInitialPortalRegion();
+      if (selectedRegion === 'kansai') {
+        window.location.replace(KANSAI_EXTERNAL_APP_URL);
+        return;
+      }
+      profileResult = await loadPortalProfile();
+    }
     if (profileResult === 'redirect_kansai') {
       window.location.replace(KANSAI_EXTERNAL_APP_URL);
+      return;
+    }
+    if (profileResult === 'profile_error') {
+      const message = document.getElementById('loading');
+      message.hidden = false;
+      message.textContent = '所属情報を確認できませんでした。ページを再読み込みしてください。';
       return;
     }
     window.addEventListener("focus", () => void refreshPortalIdentity());
@@ -11926,6 +11979,45 @@ async function sendLineTodayNow(){
   finally{button.disabled=false;}
 }
 
+async function chooseInitialPortalRegion() {
+  const overlay = document.getElementById('portalInitialRegionSetup');
+  const status = document.getElementById('portalInitialRegionStatus');
+  const buttons = Array.from(overlay.querySelectorAll('[data-portal-initial-region]'));
+  document.getElementById('loading').hidden = true;
+  overlay.hidden = false;
+  buttons[0]?.focus();
+  return new Promise(resolve => {
+    let sending = false;
+    const selectRegion = async region => {
+      if (sending) return;
+      sending = true;
+      buttons.forEach(button => { button.disabled = true; });
+      status.textContent = '所属支部を登録しています…';
+      try {
+        const saved = await portalFetch('/api/me/initial-region', {
+          method:'POST', body:{region}
+        });
+        if (saved.region !== 'kanto' && saved.region !== 'kansai') {
+          throw new Error('支部の登録結果を確認できませんでした。');
+        }
+        const finalRegion = saved.region;
+        state.preferredRegion = finalRegion;
+        state.region = finalRegion;
+        sessionStorage.setItem('dotjp_region',finalRegion);
+        overlay.hidden = true;
+        resolve(finalRegion);
+      } catch(error) {
+        status.textContent = error.message || '登録できませんでした。もう一度選択してください。';
+        sending = false;
+        buttons.forEach(button => { button.disabled = false; });
+      }
+    };
+    buttons.forEach(button => {
+      button.addEventListener('click',() => void selectRegion(button.dataset.portalInitialRegion),{once:false});
+    });
+  });
+}
+
 async function loadPortalProfile() {
   try {
     const data = await portalFetch("/api/me");
@@ -11945,6 +12037,7 @@ async function loadPortalProfile() {
       sessionStorage.setItem(regionSessionOwnerKey, email);
     }
     state.preferredRegion = data.preferred_region || null;
+    if (!state.preferredRegion) return 'choose_region';
     if (state.preferredRegion === 'kansai') return 'redirect_kansai';
     state.region = 'kanto';
     sessionStorage.setItem('dotjp_region','kanto');
@@ -11963,6 +12056,7 @@ async function loadPortalProfile() {
     state.canManageMeetings = false;
     document.getElementById("representativeDashboardEntry").hidden = true;
     document.getElementById("hpEditButton").textContent = "HPへの要望";
+    return 'profile_error';
   }
 }
 
