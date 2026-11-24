@@ -6651,15 +6651,15 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-home .region-switch {
   position:absolute;right:-6px;top:-6px;width:320px;height:160px;
   display:grid;grid-template-columns:repeat(2,154px);grid-template-rows:repeat(2,74px);
-  z-index:8;background:#fff;box-sizing:border-box;border:6px solid #000060;
+  z-index:8;background:#fff;box-sizing:border-box;border:6px solid #40ccff;
 }
 .screen-home .region-switch .region-button {
   width:154px;height:74px;box-sizing:border-box;border:0;
   background:#fff;color:#000060;font:500 49px/1 Inter,'Noto Sans JP',sans-serif;
   display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
 }
-.screen-home .region-switch .region-button:nth-child(odd) {border-right:6px solid #000060}
-.screen-home .region-switch .region-button:nth-child(-n+2) {border-bottom:6px solid #000060}
+.screen-home .region-switch .region-button:nth-child(odd) {border-right:6px solid #40ccff}
+.screen-home .region-switch .region-button:nth-child(-n+2) {border-bottom:6px solid #40ccff}
 .screen-home .region-switch .region-button.is-active {background:#fff;color:#000060}
 .screen-home .region-switch .region-button:hover,.screen-home .region-switch .region-button:focus-visible {background:#eef1ff}
 .screen-home .department-grid > :nth-child(1) {grid-column:1;grid-row:1}
@@ -12095,8 +12095,11 @@ async function loadPortalProfile() {
     state.isRepresentative = Boolean(data.representative);
     state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
     state.canManageMeetings = Boolean(data.can_manage_meetings);
-    document.getElementById("representativeDashboardEntry").hidden = !(state.isRepresentative || state.isDeveloper);
-    document.getElementById("homeReviewButton").textContent = state.isRepresentative || state.isDeveloper ? "予定確認" : "タスク予定確認";
+    const homeIsManager = state.isRepresentative || state.isDeveloper;
+    document.getElementById("representativeDashboardEntry").hidden = true;
+    const homeReviewButton = document.getElementById("homeReviewButton");
+    homeReviewButton.textContent = homeIsManager ? "代表" : "タスク予定確認";
+    homeReviewButton.dataset.route = homeIsManager ? "representative-dashboard" : "schedule-review";
     // 同じログイン中に手動で変えた地域は維持し、新規ログイン時は名簿を優先。
     const email = userIdentity();
     const regionSessionOwnerKey = 'dotjp_region_preference_applied_for';
@@ -12125,6 +12128,9 @@ async function loadPortalProfile() {
     state.canEditRoster = false;
     state.canManageMeetings = false;
     document.getElementById("representativeDashboardEntry").hidden = true;
+    const homeReviewButton = document.getElementById("homeReviewButton");
+    homeReviewButton.textContent = "タスク予定確認";
+    homeReviewButton.dataset.route = "schedule-review";
     document.getElementById("hpEditButton").textContent = "HPへの要望";
     return 'profile_error';
   }
