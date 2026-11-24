@@ -1,948 +1,331 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="robots"
-    content="noindex, nofollow, noarchive, nosnippet"
-  >
-
-  <meta
-    http-equiv="Content-Security-Policy"
-    content="
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-      style-src 'self' 'unsafe-inline';
-      connect-src https://dotjp-login.taka-souda516.workers.dev;
-      img-src 'self' data:;
-      base-uri 'none';
-      form-action 'self'
-    "
-  >
-
-  <title>
-    2段階認証
-  </title>
-
-
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
-    integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
-
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-
-      min-height: 100%;
-
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        "Noto Sans JP",
-        "Yu Gothic",
-        sans-serif;
-
-      background: #f6f7f9;
-
-      color: #202124;
-    }
-
-    body {
-      min-height: 100vh;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 24px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 500px;
-
-      background: #ffffff;
-
-      border:
-        1px solid #e1e4e8;
-
-      border-radius: 18px;
-
-      padding: 42px;
-
-      box-shadow:
-        0 4px 20px
-        rgba(0, 0, 0, .04);
-    }
-
-    h1 {
-      margin:
-        0 0 12px;
-
-      font-size: 27px;
-
-      text-align: center;
-    }
-
-    .lead {
-      margin:
-        0 0 28px;
-
-      color: #666;
-
-      font-size: 14px;
-
-      line-height: 1.8;
-
-      text-align: center;
-    }
-
-    .setup {
-      display: none;
-
-      padding: 22px;
-
-      margin-bottom: 24px;
-
-      background: #f8f9fa;
-
-      border-radius: 12px;
-    }
-
-    #qrcode {
-      width: 220px;
-
-      min-height: 220px;
-
-      margin:
-        0 auto 20px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #ffffff;
-
-      padding: 10px;
-
-      border-radius: 10px;
-    }
-
-    .secret-label {
-      margin:
-        0 0 8px;
-
-      color: #666;
-
-      font-size: 12px;
-    }
-
-    .secret-row {
-      display: flex;
-
-      gap: 8px;
-    }
-
-    .secret {
-      flex: 1;
-
-      min-width: 0;
-
-      padding:
-        11px 12px;
-
-      border:
-        1px solid #dadce0;
-
-      border-radius: 8px;
-
-      background: #ffffff;
-
-      font-family:
-        Consolas,
-        monospace;
-
-      font-size: 13px;
-
-      word-break: break-all;
-    }
-
-    .copy-button {
-      border:
-        1px solid #dadce0;
-
-      border-radius: 8px;
-
-      background: #ffffff;
-
-      padding:
-        0 14px;
-
-      cursor: pointer;
-    }
-
-    .note {
-      margin:
-        12px 0 0;
-
-      color: #777;
-
-      font-size: 12px;
-
-      line-height: 1.7;
-    }
-
-    label {
-      display: block;
-
-      margin-bottom: 8px;
-
-      font-size: 13px;
-
-      font-weight: 600;
-    }
-
-    .code-input {
-      width: 100%;
-
-      height: 56px;
-
-      border:
-        1px solid #cfd3d7;
-
-      border-radius: 9px;
-
-      padding:
-        0 16px;
-
-      font-size: 24px;
-
-      letter-spacing: .35em;
-
-      text-align: center;
-
-      outline: none;
-    }
-
-    .code-input:focus {
-      border-color:
-        #1a73e8;
-
-      box-shadow:
-        0 0 0 3px
-        rgba(26, 115, 232, .12);
-    }
-
-    .verify-button {
-      width: 100%;
-
-      height: 50px;
-
-      margin-top: 16px;
-
-      border: none;
-
-      border-radius: 8px;
-
-      background: #1a73e8;
-
-      color: #ffffff;
-
-      font-size: 15px;
-
-      font-weight: 600;
-
-      cursor: pointer;
-    }
-
-    .verify-button:disabled {
-      opacity: .55;
-
-      cursor: default;
-    }
-
-    .message {
-      min-height: 24px;
-
-      margin-top: 16px;
-
-      color: #c5221f;
-
-      font-size: 13px;
-
-      line-height: 1.6;
-
-      text-align: center;
-    }
-
-    .back {
-      display: block;
-
-      margin-top: 20px;
-
-      text-align: center;
-
-      color: #666;
-
-      font-size: 13px;
-    }
-
-  </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>2段階認証 | ドットジェイピー</title>
+<style>
+:root{font-family:Inter,"Noto Sans JP",system-ui,sans-serif;color:#202d56;background:#f2f2ff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+main{width:min(100%,540px);background:white;padding:34px 36px 30px;border:1px solid #d9e1f5;border-radius:14px;box-shadow:0 16px 42px rgba(34,45,90,.10)}
+h1{font-size:25px;line-height:1.45;margin:0 0 11px}
+p{font-size:15px;line-height:1.8;color:#58637e}
+.caption{margin-top:0}
+label.field{display:block;font-size:16px;font-weight:650;margin:24px 0 8px}
+input[type=text]{width:100%;padding:13px 16px;border:1px solid #97a9cc;border-radius:7px;font-size:29px;text-align:center;letter-spacing:.25em;color:#1d2950;background:#fbfcff}
+input[type=text]:focus{outline:3px solid #d2e5ff;border-color:#397bd3}
+button.primary{display:block;width:100%;padding:15px 20px;background:#345ce9;color:#fff;border:0;border-radius:7px;font-size:18px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:21px}
+button.primary:disabled{opacity:.58;cursor:wait}
+.check{display:flex;align-items:flex-start;gap:13px;padding:14px;background:#f3f6ff;border-radius:8px;margin-top:18px;cursor:pointer}
+.check input{width:20px;height:20px;flex-shrink:0;accent-color:#345ce9;margin-top:4px}
+.check strong{display:block;font-size:16px}
+.check small{display:block;color:#63708b;line-height:1.6;margin-top:4px}
+#setupBlock{margin-top:16px;background:#f8fbff;border:1px solid #dae5f4;border-radius:9px;padding:20px}
+#setupBlock h2{font-size:18px;margin:0 0 8px}
+.secret{display:flex;gap:8px;align-items:stretch}
+#secret{font-size:16px;letter-spacing:.05em;text-align:left;overflow-wrap:anywhere;min-width:0;flex:1;padding:12px;background:white;border:1px solid #bdcce5;border-radius:5px;user-select:all;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+button.secondary{padding:10px 13px;border:1px solid #a7bee6;border-radius:6px;background:#e8f0ff;color:#234b88;font-weight:600;cursor:pointer}
+a{color:#315dc5}
+#status{font-size:14px;min-height:24px;line-height:1.7;margin-bottom:0}
+#status.is-error{color:#ba2343}
+#status.is-success{color:#1d7752}
+footer{margin-top:18px;font-size:13px;text-align:center;color:#79839b}
+[hidden]{display:none!important}
+@media(max-width:510px){main{padding:25px 21px}h1{font-size:22px}}
+</style>
 </head>
-
-
 <body>
-
-  <main class="card">
-
-    <h1 id="title">
-      2段階認証
-    </h1>
-
-    <p
-      class="lead"
-      id="lead"
-    >
-      認証情報を確認しています。
-    </p>
-
-
-    <section
-      class="setup"
-      id="setup"
-    >
-
-      <div id="qrcode"></div>
-
-
-      <p class="secret-label">
-        QRコードを読み取れない場合は、
-        2FAS Authにこの秘密鍵を手動で登録してください。
-      </p>
-
-
-      <div class="secret-row">
-
-        <div
-          class="secret"
-          id="secret"
-        ></div>
-
-
-        <button
-          class="copy-button"
-          id="copyButton"
-          type="button"
-        >
-          コピー
-        </button>
-
-      </div>
-
-
-      <p class="note">
-        QRコードまたは秘密鍵を2FAS Authへ登録したあと、
-        アプリに表示された6桁コードを下に入力してください。
-      </p>
-
-    </section>
-
-
-    <form
-      id="form"
-      hidden
-    >
-
-      <label for="code">
-        2FAS Auth の6桁コード
-      </label>
-
-
-      <input
-        id="code"
-        class="code-input"
-        type="text"
-        inputmode="numeric"
-        autocomplete="one-time-code"
-        maxlength="6"
-        pattern="[0-9]{6}"
-        placeholder="000000"
-        required
-      >
-
-
-      <button
-        class="verify-button"
-        id="verifyButton"
-        type="submit"
-      >
-        認証する
-      </button>
-
-    </form>
-
-
-    <div
-      class="message"
-      id="message"
-    ></div>
-
-
-    <a
-      class="back"
-      href="./"
-    >
-      ログイン画面へ戻る
-    </a>
-
-  </main>
-
-
-  <script>
-
-    const WORKER =
-      "https://dotjp-login.taka-souda516.workers.dev";
-
-
-    const title =
-      document.getElementById(
-        "title"
-      );
-
-
-    const lead =
-      document.getElementById(
-        "lead"
-      );
-
-
-    const setup =
-      document.getElementById(
-        "setup"
-      );
-
-
-    const secretBox =
-      document.getElementById(
-        "secret"
-      );
-
-
-    const copyButton =
-      document.getElementById(
-        "copyButton"
-      );
-
-
-    const form =
-      document.getElementById(
-        "form"
-      );
-
-
-    const codeInput =
-      document.getElementById(
-        "code"
-      );
-
-
-    const verifyButton =
-      document.getElementById(
-        "verifyButton"
-      );
-
-
-    const message =
-      document.getElementById(
-        "message"
-      );
-
-
-    let ticket = null;
-
-
-
-    function getTicket() {
-
-      const hash =
-        new URLSearchParams(
-          location.hash.slice(1)
-        );
-
-
-      const fromHash =
-        hash.get(
-          "ticket"
-        );
-
-
-      if (
-        fromHash
-      ) {
-
-        sessionStorage.setItem(
-          "dotjp_2fa_ticket",
-          fromHash
-        );
-
-
-        /*
-          URLからチケットを消す
-        */
-
-        history.replaceState(
-          null,
-          "",
-          location.pathname
-          +
-          location.search
-        );
-
-
-        return fromHash;
-
-      }
-
-
-      return sessionStorage.getItem(
-        "dotjp_2fa_ticket"
-      );
-
+<main>
+<h1 id="authHeading">ログインしています…</h1>
+<p class="caption" id="description">この端末の信頼情報を確認しています。</p>
+<section id="setupBlock" hidden>
+<h2>認証アプリの登録</h2>
+<p>2FASなどの認証アプリで下のQRコードを読み取ってください。読み取れない場合は「手動でキーを入力」で設定できます。キーは他の人に教えないでください。</p>
+<div id="qr" aria-label="認証アプリ登録用QRコード"></div>
+<div class="secret"><output id="secret"></output><button type="button" class="secondary" id="copySecret">コピー</button></div>
+<p><a id="appLink" href="#">この端末の認証アプリで開く</a></p>
+<p>登録できたら、アプリに表示される6桁のコードを入力してください。</p>
+</section>
+<form id="verifyForm" autocomplete="off" hidden>
+<label class="field" for="code">認証アプリの6桁コード</label>
+<input id="code" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
+<label class="check"><input id="trustDevice" type="checkbox"><span><strong>この端末を信頼する</strong><small>次回以降は原則として認証アプリの入力を省略します。共用端末ではチェックしないでください。</small></span></label>
+<button class="primary" type="submit" id="verifyButton">認証してログイン</button>
+</form>
+<p id="status" role="status">認証情報を確認しています…</p>
+<footer>Googleアカウントへのログインは引き続き必要です。</footer>
+</main>
+<script>
+function localQrSvg(input){
+  const dataBytes=new TextEncoder().encode(String(input));
+  const version=10,size=4*version+17,blockSizes=[68,68,69,69],eccLength=18;
+  const capacity=274;
+  const bits=[];
+  const pushBits=(value,length)=>{for(let i=length-1;i>=0;i--)bits.push((value>>>i)&1)};
+  pushBits(0x4,4);pushBits(dataBytes.length,16);
+  for(const b of dataBytes)pushBits(b,8);
+  if(bits.length>capacity*8)throw new Error('QRコードの内容が長すぎます。');
+  for(let i=0;i<4&&bits.length<capacity*8;i++)bits.push(0);
+  while(bits.length%8)bits.push(0);
+  let next=0xEC;
+  while(bits.length<capacity*8){pushBits(next,8);next=next===0xEC?0x11:0xEC;}
+  const data=[];
+  for(let i=0;i<bits.length;i+=8){let v=0;for(let j=0;j<8;j++)v=(v<<1)|bits[i+j];data.push(v);}
+  function mul(x,y){let z=0;for(let i=7;i>=0;i--){z=(z<<1)^((z>>>7)*0x11D);z^=((y>>>i)&1)*x;}return z;}
+  const gen=[1];
+  for(let i=0;i<eccLength;i++){
+    let root=1;for(let j=0;j<i;j++)root=mul(root,2);
+    const nextGen=new Array(gen.length+1).fill(0);
+    for(let j=0;j<gen.length;j++){nextGen[j]^=gen[j];nextGen[j+1]^=mul(gen[j],root);}
+    gen.splice(0,gen.length,...nextGen);
+  }
+  const blocks=[],eccBlocks=[];let pos=0;
+  for(const len of blockSizes){
+    const block=data.slice(pos,pos+len);pos+=len;blocks.push(block);
+    const rem=new Array(eccLength).fill(0);
+    for(const b of block){const factor=b^rem.shift();rem.push(0);for(let j=0;j<eccLength;j++)rem[j]^=mul(gen[j+1],factor);}
+    eccBlocks.push(rem);
+  }
+  const codewords=[];
+  for(let j=0;j<Math.max(...blockSizes);j++)for(const block of blocks)if(j<block.length)codewords.push(block[j]);
+  for(let j=0;j<eccLength;j++)for(const ecc of eccBlocks)codewords.push(ecc[j]);
+  const modules=Array.from({length:size},()=>Array(size).fill(false));
+  const reserved=Array.from({length:size},()=>Array(size).fill(false));
+  const set=(x,y,dark)=>{if(x<0||y<0||x>=size||y>=size)return;modules[y][x]=!!dark;reserved[y][x]=true;};
+  const finder=(cx,cy)=>{for(let y=-4;y<=4;y++)for(let x=-4;x<=4;x++){
+    const d=Math.max(Math.abs(x),Math.abs(y));set(cx+x,cy+y,d!==2&&d!==4);
+  }};
+  finder(3,3);finder(size-4,3);finder(3,size-4);
+  for(let i=8;i<size-8;i++){set(6,i,i%2===0);set(i,6,i%2===0);}
+  for(const cx of [6,28,50])for(const cy of [6,28,50]){
+    if((cx===6&&cy===6)||(cx===6&&cy===50)||(cx===50&&cy===6))continue;
+    for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){
+      set(cx+dx,cy+dy,Math.max(Math.abs(dx),Math.abs(dy))!==1);
     }
-
-
-
-    async function initialize() {
-
-      ticket =
-        getTicket();
-
-
-      if (!ticket) {
-
-        showFatal(
-          "認証情報がありません。もう一度Googleログインからやり直してください。"
-        );
-
-        return;
-
-      }
-
-
-      try {
-
-        const response =
-          await fetch(
-            `${WORKER}/api/2fa/setup`,
-            {
-              method: "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:
-                JSON.stringify({
-                  ticket
-                })
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (
-          !response.ok
-          ||
-          !data.ok
-        ) {
-
-          if (
-            data.error ===
-            "invalid_ticket"
-          ) {
-
-            sessionStorage.removeItem(
-              "dotjp_2fa_ticket"
-            );
-
-
-            showFatal(
-              "認証の有効期限が切れました。もう一度Googleログインからやり直してください。"
-            );
-
-            return;
-
-          }
-
-
-          throw new Error(
-            data.error
-            ||
-            "setup_failed"
-          );
-
-        }
-
-
-        /*
-          既に2FAS登録済み
-        */
-
-        if (
-          data.enabled
-        ) {
-
-          title.textContent =
-            "2段階認証";
-
-
-          lead.textContent =
-            "2FAS Authに表示されている6桁コードを入力してください。";
-
-
-        } else {
-
-          /*
-            初回登録
-          */
-
-          title.textContent =
-            "2FAS Authを設定";
-
-
-          lead.textContent =
-            "初回のみ、下のQRコードを2FAS Authで読み取ってください。";
-
-
-          setup.style.display =
-            "block";
-
-
-          secretBox.textContent =
-            data.secret;
-
-
-          const qrBox =
-            document.getElementById(
-              "qrcode"
-            );
-
-
-          qrBox.innerHTML =
-            "";
-
-
-          new QRCode(
-            qrBox,
-            {
-              text:
-                data.otpauth_uri,
-
-              width:
-                200,
-
-              height:
-                200,
-
-              colorDark:
-                "#000000",
-
-              colorLight:
-                "#ffffff",
-
-              correctLevel:
-                QRCode.CorrectLevel.M
-            }
-          );
-
-        }
-
-
-        form.hidden =
-          false;
-
-
-        codeInput.focus();
-
-
-      } catch (error) {
-
-        console.error(
-          error
-        );
-
-
-        showFatal(
-          "2段階認証の準備に失敗しました。もう一度ログインしてください。"
-        );
-
-      }
-
+  }
+  const getBit=(x,i)=>(x>>>i)&1;
+  function drawFormat(mask){
+    const format=(1<<3)|mask;let rem=format;
+    for(let i=0;i<10;i++)rem=(rem<<1)^((rem>>>9)*0x537);
+    const raw=(format<<10|rem)^0x5412;
+    for(let i=0;i<=5;i++)set(8,i,getBit(raw,i));
+    set(8,7,getBit(raw,6));set(8,8,getBit(raw,7));set(7,8,getBit(raw,8));
+    for(let i=9;i<15;i++)set(14-i,8,getBit(raw,i));
+    for(let i=0;i<8;i++)set(size-1-i,8,getBit(raw,i));
+    for(let i=8;i<15;i++)set(8,size-15+i,getBit(raw,i));
+    set(8,size-8,true);
+  }
+  function drawVersion(){let rem=version;for(let i=0;i<12;i++)rem=(rem<<1)^((rem>>>11)*0x1F25);
+    const raw=(version<<12)|rem;
+    for(let i=0;i<18;i++){
+      const bit=getBit(raw,i),a=size-11+i%3,b=Math.floor(i/3);
+      set(a,b,bit);set(b,a,bit);
     }
-
-
-
-    form.addEventListener(
-      "submit",
-
-      async event => {
-
-        event.preventDefault();
-
-
-        const code =
-          codeInput.value
-            .replace(
-              /\D/g,
-              ""
-            );
-
-
-        if (
-          code.length !== 6
-        ) {
-
-          message.textContent =
-            "6桁の認証コードを入力してください.";
-
-          return;
-
-        }
-
-
-        verifyButton.disabled =
-          true;
-
-
-        message.textContent =
-          "確認しています…";
-
-
-        try {
-
-          const response =
-            await fetch(
-              `${WORKER}/api/2fa/verify`,
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                body:
-                  JSON.stringify({
-                    ticket,
-                    code
-                  })
-              }
-            );
-
-
-          const data =
-            await response.json();
-
-
-          if (
-            !response.ok
-            ||
-            !data.ok
-          ) {
-
-            if (
-              data.error ===
-              "wrong_code"
-            ) {
-
-              message.textContent =
-                "認証コードが違います。2FAS Authの最新コードを確認してください。";
-
-
-              codeInput.select();
-
-              return;
-
-            }
-
-
-            if (
-              data.error ===
-              "invalid_ticket"
-            ) {
-
-              sessionStorage.removeItem(
-                "dotjp_2fa_ticket"
-              );
-
-
-              message.textContent =
-                "認証の有効期限が切れました。ログイン画面からやり直してください。";
-
-              return;
-
-            }
-
-
-            message.textContent =
-              "認証できませんでした。もう一度お試しください。";
-
-            return;
-
-          }
-
-
-          /*
-            Google + 2FA認証済みトークン
-          */
-
-          sessionStorage.removeItem(
-            "dotjp_2fa_ticket"
-          );
-
-
-          sessionStorage.setItem(
-            "dotjp_access_token",
-            data.token
-          );
-
-
-          location.replace(
-            data.redirect
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            error
-          );
-
-
-          message.textContent =
-            "通信エラーが発生しました。";
-
-
-        } finally {
-
-          verifyButton.disabled =
-            false;
-
-        }
-
+  }
+  drawFormat(0);drawVersion();
+  let bitIndex=0;
+  for(let right=size-1;right>=1;right-=2){
+    if(right===6)right=5;
+    const upward=((right+1)&2)===0;
+    for(let vert=0;vert<size;vert++){
+      const y=upward?size-1-vert:vert;
+      for(let j=0;j<2;j++){
+        const x=right-j;
+        if(reserved[y][x])continue;
+        const index=Math.floor(bitIndex/8),shift=7-(bitIndex%8);
+        let bit=index<codewords.length?((codewords[index]>>>shift)&1):0;
+        if((x+y)%2===0)bit^=1;
+        modules[y][x]=!!bit;bitIndex++;
       }
-    );
-
-
-
-    codeInput.addEventListener(
-      "input",
-      () => {
-
-        codeInput.value =
-          codeInput.value
-            .replace(
-              /\D/g,
-              ""
-            )
-            .slice(
-              0,
-              6
-            );
-
-      }
-    );
-
-
-
-    copyButton.addEventListener(
-      "click",
-
-      async () => {
-
-        try {
-
-          await navigator.clipboard.writeText(
-            secretBox.textContent
-          );
-
-
-          copyButton.textContent =
-            "コピー済み";
-
-
-          setTimeout(
-            () => {
-
-              copyButton.textContent =
-                "コピー";
-
-            },
-            1500
-          );
-
-
-        } catch {
-
-          message.textContent =
-            "コピーできませんでした。秘密鍵を手動で選択してください。";
-
-        }
-
-      }
-    );
-
-
-
-    function showFatal(text) {
-
-      lead.textContent =
-        text;
-
-
-      setup.style.display =
-        "none";
-
-
-      form.hidden =
-        true;
-
-
-      message.textContent =
-        "";
-
     }
+  }
+  const quiet=4,path=[];
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(modules[y][x])path.push(`M${x+quiet},${y+quiet}h1v1h-1z`);
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox',`0 0 ${size+quiet*2} ${size+quiet*2}`);
+  svg.setAttribute('role','img');svg.setAttribute('aria-label','認証アプリの登録QRコード');
+  svg.setAttribute('width','220');svg.setAttribute('height','220');
+  svg.style.cssText='display:block;background:#fff;margin:12px auto;max-width:100%;image-rendering:pixelated';
+  const shape=document.createElementNS('http://www.w3.org/2000/svg','path');
+  shape.setAttribute('d',path.join(''));shape.setAttribute('fill','#172950');svg.appendChild(shape);
+  return svg;
+}
 
-
-
-    initialize();
-
-  </script>
-
+(()=>{
+  const WORKER='https://dotjp-login.taka-souda516.workers.dev';
+  const HOME='https://dotjp-cp-portal.pages.dev/home.html';
+  const $=id=>document.getElementById(id);
+  const hash=new URLSearchParams(location.hash.slice(1));
+  const ticket=hash.get('ticket')||sessionStorage.getItem('dotjp_2fa_ticket_v2')||'';
+  if(hash.get('ticket')){
+    sessionStorage.setItem('dotjp_2fa_ticket_v2',ticket);
+    history.replaceState(null,'',location.pathname);
+  }
+  const setStatus=(text,error=false)=>{$('status').textContent=text;$('status').classList.toggle('is-error',error)};
+  const setBusy=busy=>{$('verifyButton').disabled=busy};
+  async function api(path,data){
+    const r=await fetch(WORKER+path,{method:'POST',cache:'no-store',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.ok)throw new Error(j.error||'認証サーバーに接続できませんでした。');
+    return j;
+  }
+  function ticketSubject(){
+    try{
+      const payload=JSON.parse(atob(ticket.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')));
+      return typeof payload.sub==='string'&&payload.sub.length>0?payload.sub:null;
+    }catch{return null;}
+  }
+  function deviceDatabase(){
+    return new Promise((resolve,reject)=>{
+      if(!window.indexedDB)return reject(new Error('device_storage_unavailable'));
+      const request=indexedDB.open('dotjp_portal_trusted_keys',1);
+      request.onupgradeneeded=()=>{
+        if(!request.result.objectStoreNames.contains('devices'))request.result.createObjectStore('devices');
+      };
+      request.onsuccess=()=>resolve(request.result);
+      request.onerror=()=>reject(request.error||new Error('device_storage_error'));
+      request.onblocked=()=>reject(new Error('device_storage_blocked'));
+    });
+  }
+  async function readStoredDevice(){
+    const sub=ticketSubject();if(!sub)return null;
+    const db=await deviceDatabase();
+    try{return await new Promise((resolve,reject)=>{
+      const req=db.transaction('devices','readonly').objectStore('devices').get(sub);
+      req.onsuccess=()=>resolve(req.result||null);
+      req.onerror=()=>reject(req.error||new Error('read_failed'));
+    });}finally{db.close();}
+  }
+  async function saveStoredDevice(id,privateKey){
+    const sub=ticketSubject();if(!sub)throw new Error('invalid_account');
+    const db=await deviceDatabase();
+    try{await new Promise((resolve,reject)=>{
+      const transaction=db.transaction('devices','readwrite');
+      transaction.objectStore('devices').put({device_id:id,private_key:privateKey},sub);
+      transaction.oncomplete=()=>resolve();
+      transaction.onerror=()=>reject(transaction.error||new Error('save_failed'));
+      transaction.onabort=()=>reject(transaction.error||new Error('save_aborted'));
+    });}finally{db.close();}
+  }
+  async function clearStoredDevice(){
+    const sub=ticketSubject();if(!sub)return;
+    const db=await deviceDatabase();
+    try{await new Promise((resolve,reject)=>{
+      const transaction=db.transaction('devices','readwrite');
+      transaction.objectStore('devices').delete(sub);
+      transaction.oncomplete=()=>resolve();
+      transaction.onerror=()=>reject(transaction.error||new Error('delete_failed'));
+      transaction.onabort=()=>reject(transaction.error||new Error('delete_aborted'));
+    });}finally{db.close();}
+  }
+  function encodeBase64Url(bytes){
+    let binary='';for(const byte of new Uint8Array(bytes))binary+=String.fromCharCode(byte);
+    return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/g,'');
+  }
+  async function proveTrustedDevice(device){
+    const challenge=await api('/api/trusted-device/key-challenge',{ticket,device_id:device.device_id});
+    const proof=await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},device.private_key,
+      new TextEncoder().encode(challenge.nonce));
+    const verified=await api('/api/trusted-device/key-verify',{ticket,device_id:device.device_id,
+      challenge_id:challenge.challenge_id,signature:encodeBase64Url(proof)});
+    if(!verified.token)throw new Error('missing_token');
+    return verified;
+  }
+  async function tryTrustedLogin(){
+    let device;
+    try{device=await readStoredDevice();}catch{return false;}
+    if(!device||!device.device_id||!device.private_key)return false;
+    try{
+      const verified=await proveTrustedDevice(device);
+      sessionStorage.removeItem('dotjp_2fa_ticket_v2');
+      location.replace(HOME+'#login_token='+encodeURIComponent(verified.token));
+      return true;
+    }catch(error){
+      if(['untrusted_device','invalid_device','invalid_device_proof'].includes(error?.message)){
+        try{await clearStoredDevice();}catch{}
+      }
+      return false;
+    }
+  }
+  async function load(){
+    if(!ticket){setStatus('ログイン情報がありません。Googleログインからやり直してください。',true);setBusy(true);return;}
+    setStatus('この端末の信頼情報を確認しています…');
+    if(await tryTrustedLogin())return;
+    $('authHeading').textContent='2段階認証';
+    $('verifyForm').hidden=false;
+    try{
+      const d=await api('/api/2fa/setup',{ticket});
+      if(d.secret){
+        $('setupBlock').hidden=false;
+        $('qr').replaceChildren();
+        try{$('qr').appendChild(localQrSvg(d.otpauth_uri));}catch{}
+        $('secret').textContent=d.secret;
+        $('appLink').href=d.otpauth_uri;
+        $('description').textContent='認証アプリを設定し、表示された6桁コードを入力してください。';
+      }else{
+        $('setupBlock').hidden=true;
+        $('description').textContent=d.enabled
+          ?'登録済みの認証アプリを開いて、6桁コードを入力してください。'
+          :'以前登録した認証アプリの6桁コードを入力してください。';
+      }
+      setStatus('この端末を信頼すると、次回以降は原則として認証コードを省略できます。ブラウザの保存データを消すと、再認証が必要になります。');
+      $('code').focus();
+    }catch(e){setStatus(e.message,true);setBusy(true);}
+  }
+  $('copySecret').addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText($('secret').textContent);setStatus('設定キーをコピーしました。');}
+    catch{setStatus('コピーできませんでした。設定キーを手動で選択してください。',true);}
+  });
+  $('verifyForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const code=$('code').value.replace(/\D/g,'');
+    if(!/^\d{6}$/.test(code)){setStatus('6桁の認証コードを入力してください。',true);return;}
+    setBusy(true);setStatus('認証中です…');
+    try{
+      let generated=null;
+      if($('trustDevice').checked){
+        try{
+          const pair=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
+          const db=await deviceDatabase();db.close();
+          generated={privateKey:pair.privateKey,publicJwk:await crypto.subtle.exportKey('jwk',pair.publicKey)};
+        }catch{generated=null;}
+      }
+      const d=await api('/api/2fa/verify',{ticket,code,trust_device:$('trustDevice').checked,
+        ...(generated?{trust_public_key:generated.publicJwk}:{})});
+      if(!d.token)throw new Error('ログイン情報を発行できませんでした。');
+      if(d.trusted_device_key_id){
+        try{
+          await saveStoredDevice(d.trusted_device_key_id,generated.privateKey);
+          await proveTrustedDevice({device_id:d.trusted_device_key_id,private_key:generated.privateKey});
+        }catch(error){
+          try{
+            const auth=await fetch(WORKER+'/api/trusted-devices/revoke',{method:'POST',
+              headers:{'Content-Type':'application/json',Authorization:'Bearer '+d.token},
+              body:JSON.stringify({device_id:d.trusted_device_key_id})});
+            if(!auth.ok)console.warn('Device registration could not be rolled back.');
+          }catch{}
+          try{await clearStoredDevice();}catch{}
+          alert('端末登録の保存・確認に失敗しました。今回はログインできますが、次回も認証コードが必要になる可能性があります。');
+        }
+        sessionStorage.removeItem('dotjp_2fa_ticket_v2');
+        location.replace(HOME+'#login_token='+encodeURIComponent(d.token));
+      }else if($('trustDevice').checked&&d.trust_activation_url){
+        sessionStorage.removeItem('dotjp_2fa_ticket_v2');
+        const url=new URL(d.trust_activation_url);
+        if(url.origin!==WORKER)throw new Error('認証先を確認できませんでした。');
+        location.replace(url.href);
+      }else{
+        sessionStorage.removeItem('dotjp_2fa_ticket_v2');
+        location.replace(HOME+'#login_token='+encodeURIComponent(d.token));
+      }
+    }catch(e){setStatus(e.message,true);setBusy(false);}
+  });
+  load();
+})();
+</script>
 </body>
-
 </html>
