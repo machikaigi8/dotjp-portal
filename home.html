@@ -6547,13 +6547,6 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-department-cons .cons-call-tip {font-size:15px;margin:0;}
 .screen-task-end .progress-group:first-child label {font-size:19px!important;line-height:1.3;margin:0;}
 .screen-task-end .progress-group:first-child input {width:60px;font-size:22px;}
-#portal2faDialog{border:0;border-radius:12px;padding:28px 34px;max-width:560px;width:calc(100% - 50px);background:#fff;color:#232852;font:18px/1.5 Inter,"Noto Sans JP",sans-serif;box-shadow:0 16px 60px #17234a55;z-index:20000}
-#portal2faDialog::backdrop{background:#101a3777}
-#portal2faDialog h2{font-size:26px;margin:0 0 12px}
-#portal2faDialog button{background:#7577ff;color:#fff;padding:10px 18px;border:0;cursor:pointer;margin:6px 8px 0 0}
-#portal2faDialog button.secondary{background:#e8e9ff;color:#30356e}
-#portal2faDialog input{width:160px;padding:10px;font-size:20px;border:1px solid #a2a5bd}
-#portal2faDialog [hidden]{display:none!important}
 
 
 /* v126 weekly boat race: the existing 1440x1024 fixed canvas is preserved. */
@@ -6723,7 +6716,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <section class="links-panel">
             <h2>リンク集</h2>
             <button type="button" id="lineSettingsOpen" class="line-settings-entry" hidden>LINE連携</button>
-            <button type="button" id="portal2faSettingsOpen" class="line-settings-entry" style="display:block;position:absolute;right:195px;top:10px;width:210px;height:50px;font-size:20px;">2段階認証設定</button>
+
             <button type="button" id="lineUnlinkEntry" class="line-unlink-entry" hidden>LINE連携を解除する</button>
             <div class="links-grid">
               <a class="green-menu" href="https://docs.google.com/spreadsheets/d/1isxF8Tmc6FnSVq0IhrcoHMxO6CbnBqD4mrqGBsEWiJg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">経営管理シート</a>
@@ -16333,50 +16326,6 @@ showScreen=function(name,...args){
   return result;
 };
 
-async function portal2faRequest(path,body) {
-  const token=sessionStorage.getItem('dotjp_access_token');
-  const response=await fetch(WORKER+path,{method:body?'POST':'GET',headers:{'Authorization':'Bearer '+token,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
-  const result=await response.json();
-  if(!response.ok||!result.ok)throw new Error(result.error||'認証設定を取得できません');
-  return result;
-}
-async function portal2faOpen() {
-  const dlg=document.getElementById('portal2faDialog');
-  if (!dlg.open) dlg.showModal();
-  document.getElementById('portal2faEnabled').hidden=true;
-  document.getElementById('portal2faDisabled').hidden=true;
-  document.getElementById('portal2faStatus').textContent='設定を確認しています…';
-  try {
-    const info=await portal2faRequest('/api/2fa/status');
-    document.getElementById('portal2faStatus').textContent=info.enabled?'現在：2段階認証は有効です':'現在：2段階認証は無効です';
-    document.getElementById('portal2faEnabled').hidden=!info.enabled;
-    document.getElementById('portal2faDisabled').hidden=!!info.enabled;
-  }catch(error){document.getElementById('portal2faStatus').textContent=error.message;}
-}
-document.addEventListener('DOMContentLoaded',()=>{
- const dlg=document.getElementById('portal2faDialog');
- document.getElementById('portal2faSettingsOpen').addEventListener('click',()=>void portal2faOpen());
- document.getElementById('portal2faClose').addEventListener('click',()=>dlg.close());
- document.getElementById('portal2faEnable').addEventListener('click',async()=>{
-  try{const r=await portal2faRequest('/api/2fa/preferences',{action:'enable'});if(r.url)location.assign(r.url);else await portal2faOpen();}catch(e){document.getElementById('portal2faStatus').textContent=e.message;}
- });
- document.getElementById('portal2faDisable').addEventListener('click',async()=>{
-  const code=document.getElementById('portal2faCode').value.trim();
-  if(!/^\d{6}$/.test(code)){document.getElementById('portal2faStatus').textContent='認証アプリの6桁コードを入力してください';return;}
-  if(!window.confirm('2段階認証を無効化します。次回からGoogleログインだけになります。よろしいですか？'))return;
-  const b=document.getElementById('portal2faDisable');b.disabled=true;
-  try {
-   const r=await portal2faRequest('/api/2fa/preferences',{action:'disable',code});
-   sessionStorage.setItem('dotjp_access_token',r.token);
-   document.getElementById('portal2faCode').value='';
-   await portal2faOpen();
-   showToast('2段階認証を無効化しました');
-  }catch(e){document.getElementById('portal2faStatus').textContent=e.message;}finally{b.disabled=false;}
- });
-});
-
-
-// ===================== v126 HR Boat Race =====================
 const hrBoatData={pending:false,result:null};
 const hrBoatSvg="<svg viewBox=\"0 0 158 112\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n<defs>\n<linearGradient id=\"hrWood\" x1=\"0\" y1=\"0\" x2=\"0.2\" y2=\"1\"><stop offset=\"0\" stop-color=\"#bf8550\"/><stop offset=\".34\" stop-color=\"#82502e\"/><stop offset=\".72\" stop-color=\"#40241c\"/><stop offset=\"1\" stop-color=\"#201b20\"/></linearGradient>\n<linearGradient id=\"hrDeck\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#d8a66a\"/><stop offset=\"1\" stop-color=\"#785037\"/></linearGradient>\n<linearGradient id=\"hrCanvas\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\".25\"><stop stop-color=\"#fffced\"/><stop offset=\".55\" stop-color=\"#e5d7b6\"/><stop offset=\".86\" stop-color=\"#c3ae8f\"/><stop offset=\"1\" stop-color=\"#fcf4df\"/></linearGradient>\n<linearGradient id=\"hrCanvasShade\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\".5\"><stop stop-color=\"#e5d5b2\"/><stop offset=\".42\" stop-color=\"#fff9e9\"/><stop offset=\"1\" stop-color=\"#ad9675\"/></linearGradient>\n<linearGradient id=\"hrSeaFoam\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#ffffff\" stop-opacity=\".87\"/><stop offset=\"1\" stop-color=\"#c0f4ff\" stop-opacity=\"0\"/></linearGradient>\n</defs>\n<ellipse cx=\"82\" cy=\"99\" rx=\"54\" ry=\"7\" fill=\"#0a3450\" opacity=\".22\"/>\n<path d=\"M11 91 Q26 86 41 92 T72 91 T101 92 T142 92\" fill=\"none\" stroke=\"url(#hrSeaFoam)\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n<path d=\"M21 97 Q40 92 53 96 M102 98 Q120 93 146 99\" fill=\"none\" stroke=\"#e4fcff\" stroke-opacity=\".8\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n<!-- curved bow, stern and layered timber hull -->\n<path d=\"M20 71 Q29 73 42 71 L122 69 L151 63 Q143 82 126 91 Q91 101 45 94 Q27 89 20 71Z\" fill=\"url(#hrWood)\" stroke=\"#29242b\" stroke-width=\"2.6\" stroke-linejoin=\"round\"/>\n<path d=\"M28 73 Q79 79 144 68\" stroke=\"#dfb478\" stroke-width=\"3\" fill=\"none\" opacity=\".95\"/>\n<path d=\"M30 79 Q87 86 137 75\" stroke=\"#251e1c\" stroke-width=\"1.5\" fill=\"none\" opacity=\".5\"/>\n<path d=\"M35 85 Q90 92 131 82\" stroke=\"#e3aa64\" stroke-width=\"1.2\" fill=\"none\" opacity=\".55\"/>\n<path d=\"M43 93 Q92 98 125 88\" stroke=\"#1d1518\" stroke-width=\"1.3\" fill=\"none\"/>\n<!-- continuous deck line, rails, portholes and stern gallery -->\n<path d=\"M22 69 Q80 64 124 65 L146 59 L148 66 Q92 73 24 74Z\" fill=\"url(#hrDeck)\" stroke=\"#4a3024\" stroke-width=\"1.8\"/>\n<path d=\"M31 63 L31 71 M49 63 L49 71 M68 61 L68 70 M86 61 L86 69 M104 61 L104 68 M121 61 L121 66\" stroke=\"#463127\" stroke-width=\"2\"/>\n<path d=\"M23 64 Q82 60 127 60 L145 54\" stroke=\"#2d292b\" stroke-width=\"2.5\" fill=\"none\"/>\n<path d=\"M139 59 L151 49\" stroke=\"#5f4633\" stroke-width=\"2.7\"/>\n<path d=\"M142 65 L150 66\" stroke=\"#f7cf8c\" stroke-width=\"1.5\"/>\n<circle cx=\"51\" cy=\"83\" r=\"3\" fill=\"#0e344a\" stroke=\"#e5bd72\" stroke-width=\"1.5\"/>\n<circle cx=\"74\" cy=\"86\" r=\"3\" fill=\"#0e344a\" stroke=\"#e5bd72\" stroke-width=\"1.5\"/>\n<circle cx=\"97\" cy=\"86\" r=\"3\" fill=\"#0e344a\" stroke=\"#e5bd72\" stroke-width=\"1.5\"/>\n<!-- mast and yardarms -->\n<path d=\"M60 13 L60 67 M102 9 L102 66\" stroke=\"#4a2e24\" stroke-width=\"3.6\" stroke-linecap=\"round\"/>\n<path d=\"M57 29 L86 30 M100 23 L129 24\" stroke=\"#62432b\" stroke-width=\"2.2\"/>\n<!-- billowing stitched sails -->\n<path d=\"M58 15 Q35 29 30 60 Q44 56 59 61 Z\" fill=\"url(#hrCanvasShade)\" stroke=\"#755e4b\" stroke-width=\"1.6\"/>\n<path d=\"M63 17 Q84 28 88 59 Q73 57 63 61Z\" fill=\"url(#hrCanvas)\" stroke=\"#755e4b\" stroke-width=\"1.6\"/>\n<path d=\"M100 12 Q79 28 78 57 Q91 53 101 58Z\" fill=\"url(#hrCanvasShade)\" stroke=\"#755e4b\" stroke-width=\"1.6\"/>\n<path d=\"M105 12 Q127 25 130 55 Q119 52 105 58Z\" fill=\"url(#hrCanvas)\" stroke=\"#755e4b\" stroke-width=\"1.6\"/>\n<path d=\"M48 26 Q45 39 40 54 M72 28 Q78 40 81 55 M89 26 Q85 38 84 50 M113 25 Q119 38 124 49\" fill=\"none\" stroke=\"#ab987e\" stroke-opacity=\".75\" stroke-width=\".9\" stroke-dasharray=\"2.2 2.5\"/>\n<!-- taut rigging -->\n<path d=\"M60 13L22 69 M60 13L96 68 M102 9L67 67 M102 9L145 59 M60 13L99 9 M105 15L142 58\" fill=\"none\" stroke=\"#574d44\" stroke-opacity=\".9\" stroke-width=\".9\"/>\n<!-- distinguishing flag and golden trim -->\n<path d=\"M103 9L103 0\" stroke=\"#3d312c\" stroke-width=\"1.8\"/>\n<path d=\"M104 1 Q117 -1 130 5 L105 8Z\" fill=\"var(--boat-accent,#4168a5)\" stroke=\"#fbdd99\" stroke-width=\"1\"/>\n<path d=\"M23 73 Q84 78 144 67\" fill=\"none\" stroke=\"var(--boat-accent,#4168a5)\" stroke-width=\"2.2\" opacity=\".9\"/>\n</svg>";
 function hrBoatNode(tag,className,text){const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=String(text);return el;}
@@ -16507,17 +16456,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 </dialog>
 
 
-<dialog id="portal2faDialog" aria-labelledby="portal2faTitle">
- <h2 id="portal2faTitle">2段階認証設定</h2>
- <p id="portal2faStatus" role="status">設定を読み込んでいます…</p>
- <div id="portal2faEnabled" hidden>
-  <p>現在有効です。無効化するには認証アプリの6桁コードを入力してください。</p>
-  <label>認証コード <input type="text" id="portal2faCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" pattern="[0-9]{6}"></label>
-  <button type="button" id="portal2faDisable">2段階認証を無効にする</button>
- </div>
- <div id="portal2faDisabled" hidden><p>現在無効です。Googleログインだけで利用できます。再度有効にする場合は認証アプリを設定してください。</p><button type="button" id="portal2faEnable">2段階認証を有効にする</button></div>
- <p><button type="button" class="secondary" id="portal2faClose">閉じる</button></p>
-</dialog>
 <script>
 (() => {
   const style = document.createElement('style');
