@@ -7213,7 +7213,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div><dt>今週のアタック件数（1人あたり）</dt><dd id="clientResultsRequired">—</dd></div>
               </dl></section>
             </div>
-            <div class="client-results-settings"><label class="v146-target"><span>目標数</span><input type="number" id="clientResultsTargetShown" min="1" max="10000" step="1" aria-label="獲得企業の目標数"></label>
+            <div class="client-results-settings"><label class="v146-target"><span>目標数</span><input type="number" id="clientResultsTargetShown" min="1" max="10000" step="1" aria-label="アタック件数の目標数"></label>
               <label>支部員人数<input id="clientResultsPeople" type="number" min="1" max="10000" step="1"></label><label>完了させたい週<select id="clientResultsDeadline"><option value="">選択してください</option></select></label><button id="clientResultsSave" type="button">保存</button></div>
             <p id="clientResultsStatus" role="status">読み込み中…</p>
           </div>
@@ -15239,16 +15239,16 @@ const clientResultsState={data:null,seq:0};
 function clientResultsEl(id){return document.getElementById('clientResults'+id);}
 function clientResultsFmt(n,suffix='件'){
   if(n===null||n===undefined||!Number.isFinite(n))return '—';
-  return new Intl.NumberFormat('ja-JP',{minimumSignificantDigits:3,maximumSignificantDigits:3}).format(n)+suffix;
+  return new Intl.NumberFormat('ja-JP',suffix==='%'?{maximumFractionDigits:2}:{maximumFractionDigits:0}).format(n)+suffix;
 }
 function clientResultsRate(n,d){return Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;}
 function clientResultsCalc(data,people,deadline,goal){
   const a=data.attack,w=data.won,ap=data.deals+w;
-  const current=data.weeks.findIndex(x=>x.start===data.current_week), end=data.weeks.findIndex(x=>x.start===deadline);
-  const remaining=current>=0&&end>=current?Math.floor((Date.parse(data.weeks[end].start)-Date.parse(data.weeks[current].start))/(7*86400000))+1:null;
+  const current=data.weeks.findIndex(x=>x.start===data.current_week),end=data.weeks.findIndex(x=>x.start===deadline);
+  const remaining=current>=0&&end>=current?end-current+1:null;
   const rate=clientResultsRate(w,a);
-  const required=Number.isInteger(goal)&&goal>0?(w>=goal?0:rate>0&&Number.isInteger(people)&&people>0&&remaining>0?(goal-w)/rate/people/remaining:null):null;
-  return {progress:clientResultsRate(a,data.target),appointmentRate:clientResultsRate(ap,a),winRate:rate,appointments:ap,required};
+  const required=Number.isInteger(goal)&&goal>0&&Number.isInteger(people)&&people>0&&remaining>0?Math.ceil(Math.max(0,goal-a)/people/remaining):null;
+  return {progress:clientResultsRate(a,goal),appointmentRate:clientResultsRate(ap,a),winRate:rate,appointments:ap,required};
 }
 function renderClientResults(){
   const d=clientResultsState.data;if(!d)return;
@@ -15256,7 +15256,7 @@ function renderClientResults(){
   const goal=clientResultsEl('TargetShown').value.trim()===''?NaN:Number(clientResultsEl('TargetShown').value);
   const c=clientResultsCalc(d,people,deadline,goal);
   const put=(key,v,suffix='件')=>{const node=clientResultsEl(key);node.textContent=clientResultsFmt(v,suffix);node.title=Number.isFinite(v)?String(v)+suffix:'';};
-  put('Attack',d.attack);put('Target',d.target);put('Progress',c.progress===null?null:c.progress*100,'%');
+  put('Attack',d.attack);put('Target',Number.isInteger(goal)&&goal>0?goal:null);put('Progress',c.progress===null?null:c.progress*100,'%');
   put('Appointments',c.appointments,'社');put('AppointmentRate',c.appointmentRate===null?null:c.appointmentRate*100,'%');
   put('Won',d.won,'社');put('WinRate',c.winRate===null?null:c.winRate*100,'%');put('Required',c.required,'件');
   clientResultsEl('Status').textContent='';
@@ -15273,7 +15273,7 @@ async function loadClientResults(){
     const sel=clientResultsEl('Deadline');sel.replaceChildren(new Option('選択してください',''));
     for(const week of d.weeks){const option=new Option(week.label+'（'+week.start+'～'+week.end+'）',week.start);sel.add(option);}
     clientResultsEl('People').value=d.settings.people??'';
-    clientResultsEl('TargetShown').value=d.settings.goal??10;
+    clientResultsEl('TargetShown').value=d.settings.goal??d.target??'';
     sel.value=d.settings.deadline||'';
     renderClientResults();
   }catch(e){if(seq===clientResultsState.seq){clientResultsState.data=null;for(const key of ['Attack','Target','Progress','Appointments','AppointmentRate','Won','WinRate','Required'])clientResultsEl(key).textContent='—';clientResultsEl('Week').textContent='東京企業支部';clientResultsEl('Status').textContent='取得できませんでした：'+(e.message||e);}}
@@ -15286,7 +15286,7 @@ async function saveClientResults(){
   const button=clientResultsEl('Save');button.disabled=true;
   try{
     const r=await portalFetch('/api/client/results/settings',{method:'POST',body:{people,goal,deadline}});
-    if(clientResultsState.data)clientResultsState.data.settings=r.settings;
+    if(clientResultsState.data){clientResultsState.data.settings=r.settings;clientResultsState.data.target=r.settings.goal;}
     renderClientResults();showToast('保存しました。');
   }catch(e){showToast(e.message||'保存できませんでした。');}
   finally{button.disabled=false;}
@@ -17136,10 +17136,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 .screen-client-results .client-results-settings label:has(#clientResultsDeadline){width:210px!important}.screen-client-results .client-results-settings select{width:210px!important;min-width:210px!important}
 .screen-client-results .client-results-settings #clientResultsSave{position:absolute!important;left:650px!important;top:0!important;width:70px!important;height:40px!important;font-size:28px!important;padding:0!important;display:flex!important;align-items:center;justify-content:center;background:#3080ff!important;color:white!important;font-weight:400!important;white-space:nowrap}
 .screen-client-results .client-results-columns{position:absolute!important;left:40px!important;top:137px!important;right:40px!important;height:330px!important;display:grid!important;grid-template-columns:repeat(3,320px)!important;justify-content:space-between!important;gap:0!important}
-.screen-client-results .client-results-card{height:330px!important;border:3px solid #ffa3dc!important;border-radius:0!important;background:#fff!important;padding:0!important;box-shadow:none!important;min-width:0!important}
+.screen-client-results .client-results-card{height:330px!important;border:3px solid #ffa3dc!important;border-radius:0!important;background:#fff!important;padding:0!important;box-shadow:none!important;min-width:0!important;overflow:hidden!important;box-sizing:border-box!important}
 .screen-client-results .client-results-card h3{height:90px!important;display:flex;align-items:center;justify-content:center;background:#ffa3dc!important;color:white!important;margin:0!important;padding:0!important;font:500 35px/1.2 Inter,'Noto Sans JP',sans-serif!important}
-.screen-client-results .client-results-card dl{display:grid!important;grid-template-columns:1fr!important;margin:0!important;gap:0!important}
+.screen-client-results .client-results-card dl{display:grid!important;grid-template-columns:1fr!important;margin:0!important;gap:0!important;padding:0!important;box-sizing:border-box!important}
 .screen-client-results .client-results-card dl>div{height:78px!important;border-bottom:2px solid #ffa3dc!important;display:flex!important;align-items:center;justify-content:space-between;gap:4px;padding:3px 9px!important;box-sizing:border-box!important}
+.screen-client-results .client-results-card dl>div:last-child{border-bottom:0!important}
 .screen-client-results .client-results-card dt{font-size:19px!important;line-height:1.2!important}.screen-client-results .client-results-card dd{font-size:25px!important;margin:0!important;white-space:nowrap}
 .screen-client-results #clientResultsStatus{position:absolute;left:40px;top:465px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:1100px}
 .screen-client-results>.common-back-button,.screen-client-materials>.common-back-button{left:70px!important;top:898px!important;width:140px!important;height:60px!important;background:#3080ff!important;font-size:40px!important}
