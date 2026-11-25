@@ -6845,36 +6845,12 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <!-- 行動量の日次差分・昨日のログイン時報告とカレンダー連携表示 -->
         <!-- Figma 64:637: クライアント -->
         <!-- Figma 2026-11-05: コンス / white placeholder -->
-        <section class="screen screen-department-placeholder screen-department-cons" data-screen="department-cons" aria-label="コンス">
-          <div class="user-name" data-user-name>＜名前＞</div>
-          <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="cons">資料一覧</button>
-          <div class="department-placeholder-panel cons-call-panel" aria-label="コンスの学生アプローチ記録">
-            <h2 class="cons-call-heading">コンス｜学生アプローチ記録</h2>
-            <p class="cons-call-description">架電・メール・DMは連絡手段を選び、最後に獲得結果を押して記録します。口コミは押した時点で1件記録します。</p>
-            <div class="cons-contact-current" id="consContactCurrent" aria-live="polite">1人目を記録</div>
-            <div class="cons-contact-methods" role="group" aria-label="この学生に使った連絡手段">
-              <button type="button" class="cons-contact-method" data-cons-method="call" aria-pressed="false" disabled>架電</button>
-              <button type="button" class="cons-contact-method" data-cons-method="email" aria-pressed="false" disabled>メール</button>
-              <button type="button" class="cons-contact-method" data-cons-method="review" aria-pressed="false" disabled>口コミ</button>
-              <button type="button" class="cons-contact-method" data-cons-method="dm" aria-pressed="false" disabled>DM</button>
-            </div>
-            <p class="cons-contact-help">架電・メール・DMは複数選択できます。口コミだけはタップすると即時に確定し、獲得結果の選択は不要です。</p>
-            <div class="cons-contact-outcomes" role="group" aria-label="この学生の獲得結果">
-              <button type="button" id="consContactWon" class="cons-contact-outcome is-won" disabled>獲得した</button>
-              <button type="button" id="consContactLost" class="cons-contact-outcome is-lost" disabled>獲得できなかった</button>
-            </div>
-            <div class="cons-contact-summary" aria-label="本日の記録件数">
-              <span>対応人数：<strong id="consContactPeople">—</strong>人</span>
-              <span>架電：<strong id="consCallTodayCount">—</strong>件</span>
-              <span>メール：<strong id="consEmailTodayCount">—</strong>件</span>
-              <span>口コミ：<strong id="consReviewTodayCount">—</strong>件</span>
-              <span>DM：<strong id="consDmTodayCount">—</strong>件</span>
-              <span>獲得：<strong id="consWonTodayCount">—</strong>件</span>
-            </div>
-            <p id="consCallStatus" class="cons-call-status" role="status" aria-live="polite">記録状況を確認しています…</p>
-            <p class="cons-call-tip">口コミは押した時点で記録します。ほかの手段は獲得結果の確定時に記録します。タスク終了時の入力と重複しないようにしてください。</p>
-          </div>
-        </section>
+        <section class="screen screen-department-cons screen-cons-v146" data-screen="department-cons" aria-label="コンス">
+<div class="user-name" data-user-name>＜名前＞</div><nav class="cons-v146-nav" aria-label="コンス内メニュー">
+<button type="button" data-route="cons-call">架電をする</button>
+<button type="button" data-route="cons-staff-status">支部員タスク状況</button>
+<button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
+</nav><button type="button" class="v146-back" data-back-route="home" data-common-back>←戻る</button></section>
         <section class="screen screen-marketing" data-screen="department-mark" aria-label="マーケティング・ナレッジ共有">
           <div class="user-name" data-user-name>＜名前＞</div>
           <div class="marketing-shell">
@@ -7100,21 +7076,85 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </div>
         </section>
 
-        <section class="screen screen-client" data-screen="client">
-          <div class="user-name" data-user-name>＜名前＞</div>
+        <section class="screen screen-cons-call" data-screen="cons-call" aria-label="コンス・架電をする">
+<div class="user-name" data-user-name>＜名前＞</div><nav class="cons-v146-nav" aria-label="コンス内メニュー">
+<button type="button" data-route="cons-call">架電をする</button>
+<button type="button" data-route="cons-staff-status">支部員タスク状況</button>
+<button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
+</nav>
+<div class="cons-v146-call-stage">
+ <div class="cons-v146-script"><div>架電スクリプト</div><button type="button" class="cons-v146-record-toggle" id="consRecordToggle">アプローチを記録</button></div>
+ <div class="cons-v146-student"><div>学生情報</div><p>対象学生の情報は既存の名簿・資料から確認できます。</p><button type="button" data-route="department-materials" data-material-department="cons">資料を開く</button></div>
+</div>
+<div class="cons-v146-record-modal" id="consRecordModal" hidden><button type="button" class="cons-v146-close" id="consRecordClose">閉じる ×</button><div aria-label="コンスの学生アプローチ記録" class="department-placeholder-panel cons-call-panel">
+<h2 class="cons-call-heading">コンス｜学生アプローチ記録</h2>
+<p class="cons-call-description">架電・メール・DMは連絡手段を選び、最後に獲得結果を押して記録します。口コミは押した時点で1件記録します。</p>
+<div aria-live="polite" class="cons-contact-current" id="consContactCurrent">1人目を記録</div>
+<div aria-label="この学生に使った連絡手段" class="cons-contact-methods" role="group">
+<button aria-pressed="false" class="cons-contact-method" data-cons-method="call" disabled="" type="button">架電</button>
+<button aria-pressed="false" class="cons-contact-method" data-cons-method="email" disabled="" type="button">メール</button>
+<button aria-pressed="false" class="cons-contact-method" data-cons-method="review" disabled="" type="button">口コミ</button>
+<button aria-pressed="false" class="cons-contact-method" data-cons-method="dm" disabled="" type="button">DM</button>
+</div>
+<p class="cons-contact-help">架電・メール・DMは複数選択できます。口コミだけはタップすると即時に確定し、獲得結果の選択は不要です。</p>
+<div aria-label="この学生の獲得結果" class="cons-contact-outcomes" role="group">
+<button class="cons-contact-outcome is-won" disabled="" id="consContactWon" type="button">獲得した</button>
+<button class="cons-contact-outcome is-lost" disabled="" id="consContactLost" type="button">獲得できなかった</button>
+</div>
+<div aria-label="本日の記録件数" class="cons-contact-summary">
+<span>対応人数：<strong id="consContactPeople">—</strong>人</span>
+<span>架電：<strong id="consCallTodayCount">—</strong>件</span>
+<span>メール：<strong id="consEmailTodayCount">—</strong>件</span>
+<span>口コミ：<strong id="consReviewTodayCount">—</strong>件</span>
+<span>DM：<strong id="consDmTodayCount">—</strong>件</span>
+<span>獲得：<strong id="consWonTodayCount">—</strong>件</span>
+</div>
+<p aria-live="polite" class="cons-call-status" id="consCallStatus" role="status">記録状況を確認しています…</p>
+<p class="cons-call-tip">口コミは押した時点で記録します。ほかの手段は獲得結果の確定時に記録します。タスク終了時の入力と重複しないようにしてください。</p>
+</div></div><button type="button" class="v146-back" data-back-route="department-cons" data-common-back>←戻る</button></section>
 
-          <nav class="client-tabs" aria-label="クライアントメニュー">
-            <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
-            <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
-            <button class="client-tab" type="button" data-route="client-deals">商談予定企業</button>
-            <button class="client-tab" type="button" data-route="client-materials">資料一覧</button>
-            <button class="client-tab" type="button" data-route="client-mail">メールを送る</button>
-            <button class="client-tab" type="button" data-route="client-line">LINE通知</button>
-          </nav>
-        </section>
+        <section class="screen screen-cons-staff-status" data-screen="cons-staff-status">
+<div class="user-name" data-user-name>＜名前＞</div><nav class="cons-v146-nav" aria-label="コンス内メニュー">
+<button type="button" data-route="cons-call">架電をする</button>
+<button type="button" data-route="cons-staff-status">支部員タスク状況</button>
+<button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
+</nav><div class="cons-v146-staff-stage"><div class="cons-v146-people" id="consV146People"></div><div class="cons-v146-stats"><section class="cons-v146-stat"><header><h3>1日の行動量</h3><label class="cons-v146-period-control"><span>日時選択▼</span><input id="consV146Day" type="date" aria-label="日時選択"></label></header><dl id="consV146DayStats"><dt>架電数：</dt><dd>—</dd><dt>メール数：</dt><dd>—</dd><dt>口コミ数：</dt><dd>—</dd><dt>DM数：</dt><dd>—</dd><dt>獲得数：</dt><dd>—</dd></dl></section><section class="cons-v146-stat"><header><h3>1週間の行動量</h3><label class="cons-v146-period-control"><span>日時選択▼</span><input id="consV146Week" type="date" aria-label="日時選択"></label></header><dl id="consV146WeekStats"><dt>架電数：</dt><dd>—</dd><dt>メール数：</dt><dd>—</dd><dt>口コミ数：</dt><dd>—</dd><dt>DM数：</dt><dd>—</dd><dt>獲得数：</dt><dd>—</dd></dl></section><section class="cons-v146-stat"><header><h3>1ヶ月の行動量</h3><label class="cons-v146-period-control"><span>月▼</span><input id="consV146Month" type="month" aria-label="月"></label></header><dl id="consV146MonthStats"><dt>架電数：</dt><dd>—</dd><dt>メール数：</dt><dd>—</dd><dt>口コミ数：</dt><dd>—</dd><dt>DM数：</dt><dd>—</dd><dt>獲得数：</dt><dd>—</dd></dl></section><section class="cons-v146-stat"><header><h3>累計の行動量</h3><span class="cons-v146-total-note">現在までの累計</span></header><dl id="consV146TotalStats"><dt>架電数：</dt><dd>—</dd><dt>メール数：</dt><dd>—</dd><dt>口コミ数：</dt><dd>—</dd><dt>DM数：</dt><dd>—</dd><dt>獲得数：</dt><dd>—</dd></dl></section></div></div><p class="cons-v146-staff-status" id="consV146StaffStatus" role="status"></p><button type="button" class="v146-back" data-back-route="department-cons" data-common-back>←戻る</button></section>
+
+<section class="screen screen-cons-results" data-screen="cons-results">
+<div class="user-name" data-user-name>＜名前＞</div><nav class="cons-v146-nav" aria-label="コンス内メニュー">
+<button type="button" data-route="cons-call">架電をする</button>
+<button type="button" data-route="cons-staff-status">支部員タスク状況</button>
+<button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
+</nav>
+<div class="cons-v146-results-stage"><div class="cons-v146-results-title">実績一覧</div><div class="cons-v146-results-table"><h2>プレキャリ</h2>
+<table><thead><tr><th>項目／完了件数</th><th>獲得数</th><th>見込み獲得数</th></tr></thead><tbody>
+<tr><th>架電<small id="consV146AllCalls">—</small></th><td id="consV146CallWon">—</td><td id="consV146CallProspects">—</td></tr>
+<tr><th>メール<small id="consV146AllEmails">—</small></th><td id="consV146EmailWon">—</td><td id="consV146EmailProspects">—</td></tr>
+<tr><th>口コミ<small id="consV146AllReviews">—</small></th><td id="consV146ReviewWon">—</td><td id="consV146ReviewProspects">—</td></tr>
+<tr><th>DM<small id="consV146AllDm">—</small></th><td id="consV146DmWon">—</td><td id="consV146DmProspects">—</td></tr>
+<tr><th>獲得数</th><td id="consV146Won">—</td><td>—</td></tr>
+</tbody></table></div>
+<div class="cons-v146-intern"><h2>長期インターン</h2><dl><dt>目標人数</dt><dd id="consV146Target">—</dd><dt>実績</dt><dd id="consV146Actual">—</dd><dt>獲得率</dt><dd id="consV146Rate">—</dd><dt>企業支部内順位</dt><dd id="consV146Rank">—</dd></dl></div></div>
+<p class="cons-v146-results-note" id="consV146ResultsStatus" role="status"></p><button type="button" class="v146-back" data-back-route="department-materials" data-common-back>←戻る</button><button class="cons-v146-add-doc" id="consV146AddDocument" type="button">＋資料を増やす</button></section>
+
+<section class="screen screen-client screen-client-v146" data-screen="client">
+<div class="user-name" data-user-name>＜名前＞</div><nav class="client-v146-nav" aria-label="クライアント内メニュー">
+<button type="button" data-route="client-contact">お問い合わせフォーム</button>
+<button type="button" data-route="client-won">獲得企業一覧</button>
+<button type="button" data-route="client-deals">商談予定企業</button>
+<button type="button" data-route="client-materials">資料一覧</button>
+<button type="button" data-route="client-mail">メールを送る</button>
+<button type="button" data-route="client-line">LINE通知</button>
+</nav><button type="button" class="v146-back" data-back-route="home" data-common-back>←戻る</button></section>
 
         <section class="screen screen-department-materials" data-screen="department-materials" aria-label="部署の資料一覧">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <button id="consV146MaterialAdd" type="button" class="cons-v146-add-doc" hidden>＋資料を増やす</button>
+          <div class="cons-v146-materials-only"><nav class="cons-v146-nav" aria-label="コンス内メニュー">
+<button type="button" data-route="cons-call">架電をする</button>
+<button type="button" data-route="cons-staff-status">支部員タスク状況</button>
+<button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
+</nav><button type="button" class="cons-v146-results-go" data-route="cons-results">実績一覧</button></div>
           <div class="department-materials-stage">
             <header class="department-materials-heading">
               <div><small id="departmentMaterialsRegion">関東</small><h2 id="departmentMaterialsTitle">部署｜資料一覧</h2><p>部署で使う資料やマニュアルを、ボタンからすぐに開けます。</p></div>
@@ -7128,6 +7168,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
         <!-- Figma 194:886 — クライアント資料一覧 -->
         <section class="screen screen-client-materials" data-screen="client-materials" aria-label="資料一覧">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <button type="button" id="clientMaterialsAddButton" class="dept-material-action" hidden>＋ 資料ボタンを追加</button>
           <nav class="client-tabs" aria-label="クライアントメニュー">
             <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
             <button class="client-tab" type="button" data-route="client-won">獲得企業一覧</button>
@@ -7138,13 +7179,13 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           </nav>
           <button type="button" class="client-material-email client-material-results" data-route="client-results">実績一覧</button>
           <button type="button" id="clientMaterialsEmailScript" class="client-material-email">メールスクリプト</button>
-          <div class="client-material-custom"><div class="client-material-custom-head"><h2>共有資料</h2><button type="button" id="clientMaterialsAddButton" class="dept-material-action" hidden>＋ 資料ボタンを追加</button></div>
+          <div class="client-material-custom"><div class="client-material-custom-head"><h2>共有資料</h2></div>
             <div id="clientMaterialsCustomGrid" class="department-material-grid" aria-live="polite"></div><p id="clientMaterialsStatus" class="department-material-status" role="status"></p></div>
         </section>
 
 
         <!-- Figma 196:955: クライアント／メールを送る（フォームを送るは無変更） -->
-        <section class="screen screen-client-results" data-screen="client-results" aria-label="実績一覧">
+        <section class="screen screen-client-results" data-screen="client-results" aria-label="実績一覧"><button id="clientV146AddDocument" type="button">＋資料を増やす</button>
           <div class="user-name" data-user-name>＜名前＞</div>
           <nav class="client-tabs" aria-label="クライアントメニュー">
             <button class="client-tab" type="button" data-route="client-contact">お問い合わせフォーム</button>
@@ -7172,7 +7213,8 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <div><dt>今週のアタック件数（1人あたり）</dt><dd id="clientResultsRequired">—</dd></div>
               </dl></section>
             </div>
-            <div class="client-results-settings"><label>人数<input id="clientResultsPeople" type="number" min="1" max="10000" step="1" placeholder="人数"></label><label>完了させたい週<select id="clientResultsDeadline"><option value="">選択してください</option></select></label><button id="clientResultsSave" type="button">保存</button><span id="clientResultsRemaining" aria-live="polite"></span></div>
+            <div class="client-results-settings"><label class="v146-target"><span>目標数</span><input type="text" id="clientResultsTargetShown" value="—" readonly aria-label="スプレッドシートの週次目標数"></label>
+              <label>人数<input id="clientResultsPeople" type="number" min="1" max="10000" step="1" placeholder="人数"></label><label>完了させたい週<select id="clientResultsDeadline"><option value="">選択してください</option></select></label><button id="clientResultsSave" type="button">保存</button><span id="clientResultsRemaining" aria-live="polite"></span></div>
             <p id="clientResultsStatus" role="status">読み込み中…</p>
           </div>
         </section>
@@ -8458,6 +8500,9 @@ const screenNames = new Set([
   "hp-edit",
   "hp-request",
   "department-cons",
+  "cons-call",
+  "cons-staff-status",
+  "cons-results",
   "department-mark",
   "department-hr",
   "hr-daily-tasks",
@@ -16521,7 +16566,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 const consContactOriginalShowScreen=showScreen;
 showScreen=function(name,...args){
   const result=consContactOriginalShowScreen(name,...args);
-  if(name==='department-cons')void consContactLoad();
+  if(name==='cons-call')void consContactLoad();
   return result;
 };
 
@@ -16649,7 +16694,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   <p>登録したボタンは、同じ地域・部署の資料一覧に共有されます。</p>
   <form id="deptMaterialForm">
     <label>ボタン名<input id="deptMaterialTitle" type="text" maxlength="45" placeholder="例：広報マニュアル" autocomplete="off" required></label>
-    <label>リンク先URL<input id="deptMaterialUrl" type="url" maxlength="1800" placeholder="https://docs.google.com/..." autocomplete="off" required></label>
+    <label>URL<input id="deptMaterialUrl" type="url" maxlength="1800" placeholder="https://docs.google.com/..." autocomplete="off"></label>
+    <label>ファイルを追加する<input id="deptMaterialFile" type="file" accept="application/pdf,image/png,image/jpeg,image/webp,text/plain"></label>
+    <label>テキストを追加する<textarea id="deptMaterialText" rows="4" maxlength="10000" placeholder="資料の内容を入力"></textarea></label>
+    <p class="v146-material-note">URL・ファイル・テキストのいずれかを登録できます。ファイルは300KBまでです。</p>
     <div class="dept-material-dialog-actions"><button type="button" id="deptMaterialCancel">キャンセル</button><button type="submit" id="deptMaterialSave">保存</button></div>
   </form>
 </dialog>
@@ -17013,5 +17061,235 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('DOMContentLoaded',prepare);
 })();
 </script>
+<dialog id="v146TextMaterialDialog" style="width:min(900px,88vw);max-height:75vh;overflow:auto;padding:32px;border:3px solid #000060;background:white"><h2>資料</h2><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:50vh;overflow:auto;font:20px/1.6 'Noto Sans JP',sans-serif"></pre><button id="v146TextMaterialClose" type="button" style="padding:12px 30px;background:#3080ff;color:white;border:0;cursor:pointer">閉じる</button></dialog>
+
+<style>
+/* Cons and client: original Figma frame = 1440 x 1024 */
+.screen-cons-v146,.screen-cons-call,.screen-cons-staff-status,.screen-cons-results{background:#f2f2ff}
+.cons-v146-nav,.client-v146-nav{position:absolute;left:120px;top:110px;display:grid;grid-template-columns:repeat(3,360px);column-gap:60px;row-gap:51px;z-index:4}
+.cons-v146-nav button,.client-v146-nav button{background:#d4d5ff;border:0;color:#090909;height:60px;font:500 35px/1.2 Inter,'Noto Sans JP',sans-serif;white-space:nowrap;cursor:pointer;}
+.cons-v146-nav button:focus-visible,.client-v146-nav button:focus-visible{outline:3px solid #4056b1}
+.screen-client-v146 .client-v146-nav button:nth-child(6){display:none}
+.v146-back{position:absolute;left:70px;top:898px;width:140px;height:60px;background:#3080ff;color:white;border:0;cursor:pointer;font:400 40px/1 Inter,'Noto Sans JP',sans-serif;z-index:12;white-space:nowrap}
+.screen-cons-v146 .common-back-button,.screen-cons-call .common-back-button,.screen-cons-staff-status .common-back-button,.screen-cons-results .common-back-button,.screen-client-v146 .common-back-button{display:none!important}
+.screen-cons-call .cons-v146-call-stage{position:absolute;left:70px;top:208px;width:1300px;height:690px;display:grid;grid-template-columns:650px 650px;overflow:hidden}
+.cons-v146-script,.cons-v146-student{position:relative;display:flex;align-items:center;justify-content:center;font-size:35px;font-weight:400;flex-direction:column}
+.cons-v146-script{background:#d9d9d9}.cons-v146-student{background:white}
+.cons-v146-script .cons-v146-record-toggle{position:absolute;bottom:18px;right:18px;background:#7577ff;color:white;border:0;padding:12px 22px;font-size:20px;cursor:pointer}
+.cons-v146-student p{font-size:17px;color:#595c76;max-width:360px;text-align:center}.cons-v146-student button{border:0;background:#7577ff;color:white;padding:10px 20px;font-size:19px;cursor:pointer}
+.cons-v146-record-modal[hidden]{display:none!important}.cons-v146-record-modal{z-index:20;position:absolute;top:196px;left:190px;width:1060px;max-height:660px;overflow:auto;background:white;border:3px solid #000060;box-shadow:0 16px 60px #0005;padding:25px 28px}
+.cons-v146-record-modal .department-placeholder-panel{position:static!important;box-shadow:none!important;background:white!important;width:auto!important;height:auto!important;padding:24px!important;margin:0!important;overflow:visible!important}
+.cons-v146-close{position:sticky;top:0;float:right;z-index:2;border:0;background:#3080ff;color:white;padding:8px 16px;cursor:pointer;font-size:22px}
+.screen-cons-staff-status .cons-v146-staff-stage{position:absolute;left:70px;top:208px;width:1300px;height:690px;background:#fff;display:grid;grid-template-columns:350px 1fr;gap:25px;box-sizing:border-box;padding:34px 30px;}
+.cons-v146-people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:60px;gap:30px 25px;align-content:start;overflow-y:auto}
+.cons-v146-people button{min-width:0;background:#2fb000;color:#fff;border:0;font:500 30px/1 Inter,'Noto Sans JP',sans-serif;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cons-v146-people button.is-selected{background:#1a5e01}
+.cons-v146-stats{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,minmax(0,1fr));gap:40px 26px;min-width:0}
+.cons-v146-stat{min-width:0;border:3px solid #000;background:white;overflow:hidden;font:normal 26px/1.23 Inter,'Noto Sans JP',sans-serif;padding:6px 4px}
+.cons-v146-stat header{display:flex;justify-content:space-between;align-items:center;gap:5px}.cons-v146-stat h3{font:500 30px/1.15 Inter,'Noto Sans JP',sans-serif;margin:0;white-space:nowrap}
+.cons-v146-period-control{position:relative;display:block;background:#d9d9d9;font-size:25px;white-space:nowrap;cursor:pointer}
+.cons-v146-period-control input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.cons-v146-total-note{font-size:15px;color:#555}
+.cons-v146-stat dl{display:grid;grid-template-columns:1fr 75px;gap:0;margin:12px 20px 0 4px;line-height:1.35}.cons-v146-stat dt{text-align:center;font-weight:400}.cons-v146-stat dd{margin:0;text-align:right}
+.cons-v146-staff-status{position:absolute;top:884px;left:270px;font-size:17px;color:#494f72;z-index:2}
+.screen-cons-results .cons-v146-results-stage{position:absolute;left:120px;top:221px;width:1200px;height:659px;background:#fff;display:grid;grid-template-columns:700px 350px;column-gap:50px;box-sizing:border-box;padding:130px 50px 30px}
+.cons-v146-results-title{position:absolute;left:0;top:0;width:360px;height:100px;background:#7577ff;color:white;display:flex;align-items:center;justify-content:center;font-size:35px}
+.cons-v146-results-table,.cons-v146-intern{border:3px solid #ffa3dc;height:500px;box-sizing:border-box;overflow:hidden}
+.cons-v146-results-stage h2{background:#ffa3dc;color:white;text-align:center;font:500 42px/1.2 Inter,'Noto Sans JP',sans-serif;height:80px;display:flex;align-items:center;justify-content:center;margin:-1px 0 0}
+.cons-v146-results-table table{border-collapse:collapse;width:100%;height:calc(100% - 80px);font-size:24px;text-align:center}
+.cons-v146-results-table table th{font-weight:400}.cons-v146-results-table table thead th{height:60px;border-bottom:2px solid #ffa3dc}
+.cons-v146-results-table tbody th{text-align:left;padding:3px 8px;font-size:24px}.cons-v146-results-table tbody td{font-size:24px;text-align:right;padding-right:12px}
+.cons-v146-results-table tr{border-bottom:2px solid #ffa3dc}.cons-v146-results-table td+td,.cons-v146-results-table th+th{border-left:2px dotted #ffa3dc}
+.cons-v146-results-table tbody th{position:relative}.cons-v146-results-table tbody th small{display:block;font-size:21px;font-weight:400;text-align:right;padding-right:8px;line-height:1.1}
+.cons-v146-intern dl{margin:0;display:grid;grid-template-columns:1fr;grid-template-rows:repeat(8,52px);font-size:27px}.cons-v146-intern dt{border-top:2px solid #ffa3dc;padding:5px}.cons-v146-intern dd{margin:0;text-align:right;padding:0 13px}
+.cons-v146-results-note{position:absolute;top:890px;left:265px;max-width:590px;font-size:13px;color:#555}
+.cons-v146-add-doc{position:absolute;left:1026px;top:898px;width:294px;height:60px;background:#d630ff;border:0;color:white;font-size:35px;cursor:pointer;z-index:8}
+.screen-department-materials .cons-v146-materials-only{display:none}
+.screen-department-materials.is-cons-v146 .cons-v146-materials-only{display:block}
+.screen-department-materials.is-cons-v146 .department-materials-stage{position:absolute;left:120px;top:336px;width:1200px;height:520px;background:transparent;border:0;padding:0;overflow:auto}
+.screen-department-materials.is-cons-v146 .department-materials-heading{display:none}
+.screen-department-materials.is-cons-v146 .cons-v146-results-go{position:absolute;top:221px;left:120px;width:360px;height:100px;border:0;background:#7577ff;color:white;font:500 35px/1.2 Inter,'Noto Sans JP',sans-serif;cursor:pointer}
+.screen-department-materials.is-cons-v146 #departmentMaterialsGrid{display:flex!important;flex-wrap:wrap;align-content:start;gap:22px;width:100%;padding:0!important}
+.screen-department-materials.is-cons-v146 .department-material-entry{width:360px;min-height:100px;position:relative;margin:0}
+.screen-department-materials.is-cons-v146 .department-material-link{background:#7577ff;color:white;border-radius:0;min-height:100px;display:flex;align-items:center;justify-content:center;font-size:27px}
+.screen-client-materials .department-material-entry{position:relative}
+.screen-department-materials.is-cons-v146::after{content:'';pointer-events:none}
+.screen-client-materials .client-material-custom{position:absolute!important;left:120px!important;top:454px!important;width:1200px!important;height:415px!important;background:transparent!important;overflow:auto!important;padding:0!important}
+.screen-client-materials .client-material-custom-head h2{display:none}
+.screen-client-materials .client-material-email{position:absolute!important;top:332px!important;left:120px!important;width:360px!important;height:100px!important;background:#7577ff!important;color:#fff!important;font-size:35px!important;border:0!important;display:flex;align-items:center;justify-content:center}
+.screen-client-materials #clientMaterialsEmailScript{left:540px!important}
+.screen-client-materials #clientMaterialsCustomGrid{display:flex!important;flex-wrap:wrap;gap:22px;padding:0!important}
+.screen-client-materials #clientMaterialsCustomGrid .department-material-entry{width:360px;min-height:90px}
+.screen-client-materials #clientMaterialsCustomGrid .department-material-link{background:#7577ff!important;color:white!important;font-size:25px!important;min-height:90px;display:flex;align-items:center;justify-content:center}
+.screen-client-materials #clientMaterialsAddButton{position:absolute!important;left:1026px!important;top:898px!important;width:294px!important;height:60px!important;background:#d630ff!important;color:white!important;border:0!important;font-size:35px!important;cursor:pointer;z-index:4}
+/* Client results Figma: 6 navigation tiles, upper settings and three pink metric cards */
+.screen-client-results .client-results-panel{left:120px!important;top:332px!important;width:1200px!important;height:548px!important;padding:0!important;overflow:hidden!important;background:#fff!important}
+.screen-client-results .client-results-heading{position:absolute;left:0;top:0;width:360px;height:100px;margin:0!important;background:#7577ff!important;z-index:2}
+.screen-client-results .client-results-heading h2{color:white!important;font:500 35px/1.2 Inter,'Noto Sans JP',sans-serif!important;width:100%;text-align:center}
+.screen-client-results .client-results-heading span{position:absolute;left:40px;top:495px;width:1000px;color:#222;font-size:22px;white-space:nowrap}
+.screen-client-results .client-results-heading #clientResultsRefresh{position:absolute;left:1090px;top:38px;z-index:2;background:#3080ff;color:white;font-size:28px;padding:7px 9px;min-width:90px!important;height:50px!important;white-space:nowrap}
+.screen-client-results .client-results-settings{position:absolute!important;top:0!important;left:370px!important;width:820px!important;height:100px!important;padding:0!important;display:flex!important;align-items:flex-start!important;gap:20px!important;justify-content:flex-start!important;background:transparent!important;border:0!important}
+.screen-client-results .client-results-settings label{display:flex!important;flex-direction:column!important;gap:3px!important;font-size:27px!important;color:#000!important;width:180px!important;flex-shrink:0!important}
+.screen-client-results .client-results-settings label.v146-target{order:0}.screen-client-results .client-results-settings label:has(#clientResultsPeople){order:-1}.screen-client-results .client-results-settings label:has(#clientResultsDeadline){order:1}
+.screen-client-results .client-results-settings input,.screen-client-results .client-results-settings select{font-size:20px!important;width:150px!important;height:44px!important;box-sizing:border-box!important;border:2px solid #000!important;border-radius:0!important;background:white!important}
+.screen-client-results .client-results-settings label:has(#clientResultsDeadline){width:228px!important}.screen-client-results .client-results-settings select{width:210px!important}
+.screen-client-results .client-results-settings #clientResultsSave{position:absolute!important;left:0!important;top:97px!important;font-size:18px!important;padding:5px 16px!important}
+.screen-client-results .client-results-settings #clientResultsRemaining{position:absolute!important;left:85px!important;top:110px!important;font-size:16px!important}
+.screen-client-results .client-results-columns{position:absolute!important;left:40px!important;top:137px!important;right:40px!important;height:330px!important;display:grid!important;grid-template-columns:repeat(3,320px)!important;justify-content:space-between!important;gap:0!important}
+.screen-client-results .client-results-card{height:330px!important;border:3px solid #ffa3dc!important;border-radius:0!important;background:#fff!important;padding:0!important;box-shadow:none!important;min-width:0!important}
+.screen-client-results .client-results-card h3{height:90px!important;display:flex;align-items:center;justify-content:center;background:#ffa3dc!important;color:white!important;margin:0!important;padding:0!important;font:500 35px/1.2 Inter,'Noto Sans JP',sans-serif!important}
+.screen-client-results .client-results-card dl{display:grid!important;grid-template-columns:1fr!important;margin:0!important;gap:0!important}
+.screen-client-results .client-results-card dl>div{height:78px!important;border-bottom:2px solid #ffa3dc!important;display:flex!important;align-items:center;justify-content:space-between;gap:4px;padding:3px 9px!important;box-sizing:border-box!important}
+.screen-client-results .client-results-card dt{font-size:19px!important;line-height:1.2!important}.screen-client-results .client-results-card dd{font-size:25px!important;margin:0!important;white-space:nowrap}
+.screen-client-results #clientResultsStatus{position:absolute;left:40px;top:465px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:1100px}
+.screen-client-results>.common-back-button,.screen-client-materials>.common-back-button{left:70px!important;top:898px!important;width:140px!important;height:60px!important;background:#3080ff!important;font-size:40px!important}
+.screen-client-results #clientV146AddDocument{position:absolute;left:1026px;top:898px;width:294px;height:60px;border:0;background:#d630ff;color:white;font:400 35px/1 Inter,'Noto Sans JP',sans-serif;cursor:pointer;z-index:6}
+.screen-client-materials .client-material-custom{border:0!important;box-shadow:none!important}
+.screen-cons-call .cons-call-heading{font-size:30px;color:#232558;margin:0 0 14px}
+.screen-cons-call .cons-call-description{font-size:18px;color:#5b607a;margin:0 0 25px;line-height:1.5}
+.screen-cons-call .cons-call-status{font-size:16px;color:#4e5273}
+.screen-cons-call .cons-call-tip{font-size:14px;color:#737792}
+.screen-cons-call .cons-contact-methods{display:flex;flex-wrap:wrap;gap:16px;margin:16px 0}
+.screen-cons-call .cons-contact-method{font-size:23px;padding:12px 22px;border:0;background:#d4d5ff;cursor:pointer}
+.screen-cons-call .cons-contact-method[aria-pressed="true"]{background:#7577ff;color:white}
+.screen-cons-call .cons-contact-outcomes{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.screen-cons-call .cons-contact-outcome{border:0;padding:14px 30px;background:#7577ff;color:white;font-size:22px;cursor:pointer}
+.screen-cons-call .cons-contact-summary{display:flex;gap:16px;flex-wrap:wrap;font-size:18px;margin:15px 0}
+#deptMaterialDialog{width:1154px!important;max-width:90vw!important;min-height:574px!important;border-radius:80px!important;border:5px solid #010c41!important;background:white!important;padding:30px 50px!important;box-sizing:border-box!important;font:27px Inter,'Noto Sans JP',sans-serif!important;max-height:90vh;overflow:auto}
+#deptMaterialDialog h2{font-size:35px!important;font-weight:400!important;margin:0 0 25px!important}#deptMaterialDialog>p{display:none}
+#deptMaterialDialog form{display:flex!important;flex-direction:column!important;gap:14px!important}#deptMaterialDialog label{display:grid!important;grid-template-columns:280px 1fr!important;gap:24px!important;align-items:center!important;margin:0!important;font:26px/1.3 Inter,'Noto Sans JP',sans-serif!important}
+#deptMaterialDialog input,#deptMaterialDialog textarea{border:2px solid #000!important;background:#f8f8ff!important;height:40px;font:21px Inter,'Noto Sans JP',sans-serif!important;padding:4px 10px!important;box-sizing:border-box!important;width:100%!important;border-radius:0!important}
+#deptMaterialDialog textarea{height:130px!important;resize:vertical}#deptMaterialDialog input[type=file]{height:45px!important;padding:2px!important}
+#deptMaterialDialog .v146-material-note{font-size:15px!important;margin:0 0 0 304px!important;color:#4e526a}
+#deptMaterialDialog .dept-material-dialog-actions{display:flex!important;justify-content:flex-end!important;gap:60px!important}
+#deptMaterialDialog .dept-material-dialog-actions button{height:60px!important;width:140px!important;border:0!important;border-radius:0!important;background:#3080ff!important;color:white!important;font:30px Inter,'Noto Sans JP',sans-serif!important;cursor:pointer}
+#deptMaterialDialog #deptMaterialSave{background:#ff8030!important}
+</style>
+
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const portalRegion=()=>state.region==='kansai'?'kansai':'kanto';
+// Insert Figma component navigation without replacing the existing route handlers.
+const originalShow=showScreen;
+showScreen=function(screen,...args){
+ const result=originalShow(screen,...args);
+ const consMaterials=screen==='department-materials' && departmentMaterialState.department==='cons';
+ const mat=document.querySelector('[data-screen="department-materials"]');
+ if(mat)mat.classList.toggle('is-cons-v146',consMaterials);
+ if(screen==='cons-staff-status')void v146LoadConsStaff();
+ if(screen==='cons-results')void v146LoadConsResults();
+ if(screen==='client-results'){
+  const el=$('clientResultsTargetShown');if(el)el.value=clientResultsState.data?.target ?? '—';
+ }
+ return result;
+};
+const oldRenderClientResults=renderClientResults;
+renderClientResults=function(...args){const r=oldRenderClientResults(...args);if($('clientResultsTargetShown'))$('clientResultsTargetShown').value=clientResultsState.data?.target ?? '—';return r;};
+// Existing department-materials data and permission checks remain authoritative.
+const oldDeptRender=deptMaterialRender;
+deptMaterialRender=function(...args){const ret=oldDeptRender(...args);const isCons=departmentMaterialState.department==='cons'&&state.currentScreen==='department-materials';
+ const mat=document.querySelector('[data-screen="department-materials"]');if(mat)mat.classList.toggle('is-cons-v146',isCons);
+ const add=$('consV146MaterialAdd');if(add)add.hidden=!(isCons&&departmentMaterialState.canEdit);
+ const clientAdd=$('clientMaterialsAddButton');if(clientAdd)clientAdd.textContent='＋資料を増やす';
+ return ret;};
+// The custom file/text types are fetched only on deliberate opening; nothing executable is inserted as HTML.
+const oldMaterialCard=deptMaterialCard;
+deptMaterialCard=function(item){
+ if(!item.kind||item.kind==='url')return oldMaterialCard(item);
+ const card=document.createElement('div');card.className='department-material-entry';
+ const open=document.createElement('button');open.type='button';open.className='department-material-link';open.textContent=item.title;
+ open.style.cssText='cursor:pointer;border:0;width:100%';open.addEventListener('click',()=>void v146OpenMaterial(item));card.append(open);
+ if(departmentMaterialState.canEdit){const admin=document.createElement('div');admin.className='department-material-admin';
+ const edit=document.createElement('button');edit.type='button';edit.textContent='編集';edit.addEventListener('click',()=>deptMaterialOpenDialog(item));
+ const del=document.createElement('button');del.type='button';del.textContent='削除';del.addEventListener('click',()=>void deptMaterialDelete(item));admin.append(edit,del);card.append(admin);}
+ return card;
+};
+function v146B64ToBlob(data,mime){const bin=atob(data);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime});}
+async function v146OpenMaterial(item){
+ try{const q=new URLSearchParams({material_id:String(item.id)});const data=await portalFetch('/api/department-materials?'+q.toString());
+ if(data.kind==='text'){
+   const pop=$('v146TextMaterialDialog');pop.querySelector('h2').textContent=item.title;
+   pop.querySelector('pre').textContent=data.text||'';pop.showModal();return;
+ }
+ if(data.kind==='file'){
+   const blob=v146B64ToBlob(data.file_data,data.file_mime);const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');a.href=url;a.download=data.file_name||'資料';a.target='_blank';a.rel='noopener';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),45000);return;
+ }
+ showToast('資料を開けませんでした。');
+ }catch(error){showToast('資料を取得できませんでした：'+(error.message||error));}
+}
+const originalDialog=deptMaterialOpenDialog;
+deptMaterialOpenDialog=function(item=null){
+ originalDialog(item);
+ const f=$('deptMaterialFile'),t=$('deptMaterialText');if(f)f.value='';if(t)t.value=item?.content_text||'';
+ $('deptMaterialDialogTitle').textContent=item?'資料を編集':'資料を増やす';
+ if(item?.kind&&item.kind!=='url')$('deptMaterialUrl').value='';
+};
+function v146ReadFile(file){return new Promise((resolve,reject)=>{
+ const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=()=>reject(Error('ファイルを読み取れません'));r.readAsDataURL(file);
+});}
+const oldDeptSubmit=deptMaterialSubmit;
+deptMaterialSubmit=async function(event){
+ event.preventDefault();const title=$('deptMaterialTitle').value.trim(),url=$('deptMaterialUrl').value.trim(),text=$('deptMaterialText').value.trim(),file=$('deptMaterialFile').files?.[0];
+ if(!title||title.length>45)return alert('タイトルは1〜45文字で入力してください。');
+ const provided=Number(Boolean(url))+Number(Boolean(text))+Number(Boolean(file));
+ if(provided>1)return alert('URL・ファイル・テキストのうち、1種類を選択してください。');
+ if(!provided&&!departmentMaterialState.editing)return alert('URL・ファイル・テキストのどれかを入力してください。');
+ if(url&&!deptMaterialValidHref(url))return alert('https://から始まるURLを入力してください。');
+ if(file&&(file.size>300*1024||!['application/pdf','image/png','image/jpeg','image/webp','text/plain'].includes(file.type)))return alert('300KB以下のPDF・画像・テキストファイルを選んでください。');
+ if(!departmentMaterialState.canEdit)return;
+ const btn=$('deptMaterialSave');btn.disabled=true;
+ try{
+ const department=deptMaterialCurrentDepartment(),region=portalRegion();
+ let kind=url?'url':text?'text':file?'file':'keep';
+ let body={action:departmentMaterialState.editing?'update':'create',id:departmentMaterialState.editing||undefined,department,region,title,kind,url,text};
+ if(file){body.file_name=file.name.slice(0,120);body.file_mime=file.type;body.file_data=await v146ReadFile(file);}
+ const result=await portalFetch('/api/department-materials',{method:'POST',body});
+ $('deptMaterialDialog').close();await deptMaterialLoad(department);showToast('資料を保存しました');
+ }catch(error){alert(error.message||'資料を保存できませんでした。');}finally{btn.disabled=false;}
+};
+let consStaff=null,selectedConsEmail='';
+function v146MetricMarkup(target,values){if(!target)return;target.replaceChildren();for(const [text,key] of [['架電数：','call'],['メール数：','email'],['口コミ数：','review'],['DM数：','dm'],['獲得数：','won']]){const dt=document.createElement('dt');dt.textContent=text;const dd=document.createElement('dd');dd.textContent=Number(values?.[key]||0).toLocaleString('ja-JP');target.append(dt,dd);}}
+function v146ShowConsStaff(){const p=consStaff?.people?.find(x=>x.email===selectedConsEmail)||consStaff?.people?.[0];
+ for(const key of ['day','week','month','total'])v146MetricMarkup($('consV146'+key[0].toUpperCase()+key.slice(1)+'Stats'),p?.periods?.[key]);
+ for(const b of $('consV146People').querySelectorAll('button'))b.classList.toggle('is-selected',b.dataset.email===p?.email);
+ if(p)selectedConsEmail=p.email;
+}
+async function v146LoadConsStaff(){const n=$('consV146StaffStatus');n.textContent='実績を読み込んでいます…';const now=new Date();const jst=new Date(now.getTime()+9*60*60000).toISOString().slice(0,10);
+ for(const id of ['consV146Day','consV146Week'])if(!$(id).value)$(id).value=jst;
+ if(!$('consV146Month').value)$('consV146Month').value=jst.slice(0,7);
+ try{const q=new URLSearchParams({region:portalRegion(),day:$('consV146Day').value,week:$('consV146Week').value,month:$('consV146Month').value});
+ const result=await portalFetch('/api/cons/staff-status?'+q.toString());if(state.currentScreen!=='cons-staff-status')return;
+ consStaff=result;const holder=$('consV146People');holder.replaceChildren();
+ for(const p of result.people||[]){const b=document.createElement('button');b.type='button';b.textContent=p.name;b.dataset.email=p.email;b.addEventListener('click',()=>{selectedConsEmail=p.email;v146ShowConsStaff()});holder.append(b)}
+ if(!result.people?.some(p=>p.email===selectedConsEmail))selectedConsEmail=result.people?.[0]?.email||'';
+ v146ShowConsStaff();n.textContent=result.people?.length?'':'該当支部のコンス担当者が見つかりません。';
+ }catch(e){n.textContent='取得できませんでした：'+(e.message||e)}
+}
+async function v146LoadConsResults(){const n=$('consV146ResultsStatus');n.textContent='実績を読み込んでいます…';try{
+ const d=await portalFetch('/api/cons/results?region='+encodeURIComponent(portalRegion()));if(state.currentScreen!=='cons-results')return;
+ const set=(id,val,suffix='件')=>{const el=$(id);if(el)el.textContent=val===null||val===undefined?'—':(Number(val).toLocaleString('ja-JP')+suffix)};
+ for(const [key,label] of [['call','Call'],['email','Email'],['review','Review'],['dm','Dm']]){
+ set('consV146'+label+'Won',d.methods?.[key]?.won);set('consV146All'+({call:'Calls',email:'Emails',review:'Reviews',dm:'Dm'}[key]),d.methods?.[key]?.completed);
+ set('consV146'+label+'Prospects',d.methods?.[key]?.prospect);
+ }
+ set('consV146Won',d.won);set('consV146Actual',d.internActual,'人');set('consV146Target',d.target,'人');set('consV146Rate',d.rate,'%');set('consV146Rank',d.rank,'位');
+ n.textContent='記録済みのコンスのアプローチ履歴から集計。見込み獲得・目標人数・順位は連携元が未設定のため「—」表示です。';
+ }catch(e){n.textContent='実績を取得できませんでした：'+(e.message||e);}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ $('consRecordToggle')?.addEventListener('click',()=>{$('consRecordModal').hidden=false;void consContactLoad();});
+ $('consRecordClose')?.addEventListener('click',()=>{$('consRecordModal').hidden=true;});
+ for(const id of ['consV146Day','consV146Week','consV146Month'])$(id)?.addEventListener('change',()=>void v146LoadConsStaff());
+ $('consV146AddDocument')?.addEventListener('click',async()=>{departmentMaterialState.department='cons';showScreen('department-materials');await deptMaterialLoad('cons');if(departmentMaterialState.canEdit)deptMaterialOpenDialog();else showToast('資料の編集権限を確認してください。')});
+ $('consV146MaterialAdd')?.addEventListener('click',()=>deptMaterialOpenDialog());
+ $('clientV146AddDocument')?.addEventListener('click',async()=>{showScreen('client-materials');await deptMaterialLoad('client');if(departmentMaterialState.canEdit)deptMaterialOpenDialog();else showToast('資料の編集権限を確認してください。')});
+ $('v146TextMaterialClose')?.addEventListener('click',()=>$('v146TextMaterialDialog').close());
+});
+})();
+</script>
+
 </body>
 </html>
