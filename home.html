@@ -4012,6 +4012,34 @@ a:active {
 .screen-hp-edit .figma-hp-modal-dialog label.figma-roster-chief {display:flex;align-items:center;gap:12px;}
 .screen-hp-edit .figma-roster-chief input {width:26px;height:26px;flex:none;}
 .screen-hp-edit .figma-roster-legacy {margin:0;color:#655a49;font-size:17px;line-height:1.5;}
+
+.screen-hp-edit .figma-hp-topline{gap:68px}
+.screen-hp-edit .figma-hp-sheets{display:block}
+.screen-hp-edit .figma-hp-sheets[hidden]{display:none!important}
+.screen-hp-edit .portal-sheets-app{height:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:13px;padding:25px 34px 20px;color:#202642;font:19px/1.4 Inter,'Noto Sans JP',sans-serif}
+.screen-hp-edit .portal-sheets-app h2{margin:0;font-size:30px;font-weight:650}
+.screen-hp-edit .portal-sheets-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.screen-hp-edit .portal-sheets-app button{cursor:pointer;border:1px solid #8c91b1;border-radius:6px;background:#f0f1ff;color:#202642;padding:8px 17px;font:600 17px/1.3 Inter,'Noto Sans JP',sans-serif}
+.screen-hp-edit .portal-sheets-app button:disabled{opacity:.45;cursor:not-allowed}
+.screen-hp-edit .portal-sheets-regions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.screen-hp-edit .portal-sheets-regions button{font-size:22px;background:#e7e8fd;border:0;padding:11px}
+.screen-hp-edit .portal-sheets-regions button.is-active{background:#7577ff;color:white}
+.screen-hp-edit .portal-sheets-intro{margin:0;font-size:16px;line-height:1.55;color:#43465a}
+.screen-hp-edit .portal-sheets-status{font-size:16px;color:#285292;min-height:22px;overflow-wrap:anywhere}
+.screen-hp-edit .portal-sheets-list{flex:1;min-height:0;overflow-y:auto;display:grid;align-content:start;gap:10px;padding:2px 2px 4px}
+.screen-hp-edit .portal-sheets-item{border:1px solid #d7d9e8;background:#fbfbff;padding:8px 15px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 10px}
+.screen-hp-edit .portal-sheets-title{font-size:19px;font-weight:650;overflow-wrap:anywhere}
+.screen-hp-edit .portal-sheets-detail{font-size:14px;color:#61677e;overflow-wrap:anywhere}
+.screen-hp-edit .portal-sheets-detail a{color:#255abc}
+.screen-hp-edit .portal-sheets-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;grid-column:2;grid-row:1/span 2}
+.screen-hp-edit .portal-sheets-actions .portal-sheet-connect{background:#3080ff;border-color:#3080ff;color:#fff}
+.screen-hp-edit .portal-sheets-actions button{font-size:15px;padding:7px 13px;white-space:nowrap}
+.screen-hp-edit .portal-sheets-actions .portal-sheet-remove{background:#fff;color:#b83f55;border-color:#d3a1ac}
+.screen-hp-edit .portal-sheets-add{display:flex;align-items:center;gap:12px;padding-top:8px;border-top:1px solid #ddd}
+.screen-hp-edit .portal-sheets-add label{font-size:16px;white-space:nowrap}
+.screen-hp-edit .portal-sheets-add input{flex:1;min-width:0;padding:8px 11px;border:1px solid #a9adca;border-radius:4px;font:17px Inter,'Noto Sans JP',sans-serif;background:#fff}
+.screen-hp-edit .portal-sheets-add button{background:#7577ff;color:white;border-color:#7577ff}
+.screen-hp-edit .portal-sheets-note{font-size:13px;color:#666b7d;margin:0}
 .screen-hp-request .hp-request-panel {position:absolute;left:120px;top:162px;width:1200px;height:700px;background:white;border:3px solid #000;padding:42px 58px;box-sizing:border-box;display:flex;flex-direction:column;gap:22px;}
 .screen-hp-request .hp-request-panel h2 {margin:0;font-size:46px;font-weight:500;}
 .screen-hp-request .hp-request-panel p {font-size:27px;margin:0;}
@@ -7758,7 +7786,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <div class="figma-hp-topline">
             <button type="button" class="figma-hp-tab is-active" data-hp-tab="roster">関東・関西名簿</button>
             <button type="button" class="figma-hp-tab" data-hp-tab="requests">要望</button>
-            <button type="button" class="figma-hp-tab" data-hp-tab="line" hidden>LINE通知</button>
+            <button type="button" class="figma-hp-tab" data-hp-tab="sheets">スプレッドシート連携</button>
           </div>
           <section class="figma-hp-main" data-hp-view="roster">
             <div class="figma-hp-column" data-roster-column="関東">
@@ -7777,6 +7805,30 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
           <section class="figma-hp-main figma-hp-requests" data-hp-view="requests" hidden>
             <div class="figma-hp-request-list" id="figmaHpRequestsList">
               <p class="figma-hp-empty">読み込み中…</p>
+            </div>
+          </section>
+          <section class="figma-hp-main figma-hp-sheets" data-hp-view="sheets" hidden>
+            <div class="portal-sheets-app">
+              <div class="portal-sheets-heading">
+                <h2>スプレッドシート連携</h2>
+                <button type="button" id="portalSheetRefresh">更新</button>
+              </div>
+              <nav class="portal-sheets-regions" id="portalSheetRegions" aria-label="連携する地域">
+                <button type="button" data-sheet-region="kumamoto">熊本</button>
+                <button type="button" data-sheet-region="hiroshima">広島</button>
+                <button type="button" data-sheet-region="kansai">関西</button>
+                <button type="button" data-sheet-region="kanto" class="is-active">関東</button>
+                <button type="button" data-sheet-region="miyagi">宮城</button>
+              </nav>
+              <p class="portal-sheets-intro">地域ごとにスプレッドシートを管理できます。共有権限を持つGoogleアカウントで対象ファイルを選び、ポータルのサービスアカウントに編集権限を付与します。</p>
+              <div class="portal-sheets-status" id="portalSheetStatus" role="status">連携設定を読み込んでいます…</div>
+              <div class="portal-sheets-list" id="portalSheetList"></div>
+              <form id="portalSheetAddForm" class="portal-sheets-add" autocomplete="off">
+                <label for="portalSheetNewLabel">その他のスプレッドシートを追加</label>
+                <input type="text" id="portalSheetNewLabel" placeholder="例：今期の学生リスト" maxlength="70" required>
+                <button type="submit">追加</button>
+              </form>
+              <p class="portal-sheets-note" id="portalSheetNote">※共有先の設定を管理します。既存業務の参照先を変更するには、その機能側の連携設定も必要です。</p>
             </div>
           </section>
           <button type="button" class="figma-hp-back" data-common-back="">←戻る</button>
@@ -8563,6 +8615,7 @@ document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
   fitCanvas();
+  portalSheetInstall();
   window.addEventListener("resize", fitCanvas);
   window.visualViewport?.addEventListener("resize", fitCanvas);
   window.addEventListener("hashchange", routeFromHash);
@@ -9566,8 +9619,13 @@ if (name === "post-confirm") {
       showScreen("home", updateHash);
       return;
     }
-    switchFigmaHpTab('roster');
-    loadRoster(true);
+    if(portalSheetReturn.pending){
+      portalSheetReturn.pending=false;
+      switchFigmaHpTab('sheets');
+    }else{
+      switchFigmaHpTab('roster');
+      loadRoster(true);
+    }
   }
 
   if (name === "screen-share") {
@@ -12227,27 +12285,108 @@ async function loadRoster(includeDisabled = false) {
 }
 
 // Figmaの「関東・関西名簿」3列と、「要望」空枠を切り替える。
+const portalSheetRegionNames={kumamoto:'熊本',hiroshima:'広島',kansai:'関西',kanto:'関東',miyagi:'宮城'};
+const portalSheetState={region:'kanto',entries:[],busy:false};
+const portalSheetReturn={pending:false,status:'',detail:''};
+function portalSheetStatus(message){const el=document.getElementById('portalSheetStatus');if(el)el.textContent=String(message||'');}
+function portalSheetRender(){
+ const container=document.getElementById('portalSheetList');if(!container)return;
+ container.replaceChildren();
+ document.querySelectorAll('[data-sheet-region]').forEach(btn=>btn.classList.toggle('is-active',btn.dataset.sheetRegion===portalSheetState.region));
+ const list=portalSheetState.entries.filter(item=>item.region===portalSheetState.region);
+ if(!list.length){const p=document.createElement('p');p.textContent='この地域にはまだ連携設定がありません。';container.append(p);return;}
+ for(const item of list){
+  const card=document.createElement('article');card.className='portal-sheets-item';
+  const name=document.createElement('div');name.className='portal-sheets-title';name.textContent=item.label||'無題のシート';
+  const details=document.createElement('div');details.className='portal-sheets-detail';
+  if(item.spreadsheet_id){
+   const link=document.createElement('a');link.href='https://docs.google.com/spreadsheets/d/'+encodeURIComponent(item.spreadsheet_id)+'/edit';
+   link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.spreadsheet_title||item.spreadsheet_id;details.append(link);
+   details.append(document.createTextNode('　／　'+(item.granted_at?'共有設定済み':'共有権限の確認待ち')));
+  }else details.textContent='連携するスプレッドシートが未選択です';
+  const actions=document.createElement('div');actions.className='portal-sheets-actions';
+  const connect=document.createElement('button');connect.type='button';connect.className='portal-sheet-connect';connect.textContent=item.spreadsheet_id?'Googleで共有・再連携':'Googleで選択・連携';
+  connect.disabled=portalSheetState.busy;connect.addEventListener('click',()=>void portalSheetConnect(item));actions.append(connect);
+  if(item.spreadsheet_id){const check=document.createElement('button');check.type='button';check.textContent='接続確認';check.disabled=portalSheetState.busy;check.addEventListener('click',()=>void portalSheetCheck(item));actions.append(check);}
+  if(item.custom){const remove=document.createElement('button');remove.type='button';remove.className='portal-sheet-remove';remove.textContent='設定削除';remove.disabled=portalSheetState.busy;remove.addEventListener('click',()=>void portalSheetRemove(item));actions.append(remove);}
+  card.append(name,details,actions);container.append(card);
+ }
+}
+async function portalSheetLoad(){
+ const container=document.getElementById('portalSheetList');if(!container)return;
+ portalSheetStatus('連携設定を読み込んでいます…');
+ try{const data=await portalFetch('/api/admin/sheets');portalSheetState.entries=Array.isArray(data.sheets)?data.sheets:[];
+  portalSheetStatus('対象地域：'+portalSheetRegionNames[portalSheetState.region]+'　／　共有先：'+(data.service_account||'サービスアカウント未設定'));
+  portalSheetRender();
+  if(portalSheetReturn.status){
+   portalSheetStatus(portalSheetReturn.status==='connected'?'選択したシートを登録し、ポータルの編集権限を設定しました。':'連携できませんでした：'+(portalSheetReturn.detail||'Google側の権限・設定を確認してください。'));
+   portalSheetReturn.status='';portalSheetReturn.detail='';
+  }
+ }catch(e){portalSheetStatus('設定を取得できません：'+String(e.message||e));}
+}
+async function portalSheetConnect(item){
+ if(portalSheetState.busy)return;portalSheetState.busy=true;portalSheetRender();portalSheetStatus('Googleの連携画面を準備しています…');
+ try{const data=await portalFetch('/api/admin/sheets/connect',{method:'POST',body:{region:item.region,key:item.key}});
+  if(!data.authorization_url?.startsWith('https://accounts.google.com/o/oauth2/v2/auth?'))throw new Error('認証URLが不正です');
+  location.assign(data.authorization_url);
+ }catch(e){portalSheetStatus('連携開始エラー：'+String(e.message||e));portalSheetState.busy=false;portalSheetRender();}
+}
+async function portalSheetCheck(item){
+ if(portalSheetState.busy)return;portalSheetState.busy=true;portalSheetRender();portalSheetStatus('サービスアカウントからのアクセスを確認しています…');
+ try{const data=await portalFetch('/api/admin/sheets/check?region='+encodeURIComponent(item.region)+'&key='+encodeURIComponent(item.key));
+  portalSheetStatus(data.accessible?'APIでの読み取りを確認しました：'+data.title:'シートにアクセスできません：'+(data.reason||'共有設定を確認してください'));
+ }catch(e){portalSheetStatus('接続確認：'+String(e.message||e));}
+ finally{portalSheetState.busy=false;portalSheetRender();}
+}
+async function portalSheetRemove(item){
+ if(portalSheetState.busy||!item.custom||!confirm('この地域の「'+item.label+'」の連携設定を削除しますか？Google Drive側の共有権限は削除されません。'))return;
+ portalSheetState.busy=true;portalSheetRender();
+ try{await portalFetch('/api/admin/sheets/remove',{method:'POST',body:{region:item.region,key:item.key}});await portalSheetLoad();portalSheetStatus('連携設定を削除しました。Google Driveの共有権限は変更していません。');}
+ catch(e){portalSheetStatus('設定削除に失敗：'+String(e.message||e));}
+ finally{portalSheetState.busy=false;portalSheetRender();}
+}
+function portalSheetInstall(){
+ document.querySelectorAll('[data-sheet-region]').forEach(btn=>btn.addEventListener('click',()=>{
+  if(portalSheetState.busy)return;portalSheetState.region=btn.dataset.sheetRegion;portalSheetRender();portalSheetStatus('対象地域：'+portalSheetRegionNames[portalSheetState.region]);
+ }));
+ document.getElementById('portalSheetRefresh')?.addEventListener('click',()=>void portalSheetLoad());
+ document.getElementById('portalSheetAddForm')?.addEventListener('submit',async event=>{
+  event.preventDefault();if(portalSheetState.busy)return;
+  const label=document.getElementById('portalSheetNewLabel').value.trim();if(!label)return;
+  portalSheetState.busy=true;portalSheetRender();
+  try{await portalFetch('/api/admin/sheets/add',{method:'POST',body:{region:portalSheetState.region,label}});
+   document.getElementById('portalSheetNewLabel').value='';await portalSheetLoad();portalSheetStatus('連携項目を追加しました。続けて「Googleで選択・連携」を押してください。');
+  }catch(e){portalSheetStatus('項目を追加できません：'+String(e.message||e));}
+  finally{portalSheetState.busy=false;portalSheetRender();}
+ });
+ const params=new URL(location.href).searchParams;
+ if(params.has('sheets')){
+  if(params.get('sheet_region')&&portalSheetRegionNames[params.get('sheet_region')])portalSheetState.region=params.get('sheet_region');
+  portalSheetReturn.pending=true;portalSheetReturn.status=params.get('sheets')||'error';portalSheetReturn.detail=params.get('detail')||'';
+  history.replaceState(null,'',location.pathname+location.hash);
+ }
+}
 function switchFigmaHpTab(tab) {
   // developer sees requests received; representative sees a request submission screen.
   if (tab === 'requests' && !state.isDeveloper && state.isRepresentative) {
     showScreen('hp-request');
     return;
   }
-  const canManageLine=Boolean(state.isDeveloper||state.isRepresentative);
-  if(tab==='line'&&canManageLine){showScreen('client-line');return;}
-  const active=(tab==='requests'&&state.isDeveloper)?'requests':'roster';
+  const canManage=Boolean(state.isDeveloper||state.isRepresentative);
+  const active=tab==='sheets'&&canManage?'sheets':tab==='requests'&&state.isDeveloper?'requests':'roster';
   document.querySelectorAll('[data-hp-tab]').forEach(el => {
     if (el.dataset.hpTab === 'requests') {
-      el.hidden = !canManageLine;
+      el.hidden = !canManage;
       el.textContent = state.isDeveloper ? '要望' : '要望送信';
     }
-    if(el.dataset.hpTab==='line')el.hidden=!canManageLine;
+    if(el.dataset.hpTab==='sheets')el.hidden=!canManage;
     el.classList.toggle('is-active',el.dataset.hpTab===active);
   });
   document.querySelectorAll('[data-hp-view]').forEach(el => {
     el.hidden=el.dataset.hpView!==active;
   });
   if(active==='requests'&&state.isDeveloper)void loadHpRequests();
+  if(active==='sheets')void portalSheetLoad();
 }
 
 function renderFigmaRoster() {
