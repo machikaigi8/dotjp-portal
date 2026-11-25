@@ -7086,8 +7086,31 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 <button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
 </nav>
 <div class="cons-v146-call-stage">
- <div class="cons-v146-script"><div>架電スクリプト</div><button type="button" class="cons-v146-record-toggle" id="consRecordToggle">アプローチを記録</button></div>
- <div class="cons-v146-student"><div>学生情報</div><p>対象学生の情報は既存の名簿・資料から確認できます。</p><button type="button" data-route="department-materials" data-material-department="cons">資料を開く</button></div>
+ <div class="cons-v146-script" aria-label="架電スクリプト">
+  <iframe id="consCallingSite" src="https://kaleidoscopic-mermaid-7ac9f2.netlify.app/" title="コンス架電スクリプト" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+  <a class="cons-calling-site-open" href="https://kaleidoscopic-mermaid-7ac9f2.netlify.app/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">別タブで開く ↗</a>
+  <button type="button" class="cons-v146-record-toggle" id="consRecordToggle">アプローチを記録</button>
+ </div>
+ <div class="cons-v146-student" aria-label="担当学生の情報">
+  <div class="cons-student-header"><h2>学生情報</h2><button type="button" id="consStudentReload">更新</button></div>
+  <div class="cons-student-searchbar"><label for="consStudentSearch">学生を検索</label><input id="consStudentSearch" type="search" placeholder="氏名・大学名" autocomplete="off"></div>
+  <div class="cons-student-navigation"><span id="consStudentProgress" aria-live="polite">読み込み中…</span><div><button type="button" id="consStudentPrev">前へ</button><button type="button" id="consStudentNext">次へ</button></div></div>
+  <div id="consStudentStatus" class="cons-student-status" role="status" aria-live="polite">担当学生の情報を取得しています…</div>
+  <div class="cons-student-fields" id="consStudentFields" hidden>
+    <label class="cons-student-field"><span>名前</span><input id="consStudentName" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>ふりがな</span><input id="consStudentKana" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>大学</span><input id="consStudentUniversity" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>学部・学科</span><input id="consStudentDepartment" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>携帯電話</span><div class="cons-student-phone"><input id="consStudentPhone" readonly title="クリックしてコピー"><a id="consStudentDial" href="#" aria-label="学生の電話番号を開く">電話</a></div></label>
+    <label class="cons-student-field"><span>メールアドレス</span><input id="consStudentEmail" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>参加期</span><input id="consStudentTerm" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>担当者</span><input id="consStudentAssignee" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>架電結果</span><input id="consStudentOutcome" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>架電日</span><input id="consStudentCallDay" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field cons-student-field-wide"><span>断り理由</span><textarea id="consStudentReason" rows="2" readonly title="クリックしてコピー"></textarea></label>
+    <label class="cons-student-field cons-student-field-wide"><span>詳細メモ</span><textarea id="consStudentMemo" rows="3" readonly title="クリックしてコピー"></textarea></label>
+  </div>
+ </div>
 </div>
 <div class="cons-v146-record-modal" id="consRecordModal" hidden><button type="button" class="cons-v146-close" id="consRecordClose">閉じる ×</button><div aria-label="コンスの学生アプローチ記録" class="department-placeholder-panel cons-call-panel">
 <h2 class="cons-call-heading">コンス｜学生アプローチ記録</h2>
@@ -9519,6 +9542,7 @@ if (name === "post-confirm") {
     document.getElementById('clientLineLoadStatus').textContent = 'LINE通知設定を読み込んでいます…';
     void refreshLineSettings();
   }
+  if (name === 'cons-call') void consStudentLoad();
   if (name === 'client-results') void loadClientResults();
   if (name === 'client-won') void loadClientBusiness('won');
   if (name === 'client-deals') void loadClientBusiness('deals');
@@ -17238,6 +17262,36 @@ document.addEventListener('DOMContentLoaded',()=>{
 #deptMaterialDialog .dept-material-dialog-actions{display:flex!important;justify-content:flex-end!important;gap:60px!important}
 #deptMaterialDialog .dept-material-dialog-actions button{height:60px!important;width:140px!important;border:0!important;border-radius:0!important;background:#3080ff!important;color:white!important;font:30px Inter,'Noto Sans JP',sans-serif!important;cursor:pointer}
 #deptMaterialDialog #deptMaterialSave{background:#ff8030!important}
+
+/* Cons call: embedded script / assigned student details */
+.screen-cons-call .cons-v146-script{display:block;background:#d9d9d9;padding:0;overflow:hidden}
+.screen-cons-call #consCallingSite{display:block;width:100%;height:100%;border:0;background:#d9d9d9}
+.screen-cons-call .cons-calling-site-open{position:absolute;z-index:2;top:14px;right:14px;padding:9px 13px;border-radius:4px;background:#fff;box-shadow:0 2px 9px #0004;color:#11194b;text-decoration:underline;font:600 16px/1.3 Inter,'Noto Sans JP',sans-serif}
+.screen-cons-call .cons-v146-record-toggle{z-index:2;bottom:17px;right:16px;box-shadow:0 2px 10px #0004}
+.screen-cons-call .cons-v146-student{display:flex;align-items:stretch;justify-content:flex-start;flex-direction:column;gap:12px;background:#fff;overflow:auto;padding:22px 23px 25px;box-sizing:border-box;font:18px/1.35 Inter,'Noto Sans JP',sans-serif;color:#111}
+.screen-cons-call .cons-student-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.screen-cons-call .cons-student-header h2{font-size:31px;margin:0;font-weight:600}
+.screen-cons-call .cons-student-header button,.screen-cons-call .cons-student-navigation button,.screen-cons-call .cons-student-phone a{font:500 17px/1.2 Inter,'Noto Sans JP',sans-serif;padding:8px 14px;border:0;border-radius:2px;background:#7577ff;color:#fff;cursor:pointer;text-decoration:none}
+.screen-cons-call .cons-student-navigation button:disabled{opacity:.4;cursor:default}
+.screen-cons-call .cons-student-searchbar{display:flex;align-items:center;gap:12px}
+.screen-cons-call .cons-student-searchbar label{font-size:17px;white-space:nowrap}
+.screen-cons-call .cons-student-searchbar input{height:36px;min-width:0;flex:1;border:1px solid #a8a8b2;padding:4px 10px;background:#fff;font:17px Inter,'Noto Sans JP',sans-serif}
+.screen-cons-call .cons-student-navigation{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:16px;color:#333}
+.screen-cons-call .cons-student-navigation>div{display:flex;gap:8px}
+.screen-cons-call .cons-student-status{font-size:15px;color:#53576d;line-height:1.45;min-height:20px;overflow-wrap:anywhere}
+.screen-cons-call .cons-student-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 14px;align-items:start}
+.screen-cons-call .cons-student-fields[hidden]{display:none!important}
+.screen-cons-call .cons-student-field{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:15px}
+.screen-cons-call .cons-student-field-wide{grid-column:1/-1}
+.screen-cons-call .cons-student-field>span{font-weight:550;color:#323454}
+.screen-cons-call .cons-student-field input,.screen-cons-call .cons-student-field textarea{box-sizing:border-box;width:100%;min-height:35px;padding:6px 8px;border:1px solid #bfc0d0;background:#f8f8ff;border-radius:0;color:#151521;font:16px/1.35 Inter,'Noto Sans JP',sans-serif;overflow-wrap:anywhere;cursor:copy;resize:vertical}
+.screen-cons-call .cons-student-field input:focus,.screen-cons-call .cons-student-field textarea:focus{outline:2px solid #7577ff}
+.screen-cons-call .cons-student-field textarea{min-height:49px}
+.screen-cons-call .cons-student-phone{display:flex;gap:5px;align-items:center;min-width:0}
+.screen-cons-call .cons-student-phone input{flex:1;min-width:0}
+.screen-cons-call .cons-student-phone a{font-size:15px;padding:9px 10px;white-space:nowrap}
+.screen-cons-call .cons-student-phone a[aria-disabled="true"]{pointer-events:none;opacity:.4}
+
 </style>
 
 
@@ -17359,6 +17413,61 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('v146TextMaterialClose')?.addEventListener('click',()=>$('v146TextMaterialDialog').close());
 });
 })();
+
+const consStudentState={students:[],filtered:[],index:0,loading:false,loadSerial:0};
+const consStudentVal=id=>document.getElementById(id);
+function consStudentSafe(value){return String(value??'').trim();}
+function consStudentSelect(){
+ const view=consStudentState.filtered,index=consStudentState.index;
+ const p=view[index]||null;
+ const fields=consStudentVal('consStudentFields');
+ fields.hidden=!p;
+ consStudentVal('consStudentProgress').textContent=p?`${index+1} / ${view.length}人`:`0 / ${view.length}人`;
+ consStudentVal('consStudentPrev').disabled=index<=0||!p;
+ consStudentVal('consStudentNext').disabled=!p||index>=view.length-1;
+ if(!p)return;
+ const bind=(id,key)=>{consStudentVal(id).value=consStudentSafe(p[key]);};
+ for(const [id,key] of [['consStudentName','name'],['consStudentKana','kana'],['consStudentUniversity','university'],['consStudentDepartment','department'],['consStudentPhone','phone'],['consStudentEmail','email'],['consStudentTerm','term'],['consStudentAssignee','assignee'],['consStudentOutcome','outcome'],['consStudentCallDay','call_day'],['consStudentReason','reason'],['consStudentMemo','memo']])bind(id,key);
+ const tel=consStudentVal('consStudentDial');
+ if(/^0\d{9,10}$/.test(consStudentSafe(p.phone).replace(/[\s\-()]/g,''))){tel.href='tel:'+consStudentSafe(p.phone).replace(/[\s\-()]/g,'');tel.removeAttribute('aria-disabled')}
+ else{tel.removeAttribute('href');tel.setAttribute('aria-disabled','true')}
+}
+function consStudentFilter(){
+ const text=consStudentSafe(consStudentVal('consStudentSearch').value).normalize('NFKC').toLowerCase();
+ consStudentState.filtered=consStudentState.students.filter(p=>!text||[p.name,p.kana,p.university].some(value=>consStudentSafe(value).normalize('NFKC').toLowerCase().includes(text)));
+ consStudentState.index=0;
+ consStudentVal('consStudentStatus').textContent=consStudentState.students.length===0?'担当の学生が見つかりません。':consStudentState.filtered.length===0?'検索条件に一致する学生がいません。':'';
+ consStudentSelect();
+}
+async function consStudentLoad(){
+ const status=consStudentVal('consStudentStatus');
+ if(!status||consStudentState.loading)return;
+ const serial=++consStudentState.loadSerial;
+ consStudentState.loading=true;consStudentVal('consStudentReload').disabled=true;
+ status.textContent='担当学生を読み込んでいます…';
+ try{
+  const region=portalRegion();
+  if(region!=='kanto'){consStudentState.students=[];consStudentFilter();status.textContent='この学生リストは東京企業支部（28卒）専用です。';return;}
+  const result=await portalFetch('/api/cons/students?region='+encodeURIComponent(region),{timeoutMs:25000});
+  if(serial!==consStudentState.loadSerial||state.currentScreen!=='cons-call')return;
+  consStudentState.students=Array.isArray(result.students)?result.students:[];
+  consStudentFilter();
+ }catch(error){
+  if(serial!==consStudentState.loadSerial)return;
+  consStudentState.students=[];consStudentFilter();
+  status.textContent='学生情報を取得できませんでした：'+String(error.message||error)+'。スプレッドシートの共有権限も確認してください。';
+ }finally{if(serial===consStudentState.loadSerial){consStudentState.loading=false;consStudentVal('consStudentReload').disabled=false}}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ consStudentVal('consStudentReload')?.addEventListener('click',()=>void consStudentLoad());
+ consStudentVal('consStudentSearch')?.addEventListener('input',consStudentFilter);
+ consStudentVal('consStudentPrev')?.addEventListener('click',()=>{consStudentState.index=Math.max(0,consStudentState.index-1);consStudentSelect()});
+ consStudentVal('consStudentNext')?.addEventListener('click',()=>{consStudentState.index=Math.min(consStudentState.filtered.length-1,consStudentState.index+1);consStudentSelect()});
+ for(const f of consStudentVal('consStudentFields')?.querySelectorAll('input,textarea')||[]){
+  f.addEventListener('click',async()=>{const text=f.value?.trim();if(!text)return;try{await navigator.clipboard.writeText(text);showToast('コピーしました')}catch{f.select();document.execCommand('copy')}});
+ }
+});
+
 </script>
 
 </body>
