@@ -4403,6 +4403,9 @@ display: flex; gap: 13px; align-items: baseline; margin: 16px 2px 10px;
 .review-edit-actions { display: flex; justify-content: flex-end; gap: 15px; }
 .review-edit-actions button { padding: 11px 24px; border-radius: 9px; border: 2px solid #b8c4d8; font-size: 23px; cursor: pointer; }
 #reviewEditSave { border-color: #205fca; background: #2f72dd; color: #fff; }
+#reviewEditDelete { margin-right: auto; background: #fff2f2; border-color: #d84040; color: #ad2121; }
+#reviewEditDelete:hover { background: #ffe0e0; }
+.review-edit-actions button:disabled { opacity: .55; cursor: wait; }
 #reviewEditWarning { margin: 0; font-size: 18px; color: #ae3c19; }
 .schedule-plan-memo { position: absolute; left: 90px; top: 713px; display: flex; align-items: center; gap: 18px; font-size: 20px; }
 .schedule-plan-memo input { width: 390px; height: 34px; box-sizing: border-box; border: 1px solid #7e88a4; padding: 3px 8px; font: inherit; }
@@ -8004,6 +8007,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <label>タスク内容 <input id="reviewEditTask" type="text" maxlength="150" required></label>
               <label>メモ（任意） <textarea id="reviewEditMemo" maxlength="1000" rows="3" placeholder="作業に関する補足"></textarea></label>
               <div class="review-edit-actions">
+                <button type="button" id="reviewEditDelete">削除</button>
                 <button type="button" id="reviewEditCancel">キャンセル</button>
                 <button type="submit" id="reviewEditSave">変更を保存</button>
               </div>
@@ -9354,6 +9358,7 @@ function wireActions() {
     if (event.target.id === "scheduleReviewEditOverlay") closeReviewPlanEdit();
   });
   document.getElementById("scheduleReviewEditForm").addEventListener("submit", saveReviewPlanEdit);
+  document.getElementById("reviewEditDelete").addEventListener("click", deleteReviewPlan);
 
   document.getElementById("schedulePlanRegisterButton").addEventListener(
     "click",
@@ -13718,6 +13723,43 @@ async function saveReviewPlanEdit(event) {
   } catch(error) {
     document.getElementById("reviewEditWarning").textContent=error.message||'編集できませんでした';
   } finally { button.disabled=false; }
+}
+
+async function deleteReviewPlan() {
+  const overlay=document.getElementById('scheduleReviewEditOverlay');
+  const planId=Number(overlay.dataset.planId);
+  const plan=(state.calendar.reviewPlans||[]).find(p=>Number(p.id)===planId);
+  if (!plan || String(plan.user_email||'').trim().toLowerCase()!==String(state.user?.email||'').trim().toLowerCase()) {
+    document.getElementById('reviewEditWarning').textContent='自分のタスク時間のみ削除できます。';
+    return;
+  }
+  const day=tokyoDateFromIso(plan.starts_at);
+  const begin=formatTokyoClock(new Date(plan.starts_at));
+  const finish=formatTokyoClock(new Date(plan.ends_at));
+  if (!window.confirm(`${day} ${begin}〜${finish}「${plan.title||'タスク'}」を削除しますか？\nポータルと経営管理シートの予定入力から削除されます。`)) return;
+  const removeButton=document.getElementById('reviewEditDelete');
+  const saveButton=document.getElementById('reviewEditSave');
+  removeButton.disabled=true;
+  saveButton.disabled=true;
+  try {
+    const result=await portalFetch('/api/calendar/plans/delete',{
+      method:'POST',body:{planId}
+    });
+    closeReviewPlanEdit();
+    state.calendar.reviewPlans=(state.calendar.reviewPlans||[]).filter(item=>Number(item.id)!==planId);
+    renderScheduleReviewEvents(reviewWeekRange());
+    await loadScheduleReview();
+    if ((result.externalResults||[]).some(item=>!item.ok)) {
+      showToast('ポータルとスプレッドシートから削除しました。外部カレンダーに削除できなかった予定があります。');
+    } else {
+      showToast('タスク時間を削除しました');
+    }
+  } catch(error) {
+    document.getElementById('reviewEditWarning').textContent=error.message||'タスク時間を削除できませんでした';
+  } finally {
+    removeButton.disabled=false;
+    saveButton.disabled=false;
+  }
 }
 
 function tokyoDateFromIso(iso) {
