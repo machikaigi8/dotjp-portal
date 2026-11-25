@@ -17526,7 +17526,7 @@ async function v146LoadConsStaff(){const n=$('consV146StaffStatus');n.textConten
  consStaff=result;const holder=$('consV146People');holder.replaceChildren();
  for(const p of result.people||[]){const b=document.createElement('button');b.type='button';b.textContent=p.name;b.dataset.email=p.email;b.addEventListener('click',()=>{selectedConsEmail=p.email;v146ShowConsStaff()});holder.append(b)}
  if(!result.people?.some(p=>p.email===selectedConsEmail))selectedConsEmail=result.people?.[0]?.email||'';
- v146ShowConsStaff();n.textContent=result.people?.length?'':'該当支部のコンス担当者が見つかりません。';
+ v146ShowConsStaff();n.textContent=result.people?.length?'':'該当支部のメンバーが見つかりません。';
  }catch(e){n.textContent='取得できませんでした：'+(e.message||e)}
 }
 async function v146LoadConsResults(){const n=$('consV146ResultsStatus');n.textContent='';try{
