@@ -7236,7 +7236,6 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <label>部署<select id="clientSignatureDepartment" required><option value="">選択してください</option><option>コンス部</option><option>マーケティング部</option><option>人事局</option><option>プログラム部</option><option>クライアント部</option><option>事務局</option></select></label>
               <label>大学名<input id="clientSignatureUniversity" required maxlength="80" placeholder="○○大学"></label>
               <label>学部名<input id="clientSignatureFaculty" required maxlength="80" placeholder="○○学部"></label>
-              <label>学年<select id="clientSignatureGrade" required><option value="">選択してください</option><option value="1">1年</option><option value="2">2年</option><option value="3">3年</option><option value="4">4年</option><option value="5">5年</option><option value="6">6年</option></select></label>
               <label>ローマ字氏名<input id="clientSignatureRomanName" required maxlength="80" placeholder="Taro Yamada"></label>
               <label>電話番号<input id="clientSignaturePhone" type="tel" required maxlength="32" placeholder="090-1234-5678"></label>
               <p id="clientMailSignatureProfileStatus" role="status"></p>
@@ -16066,7 +16065,7 @@ async function clientMailOpenSignature(){
  save.disabled=true;status.textContent='署名情報を取得中…';dlg.showModal();
  try{
   const data=await portalFetch('/api/client/mail/signature-profile'),p=data.profile;
-  for(const [id,key] of [['clientSignatureName','name'],['clientSignatureHiragana','hiragana'],['clientSignatureEmail','signature_email'],['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureGrade','grade'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])clientMailEl(id).value=p[key]||'';
+  for(const [id,key] of [['clientSignatureName','name'],['clientSignatureHiragana','hiragana'],['clientSignatureEmail','signature_email'],['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])clientMailEl(id).value=p[key]||'';
   clientMailEl('clientSignatureEmail').value='companytokyo@dot-jp.or.jp';
   clientMailEl('clientSignatureDepartment').disabled=Boolean(p.department_locked);
   clientMailState.signatureReady=Boolean(data.ready);clientMailEl('clientMailSignature').value=data.signature||'';
@@ -16078,7 +16077,7 @@ async function clientMailSaveSignature(event){
  const dlg=clientMailEl('clientMailSignatureDialog'),save=clientMailEl('clientSignatureSave'),status=clientMailEl('clientMailSignatureProfileStatus');
  if(save.disabled)return;save.disabled=true;status.textContent='保存中…';
  try{
-  const body={};for(const [id,key] of [['clientSignatureHiragana','hiragana'],['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureGrade','grade'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])body[key]=clientMailEl(id).value;
+  const body={};for(const [id,key] of [['clientSignatureHiragana','hiragana'],['clientSignatureDepartment','department'],['clientSignatureUniversity','university'],['clientSignatureFaculty','faculty'],['clientSignatureRomanName','roman_name'],['clientSignaturePhone','phone']])body[key]=clientMailEl(id).value;
   const data=await portalFetch('/api/client/mail/signature-profile',{method:'POST',body});
   if(!data.ready)throw new Error('名簿の氏名などを確認してください。');
   inquiryProfile=data.profile;renderInquiryIdentity();
