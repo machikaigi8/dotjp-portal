@@ -7088,56 +7088,28 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 <div class="cons-v146-call-stage">
  <div class="cons-v146-script" aria-label="架電スクリプト">
   <iframe id="consCallingSite" src="https://kaleidoscopic-mermaid-7ac9f2.netlify.app/" title="コンス架電スクリプト" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
-  <a class="cons-calling-site-open" href="https://kaleidoscopic-mermaid-7ac9f2.netlify.app/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">別タブで開く ↗</a>
-  <button type="button" class="cons-v146-record-toggle" id="consRecordToggle">アプローチを記録</button>
  </div>
  <div class="cons-v146-student" aria-label="担当学生の情報">
   <div class="cons-student-header"><h2>学生情報</h2><button type="button" id="consStudentReload">更新</button></div>
-  <div class="cons-student-searchbar"><label for="consStudentSearch">学生を検索</label><input id="consStudentSearch" type="search" placeholder="氏名・大学名" autocomplete="off"></div>
+  <div class="cons-student-searchbar"><label for="consStudentSearch">学生を検索</label><input id="consStudentSearch" type="search" placeholder="氏名・ふりがな" autocomplete="off"></div>
   <div class="cons-student-navigation"><span id="consStudentProgress" aria-live="polite">読み込み中…</span><div><button type="button" id="consStudentPrev">前へ</button><button type="button" id="consStudentNext">次へ</button></div></div>
   <div id="consStudentStatus" class="cons-student-status" role="status" aria-live="polite">担当学生の情報を取得しています…</div>
   <div class="cons-student-fields" id="consStudentFields" hidden>
-    <label class="cons-student-field"><span>名前</span><input id="consStudentName" readonly title="クリックしてコピー"></label>
+    <label class="cons-student-field"><span>氏名</span><input id="consStudentName" readonly title="クリックしてコピー"></label>
     <label class="cons-student-field"><span>ふりがな</span><input id="consStudentKana" readonly title="クリックしてコピー"></label>
-    <label class="cons-student-field"><span>大学</span><input id="consStudentUniversity" readonly title="クリックしてコピー"></label>
-    <label class="cons-student-field"><span>学部・学科</span><input id="consStudentDepartment" readonly title="クリックしてコピー"></label>
-    <label class="cons-student-field"><span>携帯電話</span><div class="cons-student-phone"><input id="consStudentPhone" readonly title="クリックしてコピー"><a id="consStudentDial" href="#" aria-label="学生の電話番号を開く">電話</a></div></label>
-    <label class="cons-student-field"><span>メールアドレス</span><input id="consStudentEmail" readonly title="クリックしてコピー"></label>
-    <label class="cons-student-field"><span>参加期</span><input id="consStudentTerm" readonly title="クリックしてコピー"></label>
-    <label class="cons-student-field"><span>担当者</span><input id="consStudentAssignee" readonly title="クリックしてコピー"></label>
-    <label class="cons-student-field"><span>架電結果</span><input id="consStudentOutcome" readonly title="クリックしてコピー"></label>
-    <label class="cons-student-field"><span>架電日</span><input id="consStudentCallDay" readonly title="クリックしてコピー"></label>
-    <label class="cons-student-field cons-student-field-wide"><span>断り理由</span><textarea id="consStudentReason" rows="2" readonly title="クリックしてコピー"></textarea></label>
-    <label class="cons-student-field cons-student-field-wide"><span>詳細メモ</span><textarea id="consStudentMemo" rows="3" readonly title="クリックしてコピー"></textarea></label>
+    <label class="cons-student-field cons-student-field-wide"><span>携帯電話</span><div class="cons-student-phone"><input id="consStudentPhone" readonly title="クリックしてコピー"><a id="consStudentDial" href="#" aria-label="学生に電話をかける">電話</a></div></label>
+    <label class="cons-student-field"><span>架電結果（M列）</span><select id="consStudentOutcome">
+      <option value="">未選択</option><option>面談獲得</option><option>不在</option><option>留守電</option><option>スクリーニング</option><option>番号違う</option><option>通電後断り</option><option>通電後時間都合悪いので後で</option><option>再架電</option>
+    </select></label>
+    <label class="cons-student-field"><span>断り理由（N列）</span><select id="consStudentReason">
+      <option value="">未選択</option><option>自分で就活する</option><option>他社を利用</option><option>就活終了</option><option>忙しい</option><option>興味がない</option><option>困ってない</option><option>すでに利用済み</option><option>日程が合わない</option><option>対象外</option><option>その他</option>
+    </select></label>
+    <label class="cons-student-field cons-student-field-wide"><span>詳細メモ（O列）</span><textarea id="consStudentMemo" rows="3" maxlength="3000"></textarea></label>
+    <div class="cons-student-actions"><button type="button" id="consStudentSave" disabled>保存</button></div>
   </div>
  </div>
 </div>
-<div class="cons-v146-record-modal" id="consRecordModal" hidden><button type="button" class="cons-v146-close" id="consRecordClose">閉じる ×</button><div aria-label="コンスの学生アプローチ記録" class="department-placeholder-panel cons-call-panel">
-<h2 class="cons-call-heading">コンス｜学生アプローチ記録</h2>
-<p class="cons-call-description">架電・メール・DMは連絡手段を選び、最後に獲得結果を押して記録します。口コミは押した時点で1件記録します。</p>
-<div aria-live="polite" class="cons-contact-current" id="consContactCurrent">1人目を記録</div>
-<div aria-label="この学生に使った連絡手段" class="cons-contact-methods" role="group">
-<button aria-pressed="false" class="cons-contact-method" data-cons-method="call" disabled="" type="button">架電</button>
-<button aria-pressed="false" class="cons-contact-method" data-cons-method="email" disabled="" type="button">メール</button>
-<button aria-pressed="false" class="cons-contact-method" data-cons-method="review" disabled="" type="button">口コミ</button>
-<button aria-pressed="false" class="cons-contact-method" data-cons-method="dm" disabled="" type="button">DM</button>
-</div>
-<p class="cons-contact-help">架電・メール・DMは複数選択できます。口コミだけはタップすると即時に確定し、獲得結果の選択は不要です。</p>
-<div aria-label="この学生の獲得結果" class="cons-contact-outcomes" role="group">
-<button class="cons-contact-outcome is-won" disabled="" id="consContactWon" type="button">獲得した</button>
-<button class="cons-contact-outcome is-lost" disabled="" id="consContactLost" type="button">獲得できなかった</button>
-</div>
-<div aria-label="本日の記録件数" class="cons-contact-summary">
-<span>対応人数：<strong id="consContactPeople">—</strong>人</span>
-<span>架電：<strong id="consCallTodayCount">—</strong>件</span>
-<span>メール：<strong id="consEmailTodayCount">—</strong>件</span>
-<span>口コミ：<strong id="consReviewTodayCount">—</strong>件</span>
-<span>DM：<strong id="consDmTodayCount">—</strong>件</span>
-<span>獲得：<strong id="consWonTodayCount">—</strong>件</span>
-</div>
-<p aria-live="polite" class="cons-call-status" id="consCallStatus" role="status">記録状況を確認しています…</p>
-<p class="cons-call-tip">口コミは押した時点で記録します。ほかの手段は獲得結果の確定時に記録します。タスク終了時の入力と重複しないようにしてください。</p>
-</div></div><button type="button" class="v146-back" data-back-route="department-cons" data-common-back>←戻る</button></section>
+<button type="button" class="v146-back" data-back-route="department-cons" data-common-back>←戻る</button></section>
 
         <section class="screen screen-cons-staff-status" data-screen="cons-staff-status">
 <div class="user-name" data-user-name>＜名前＞</div><nav class="cons-v146-nav" aria-label="コンス内メニュー">
@@ -16653,7 +16625,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 const consContactOriginalShowScreen=showScreen;
 showScreen=function(name,...args){
   const result=consContactOriginalShowScreen(name,...args);
-  if(name==='cons-call')void consContactLoad();
   return result;
 };
 
@@ -16780,11 +16751,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   <h2 id="deptMaterialDialogTitle">資料ボタンを追加</h2>
   <p>登録したボタンは、同じ地域・部署の資料一覧に共有されます。</p>
   <form id="deptMaterialForm">
-    <label>ボタン名<input id="deptMaterialTitle" type="text" maxlength="45" placeholder="例：広報マニュアル" autocomplete="off" required></label>
+    <label><span>タイトル <strong style="color:#c42e42">*</strong></span><input id="deptMaterialTitle" type="text" maxlength="45" placeholder="例：広報マニュアル" autocomplete="off" required aria-label="タイトル（必須）"></label>
     <label>URL<input id="deptMaterialUrl" type="url" maxlength="1800" placeholder="https://docs.google.com/..." autocomplete="off"></label>
-    <label>ファイルを追加する<input id="deptMaterialFile" type="file" accept="application/pdf,image/png,image/jpeg,image/webp,text/plain"></label>
-    <label>テキストを追加する<textarea id="deptMaterialText" rows="4" maxlength="10000" placeholder="資料の内容を入力"></textarea></label>
-    <p class="v146-material-note">URL・ファイル・テキストのいずれかを登録できます。ファイルは300KBまでです。</p>
+    <label>ファイル<input id="deptMaterialFile" type="file" accept="application/pdf,image/png,image/jpeg,image/webp,text/plain"></label>
+    <div id="deptMaterialExistingFile" class="v155-existing-file" hidden><span id="deptMaterialExistingFileName"></span><label><input id="deptMaterialRemoveFile" type="checkbox">既存のファイルを削除</label></div>
+    <label>テキスト<textarea id="deptMaterialText" rows="4" maxlength="10000" placeholder="資料の内容を入力"></textarea></label>
+    <p class="v146-material-note">タイトルは必須です。URL・ファイル・テキストは任意ですが、少なくとも1つ入力してください。複数の登録もできます。ファイルは300KBまで。</p>
     <div class="dept-material-dialog-actions"><button type="button" id="deptMaterialCancel">キャンセル</button><button type="submit" id="deptMaterialSave">保存</button></div>
   </form>
 </dialog>
@@ -17148,7 +17120,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('DOMContentLoaded',prepare);
 })();
 </script>
-<dialog id="v146TextMaterialDialog" style="width:min(900px,88vw);max-height:75vh;overflow:auto;padding:32px;border:3px solid #000060;background:white"><h2>資料</h2><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:50vh;overflow:auto;font:20px/1.6 'Noto Sans JP',sans-serif"></pre><button id="v146TextMaterialClose" type="button" style="padding:12px 30px;background:#3080ff;color:white;border:0;cursor:pointer">閉じる</button></dialog>
+<dialog id="v146TextMaterialDialog" style="width:min(640px,calc(100vw - 32px));max-height:80vh;overflow:auto;padding:26px 30px;border:1px solid #b9bfe5;border-radius:14px;background:white;box-shadow:0 18px 70px #0004;color:#202555"><h2 style="font-size:24px;line-height:1.3;margin:0 0 18px">資料</h2><div id="v155MaterialViewLinks" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:13px"></div><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:43vh;overflow:auto;font:17px/1.6 'Noto Sans JP',sans-serif;background:#f8f8ff;border:1px solid #e4e6f7;padding:14px;border-radius:7px"></pre><button id="v146TextMaterialClose" type="button" style="padding:10px 25px;background:#3080ff;color:white;border:0;border-radius:6px;cursor:pointer;font-size:16px">閉じる</button></dialog>
 
 <style>
 /* Cons and client: original Figma frame = 1440 x 1024 */
@@ -17253,20 +17225,28 @@ document.addEventListener('DOMContentLoaded',()=>{
 .screen-cons-call .cons-contact-outcomes{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
 .screen-cons-call .cons-contact-outcome{border:0;padding:14px 30px;background:#7577ff;color:white;font-size:22px;cursor:pointer}
 .screen-cons-call .cons-contact-summary{display:flex;gap:16px;flex-wrap:wrap;font-size:18px;margin:15px 0}
-#deptMaterialDialog{width:1154px!important;max-width:90vw!important;min-height:574px!important;border-radius:80px!important;border:5px solid #010c41!important;background:white!important;padding:30px 50px!important;box-sizing:border-box!important;font:27px Inter,'Noto Sans JP',sans-serif!important;max-height:90vh;overflow:auto}
-#deptMaterialDialog h2{font-size:35px!important;font-weight:400!important;margin:0 0 25px!important}#deptMaterialDialog>p{display:none}
-#deptMaterialDialog form{display:flex!important;flex-direction:column!important;gap:14px!important}#deptMaterialDialog label{display:grid!important;grid-template-columns:280px 1fr!important;gap:24px!important;align-items:center!important;margin:0!important;font:26px/1.3 Inter,'Noto Sans JP',sans-serif!important}
-#deptMaterialDialog input,#deptMaterialDialog textarea{border:2px solid #000!important;background:#f8f8ff!important;height:40px;font:21px Inter,'Noto Sans JP',sans-serif!important;padding:4px 10px!important;box-sizing:border-box!important;width:100%!important;border-radius:0!important}
-#deptMaterialDialog textarea{height:130px!important;resize:vertical}#deptMaterialDialog input[type=file]{height:45px!important;padding:2px!important}
-#deptMaterialDialog .v146-material-note{font-size:15px!important;margin:0 0 0 304px!important;color:#4e526a}
-#deptMaterialDialog .dept-material-dialog-actions{display:flex!important;justify-content:flex-end!important;gap:60px!important}
-#deptMaterialDialog .dept-material-dialog-actions button{height:60px!important;width:140px!important;border:0!important;border-radius:0!important;background:#3080ff!important;color:white!important;font:30px Inter,'Noto Sans JP',sans-serif!important;cursor:pointer}
+#deptMaterialDialog{position:fixed!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;margin:0!important;width:min(760px,calc(100vw - 40px))!important;max-width:calc(100vw - 40px)!important;min-height:0!important;max-height:88vh!important;overflow:auto!important;box-sizing:border-box!important;border:1px solid #c7cae4!important;border-radius:16px!important;background:#fff!important;padding:27px 30px 25px!important;color:#202555!important;box-shadow:0 24px 85px #0004!important;font:16px/1.5 Inter,'Noto Sans JP',sans-serif!important}
+#deptMaterialDialog h2{font-size:27px!important;font-weight:600!important;line-height:1.3!important;margin:0 0 18px!important}#deptMaterialDialog>p{display:none}
+#deptMaterialDialog form{display:flex!important;flex-direction:column!important;gap:13px!important}
+#deptMaterialDialog label{display:grid!important;grid-template-columns:155px minmax(0,1fr)!important;gap:15px!important;align-items:center!important;margin:0!important;font:500 16px/1.45 Inter,'Noto Sans JP',sans-serif!important}
+#deptMaterialDialog input,#deptMaterialDialog textarea{border:1px solid #bfc4dc!important;background:#fbfbff!important;min-height:41px!important;height:auto!important;font:16px/1.45 Inter,'Noto Sans JP',sans-serif!important;padding:9px 11px!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;border-radius:6px!important;color:#21274d!important}
+#deptMaterialDialog textarea{min-height:95px!important;max-height:160px!important;resize:vertical!important}
+#deptMaterialDialog input[type=file]{min-height:43px!important;padding:7px 9px!important;font-size:14px!important}
+#deptMaterialDialog .v146-material-note{font-size:13px!important;line-height:1.55!important;margin:0 0 0 170px!important;color:#555c7c!important}
+#deptMaterialDialog .v155-existing-file{font-size:14px!important;margin:-6px 0 0 170px!important;color:#48517d!important;display:flex!important;align-items:center!important;gap:12px!important;flex-wrap:wrap!important}
+#deptMaterialDialog .v155-existing-file[hidden]{display:none!important}
+#deptMaterialDialog .v155-existing-file label{display:inline-flex!important;align-items:center!important;gap:5px!important;font-size:14px!important}
+#deptMaterialDialog #deptMaterialRemoveFile{width:17px!important;min-height:17px!important;height:17px!important;padding:0!important;accent-color:#6268d5}
+#deptMaterialDialog .dept-material-dialog-actions{display:flex!important;justify-content:flex-end!important;gap:12px!important;margin-top:7px!important}
+#deptMaterialDialog .dept-material-dialog-actions button{height:43px!important;min-width:112px!important;width:auto!important;padding:0 20px!important;border:0!important;border-radius:6px!important;background:#3080ff!important;color:#fff!important;font:500 17px Inter,'Noto Sans JP',sans-serif!important;cursor:pointer}
 #deptMaterialDialog #deptMaterialSave{background:#ff8030!important}
+#deptMaterialDialog .dept-material-dialog-actions button:disabled{opacity:.55;cursor:wait}
+@media(max-width:690px){#deptMaterialDialog{padding:22px 18px!important}#deptMaterialDialog label{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important}#deptMaterialDialog .v146-material-note,#deptMaterialDialog .v155-existing-file{margin-left:0!important}}
+
 
 /* Cons call: embedded script / assigned student details */
 .screen-cons-call .cons-v146-script{display:block;background:#d9d9d9;padding:0;overflow:hidden}
 .screen-cons-call #consCallingSite{display:block;width:100%;height:100%;border:0;background:#d9d9d9}
-.screen-cons-call .cons-calling-site-open{position:absolute;z-index:2;top:14px;right:14px;padding:9px 13px;border-radius:4px;background:#fff;box-shadow:0 2px 9px #0004;color:#11194b;text-decoration:underline;font:600 16px/1.3 Inter,'Noto Sans JP',sans-serif}
 .screen-cons-call .cons-v146-record-toggle{z-index:2;bottom:17px;right:16px;box-shadow:0 2px 10px #0004}
 .screen-cons-call .cons-v146-student{display:flex;align-items:stretch;justify-content:flex-start;flex-direction:column;gap:12px;background:#fff;overflow:auto;padding:22px 23px 25px;box-sizing:border-box;font:18px/1.35 Inter,'Noto Sans JP',sans-serif;color:#111}
 .screen-cons-call .cons-student-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -17291,6 +17271,17 @@ document.addEventListener('DOMContentLoaded',()=>{
 .screen-cons-call .cons-student-phone input{flex:1;min-width:0}
 .screen-cons-call .cons-student-phone a{font-size:15px;padding:9px 10px;white-space:nowrap}
 .screen-cons-call .cons-student-phone a[aria-disabled="true"]{pointer-events:none;opacity:.4}
+
+.screen-cons-call .cons-v146-student{gap:10px;padding:18px 23px 20px}
+.screen-cons-call .cons-student-fields{gap:8px 13px}
+.screen-cons-call .cons-student-field input[readonly]{cursor:copy;background:#f8f8ff}
+.screen-cons-call .cons-student-field select,.screen-cons-call .cons-student-field textarea{box-sizing:border-box;width:100%;min-height:38px;padding:6px 8px;border:1px solid #bfc0d0;border-radius:0;background:#fff;color:#151521;font:16px/1.35 Inter,'Noto Sans JP',sans-serif}
+.screen-cons-call .cons-student-field select{cursor:pointer;max-width:100%;height:40px}
+.screen-cons-call .cons-student-field textarea{cursor:text;resize:vertical;min-height:83px}
+.screen-cons-call .cons-student-actions{grid-column:1/-1;display:flex;justify-content:flex-end;padding-top:4px}
+.screen-cons-call #consStudentSave{min-width:125px;padding:11px 23px;background:#7577ff;color:#fff;border:0;font:600 19px/1.2 Inter,'Noto Sans JP',sans-serif;cursor:pointer}
+.screen-cons-call #consStudentSave:disabled{opacity:.46;cursor:default}
+
 
 </style>
 
@@ -17321,7 +17312,7 @@ deptMaterialRender=function(...args){const ret=oldDeptRender(...args);const isCo
 // The custom file/text types are fetched only on deliberate opening; nothing executable is inserted as HTML.
 const oldMaterialCard=deptMaterialCard;
 deptMaterialCard=function(item){
- if(!item.kind||item.kind==='url')return oldMaterialCard(item);
+ if(item.has_url&&!item.has_file&&!item.has_text)return oldMaterialCard(item);
  const card=document.createElement('div');card.className='department-material-entry';
  const open=document.createElement('button');open.type='button';open.className='department-material-link';open.textContent=item.title;
  open.style.cssText='cursor:pointer;border:0;width:100%';open.addEventListener('click',()=>void v146OpenMaterial(item));card.append(open);
@@ -17333,44 +17324,51 @@ deptMaterialCard=function(item){
 function v146B64ToBlob(data,mime){const bin=atob(data);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime});}
 async function v146OpenMaterial(item){
  try{const q=new URLSearchParams({material_id:String(item.id)});const data=await portalFetch('/api/department-materials?'+q.toString());
- if(data.kind==='text'){
-   const pop=$('v146TextMaterialDialog');pop.querySelector('h2').textContent=item.title;
-   pop.querySelector('pre').textContent=data.text||'';pop.showModal();return;
- }
- if(data.kind==='file'){
-   const blob=v146B64ToBlob(data.file_data,data.file_mime);const url=URL.createObjectURL(blob);
-   const a=document.createElement('a');a.href=url;a.download=data.file_name||'資料';a.target='_blank';a.rel='noopener';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),45000);return;
- }
- showToast('資料を開けませんでした。');
+ const hasUrl=Boolean(data.url),hasText=Boolean(data.text),hasFile=Boolean(data.file_data);
+ if(!hasUrl&&!hasText&&!hasFile)throw Error('資料の内容が見つかりません。');
+ if(hasFile&&!hasUrl&&!hasText){v155DownloadMaterial(data);return;}
+ const pop=$('v146TextMaterialDialog');pop.querySelector('h2').textContent=item.title;
+ const pre=pop.querySelector('pre');pre.textContent=data.text||'';pre.hidden=!hasText;
+ const links=$('v155MaterialViewLinks');links.replaceChildren();
+ if(hasUrl){const link=document.createElement('a');link.textContent='URLを開く';link.href=data.url;link.target='_blank';link.rel='noopener noreferrer';link.style.cssText='display:inline-flex;padding:10px 16px;background:#7577ff;color:#fff;text-decoration:none;border-radius:6px;font:500 16px Inter,sans-serif';links.append(link);}
+ if(hasFile){const button=document.createElement('button');button.type='button';button.textContent='ファイルを開く・保存';button.style.cssText='padding:10px 16px;background:#7577ff;color:#fff;border:0;border-radius:6px;font:500 16px Inter,sans-serif;cursor:pointer';button.addEventListener('click',()=>v155DownloadMaterial(data));links.append(button);}
+ pop.showModal();
  }catch(error){showToast('資料を取得できませんでした：'+(error.message||error));}
+}
+function v155DownloadMaterial(data){
+ const blob=v146B64ToBlob(data.file_data,data.file_mime||'application/octet-stream');const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download=data.file_name||'資料';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),45000);
 }
 const originalDialog=deptMaterialOpenDialog;
 deptMaterialOpenDialog=function(item=null){
  originalDialog(item);
  const f=$('deptMaterialFile'),t=$('deptMaterialText');if(f)f.value='';if(t)t.value=item?.content_text||'';
  $('deptMaterialDialogTitle').textContent=item?'資料を編集':'資料を増やす';
- if(item?.kind&&item.kind!=='url')$('deptMaterialUrl').value='';
+ $('deptMaterialUrl').value=item?.has_url?item.url:'';
+ const existing=Boolean(item?.has_file);
+ $('deptMaterialExistingFile').hidden=!existing;
+ $('deptMaterialExistingFileName').textContent=existing?'登録済み：'+(item.file_name||'ファイル'):'';
+ $('deptMaterialRemoveFile').checked=false;
 };
 function v146ReadFile(file){return new Promise((resolve,reject)=>{
  const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=()=>reject(Error('ファイルを読み取れません'));r.readAsDataURL(file);
 });}
-const oldDeptSubmit=deptMaterialSubmit;
 deptMaterialSubmit=async function(event){
- event.preventDefault();const title=$('deptMaterialTitle').value.trim(),url=$('deptMaterialUrl').value.trim(),text=$('deptMaterialText').value.trim(),file=$('deptMaterialFile').files?.[0];
+ event.preventDefault();
+ const title=$('deptMaterialTitle').value.trim(),url=$('deptMaterialUrl').value.trim(),text=$('deptMaterialText').value.trim(),file=$('deptMaterialFile').files?.[0];
+ const current=departmentMaterialState.items.find(x=>x.id===departmentMaterialState.editing);
+ const keepFile=Boolean(current?.has_file&&!$('deptMaterialRemoveFile').checked);
  if(!title||title.length>45)return alert('タイトルは1〜45文字で入力してください。');
- const provided=Number(Boolean(url))+Number(Boolean(text))+Number(Boolean(file));
- if(provided>1)return alert('URL・ファイル・テキストのうち、1種類を選択してください。');
- if(!provided&&!departmentMaterialState.editing)return alert('URL・ファイル・テキストのどれかを入力してください。');
+ if(!url&&!text&&!file&&!keepFile)return alert('URL・ファイル・テキストのいずれか1つ以上を入力してください。');
  if(url&&!deptMaterialValidHref(url))return alert('https://から始まるURLを入力してください。');
  if(file&&(file.size>300*1024||!['application/pdf','image/png','image/jpeg','image/webp','text/plain'].includes(file.type)))return alert('300KB以下のPDF・画像・テキストファイルを選んでください。');
  if(!departmentMaterialState.canEdit)return;
  const btn=$('deptMaterialSave');btn.disabled=true;
  try{
- const department=deptMaterialCurrentDepartment(),region=portalRegion();
- let kind=url?'url':text?'text':file?'file':'keep';
- let body={action:departmentMaterialState.editing?'update':'create',id:departmentMaterialState.editing||undefined,department,region,title,kind,url,text};
+ const department=deptMaterialCurrentDepartment(),region=deptMaterialRegion();
+ const body={action:departmentMaterialState.editing?'update':'create',id:departmentMaterialState.editing||undefined,department,region,title,url,text,remove_file:$('deptMaterialRemoveFile').checked};
  if(file){body.file_name=file.name.slice(0,120);body.file_mime=file.type;body.file_data=await v146ReadFile(file);}
- const result=await portalFetch('/api/department-materials',{method:'POST',body});
+ await portalFetch('/api/department-materials',{method:'POST',body});
  $('deptMaterialDialog').close();await deptMaterialLoad(department);showToast('資料を保存しました');
  }catch(error){alert(error.message||'資料を保存できませんでした。');}finally{btn.disabled=false;}
 };
@@ -17404,8 +17402,6 @@ async function v146LoadConsResults(){const n=$('consV146ResultsStatus');n.textCo
  }catch(e){n.textContent='実績を取得できませんでした：'+(e.message||e);}
 }
 document.addEventListener('DOMContentLoaded',()=>{
- $('consRecordToggle')?.addEventListener('click',()=>{$('consRecordModal').hidden=false;void consContactLoad();});
- $('consRecordClose')?.addEventListener('click',()=>{$('consRecordModal').hidden=true;});
  for(const id of ['consV146Day','consV146Week','consV146Month'])$(id)?.addEventListener('change',()=>void v146LoadConsStaff());
  $('consV146AddDocument')?.addEventListener('click',async()=>{departmentMaterialState.department='cons';showScreen('department-materials');await deptMaterialLoad('cons');if(departmentMaterialState.canEdit)deptMaterialOpenDialog();else showToast('資料の編集権限を確認してください。')});
  $('consV146MaterialAdd')?.addEventListener('click',()=>deptMaterialOpenDialog());
@@ -17414,60 +17410,98 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 })();
 
-const consStudentState={students:[],filtered:[],index:0,loading:false,loadSerial:0};
+const consStudentState={students:[],filtered:[],index:0,loading:false,saving:false,loadSerial:0};
 const consStudentVal=id=>document.getElementById(id);
 function consStudentSafe(value){return String(value??'').trim();}
+function consStudentCurrent(){return consStudentState.filtered[consStudentState.index]||null;}
+function consStudentValues(){return [consStudentVal('consStudentOutcome').value,consStudentVal('consStudentReason').value,consStudentVal('consStudentMemo').value.trim()];}
+function consStudentDirty(){const p=consStudentCurrent();return !!p&&consStudentValues().some((value,i)=>value!==String(p.expected?.[i]??''));}
+function consStudentSetControls(){
+ const p=consStudentCurrent(),busy=consStudentState.loading||consStudentState.saving;
+ consStudentVal('consStudentSave').disabled=!p||busy||!consStudentDirty();
+ for(const id of ['consStudentOutcome','consStudentReason','consStudentMemo'])consStudentVal(id).disabled=!p||busy;
+ for(const id of ['consStudentReload','consStudentPrev','consStudentNext','consStudentSearch']){
+  const el=consStudentVal(id);if(el)el.disabled=busy;
+ }
+ if(!busy){consStudentVal('consStudentPrev').disabled=!p||consStudentState.index<=0;
+  consStudentVal('consStudentNext').disabled=!p||consStudentState.index>=consStudentState.filtered.length-1;}
+}
+function consStudentConfirmLeave(){return !consStudentDirty()||confirm('未保存の入力があります。保存せずに移動しますか？');}
 function consStudentSelect(){
- const view=consStudentState.filtered,index=consStudentState.index;
- const p=view[index]||null;
- const fields=consStudentVal('consStudentFields');
- fields.hidden=!p;
- consStudentVal('consStudentProgress').textContent=p?`${index+1} / ${view.length}人`:`0 / ${view.length}人`;
- consStudentVal('consStudentPrev').disabled=index<=0||!p;
- consStudentVal('consStudentNext').disabled=!p||index>=view.length-1;
- if(!p)return;
- const bind=(id,key)=>{consStudentVal(id).value=consStudentSafe(p[key]);};
- for(const [id,key] of [['consStudentName','name'],['consStudentKana','kana'],['consStudentUniversity','university'],['consStudentDepartment','department'],['consStudentPhone','phone'],['consStudentEmail','email'],['consStudentTerm','term'],['consStudentAssignee','assignee'],['consStudentOutcome','outcome'],['consStudentCallDay','call_day'],['consStudentReason','reason'],['consStudentMemo','memo']])bind(id,key);
- const tel=consStudentVal('consStudentDial');
- if(/^0\d{9,10}$/.test(consStudentSafe(p.phone).replace(/[\s\-()]/g,''))){tel.href='tel:'+consStudentSafe(p.phone).replace(/[\s\-()]/g,'');tel.removeAttribute('aria-disabled')}
- else{tel.removeAttribute('href');tel.setAttribute('aria-disabled','true')}
+ const view=consStudentState.filtered,p=consStudentCurrent();
+ consStudentVal('consStudentFields').hidden=!p;
+ consStudentVal('consStudentProgress').textContent=p?`${consStudentState.index+1} / ${view.length}人`:`0 / ${view.length}人`;
+ if(p){
+  for(const [id,key] of [['consStudentName','name'],['consStudentKana','kana'],['consStudentPhone','phone'],['consStudentOutcome','outcome'],['consStudentReason','reason'],['consStudentMemo','memo']]){
+   const el=consStudentVal(id);if(el)el.value=consStudentSafe(p[key]);
+  }
+  const tel=consStudentVal('consStudentDial'),phone=consStudentSafe(p.phone).replace(/[\s\-()]/g,'');
+  if(/^0\d{9,10}$/.test(phone)){tel.href='tel:'+phone;tel.removeAttribute('aria-disabled');}
+  else{tel.removeAttribute('href');tel.setAttribute('aria-disabled','true');}
+ }
+ consStudentSetControls();
 }
 function consStudentFilter(){
  const text=consStudentSafe(consStudentVal('consStudentSearch').value).normalize('NFKC').toLowerCase();
- consStudentState.filtered=consStudentState.students.filter(p=>!text||[p.name,p.kana,p.university].some(value=>consStudentSafe(value).normalize('NFKC').toLowerCase().includes(text)));
+ consStudentState.filtered=consStudentState.students.filter(p=>!text||[p.name,p.kana].some(v=>consStudentSafe(v).normalize('NFKC').toLowerCase().includes(text)));
  consStudentState.index=0;
  consStudentVal('consStudentStatus').textContent=consStudentState.students.length===0?'担当の学生が見つかりません。':consStudentState.filtered.length===0?'検索条件に一致する学生がいません。':'';
  consStudentSelect();
 }
 async function consStudentLoad(){
- const status=consStudentVal('consStudentStatus');
- if(!status||consStudentState.loading)return;
+ const status=consStudentVal('consStudentStatus');if(!status||consStudentState.loading||consStudentState.saving)return;
  const serial=++consStudentState.loadSerial;
- consStudentState.loading=true;consStudentVal('consStudentReload').disabled=true;
- status.textContent='担当学生を読み込んでいます…';
+ consStudentState.loading=true;consStudentSetControls();status.textContent='担当学生を読み込んでいます…';
  try{
-  const region=portalRegion();
+  const region=state.region==='kansai'?'kansai':'kanto';
   if(region!=='kanto'){consStudentState.students=[];consStudentFilter();status.textContent='この学生リストは東京企業支部（28卒）専用です。';return;}
-  const result=await portalFetch('/api/cons/students?region='+encodeURIComponent(region),{timeoutMs:25000});
+  const data=await portalFetch('/api/cons/students?region='+encodeURIComponent(region),{timeoutMs:25000});
   if(serial!==consStudentState.loadSerial||state.currentScreen!=='cons-call')return;
-  consStudentState.students=Array.isArray(result.students)?result.students:[];
+  consStudentState.students=Array.isArray(data.students)?data.students:[];
   consStudentFilter();
  }catch(error){
   if(serial!==consStudentState.loadSerial)return;
-  consStudentState.students=[];consStudentFilter();
-  status.textContent='学生情報を取得できませんでした：'+String(error.message||error)+'。スプレッドシートの共有権限も確認してください。';
- }finally{if(serial===consStudentState.loadSerial){consStudentState.loading=false;consStudentVal('consStudentReload').disabled=false}}
+  consStudentState.students=[];consStudentFilter();status.textContent='学生情報を取得できませんでした：'+String(error.message||error);
+ }finally{if(serial===consStudentState.loadSerial){consStudentState.loading=false;consStudentSetControls();}}
+}
+async function consStudentSave(){
+ const p=consStudentCurrent();if(!p||consStudentState.saving||consStudentState.loading)return;
+ const values=consStudentValues();if(!consStudentDirty())return;
+ const body={row:p.row,identity:p.identity,expected:p.expected,outcome:values[0],reason:values[1],memo:values[2]};
+ const status=consStudentVal('consStudentStatus');consStudentState.saving=true;consStudentSetControls();status.textContent='保存しています…';
+ try{
+  const data=await portalFetch('/api/cons/students/save',{method:'POST',body,timeoutMs:25000});
+  const next=Array.isArray(data.values)?data.values:values;
+  p.outcome=next[0];p.reason=next[1];p.memo=next[2];p.expected=next.slice();
+  status.textContent='保存しました。';consStudentSetControls();
+ }catch(error){status.textContent='保存できませんでした：'+String(error.message||error);}
+ finally{consStudentState.saving=false;consStudentSetControls();}
 }
 document.addEventListener('DOMContentLoaded',()=>{
- consStudentVal('consStudentReload')?.addEventListener('click',()=>void consStudentLoad());
- consStudentVal('consStudentSearch')?.addEventListener('input',consStudentFilter);
- consStudentVal('consStudentPrev')?.addEventListener('click',()=>{consStudentState.index=Math.max(0,consStudentState.index-1);consStudentSelect()});
- consStudentVal('consStudentNext')?.addEventListener('click',()=>{consStudentState.index=Math.min(consStudentState.filtered.length-1,consStudentState.index+1);consStudentSelect()});
- for(const f of consStudentVal('consStudentFields')?.querySelectorAll('input,textarea')||[]){
-  f.addEventListener('click',async()=>{const text=f.value?.trim();if(!text)return;try{await navigator.clipboard.writeText(text);showToast('コピーしました')}catch{f.select();document.execCommand('copy')}});
+ consStudentVal('consStudentReload')?.addEventListener('click',()=>{if(consStudentConfirmLeave())void consStudentLoad();});
+ consStudentVal('consStudentSearch')?.addEventListener('input',()=>{
+  if(consStudentDirty()){consStudentVal('consStudentStatus').textContent='検索する前に入力内容を保存してください。';return;}
+  consStudentFilter();
+ });
+ consStudentVal('consStudentPrev')?.addEventListener('click',()=>{
+  if(!consStudentConfirmLeave())return;
+  consStudentState.index=Math.max(0,consStudentState.index-1);consStudentSelect();consStudentVal('consStudentStatus').textContent='';
+ });
+ consStudentVal('consStudentNext')?.addEventListener('click',()=>{
+  if(!consStudentConfirmLeave())return;
+  consStudentState.index=Math.min(consStudentState.filtered.length-1,consStudentState.index+1);consStudentSelect();consStudentVal('consStudentStatus').textContent='';
+ });
+ for(const id of ['consStudentOutcome','consStudentReason','consStudentMemo']){
+  consStudentVal(id)?.addEventListener('input',consStudentSetControls);
+ }
+ consStudentVal('consStudentSave')?.addEventListener('click',()=>void consStudentSave());
+ for(const id of ['consStudentName','consStudentKana','consStudentPhone']){
+  consStudentVal(id)?.addEventListener('click',async()=>{
+   const el=consStudentVal(id),value=el.value?.trim();if(!value)return;
+   try{await navigator.clipboard.writeText(value);showToast('コピーしました');}catch{el.select();document.execCommand('copy');}
+  });
  }
 });
-
 </script>
 
 </body>
