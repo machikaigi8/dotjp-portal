@@ -17570,7 +17570,7 @@ async function v146LoadConsResults(){const n=$('consV146ResultsStatus');n.textCo
  set('consV146'+label+'Prospects',d.methods?.[key]?.prospect);
  }
  set('consV146Won',d.won);set('consV146Actual',d.internActual,'人');set('consV146Target',d.target,'人');set('consV146Rate',d.rate,'%');set('consV146Rank',d.rank,'位');
- n.textContent='';
+ n.textContent=String(d.region||'')+'支部の実績。完了件数はLINE行動量報告・タスク時間報告を重複排除して集計し、獲得数は企業支部流入学生シートから取得しています。'+(d.unclassified?' 紹介経路が判定できない登録：'+Number(d.unclassified).toLocaleString('ja-JP')+'件。':'');
  }catch(e){n.textContent='実績を取得できませんでした：'+(e.message||e);}
 }
 document.addEventListener('DOMContentLoaded',()=>{
