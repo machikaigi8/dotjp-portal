@@ -4040,6 +4040,15 @@ a:active {
 .screen-hp-edit .portal-sheets-add input{flex:1;min-width:0;padding:8px 11px;border:1px solid #a9adca;border-radius:4px;font:17px Inter,'Noto Sans JP',sans-serif;background:#fff}
 .screen-hp-edit .portal-sheets-add button{background:#7577ff;color:white;border-color:#7577ff}
 .screen-hp-edit .portal-sheets-note{font-size:13px;color:#666b7d;margin:0}
+.screen-hp-edit .portal-sheets-url-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;padding:9px 14px;background:#fff}
+.screen-hp-edit .portal-sheets-url-row .portal-sheets-title{grid-column:1/-1;font-size:18px}
+.screen-hp-edit .portal-sheets-url-input{box-sizing:border-box;grid-column:1;width:100%;min-width:0;height:36px;padding:6px 10px;border:1px solid #aab0cd;border-radius:4px;background:#fff;color:#222;font:16px/1.3 Inter,'Noto Sans JP',sans-serif}
+.screen-hp-edit .portal-sheets-url-input:focus-visible{outline:2px solid #7577ff;outline-offset:1px}
+.screen-hp-edit .portal-sheets-url-row .portal-sheets-actions{grid-column:2;grid-row:2;display:flex;gap:8px;justify-content:flex-end}
+.screen-hp-edit .portal-sheets-url-row .portal-sheet-save{background:#7577ff;border-color:#7577ff;color:#fff;padding:8px 18px}
+.screen-hp-edit .portal-sheets-open{display:inline-flex;align-items:center;padding:8px 12px;border:1px solid #c9cbe2;border-radius:5px;color:#2857a4;text-decoration:none;font-size:15px;white-space:nowrap}
+.screen-hp-edit .portal-sheets-open[aria-disabled="true"]{opacity:.45;pointer-events:none}
+
 .screen-hp-request .hp-request-panel {position:absolute;left:120px;top:162px;width:1200px;height:700px;background:white;border:3px solid #000;padding:42px 58px;box-sizing:border-box;display:flex;flex-direction:column;gap:22px;}
 .screen-hp-request .hp-request-panel h2 {margin:0;font-size:46px;font-weight:500;}
 .screen-hp-request .hp-request-panel p {font-size:27px;margin:0;}
@@ -7820,15 +7829,11 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <button type="button" data-sheet-region="kanto" class="is-active">関東</button>
                 <button type="button" data-sheet-region="miyagi">宮城</button>
               </nav>
-              <p class="portal-sheets-intro">地域ごとにスプレッドシートを管理できます。共有権限を持つGoogleアカウントで対象ファイルを選び、ポータルのサービスアカウントに編集権限を付与します。</p>
+              <p class="portal-sheets-intro">地域を選び、各スプレッドシートのURLを入力して保存してください。</p>
               <div class="portal-sheets-status" id="portalSheetStatus" role="status">連携設定を読み込んでいます…</div>
               <div class="portal-sheets-list" id="portalSheetList"></div>
-              <form id="portalSheetAddForm" class="portal-sheets-add" autocomplete="off">
-                <label for="portalSheetNewLabel">その他のスプレッドシートを追加</label>
-                <input type="text" id="portalSheetNewLabel" placeholder="例：今期の学生リスト" maxlength="70" required>
-                <button type="submit">追加</button>
-              </form>
-              <p class="portal-sheets-note" id="portalSheetNote">※共有先の設定を管理します。既存業務の参照先を変更するには、その機能側の連携設定も必要です。</p>
+              
+              <p class="portal-sheets-note" id="portalSheetNote">URLは連携設定として保存されます。Google Sheetsの共有権限は変更されません。既存業務の実データ参照先は、各機能の設定が別途必要です。</p>
             </div>
           </section>
           <button type="button" class="figma-hp-back" data-common-back="">←戻る</button>
@@ -12293,30 +12298,46 @@ function portalSheetRender(){
  const container=document.getElementById('portalSheetList');if(!container)return;
  container.replaceChildren();
  document.querySelectorAll('[data-sheet-region]').forEach(btn=>btn.classList.toggle('is-active',btn.dataset.sheetRegion===portalSheetState.region));
- const list=portalSheetState.entries.filter(item=>item.region===portalSheetState.region);
- if(!list.length){const p=document.createElement('p');p.textContent='この地域にはまだ連携設定がありません。';container.append(p);return;}
+ const keys=['client','calendar','cons','expenses'];
+ const list=keys.map(key=>portalSheetState.entries.find(item=>item.region===portalSheetState.region&&item.key===key)).filter(Boolean);
+ if(!list.length){const p=document.createElement('p');p.textContent='連携先を読み込めませんでした。更新してください。';container.append(p);return;}
  for(const item of list){
-  const card=document.createElement('article');card.className='portal-sheets-item';
-  const name=document.createElement('div');name.className='portal-sheets-title';name.textContent=item.label||'無題のシート';
-  const details=document.createElement('div');details.className='portal-sheets-detail';
-  if(item.spreadsheet_id){
-   const link=document.createElement('a');link.href='https://docs.google.com/spreadsheets/d/'+encodeURIComponent(item.spreadsheet_id)+'/edit';
-   link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.spreadsheet_title||item.spreadsheet_id;details.append(link);
-   details.append(document.createTextNode('　／　'+(item.granted_at?'共有設定済み':'共有権限の確認待ち')));
-  }else details.textContent='連携するスプレッドシートが未選択です';
-  const actions=document.createElement('div');actions.className='portal-sheets-actions';
-  const connect=document.createElement('button');connect.type='button';connect.className='portal-sheet-connect';connect.textContent=item.spreadsheet_id?'Googleで共有・再連携':'Googleで選択・連携';
-  connect.disabled=portalSheetState.busy;connect.addEventListener('click',()=>void portalSheetConnect(item));actions.append(connect);
-  if(item.spreadsheet_id){const check=document.createElement('button');check.type='button';check.textContent='接続確認';check.disabled=portalSheetState.busy;check.addEventListener('click',()=>void portalSheetCheck(item));actions.append(check);}
-  if(item.custom){const remove=document.createElement('button');remove.type='button';remove.className='portal-sheet-remove';remove.textContent='設定削除';remove.disabled=portalSheetState.busy;remove.addEventListener('click',()=>void portalSheetRemove(item));actions.append(remove);}
-  card.append(name,details,actions);container.append(card);
+  const form=document.createElement('form');form.className='portal-sheets-item portal-sheets-url-row';form.autocomplete='off';
+  const label=document.createElement('label');label.className='portal-sheets-title';label.textContent=item.label;
+  const id='portal-sheet-url-'+item.region+'-'+item.key;label.htmlFor=id;
+  const input=document.createElement('input');input.type='url';input.id=id;input.className='portal-sheets-url-input';
+  input.placeholder='https://docs.google.com/spreadsheets/d/.../edit';input.maxLength=2000;input.spellcheck=false;
+  input.value=item.spreadsheet_url|| (item.spreadsheet_id?'https://docs.google.com/spreadsheets/d/'+item.spreadsheet_id+'/edit':'');
+  input.disabled=portalSheetState.busy;
+  const save=document.createElement('button');save.type='submit';save.className='portal-sheet-save';save.textContent='保存';save.disabled=portalSheetState.busy;
+  const open=document.createElement('a');open.textContent='開く';open.className='portal-sheets-open';
+  const validUrl=/^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9_-]{15,120}(?:\/|[?#]|$)/.test(input.value);
+  if(validUrl){open.href=input.value;open.target='_blank';open.rel='noopener noreferrer';}
+  else {open.removeAttribute('href');open.setAttribute('aria-disabled','true');}
+  const actions=document.createElement('div');actions.className='portal-sheets-actions';actions.append(save,open);
+  form.append(label,input,actions);
+  form.addEventListener('submit',async event=>{
+   event.preventDefault();if(portalSheetState.busy)return;
+   const url=input.value.trim();
+   if(url&&!/^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9_-]{15,120}(?:\/|[?#]|$)/.test(url)){
+    portalSheetStatus('GoogleスプレッドシートのURLを入力してください。');input.focus();return;
+   }
+   portalSheetState.busy=true;save.disabled=true;input.disabled=true;
+   portalSheetStatus('「'+item.label+'」のURLを保存しています…');
+   try{
+    await portalFetch('/api/admin/sheets/url',{method:'POST',body:{region:item.region,key:item.key,url}});
+    await portalSheetLoad();portalSheetStatus('「'+item.label+'」のURLを保存しました。');
+   }catch(error){portalSheetStatus('保存に失敗しました：'+String(error.message||error));}
+   finally{portalSheetState.busy=false;portalSheetRender();}
+  });
+  container.append(form);
  }
 }
 async function portalSheetLoad(){
  const container=document.getElementById('portalSheetList');if(!container)return;
  portalSheetStatus('連携設定を読み込んでいます…');
  try{const data=await portalFetch('/api/admin/sheets');portalSheetState.entries=Array.isArray(data.sheets)?data.sheets:[];
-  portalSheetStatus('対象地域：'+portalSheetRegionNames[portalSheetState.region]+'　／　共有先：'+(data.service_account||'サービスアカウント未設定'));
+  portalSheetStatus('対象地域：'+portalSheetRegionNames[portalSheetState.region]+'　／　各項目のURLを編集できます');
   portalSheetRender();
   if(portalSheetReturn.status){
    portalSheetStatus(portalSheetReturn.status==='connected'?'選択したシートを登録し、ポータルの編集権限を設定しました。':'連携できませんでした：'+(portalSheetReturn.detail||'Google側の権限・設定を確認してください。'));
@@ -12350,15 +12371,6 @@ function portalSheetInstall(){
   if(portalSheetState.busy)return;portalSheetState.region=btn.dataset.sheetRegion;portalSheetRender();portalSheetStatus('対象地域：'+portalSheetRegionNames[portalSheetState.region]);
  }));
  document.getElementById('portalSheetRefresh')?.addEventListener('click',()=>void portalSheetLoad());
- document.getElementById('portalSheetAddForm')?.addEventListener('submit',async event=>{
-  event.preventDefault();if(portalSheetState.busy)return;
-  const label=document.getElementById('portalSheetNewLabel').value.trim();if(!label)return;
-  portalSheetState.busy=true;portalSheetRender();
-  try{await portalFetch('/api/admin/sheets/add',{method:'POST',body:{region:portalSheetState.region,label}});
-   document.getElementById('portalSheetNewLabel').value='';await portalSheetLoad();portalSheetStatus('連携項目を追加しました。続けて「Googleで選択・連携」を押してください。');
-  }catch(e){portalSheetStatus('項目を追加できません：'+String(e.message||e));}
-  finally{portalSheetState.busy=false;portalSheetRender();}
- });
  const params=new URL(location.href).searchParams;
  if(params.has('sheets')){
   if(params.get('sheet_region')&&portalSheetRegionNames[params.get('sheet_region')])portalSheetState.region=params.get('sheet_region');
@@ -16892,10 +16904,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   <form id="deptMaterialForm">
     <label><span>タイトル <strong style="color:#c42e42">*</strong></span><input id="deptMaterialTitle" type="text" maxlength="45" placeholder="例：広報マニュアル" autocomplete="off" required aria-label="タイトル（必須）"></label>
     <label>URL<input id="deptMaterialUrl" type="url" maxlength="1800" placeholder="https://docs.google.com/..." autocomplete="off"></label>
-    <label>ファイル<input id="deptMaterialFile" type="file" accept="application/pdf,image/png,image/jpeg,image/webp,text/plain"></label>
+    <label>ファイル<input id="deptMaterialFile" type="file"></label>
     <div id="deptMaterialExistingFile" class="v155-existing-file" hidden><span id="deptMaterialExistingFileName"></span><label><input id="deptMaterialRemoveFile" type="checkbox">既存のファイルを削除</label></div>
     <label>テキスト<textarea id="deptMaterialText" rows="4" maxlength="10000" placeholder="資料の内容を入力"></textarea></label>
-    <p class="v146-material-note">タイトルは必須です。URL・ファイル・テキストは任意ですが、少なくとも1つ入力してください。複数の登録もできます。ファイルは300KBまで。</p>
+    <p class="v146-material-note">タイトルは必須です。URL・ファイル・テキストは任意ですが、少なくとも1つ入力してください。複数の登録もできます。ファイルは形式を問わず1MBまで登録できます。</p>
     <div class="dept-material-dialog-actions"><button type="button" id="deptMaterialCancel">キャンセル</button><button type="submit" id="deptMaterialSave">保存</button></div>
   </form>
 </dialog>
@@ -17470,7 +17482,7 @@ async function v146OpenMaterial(item){
  const pre=pop.querySelector('pre');pre.textContent=data.text||'';pre.hidden=!hasText;
  const links=$('v155MaterialViewLinks');links.replaceChildren();
  if(hasUrl){const link=document.createElement('a');link.textContent='URLを開く';link.href=data.url;link.target='_blank';link.rel='noopener noreferrer';link.style.cssText='display:inline-flex;padding:10px 16px;background:#7577ff;color:#fff;text-decoration:none;border-radius:6px;font:500 16px Inter,sans-serif';links.append(link);}
- if(hasFile){const button=document.createElement('button');button.type='button';button.textContent='ファイルを開く・保存';button.style.cssText='padding:10px 16px;background:#7577ff;color:#fff;border:0;border-radius:6px;font:500 16px Inter,sans-serif;cursor:pointer';button.addEventListener('click',()=>v155DownloadMaterial(data));links.append(button);}
+ if(hasFile){const button=document.createElement('button');button.type='button';button.textContent='ファイルをダウンロード';button.style.cssText='padding:10px 16px;background:#7577ff;color:#fff;border:0;border-radius:6px;font:500 16px Inter,sans-serif;cursor:pointer';button.addEventListener('click',()=>v155DownloadMaterial(data));links.append(button);}
  pop.showModal();
  }catch(error){showToast('資料を取得できませんでした：'+(error.message||error));}
 }
@@ -17500,13 +17512,13 @@ deptMaterialSubmit=async function(event){
  if(!title||title.length>45)return alert('タイトルは1〜45文字で入力してください。');
  if(!url&&!text&&!file&&!keepFile)return alert('URL・ファイル・テキストのいずれか1つ以上を入力してください。');
  if(url&&!deptMaterialValidHref(url))return alert('https://から始まるURLを入力してください。');
- if(file&&(file.size>300*1024||!['application/pdf','image/png','image/jpeg','image/webp','text/plain'].includes(file.type)))return alert('300KB以下のPDF・画像・テキストファイルを選んでください。');
+ if(file&&file.size>1024*1024)return alert('ファイルは1MB以下にしてください。');
  if(!departmentMaterialState.canEdit)return;
  const btn=$('deptMaterialSave');btn.disabled=true;
  try{
  const department=deptMaterialCurrentDepartment(),region=deptMaterialRegion();
  const body={action:departmentMaterialState.editing?'update':'create',id:departmentMaterialState.editing||undefined,department,region,title,url,text,remove_file:$('deptMaterialRemoveFile').checked};
- if(file){body.file_name=file.name.slice(0,120);body.file_mime=file.type;body.file_data=await v146ReadFile(file);}
+ if(file){body.file_name=file.name.slice(0,120);body.file_mime=file.type||'application/octet-stream';body.file_data=await v146ReadFile(file);}
  await portalFetch('/api/department-materials',{method:'POST',body});
  $('deptMaterialDialog').close();await deptMaterialLoad(department);showToast('資料を保存しました');
  }catch(error){alert(error.message||'資料を保存できませんでした。');}finally{btn.disabled=false;}
