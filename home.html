@@ -17432,6 +17432,69 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
 @media(max-width:690px){#deptMaterialDialog{padding:22px 18px!important}#deptMaterialDialog label{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important}#deptMaterialDialog .v146-material-note,#deptMaterialDialog .v155-existing-file{margin-left:0!important}}
 
 
+
+.screen-client-materials .client-material-custom{
+ top:332px!important;height:536px!important;left:120px!important;width:1200px!important;
+ overflow:auto!important;padding:0!important;
+}
+.screen-client-materials #clientMaterialsCustomGrid{
+ display:grid!important;
+ grid-template-columns:repeat(3,360px)!important;
+ grid-auto-flow:row!important;
+ grid-auto-rows:max-content!important;
+ justify-content:space-between!important;
+ align-content:start!important;
+ align-items:start!important;
+ column-gap:0!important;
+ row-gap:20px!important;
+ width:100%!important;
+ height:auto!important;
+ margin:0!important;
+ padding:0 0 15px!important;
+ overflow:visible!important;
+}
+.screen-client-materials #clientMaterialsCustomGrid>.client-material-email{
+ position:static!important;left:auto!important;top:auto!important;
+ margin:0!important;padding:10px 14px!important;
+ width:360px!important;height:100px!important;min-height:100px!important;
+ box-sizing:border-box!important;border:0!important;border-radius:0!important;
+ background:#7577ff!important;color:#fff!important;
+ font:500 35px/1.15 Inter,'Noto Sans JP',sans-serif!important;
+ text-align:center!important;white-space:normal!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ cursor:pointer!important;
+}
+.screen-client-materials #clientMaterialsCustomGrid>.department-material-entry{
+ width:360px!important;min-height:100px!important;
+ margin:0!important;align-self:start!important;
+}
+.screen-client-materials #clientMaterialsCustomGrid>.department-material-entry>.department-material-link{
+ width:360px!important;height:100px!important;min-height:100px!important;
+ box-sizing:border-box!important;padding:10px 14px!important;
+ font:500 35px/1.15 Inter,'Noto Sans JP',sans-serif!important;
+ text-align:center!important;white-space:normal!important;
+ border:0!important;border-radius:0!important;
+}
+.screen-client-materials #clientMaterialsCustomGrid>.department-material-entry>.department-material-admin{
+ display:flex!important;justify-content:flex-end!important;
+ min-height:26px!important;padding:5px 0 0!important;
+ box-sizing:border-box!important;
+}
+.screen-department-materials.is-cons-v146 #departmentMaterialsGrid{
+ display:grid!important;grid-template-columns:repeat(3,360px)!important;
+ justify-content:space-between!important;align-content:start!important;
+ align-items:start!important;row-gap:20px!important;column-gap:0!important;
+}
+.screen-department-materials.is-cons-v146 #departmentMaterialsGrid .department-material-entry{
+ width:360px!important;min-height:100px!important;
+}
+.screen-department-materials.is-cons-v146 #departmentMaterialsGrid .department-material-link{
+ box-sizing:border-box!important;width:360px!important;
+ height:100px!important;min-height:100px!important;
+ font:500 35px/1.15 Inter,'Noto Sans JP',sans-serif!important;
+ padding:10px 14px!important;
+}
+
 /* Cons call: embedded script / assigned student details */
 .screen-cons-call .cons-v146-script{display:block;background:#d9d9d9;padding:0;overflow:hidden}
 .screen-cons-call #consCallingSite{display:block;width:100%;height:100%;border:0;background:#d9d9d9}
@@ -17492,11 +17555,28 @@ showScreen=function(screen,...args){
 };
 // Existing department-materials data and permission checks remain authoritative.
 const oldDeptRender=deptMaterialRender;
-deptMaterialRender=function(...args){const ret=oldDeptRender(...args);const isCons=departmentMaterialState.department==='cons'&&state.currentScreen==='department-materials';
+deptMaterialRender=function(...args){
+ const isClient=state.currentScreen==='client-materials';
+ const resultsButton=isClient?document.querySelector('.screen-client-materials .client-material-results'):null;
+ const scriptButton=isClient?$('clientMaterialsEmailScript'):null;
+ const ret=oldDeptRender(...args);
+ if(isClient){
+  const grid=$('clientMaterialsCustomGrid');
+  if(grid){
+   grid.querySelector('.department-material-empty')?.remove();
+   if(resultsButton)grid.prepend(resultsButton);
+   if(scriptButton){
+    if(resultsButton)resultsButton.after(scriptButton);
+    else grid.prepend(scriptButton);
+   }
+  }
+ }
+ const isCons=departmentMaterialState.department==='cons'&&state.currentScreen==='department-materials';
  const mat=document.querySelector('[data-screen="department-materials"]');if(mat)mat.classList.toggle('is-cons-v146',isCons);
  const add=$('consV146MaterialAdd');if(add)add.hidden=!(isCons&&departmentMaterialState.canEdit);
  const clientAdd=$('clientMaterialsAddButton');if(clientAdd)clientAdd.textContent='＋資料を増やす';
- return ret;};
+ return ret;
+};
 // The custom file/text types are fetched only on deliberate opening; nothing executable is inserted as HTML.
 const oldMaterialCard=deptMaterialCard;
 deptMaterialCard=function(item){
@@ -17514,18 +17594,29 @@ async function v146OpenMaterial(item){
  try{const q=new URLSearchParams({material_id:String(item.id)});const data=await portalFetch('/api/department-materials?'+q.toString(),{timeoutMs:90000});
  const hasUrl=Boolean(data.url),hasText=Boolean(data.text),hasFile=Boolean(data.file_data);
  if(!hasUrl&&!hasText&&!hasFile)throw Error('資料の内容が見つかりません。');
- if(hasFile&&!hasUrl&&!hasText){v155DownloadMaterial(data);return;}
+ if(hasFile&&!hasUrl&&!hasText){v155DownloadMaterial(data,item.title);return;}
  const pop=$('v146TextMaterialDialog');pop.querySelector('h2').textContent=item.title;
  const pre=pop.querySelector('pre');pre.textContent=data.text||'';pre.hidden=!hasText;
  const links=$('v155MaterialViewLinks');links.replaceChildren();
  if(hasUrl){const link=document.createElement('a');link.textContent='URLを開く';link.href=data.url;link.target='_blank';link.rel='noopener noreferrer';link.style.cssText='display:inline-flex;padding:10px 16px;background:#7577ff;color:#fff;text-decoration:none;border-radius:6px;font:500 16px Inter,sans-serif';links.append(link);}
- if(hasFile){const button=document.createElement('button');button.type='button';button.textContent='ファイルをダウンロード';button.style.cssText='padding:10px 16px;background:#7577ff;color:#fff;border:0;border-radius:6px;font:500 16px Inter,sans-serif;cursor:pointer';button.addEventListener('click',()=>v155DownloadMaterial(data));links.append(button);}
+ if(hasFile){const button=document.createElement('button');button.type='button';button.textContent='ファイルをダウンロード';button.style.cssText='padding:10px 16px;background:#7577ff;color:#fff;border:0;border-radius:6px;font:500 16px Inter,sans-serif;cursor:pointer';button.addEventListener('click',()=>v155DownloadMaterial(data,item.title));links.append(button);}
  pop.showModal();
  }catch(error){showToast('資料を取得できませんでした：'+(error.message||error));}
 }
-function v155DownloadMaterial(data){
- const blob=v146B64ToBlob(data.file_data,data.file_mime||'application/octet-stream');const url=URL.createObjectURL(blob);
- const a=document.createElement('a');a.href=url;a.download=data.file_name||'資料';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),45000);
+function v155DownloadName(title,originalName){
+ const safeTitle=String(title||'').trim()
+  .replace(/[\\/:*?"<>|\u0000-\u001f\u007f]/g,'_').replace(/[. ]+$/g,'').slice(0,100);
+ const filename=String(originalName||'').trim();
+ const extension=filename.match(/\.[A-Za-z0-9]{1,12}$/)?.[0]||'';
+ const stem=safeTitle||'資料';
+ return extension&&!stem.toLowerCase().endsWith(extension.toLowerCase())?stem+extension:stem;
+}
+function v155DownloadMaterial(data,materialTitle=''){
+ const blob=v146B64ToBlob(data.file_data,data.file_mime||'application/octet-stream');
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;
+ a.download=v155DownloadName(data.title||materialTitle,data.file_name);
+ document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),45000);
 }
 const originalDialog=deptMaterialOpenDialog;
 deptMaterialOpenDialog=function(item=null){
