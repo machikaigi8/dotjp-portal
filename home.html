@@ -17582,7 +17582,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 })();
 
-const consStudentState={students:[],filtered:[],index:0,loading:false,saving:false,loadSerial:0};
+const consStudentState={students:[],filtered:[],index:0,loading:false,saving:false,loadSerial:0,scope:'mine'};
 const consStudentVal=id=>document.getElementById(id);
 function consStudentSafe(value){return String(value??'').trim();}
 function consStudentCurrent(){return consStudentState.filtered[consStudentState.index]||null;}
@@ -17617,7 +17617,7 @@ function consStudentFilter(){
  const text=consStudentSafe(consStudentVal('consStudentSearch').value).normalize('NFKC').toLowerCase();
  consStudentState.filtered=consStudentState.students.filter(p=>!text||[p.name,p.kana].some(v=>consStudentSafe(v).normalize('NFKC').toLowerCase().includes(text)));
  consStudentState.index=0;
- consStudentVal('consStudentStatus').textContent=consStudentState.students.length===0?'担当の学生が見つかりません。':consStudentState.filtered.length===0?'検索条件に一致する学生がいません。':'';
+ consStudentVal('consStudentStatus').textContent=consStudentState.students.length===0?(consStudentState.scope==='region'?'連携先の学生情報が見つかりません。':'担当の学生が見つかりません。'):consStudentState.filtered.length===0?'検索条件に一致する学生がいません。':consStudentState.scope==='region'?'所属地域の学生情報を表示しています。':'';
  consStudentSelect();
 }
 async function consStudentLoad(){
@@ -17630,10 +17630,11 @@ async function consStudentLoad(){
   const data=await portalFetch('/api/cons/students?region='+encodeURIComponent(region),{timeoutMs:25000});
   if(serial!==consStudentState.loadSerial||state.currentScreen!=='cons-call')return;
   consStudentState.students=Array.isArray(data.students)?data.students:[];
+  consStudentState.scope=data.scope==='region'?'region':'mine';
   consStudentFilter();
  }catch(error){
   if(serial!==consStudentState.loadSerial)return;
-  consStudentState.students=[];consStudentFilter();status.textContent='学生情報を取得できませんでした：'+String(error.message||error);
+  consStudentState.students=[];consStudentState.scope='mine';consStudentFilter();status.textContent='学生情報を取得できませんでした：'+String(error.message||error);
  }finally{if(serial===consStudentState.loadSerial){consStudentState.loading=false;consStudentSetControls();}}
 }
 async function consStudentSave(){
