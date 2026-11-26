@@ -6750,9 +6750,9 @@ line-height: 1.5 !important;
 .screen-marketing,.screen-marketing *, .screen-department-materials.is-mark-figma .mark-material-nav, .screen-department-materials.is-mark-figma .mark-material-nav *{font-family:'Noto Sans CJK JP','Yu Gothic',Meiryo,sans-serif!important}
 .screen-marketing{background:#f2f2ff!important;color:#080808!important;overflow:hidden}
 .screen-marketing .mark-figma-primary,.screen-department-materials.is-mark-figma .mark-material-nav{position:absolute;left:120px;top:110px;width:780px;display:grid;grid-template-columns:360px 360px;gap:60px;z-index:4}
-.screen-marketing .mark-figma-primary button,.screen-department-materials.is-mark-figma .mark-material-nav button,.screen-marketing .mark-figma-secondary button{border:0;border-radius:0;background:#d6d8ff;color:#070707;cursor:pointer;text-align:center;height:60px;font:500 35px/1.1 Inter,'Noto Sans JP',sans-serif;padding:4px 8px}
+.screen-marketing .mark-figma-primary button,.screen-department-materials.is-mark-figma .mark-material-nav button,.screen-marketing .mark-figma-secondary button{border:0;border-radius:0;background:#d4d5ff;color:#070707;cursor:pointer;text-align:center;height:60px;font:500 35px/1.1 Inter,'Noto Sans JP',sans-serif;padding:4px 8px}
 .screen-marketing .mark-figma-primary button:hover,.screen-marketing .mark-figma-secondary button:hover,.screen-department-materials.is-mark-figma .mark-material-nav button:hover{background:#c2c6ff}
-.screen-marketing .mark-figma-primary button.is-current,.screen-marketing .mark-figma-secondary button.is-current{box-shadow:inset 0 -5px #656cff}
+.screen-marketing .mark-figma-primary button.is-current,.screen-marketing .mark-figma-secondary button.is-current{box-shadow:none}
 .screen-marketing .mark-figma-stage{position:absolute;left:70px;top:208px;width:1300px;height:690px;background:#fff;overflow:hidden}
 .screen-marketing .mark-figma-secondary{position:absolute;left:50px;top:32px;display:grid;grid-template-columns:repeat(3,360px);gap:60px;z-index:1}
 .screen-marketing .mark-figma-main{position:absolute;left:50px;top:120px;width:1200px;height:535px;display:grid;grid-template-columns:600px 530px;gap:71px;align-items:stretch}
@@ -6777,7 +6777,7 @@ line-height: 1.5 !important;
 .screen-marketing .mark-chat-form button{width:39px;height:39px;min-width:39px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:0;border-radius:13px;background:#193b32;color:#fff;font-size:25px;line-height:1;padding:0;cursor:pointer}
 .screen-marketing .mark-chat-form button:disabled{opacity:.45;cursor:wait}
 .screen-marketing .mark-chat-hint{font:11px/1.4 Inter,'Noto Sans JP',sans-serif;color:#78818e;margin:5px 16px 10px;text-align:center;max-height:47px;overflow:auto;flex-shrink:0}
-.screen-marketing #markMemoSave{font:500 18px Inter,'Noto Sans JP',sans-serif;border:0;background:#7479ff;color:#fff;padding:6px 14px;cursor:pointer}
+.screen-marketing .mark-chat-site-link,.screen-marketing .mark-chat-references a{color:#245cc0;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
 .screen-marketing .mark-info-right{position:relative;min-width:0;font-family:Inter,'Noto Sans JP',sans-serif;color:#050505}
 .screen-marketing .mark-region-grid{display:grid;grid-template-columns:repeat(3,160px);grid-template-rows:80px 80px}
 .screen-marketing .mark-region-grid button{padding:0;background:#fff;border:3px solid #40ccff;color:#000060;font:500 46px Inter,'Noto Sans JP',sans-serif;cursor:pointer}
@@ -6789,17 +6789,15 @@ line-height: 1.5 !important;
 .screen-marketing .mark-rating-title{position:absolute;left:0;top:399px;font-size:29px;line-height:39px;margin:0}
 .screen-marketing .mark-rating-row{position:absolute;left:0;top:409px;width:530px;height:126px;display:grid;grid-template-columns:repeat(3,90px) 158px;justify-content:space-between;align-items:end}
 .screen-marketing .mark-rating-row button{border:0;border-radius:17px;height:90px;cursor:pointer;font:500 49px Inter,'Noto Sans JP',sans-serif;color:#080808}
-.screen-marketing .mark-rating-row button[data-mark-rating='good']{background:#9770ff}
-.screen-marketing .mark-rating-row button[data-mark-rating='neutral']{background:#eeff69}
-.screen-marketing .mark-rating-row button[data-mark-rating='bad']{background:#ff7578}
+.screen-marketing .mark-rating-row button[data-mark-rating='good']{background:#9875ff}
+.screen-marketing .mark-rating-row button[data-mark-rating='neutral']{background:#efff75}
+.screen-marketing .mark-rating-row button[data-mark-rating='bad']{background:#ff7575}
 .screen-marketing .mark-rating-row button[aria-pressed='true']{outline:5px solid #000060;outline-offset:1px}
-.screen-marketing .mark-rating-row .mark-archive-open{background:#8ff7c9;font-size:27px;line-height:1.2;border:2px solid #111;height:126px}
+.screen-marketing .mark-rating-row .mark-archive-open{background:#9dffd8;font-size:27px;line-height:1.2;border:2px solid #111;height:126px}
 .screen-marketing .mark-rating-row button[data-mark-rating]:disabled{cursor:wait;opacity:.8}
 .screen-marketing .mark-memo-label{display:block;font-size:25px;position:absolute;top:298px;left:10px;z-index:1;pointer-events:none;color:#777}
-.screen-marketing #markViewingMemo{position:absolute;top:277px;left:0;width:530px;height:97px;resize:none;padding:44px 10px 7px;border:2px solid #111;border-radius:0;font-size:18px;box-sizing:border-box}
-.screen-marketing #markViewingMemo:not(:placeholder-shown){padding-top:11px}
-.screen-marketing .mark-memo-label:has(+ #markViewingMemo:not(:placeholder-shown)){opacity:0}
-.screen-marketing .mark-info-actions{position:absolute;top:344px;right:5px;display:flex;gap:8px;align-items:center;z-index:2}
+.screen-marketing #markViewingMemo{position:absolute;top:277px;left:0;width:530px;height:97px;resize:none;padding:11px 10px 7px;border:2px solid #111;border-radius:0;font-size:18px;box-sizing:border-box}
+.screen-marketing .mark-info-actions{position:absolute;top:379px;right:0;display:flex;gap:8px;align-items:center;z-index:2}
 .screen-marketing .mark-info-actions span{font-size:13px;background:#fff;color:#53608e;max-width:300px}
 .screen-marketing .mark-info-actions button{font-size:13px!important;min-height:26px;opacity:.96}
 .screen-marketing .mark-board-landing{position:absolute;left:50px;top:120px;width:1200px;height:535px}
@@ -6841,7 +6839,19 @@ line-height: 1.5 !important;
 .screen-marketing .mark-archive-dialog h2{font-size:30px;margin:0}
 .screen-marketing .mark-archive-dialog header button{border:0;background:#7577ff;color:white;font-size:18px;padding:10px 16px;cursor:pointer}
 .screen-marketing #markArchiveList{display:grid;gap:10px}
-.screen-marketing .mark-archive-item{border:1px solid #ccc;background:#f5f5ff;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px;text-align:left;font-size:18px;cursor:pointer}
+ .screen-marketing .mark-archive-item{border:1px solid #d6d9ed;background:#f9f9ff;display:flex;flex-direction:column;gap:9px;padding:14px 16px;text-align:left;font-size:15px;border-radius:9px;overflow-wrap:anywhere}
+.screen-marketing .mark-archive-meta{color:#4a5082;font-size:13px}
+.screen-marketing .mark-archive-link{color:#255aba;text-decoration:underline;font-size:16px}
+.screen-marketing .mark-archive-memo{margin:0;white-space:pre-wrap;font-size:14px;color:#303544}
+.screen-marketing .mark-archive-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.screen-marketing .mark-archive-controls button{cursor:pointer;border:1px solid #9ea5c0;border-radius:7px;background:#fff;padding:5px 12px;font-size:17px;min-width:43px}
+.screen-marketing .mark-archive-controls button[aria-pressed='true']{outline:3px solid #000060;outline-offset:1px}
+.screen-marketing .mark-archive-controls button[data-archive-rating='good']{background:#9875ff}
+.screen-marketing .mark-archive-controls button[data-archive-rating='neutral']{background:#efff75}
+.screen-marketing .mark-archive-controls button[data-archive-rating='bad']{background:#ff7575}
+.screen-marketing .mark-archive-controls button:disabled{opacity:.55;cursor:wait}
+.screen-marketing .mark-archive-controls .mark-archive-view{margin-left:auto;background:#d4d5ff}
+.screen-marketing .mark-archive-item .mark-archive-status{font-size:12px;color:#243b7a}
 .screen-marketing .mark-screenreader{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .screen-department-materials.is-mark-figma{background:#f2f2ff!important}
 .screen-department-materials.is-mark-figma .mark-material-nav{display:grid!important}
@@ -7051,17 +7061,17 @@ line-height: 1.5 !important;
       <div class="mark-figma-chat">
         <div class="mark-chat-header">
           <span class="mark-chat-avatar" aria-hidden="true">✦</span>
-          <div><div class="mark-chat-title">マーケティングAI</div><div class="mark-chat-subtitle">登録した分析情報源をもとに回答します</div></div>
+          <div><div class="mark-chat-title">マーケティングAI</div><div class="mark-chat-subtitle">困りごとを解決する外部サイトを紹介します</div></div>
         </div>
         <div class="mark-chat-messages" id="markChatMessages" aria-live="polite" role="log" aria-label="AIとの会話">
-          <div class="mark-chat-empty" id="markChatEmpty"><strong>何から始めますか？</strong><span>質問を入力すると、選択中の地域に登録された情報源を参照して回答します。</span></div>
+          <div class="mark-chat-empty" id="markChatEmpty"><strong>どんなことで困っていますか？</strong><span>役立つ外部サイトと活用方法を紹介します。紹介URLを押すと右側の「見ているURL」に反映されます。</span></div>
         </div>
         <form class="mark-chat-form" id="markChatForm">
           <label for="markChatPrompt" class="mark-screenreader">AIへの質問</label>
           <textarea id="markChatPrompt" rows="1" maxlength="1500" placeholder="メッセージを入力…" aria-label="AIへのメッセージ"></textarea>
           <button type="submit" id="markChatSend" aria-label="メッセージを送信" title="送信">↑</button>
         </form>
-        <p id="markChatStatus" class="mark-chat-hint">Enterで送信・Shift+Enterで改行 ｜ 回答には登録された分析情報源を利用します</p>
+        <p id="markChatStatus" class="mark-chat-hint">Enterで送信・Shift+Enterで改行 ｜ 外部サイトはリンク先の内容も確認してください</p>
       </div>
       <div class="mark-info-right">
         <div class="mark-region-grid" id="markRegionButtons" aria-label="地域を選択">
@@ -7073,9 +7083,8 @@ line-height: 1.5 !important;
         </div>
         <label class="mark-url-label" for="markViewingUrl">見ているURL</label>
         <input id="markViewingUrl" type="url" maxlength="1000" placeholder="https://" autocomplete="off">
-        <label class="mark-memo-label" for="markViewingMemo">メモを残す</label>
-        <textarea id="markViewingMemo" maxlength="2500" rows="3" placeholder="気づいたことや活用方法"></textarea>
-        <div class="mark-info-actions"><span id="markInfoStatus" role="status" aria-live="polite"></span><button type="button" id="markMemoSave">メモを保存</button></div>
+        <textarea id="markViewingMemo" aria-label="メモを残す" maxlength="2500" rows="3" placeholder="メモを残す"></textarea>
+        <div class="mark-info-actions"><span id="markInfoStatus" role="status" aria-live="polite"></span></div>
         <div class="mark-rating-title">役に立った</div>
         <div class="mark-rating-row" role="group" aria-label="URLの評価">
           <button type="button" data-mark-rating="good" aria-label="役に立った：〇" aria-pressed="false">〇</button>
@@ -7159,7 +7168,7 @@ line-height: 1.5 !important;
   </div>
   <div class="mark-archive-overlay" id="markArchiveOverlay" hidden>
     <div class="mark-archive-dialog" role="dialog" aria-modal="true" aria-label="URLアーカイブ">
-      <header><h2>アーカイブ URLをみる</h2><button type="button" id="markArchiveClose">閉じる ×</button></header>
+      <header><h2>保存したURLのアーカイブ</h2><button type="button" id="markArchiveClose">閉じる ×</button></header>
       <div id="markArchiveList"></div>
     </div>
   </div>
@@ -16970,15 +16979,85 @@ async function marketingFigmaSaveSource(e){
     markFigEl('markSourceEditor').hidden=true;await marketingFigmaLoadSources();
   }catch(error){alert(error.message||'保存できませんでした');}finally{btn.disabled=false;}
 }
+function marketingFigmaSetCurrentUrl(value,region=markFigState.region){
+  const url=marketingFigmaValidUrl(value);
+  if(!url)return false;
+  if(region!==markFigState.region)marketingFigmaRegion(region);
+  const field=markFigEl('markViewingUrl');field.value=url;
+  markFigState.feedbackRequest++;markFigState.feedbackSaving=false;
+  markFigState.feedback=null;markFigState.selectionUrl='';
+  markFigEl('markViewingMemo').value='';markFigEl('markInfoStatus').textContent='';
+  marketingFigmaRatings();
+  void marketingFigmaFeedbackLoad();
+  return true;
+}
+function marketingFigmaSiteLink(rawUrl,label,region=markFigState.region,closeArchive=false){
+  const url=marketingFigmaValidUrl(rawUrl);
+  if(!url)return null;
+  const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';
+  link.className='mark-chat-site-link';link.textContent=label||url;
+  link.addEventListener('click',()=>{marketingFigmaSetCurrentUrl(url,region);if(closeArchive)markFigEl('markArchiveOverlay').hidden=true;});
+  return link;
+}
+function marketingFigmaRenderAiAnswer(element,answer){
+  const message=String(answer||'');element.replaceChildren();
+  // Render only text and validated HTTPS anchors, never HTML from an AI response.
+  const pattern=/\[([^\]\n]{1,160})\]\((https:\/\/[^\s)]+)\)|https:\/\/[^\s<>"'`]+/g;
+  let cursor=0,match;
+  while((match=pattern.exec(message))){
+    if(match.index>cursor)element.append(document.createTextNode(message.slice(cursor,match.index)));
+    const raw=match[2]||match[0];
+    const trimmed=raw.replace(/[、。，．！!？?；;：:,）)\].]+$/gu,'');
+    const link=marketingFigmaSiteLink(trimmed,match[1]||trimmed);
+    if(link){element.append(link);if(!match[2]&&raw.length>trimmed.length)element.append(document.createTextNode(raw.slice(trimmed.length)));}
+    else element.append(document.createTextNode(match[0]));
+    cursor=pattern.lastIndex;
+  }
+  if(cursor<message.length)element.append(document.createTextNode(message.slice(cursor)));
+}
 async function marketingFigmaArchive(){
-  const list=markFigEl('markArchiveList');list.textContent='読み込み中…';markFigEl('markArchiveOverlay').hidden=false;
+  const list=markFigEl('markArchiveList');list.textContent='保存済みのURLを読み込み中…';markFigEl('markArchiveOverlay').hidden=false;
   try{
-    const result=await portalFetch('/api/marketing/sources?region='+encodeURIComponent(markFigState.region));
+    const result=await portalFetch('/api/marketing/feedback/archive');
     if(markFigEl('markArchiveOverlay').hidden)return;
     list.replaceChildren();
-    for(const item of result.sources||[]){const b=document.createElement('button');b.className='mark-archive-item';b.type='button';b.textContent=item.title+'　'+item.url;
-      b.addEventListener('click',()=>{markFigEl('markViewingUrl').value=item.url;markFigEl('markArchiveOverlay').hidden=true;void marketingFigmaFeedbackLoad();});list.append(b);}
-    if(!list.children.length)list.textContent='登録されたURLはありません。分析情報源設定から追加してください。';
+    const entries=Array.isArray(result.items)?result.items:[];
+    for(const item of entries){
+      const url=marketingFigmaValidUrl(item.url),region=Object.hasOwn(markFigRegions,item.region)?item.region:'tokyo';
+      if(!url)continue;
+      const box=document.createElement('article');box.className='mark-archive-item';
+      const meta=document.createElement('div');meta.className='mark-archive-meta';
+      meta.textContent=(markFigRegions[region]||region)+'　'+String(item.updated_at||'').slice(0,10);
+      const link=marketingFigmaSiteLink(url,url,region,true);if(link)link.className='mark-archive-link';
+      const memo=document.createElement('p');memo.className='mark-archive-memo';memo.textContent=item.memo||'（メモなし）';
+      const controls=document.createElement('div');controls.className='mark-archive-controls';
+      const state=document.createElement('span');state.className='mark-archive-status';state.setAttribute('role','status');
+      const ratings=[['good','〇'],['neutral','△'],['bad','×']];
+      const buttons=[];
+      for(const [rating,label] of ratings){
+        const btn=document.createElement('button');btn.type='button';btn.dataset.archiveRating=rating;btn.textContent=label;btn.title=label+'に評価を変更';
+        btn.setAttribute('aria-label',label+'の評価に変更');
+        btn.setAttribute('aria-pressed',String(item.rating===rating));
+        btn.addEventListener('click',async()=>{
+          if(buttons.some(b=>b.disabled))return;
+          buttons.forEach(b=>b.disabled=true);state.textContent='保存中…';
+          try{
+            await portalFetch('/api/marketing/feedback',{method:'POST',body:{region,url,rating,memo:item.memo||''}});
+            item.rating=rating;buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.archiveRating===rating)));
+            if(markFigState.region===region&&marketingFigmaValidUrl(markFigEl('markViewingUrl').value)===url){markFigState.feedback=rating;marketingFigmaRatings();}
+            state.textContent='保存しました';
+          }catch(error){state.textContent=error.message||'保存に失敗しました';}
+          finally{buttons.forEach(b=>b.disabled=false);}
+        });controls.append(btn);buttons.push(btn);
+      }
+      const view=document.createElement('button');view.type='button';view.className='mark-archive-view';view.textContent='表示・メモ編集';
+      view.addEventListener('click',()=>{
+        marketingFigmaSetCurrentUrl(url,region);markFigEl('markArchiveOverlay').hidden=true;
+      });
+      controls.append(view,state);
+      box.append(meta);if(link)box.append(link);box.append(memo,controls);list.append(box);
+    }
+    if(!list.children.length)list.textContent='保存済みのURLはまだありません。「見ているURL」を入力し、〇・△・×を押して保存してください。';
   }catch(error){list.textContent=error.message||'取得できませんでした';}
 }
 function marketingFigmaBack(){
@@ -17014,14 +17093,13 @@ async function marketingFigmaChat(e){
       method:'POST',timeoutMs:60000,
       body:{prompt,region:markFigState.region,url:marketingFigmaValidUrl(markFigEl('markViewingUrl').value)}
     });
-    reply.textContent=result.reply||'回答を取得できませんでした';
+    marketingFigmaRenderAiAnswer(reply,result.reply||'回答を取得できませんでした');
     const refs=Array.isArray(result.references)?result.references:[];
     if(refs.length){
       const box=document.createElement('div');box.className='mark-chat-references';
       const header=document.createElement('strong');header.textContent='参照した分析情報源';box.append(header);
       for(const item of refs){
-        const link=document.createElement('a');link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';
-        link.textContent=`[${item.number}] ${item.title}`;box.append(link);
+        const link=marketingFigmaSiteLink(item.url,`[${item.number}] ${item.title}`);if(link)box.append(link);
       }
       list.append(box);
     }
@@ -17041,7 +17119,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   markFigEl('markViewingUrl').addEventListener('change',()=>void marketingFigmaFeedbackLoad());
   markFigEl('markViewingUrl').addEventListener('blur',()=>void marketingFigmaFeedbackLoad());
   markFigEl('markInfoPane').querySelectorAll('[data-mark-rating]').forEach(b=>b.addEventListener('click',()=>marketingFigmaChooseRating(b.dataset.markRating)));
-  markFigEl('markMemoSave').addEventListener('click',()=>void marketingFigmaFeedbackSave());
   markFigEl('markArchiveOpen').addEventListener('click',()=>void marketingFigmaArchive());
   markFigEl('markArchiveClose').addEventListener('click',()=>{markFigEl('markArchiveOverlay').hidden=true;});
   markFigEl('markSourcesRegion').addEventListener('change',()=>{markFigState.region=markFigEl('markSourcesRegion').value;void marketingFigmaLoadSources();});
