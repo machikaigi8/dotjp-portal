@@ -7690,7 +7690,7 @@ line-height: 1.5 !important;
               <h2>依頼内容の編集</h2>
               <p id="pmMeta" class="pm-meta">左側から編集する依頼を選択してください。</p>
               <label class="pm-field">担当箇所（任意）<select id="pmTarget" disabled></select></label>
-              <label class="pm-field">期限（日付・時刻）<input id="pmDeadline" type="datetime-local" step="60" required disabled></label>
+              <label class="pm-field">期限（日付）<input id="pmDeadline" type="date" required disabled></label>
               <label class="pm-field">内容<textarea id="pmContent" maxlength="16000" required disabled placeholder="依頼内容を入力"></textarea></label>
               <p class="pm-hint">同じ投函で複数宛先に送られた依頼は、まとめて更新されます。既存の完了記録は保持されます。</p>
               <div class="pm-actions"><span id="pmStatus" class="pm-status" role="status"></span><button id="pmSave" class="pm-save" type="submit" disabled>変更を保存</button></div>
@@ -7731,7 +7731,7 @@ line-height: 1.5 !important;
 
             <div class="postcard-form-row row-deadline">
               <label for="deadline">期限：</label>
-              <input id="deadline" type="datetime-local" step="60" aria-label="期限（日付と時刻）">
+              <input id="deadline" type="date" aria-label="期限（日付）">
             </div>
 
             <div class="postcard-form-row row-target">
@@ -10159,7 +10159,7 @@ function openHomeTaskDetail(taskId) {
   const metadata = [
     ["依頼元", task.requester],
     ["担当", task.recipient],
-    ["期限", task.deadline ? formatPostDatetime(task.deadline) : ""],
+    ["期限", task.deadline ? formatPostDate(task.deadline) : ""],
     ["担当画面", task.targetLabel],
     ["内容", task.content && task.content.trim() !== title ? task.content : ""]
   ].filter(([,value]) => String(value || "").trim());
@@ -10951,16 +10951,18 @@ function applyPostAudience() {
   showPostAudienceSummary();
   closePostAudience();
 }
-function toPostDatetimeInput(value) {
+function toPostDateInput(value) {
   const text=String(value||'').trim();
-  // 時刻が書かれていない期限には推測の時刻を入れない。
-  const found=text.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})[T\s](\d{1,2}):(\d{2})/);
-  if(!found) return '';
-  return `${found[1]}-${found[2].padStart(2,'0')}-${found[3].padStart(2,'0')}T${found[4].padStart(2,'0')}:${found[5]}`;
+  // 既存の「日付＋時刻」の依頼も日付だけ引き継ぐ。
+  const found=text.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})(?:$|[T\s])/);
+  if(!found)return '';
+  const day=`${found[1]}-${found[2].padStart(2,'0')}-${found[3].padStart(2,'0')}`;
+  const parsed=new Date(`${day}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime())&&parsed.toISOString().slice(0,10)===day?day:'';
 }
-function formatPostDatetime(value) {
-  const parsed=toPostDatetimeInput(value);
-  return parsed?`${parsed.slice(0,4)}/${parsed.slice(5,7)}/${parsed.slice(8,10)} ${parsed.slice(11,16)}`:(value||'未設定');
+function formatPostDate(value) {
+  const parsed=toPostDateInput(value);
+  return parsed?`${parsed.slice(0,4)}/${parsed.slice(5,7)}/${parsed.slice(8,10)}`:'未設定';
 }
 // 実際のホーム内のリンクから選択肢を生成する。任意URLを入力させない。
 function postTargetOptions() {
@@ -11004,7 +11006,7 @@ function validatePostCard(card,index=null) {
       !(card.recipientRegions.length+card.recipientEmails.length)) {
     showToast(prefix+'宛先を選択してください');return false;
   }
-  if (!toPostDatetimeInput(card.deadline)) {showToast(prefix+'期限を年月日と時刻で入力してください');return false;}
+  if (!toPostDateInput(card.deadline)) {showToast(prefix+'期限の日付を入力してください');return false;}
   if (String(card.targetLink||'') && !postTargetLabel(card.targetLink)) {
     showToast(prefix+'担当箇所（ポータル上のリンク）の選択が不正です');return false;
   }
@@ -11027,7 +11029,7 @@ function hydratePostDraft() {
   showPostAudienceSummary();
 
   document.getElementById("deadline").value =
-    toPostDatetimeInput(draft.deadline);
+    toPostDateInput(draft.deadline);
 
   populatePostTargetOptions();
   document.getElementById('postTargetLink').value = draft.targetLink || '';
@@ -11127,7 +11129,7 @@ async function analyzePostFile(file) {
     requester: currentRequesterName(),
     destination: task.recipient || "全員",
     recipientEmail: task.recipientEmail || "",
-    deadline: toPostDatetimeInput(task.deadline),
+    deadline: toPostDateInput(task.deadline),
     targetLink: '',
     targetLabel: '',
     content: task.action || "",
@@ -11361,7 +11363,7 @@ function postcardInnerHtml(card) {
 
     <div class="postcard-display-row row-deadline">
       <strong>期限：</strong>
-      <span>${escapeHtml(formatPostDatetime(card.deadline))}</span>
+      <span>${escapeHtml(formatPostDate(card.deadline))}</span>
     </div>
 
     <div class="postcard-display-row row-target">
@@ -11445,7 +11447,7 @@ function editCurrentPostCard() {
   document.getElementById("requester").value = currentRequesterName();
   state.postAudience = normalizePostAudience(card);
   showPostAudienceSummary();
-  document.getElementById("deadline").value = toPostDatetimeInput(card.deadline);
+  document.getElementById("deadline").value = toPostDateInput(card.deadline);
   populatePostTargetOptions();
   document.getElementById('postTargetLink').value = card.targetLink || '';
   document.getElementById("content").value = card.content || "";
@@ -11565,7 +11567,7 @@ function renderManagedRequests() {
       return `<button type="button" class="pm-item${active?' is-selected':''}" data-pm-task="${Number(g.id)}" role="listitem" aria-pressed="${active?'true':'false'}">
           <span class="pm-item-title">${escapeHtml(heading)}</span>
           <span class="pm-item-sub">宛先：${escapeHtml(g.recipientLabels.join('・')||'—')}</span>
-          <span class="pm-item-sub">期限：${escapeHtml(formatPostDatetime(g.deadline))} ／ ${escapeHtml(where)}</span>
+          <span class="pm-item-sub">期限：${escapeHtml(formatPostDate(g.deadline))} ／ ${escapeHtml(where)}</span>
           ${state.isDeveloper?`<span class="pm-item-sub">依頼元：${escapeHtml(g.requester_name||g.requester_email)}</span>`:''}
         </button>`;
     }).join('');
@@ -11597,7 +11599,7 @@ function renderManagedRequestForm() {
     target.insertAdjacentHTML('beforeend',`<option value="${escapeHtml(selected.target_link)}" disabled>${escapeHtml(selected.target_label||'以前の担当箇所（再選択してください）')}</option>`);
   }
   target.value=selected.target_link||'';
-  deadline.value=toPostDatetimeInput(selected.deadline);
+  deadline.value=toPostDateInput(selected.deadline);
   content.value=selected.content||'';
   meta.textContent=`依頼元：${selected.requester_name||selected.requester_email||'—'} ／ 宛先：${selected.recipientLabels.join('・')||'—'} ／ 投函日：${(selected.created_at||'').slice(0,16).replace('T',' ')}`;
   form.dataset.originalContent=selected.content||'';
@@ -11614,8 +11616,8 @@ async function saveManagedRequest(event) {
   if(target && !postTargetOptions().some(x=>x.link===target)){
     showToast('担当箇所の選択が不正です');return;
   }
-  if(!toPostDatetimeInput(deadline)){
-    showToast('期限を日付と時刻で指定してください');return;
+  if(!toPostDateInput(deadline)){
+    showToast('期限の日付を指定してください');return;
   }
   if(!content){showToast('依頼内容を入力してください');return;}
   const button=document.getElementById('pmSave');
@@ -12771,7 +12773,7 @@ async function refreshRemoteTasks() {
       title:
         (task.target_label ? `【${task.target_label}】` : '') +
         `${task.content}` +
-        (task.deadline ? `（期限：${formatPostDatetime(task.deadline)}）` : ""),
+        (task.deadline ? `（期限：${formatPostDate(task.deadline)}）` : ""),
       type: "request",
       createdAt: task.created_at,
       completedAt: task.completed_at || null,
