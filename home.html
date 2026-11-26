@@ -998,7 +998,7 @@ button.file-choice-button {
   margin-top: 6px;
   text-align: center;
   color: #555;
-  font-size: 22px;
+font-size: 22px;
   line-height: 1.35;
 }
 .start-task-board {
@@ -1998,7 +1998,7 @@ button.summary-task-row:hover {
 .post-send-animation .send-animation-machine {
   left: 101px;
   top: 18px;
-  transform: scale(.94);
+transform: scale(.94);
   transform-origin: top center;
 }
 
@@ -2998,7 +2998,7 @@ body {
   width: 603px;
   height: 590px;
   padding: 12px 18px;
-  background: #f4f4f6;
+background: #f4f4f6;
   overflow-y: auto;
 }
 
@@ -4021,7 +4021,7 @@ a:active {
 .screen-hp-edit .portal-sheets-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .screen-hp-edit .portal-sheets-app button{cursor:pointer;border:1px solid #8c91b1;border-radius:6px;background:#f0f1ff;color:#202642;padding:8px 17px;font:600 17px/1.3 Inter,'Noto Sans JP',sans-serif}
 .screen-hp-edit .portal-sheets-app button:disabled{opacity:.45;cursor:not-allowed}
-.screen-hp-edit .portal-sheets-regions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.screen-hp-edit .portal-sheets-regions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .screen-hp-edit .portal-sheets-regions button{font-size:22px;background:#e7e8fd;border:0;padding:11px}
 .screen-hp-edit .portal-sheets-regions button.is-active{background:#7577ff;color:white}
 .screen-hp-edit .portal-sheets-intro{margin:0;font-size:16px;line-height:1.55;color:#43465a}
@@ -4998,7 +4998,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   margin: 0;
   font-size: 31px;
   font-weight: 700;
-  color: #17256a;
+color: #17256a;
 }
 .screen-home .home-task-detail-close {
   flex: none;
@@ -5998,7 +5998,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 .screen-schedule .figma-week-empty {
   color: #67738b !important;
   font-size: 20px !important;
-  line-height: 1.5 !important;
+line-height: 1.5 !important;
 }
 .screen-schedule .work-hours-open-button {
   box-sizing: border-box !important;
@@ -6998,7 +6998,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
 </svg></div>
 </div>
                 <div id="hrBoatLanes" class="hr-boat-lanes" aria-live="polite"></div>
-              </div>
+</div>
               <aside class="hr-boat-side" aria-label="順位とチーム編成">
                 <div class="hr-boat-side-tabs" role="tablist" aria-label="右側の表示">
                   <button type="button" id="hrBoatStandingsTab" role="tab" aria-selected="true" aria-controls="hrBoatStandingsPanel">累計順位</button>
@@ -7334,7 +7334,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <label>氏名<input id="clientSignatureName" readonly></label>
               <label>ふりがな（任意）<input id="clientSignatureHiragana" maxlength="80" placeholder="やまだたろう"></label>
               <label>署名のメールアドレス（固定）<input id="clientSignatureEmail" readonly value="companytokyo@dot-jp.or.jp"></label>
-              <label>部署<select id="clientSignatureDepartment" required><option value="">選択してください</option><option>コンス部</option><option>マーケティング部</option><option>人事局</option><option>プログラム部</option><option>クライアント部</option><option>事務局</option></select></label>
+              <label>部署<select id="clientSignatureDepartment" required><option value="">選択してください</option><option>コンス部</option><option>マーケティング部</option><option>人事局</option><option>プログラム部</option><option>クライアント部</option><option>事務局</option><option>代表</option></select></label>
               <label>大学名<input id="clientSignatureUniversity" required maxlength="80" placeholder="○○大学"></label>
               <label>学部名<input id="clientSignatureFaculty" required maxlength="80" placeholder="○○学部"></label>
               <label>ローマ字氏名<input id="clientSignatureRomanName" required maxlength="80" placeholder="Taro Yamada"></label>
@@ -7689,7 +7689,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             <form id="pmForm" class="pm-right">
               <h2>依頼内容の編集</h2>
               <p id="pmMeta" class="pm-meta">左側から編集する依頼を選択してください。</p>
-              <label class="pm-field">担当箇所<select id="pmTarget" required disabled></select></label>
+              <label class="pm-field">担当箇所（任意）<select id="pmTarget" disabled></select></label>
               <label class="pm-field">期限（日付・時刻）<input id="pmDeadline" type="datetime-local" step="60" required disabled></label>
               <label class="pm-field">内容<textarea id="pmContent" maxlength="16000" required disabled placeholder="依頼内容を入力"></textarea></label>
               <p class="pm-hint">同じ投函で複数宛先に送られた依頼は、まとめて更新されます。既存の完了記録は保持されます。</p>
@@ -7735,7 +7735,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
             </div>
 
             <div class="postcard-form-row row-target">
-              <label for="postTargetLink" title="受取側が未完了タスクを押した際に開く画面です">担当箇所：</label>
+              <label for="postTargetLink" title="任意。設定すると受取側が未完了タスクを押した際にその画面を開きます">担当箇所：</label>
               <select id="postTargetLink" aria-label="未完了タスクを押した際に開く作業画面"></select>
             </div>
 
@@ -7830,7 +7830,6 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <nav class="portal-sheets-regions" id="portalSheetRegions" aria-label="連携する地域">
                 <button type="button" data-sheet-region="kumamoto">熊本</button>
                 <button type="button" data-sheet-region="hiroshima">広島</button>
-                <button type="button" data-sheet-region="kansai">関西</button>
                 <button type="button" data-sheet-region="kanto" class="is-active">関東</button>
                 <button type="button" data-sheet-region="miyagi">宮城</button>
               </nav>
@@ -7999,7 +7998,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
               <div class="calendar-provider-heading">
                 <h2>Appleカレンダー</h2>
                 <button type="button" class="calendar-connect-button" data-calendar-connect="apple" aria-label="Appleカレンダーを連携">＋連携</button>
-              </div>
+</div>
               <div id="calendarAccountsApple" class="calendar-account-list"></div>
               <div class="calendar-provider-note">iCloud / CalDAV（アプリ用パスワード）</div>
             </section>
@@ -8999,7 +8998,7 @@ async function copyClientFieldText(value, label) {
       if (!ok) throw new Error("copy denied");
     }
     showToast(`${label}をコピーしました`);
-  } catch (error) {
+} catch (error) {
     console.warn("Client field copy failed", error);
     showToast(`${label}をコピーできませんでした。文字を選択してコピーしてください`);
   }
@@ -9994,12 +9993,12 @@ function openRequestTaskTarget(task) {
   const target = resolveRequestTaskTarget(task);
   if (!target) {
     showScreen("home");
-    showToast("この依頼には開ける担当箇所が設定されていません");
+    showToast("リンクは設定されていません。依頼の作業時間は記録されています");
     return;
   }
   if (target.kind === "external") {
     // Click handler / Start button内で同期的に開く（ポップアップブロック対策）。
-    // noopener指定ではタブが正常に開いても戻り値がnullになるため、戻り値で成否判定しない。
+// noopener指定ではタブが正常に開いても戻り値がnullになるため、戻り値で成否判定しない。
     window.open(target.url, "_blank", "noopener,noreferrer");
     showScreen("home");
     return;
@@ -10985,12 +10984,12 @@ function postTargetLabel(link) {return postTargetOptions().find(x=>x.link===link
 function populatePostTargetOptions() {
   const select=document.getElementById('postTargetLink');
   if (!select) return;
-  select.innerHTML='<option value="">タスクから開く画面を選択</option>'+postTargetOptions()
+  select.innerHTML='<option value="">設定しない（任意）</option>'+postTargetOptions()
     .map(x=>`<option value="${escapeHtml(x.link)}">${escapeHtml(x.label)}</option>`).join('');
 }
 function postTargetLinkHtml(card) {
   const id=String(card.targetLink||'');
-  const label=String(card.targetLabel||postTargetLabel(id)||'未設定');
+  const label=String(card.targetLabel||postTargetLabel(id)||'リンクなし');
   if (id.startsWith('route:') && screenNames.has(id.slice(6))) {
     return `<a class="post-target-link" href="#${escapeHtml(id.slice(6))}">${escapeHtml(label)} ↗</a>`;
   }
@@ -11006,8 +11005,8 @@ function validatePostCard(card,index=null) {
     showToast(prefix+'宛先を選択してください');return false;
   }
   if (!toPostDatetimeInput(card.deadline)) {showToast(prefix+'期限を年月日と時刻で入力してください');return false;}
-  if (!String(card.targetLink||'') || !postTargetLabel(card.targetLink)) {
-    showToast(prefix+'担当箇所（ポータル上のリンク）を選択してください');return false;
+  if (String(card.targetLink||'') && !postTargetLabel(card.targetLink)) {
+    showToast(prefix+'担当箇所（ポータル上のリンク）の選択が不正です');return false;
   }
   if (!String(card.content||'').trim()) {showToast(prefix+'依頼内容を入力してください');return false;}
   return true;
@@ -11562,7 +11561,7 @@ function renderManagedRequests() {
       const selected=managedRequestById(state.managedSelectedTaskId);
       const active=selected && managedRequestKey(selected)===managedRequestKey(g);
       const heading=String(g.content||'').replace(/\s+/g,' ').slice(0,65);
-      const where=g.target_label||postTargetLabel(g.target_link)||'担当箇所 未設定';
+      const where=g.target_label||postTargetLabel(g.target_link)||'リンクなし';
       return `<button type="button" class="pm-item${active?' is-selected':''}" data-pm-task="${Number(g.id)}" role="listitem" aria-pressed="${active?'true':'false'}">
           <span class="pm-item-title">${escapeHtml(heading)}</span>
           <span class="pm-item-sub">宛先：${escapeHtml(g.recipientLabels.join('・')||'—')}</span>
@@ -11586,7 +11585,7 @@ function renderManagedRequestForm() {
   const save=document.getElementById('pmSave');
   const enabled=Boolean(selected);
   for(const el of [target,deadline,content,save])el.disabled=!enabled;
-  target.innerHTML='<option value="">担当箇所を選択してください</option>'+postTargetOptions()
+  target.innerHTML='<option value="">設定しない（任意）</option>'+postTargetOptions()
     .map(x=>`<option value="${escapeHtml(x.link)}">${escapeHtml(x.label)}</option>`).join('');
   if(!selected){
     meta.textContent='左の一覧から依頼を選んでください。';
@@ -11612,8 +11611,8 @@ async function saveManagedRequest(event) {
   const target=document.getElementById('pmTarget').value;
   const deadline=document.getElementById('pmDeadline').value;
   const content=document.getElementById('pmContent').value.trim();
-  if(!postTargetOptions().some(x=>x.link===target)){
-    showToast('担当箇所を選択してください');return;
+  if(target && !postTargetOptions().some(x=>x.link===target)){
+    showToast('担当箇所の選択が不正です');return;
   }
   if(!toPostDatetimeInput(deadline)){
     showToast('期限を日付と時刻で指定してください');return;
@@ -11999,7 +11998,7 @@ async function refreshLineManualDirectory(){
      btn.addEventListener('click',()=>{candidateSelect.value=key;candidateSelect.focus();});
      row.appendChild(btn);candidates.appendChild(row);
    }
-   if(!data.members?.length){const empty=document.createElement('p');empty.textContent='候補がありません。公式LINEがいるグループで本人にメッセージを1件送ってもらい、LINE Webhook受信後に更新してください。';candidates.appendChild(empty);}
+if(!data.members?.length){const empty=document.createElement('p');empty.textContent='候補がありません。公式LINEがいるグループで本人にメッセージを1件送ってもらい、LINE Webhook受信後に更新してください。';candidates.appendChild(empty);}
    if(previousCandidate&&Array.from(candidateSelect.options).some(o=>o.value===previousCandidate))candidateSelect.value=previousCandidate;
    if(previousRoster&&Array.from(rosterSelect.options).some(o=>o.value===previousRoster))rosterSelect.value=previousRoster;
    for(const link of data.links||[]){
@@ -12300,7 +12299,7 @@ async function loadRoster(includeDisabled = false) {
 }
 
 // Figmaの「関東・関西名簿」3列と、「要望」空枠を切り替える。
-const portalSheetRegionNames={kumamoto:'熊本',hiroshima:'広島',kansai:'関西',kanto:'関東',miyagi:'宮城'};
+const portalSheetRegionNames={kumamoto:'熊本',hiroshima:'広島',kanto:'関東',miyagi:'宮城'};
 const portalSheetState={region:'kanto',entries:[],busy:false,serviceAccountEmail:''};
 const portalSheetReturn={pending:false,status:'',detail:''};
 function portalSheetStatus(message){const el=document.getElementById('portalSheetStatus');if(el)el.textContent=String(message||'');}
@@ -12999,7 +12998,7 @@ root.innerHTML =
 
     if (provider === "apple") {
       button.disabled = false;
-      return;
+return;
     }
 
     const available =
@@ -13999,7 +13998,7 @@ function buildDefaultWorkDays() {
     dayOfWeek,
     enabled: true,
     slots: [
-      {
+{
         start: "09:00",
         end: "22:00"
       }
@@ -14999,7 +14998,7 @@ async function loadMeetings(preserveScroll=false){
     renderMeetings();
     if(preserveScroll)root.scrollTop=savedScroll;
   }catch(error){
-    if(current!==state.meetingLoadingId)return;
+if(current!==state.meetingLoadingId)return;
     root.innerHTML='<div class="mtg-empty">'+escapeHtml(error.message||'MTGを取得できませんでした')+'</div>';
   }
 }
@@ -15999,7 +15998,7 @@ function clientMailRenderButtons(){
  // Always keep a real href: this still works if the JavaScript search handler fails.
  link.href=clientMailSearchUrl(record);
  link.target='_blank';link.rel='noopener noreferrer';
- link.textContent=step===2?'確認済み':step===1?'確認した':'メールを検索';
+link.textContent=step===2?'確認済み':step===1?'確認した':'メールを検索';
  link.setAttribute('aria-disabled',String(step===2));
  link.setAttribute('aria-label',link.textContent);
  link.classList.toggle('is-visited',step===1);
@@ -16999,7 +16998,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 .screen-hr-boats .hr-boat-vessel{
   top:0 !important;left:calc(128px + var(--boat-progress) * (100% - 258px) / 100) !important;
   min-width:115px !important;width:115px !important;height:85px !important;display:block !important;
-  transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sink,0) * 13deg)) !important;
+transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sink,0) * 13deg)) !important;
   transform-origin:50% 80% !important;opacity:calc(1 - var(--boat-sink,0) * .65) !important;
   filter:none !important;transition:left .7s ease,transform 1.1s ease,opacity 1.1s ease !important;
 }
