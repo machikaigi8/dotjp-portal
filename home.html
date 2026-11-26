@@ -6742,6 +6742,12 @@ line-height: 1.5 !important;
 .screen-schedule-plan .manual-plan-date-row input {font:500 23px/36px Inter,'Noto Sans JP',sans-serif;padding:2px 12px;border:2px solid #8aa5d4;border-radius:6px;color:#14274f}
 .screen-schedule-plan #planRpAvailabilityButton[hidden] {display:none!important}
 </style>
+<style>
+#activityHistoryPreview{display:block;box-sizing:border-box;width:100%;min-height:210px;max-height:240px;resize:vertical;overflow:auto;white-space:pre;line-height:1.4;font-size:14px;font-family:inherit;padding:12px;border:1px solid #bec7d9;border-radius:8px;background:#f8faff;color:#18243e;user-select:text}
+#activityHistoryCopy{margin-top:10px;font-size:16px;padding:8px 15px;cursor:pointer}
+.screen-client-staff-status .staff-status-metric span,.screen-client-staff-status .staff-status-metric strong{font-size:25px}
+.screen-client-staff-status [data-staff-period='total'] .staff-status-metric span,.screen-client-staff-status [data-staff-period='total'] .staff-status-metric strong{font-size:24px}
+</style>
 </head>
 <body>
   <div id="loading" class="loading-screen">認証情報を確認しています…</div>
@@ -7383,6 +7389,11 @@ line-height: 1.5 !important;
                 <div class="line-row"><label for="activitySubmissionDate">報告対象日</label><input type="date" id="activitySubmissionDate"><button type="button" id="activitySubmissionRefresh" class="secondary">提出状況を更新</button></div>
                 <div id="activitySubmissionStatus" class="line-link-status" role="status" aria-live="polite">日付を選択して更新してください。</div>
                 <div id="activitySubmissionRows" class="line-manual-link-list" aria-label="行動量提出状況"></div>
+                <h3>過去の行動量報告を取り込む（代表・デベロッパー）</h3>
+                <p>確認済みのCSVまたはJSONファイルを読み込み、元画像・日付・名簿氏名・9項目を照合します。最初にプレビューし、エラー0件のときだけD1へ保存できます。同じ人・同じ日の再取り込みは上書きし、二重加算しません。</p>
+                <input type="file" id="activityHistoryImportFile" accept=".csv,.json,text/csv,application/json" aria-label="過去行動量のCSVまたはJSONファイル">
+                <div class="line-row"><button type="button" id="activityHistoryImportPreview" class="secondary">取り込み内容を検証</button><button type="button" id="activityHistoryImportApply" disabled>確認済みデータをD1に登録</button></div>
+                <div id="activityHistoryImportStatus" class="line-link-status" role="status" aria-live="polite">未選択。画像の読み取りに不明点があるレコードは取り込めません。</div>
                 <h3>朝7時の前日行動量メール</h3>
                 <p>送信元は takaaki_souda@dot-jp.or.jp に固定。宛先は各メンバーのポータルログインアドレスです。受信者のGmail連携は不要。送信元の権限が未設定の場合のみ、管理者が本人のGoogleアカウントで1回だけ許可してください。企業メール用のアカウントとは別管理です。</p>
                 <div id="activityMailStatus" class="line-link-status" role="status">送信元と配信先を確認中…</div>
@@ -10623,10 +10634,10 @@ function activityHistoryReportText(day,values,reflection,goal){
 💬 振り返り・ネクストアクション
 ━━━━━━━━━━━━
 【本日の振り返り】
-${String(reflection||'').trim()||'未記入'}
+${String(reflection||'').trim()}
 
 【明日の行動目標】
-${String(goal||'').trim()||'未記入'}`;
+${String(goal||'').trim()}`;
 }
 function activityHistoryInputSnapshot(){
  const m={};document.querySelectorAll('[data-edit-activity]').forEach(el=>m[el.dataset.editActivity]=Number(el.value));
@@ -10638,7 +10649,7 @@ function activityHistoryInputSnapshot(){
 }
 function activityHistoryPreviewUpdate(){
  const p=activityHistoryInputSnapshot();
- document.getElementById('activityHistoryPreview').textContent=activityHistoryReportText(p.day,p.metrics,p.reflection,p.tomorrowGoal);
+ document.getElementById('activityHistoryPreview').value=activityHistoryReportText(p.day,p.metrics,p.reflection,p.tomorrowGoal);
 }
 function activityHistoryShowCalendar(){
  document.getElementById('activityHistoryCalendar').hidden=false;
@@ -10764,6 +10775,11 @@ function installActivityHistoryActions(){
  document.getElementById('activityHistoryBack').addEventListener('click',()=>{activityHistoryShowCalendar();void activityHistoryRenderMonth();});
  document.getElementById('activityHistoryCancel').addEventListener('click',()=>{activityHistoryShowCalendar();void activityHistoryRenderMonth();});
  document.getElementById('activityHistoryForm').addEventListener('submit',e=>void activityHistorySave(e));
+ document.getElementById('activityHistoryCopy').addEventListener('click',async()=>{
+  const editor=document.getElementById('activityHistoryPreview'),value=editor.value;
+  try{await navigator.clipboard.writeText(value);}catch{editor.focus();editor.select();document.execCommand('copy');}
+  showToast('行動量報告の全文をコピーしました。');
+ });
  document.getElementById('activityHistoryTimeOverride').addEventListener('change',e=>{
   document.getElementById('activityHistoryMinutes').disabled=!e.target.checked;
  });
@@ -10833,10 +10849,10 @@ function renderClientStaffStatus() {
   document.getElementById('staffStatusPersonLabel').textContent=member?member.name:'スタッフを選択してください';
   const metrics=member?.periods||{};
   const labelsByPeriod={
-    day:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']],
-    week:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']],
-    month:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']],
-    total:[['pending','未完了'],['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']]
+    day:[['list','リストアップ'],['call','架電'],['mail','メール送信'],['won','獲得']],
+    week:[['list','リストアップ'],['call','架電'],['mail','メール送信'],['won','獲得']],
+    month:[['list','リストアップ'],['call','架電'],['mail','メール送信'],['won','獲得']],
+    total:[['pending','未完了'],['list','リストアップ'],['call','架電'],['mail','メール送信'],['won','獲得']]
   };
   for (const [period,id] of [['day','staffStatusDayMetrics'],['week','staffStatusWeekMetrics'],
        ['month','staffStatusMonthMetrics'],['total','staffStatusTotalMetrics']]) {
@@ -10848,7 +10864,7 @@ function renderClientStaffStatus() {
   }
   const statusNote=document.getElementById('staffStatusNote');
   statusNote.textContent=(data.warning?data.warning+'　':'')+
-    '日・週・月はスプシのM/N/O列の増分履歴です。累計の未完了は現在の担当企業のうち対応対象で未チェックの件数です。今日の数値は速報値。初回導入以前の履歴は推定しません。';
+    '企業向けの件数はLINE報告・タスク時間記録と企業シートの記録を重複排除して集計しています。履歴がない項目は0件です。未完了は現在の企業シートを参照します。';
   statusNote.classList.toggle('is-warning',Boolean(data.warning));
   const selectedMonth=document.getElementById('staffStatusMonth').value;
   const selectedDay=document.getElementById('staffStatusDay').value;
@@ -15942,7 +15958,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     <p class="activity-history-note">時間を補正しない場合、作業セッションから計算された元の時間を維持します。</p>
    </div>
    <div class="activity-history-section"><h3>LINE・メールに使用する文章のプレビュー</h3>
-    <div id="activityHistoryPreview" class="activity-history-preview"></div></div>
+    <textarea id="activityHistoryPreview" class="activity-history-preview" readonly spellcheck="false" aria-label="LINE報告の全文"></textarea><button type="button" id="activityHistoryCopy" class="activity-history-save">行動量報告の全文をコピー</button></div>
    <p id="activityHistoryStatus" class="activity-history-status" role="status"></p>
    <div class="activity-history-actions">
     <button type="button" id="activityHistoryCancel" class="activity-history-back">戻る</button>
@@ -17690,5 +17706,67 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+ const file=document.getElementById('activityHistoryImportFile');
+ const preview=document.getElementById('activityHistoryImportPreview');
+ const apply=document.getElementById('activityHistoryImportApply');
+ const output=document.getElementById('activityHistoryImportStatus');
+ if(!file||!preview||!apply||!output)return;
+ let candidate=null;
+ const csvRows=text=>{
+  const cells=[],rows=[];let field='',row=[],inside=false;
+  for(let i=0;i<text.length;i++){
+   const c=text[i];
+   if(c==='"'){if(inside&&text[i+1]==='"'){field+='"';i++;}else inside=!inside;}
+   else if(c===','&&!inside){row.push(field);field='';}
+   else if((c==='\r'||c==='\n')&&!inside){
+    if(c==='\r'&&text[i+1]==='\n')i++;
+    row.push(field);if(row.some(x=>x!==''))rows.push(row);
+    row=[];field='';
+   }else field+=c;
+  }
+  row.push(field);if(row.some(x=>x!==''))rows.push(row);
+  const headers=(rows.shift()||[]).map(x=>x.replace(/^\uFEFF/,'').trim());
+  const ix=name=>headers.indexOf(name);
+  const fields=['student_call','student_email','student_review','student_dm','student_won',
+   'company_list','company_call','company_mail','company_won'];
+  if(ix('画像切出しID')<0||ix('報告日候補')<0||ix('報告者候補')<0)return null;
+  return rows.map(r=>({source:r[ix('画像切出しID')]||'',day:r[ix('報告日候補')]||'',
+   name:r[ix('報告者候補')]||'',email:r[ix('本人メール(任意)')]||'',
+   verified:/^(はい|true|1|確認済み)$/i.test(String(r[ix('原画像と照合済み')]||'').trim()),
+   metrics:Object.fromEntries(fields.map(k=>[k,r[ix(k)]??'0']))}));
+ };
+ file.addEventListener('change' ,()=>{candidate=null;apply.disabled=true;output.textContent='ファイルを確認してください。';});
+ preview.addEventListener('click',async()=>{
+  if(!file.files?.[0]){output.textContent='先にCSVまたはJSONファイルを選択してください。';return;}
+  preview.disabled=true;apply.disabled=true;
+  try{
+   const text=await file.files[0].text();
+   if(text.length>950000)throw new Error('ファイルが大きすぎます。500件以内に分けてください。');
+   const loaded=file.files[0].name.toLowerCase().endsWith('.csv')?csvRows(text):JSON.parse(text);
+   const allRows=Array.isArray(loaded)?loaded:loaded?.rows;
+   if(!Array.isArray(allRows))throw new Error('CSVの列名またはJSONのrows配列を確認してください。');
+   const rows=allRows.filter(item=>item.verified===true),skipped=allRows.length-rows.length;
+   if(!rows.length)throw new Error('確認済みの行がありません。CSVの「原画像と照合済み」を「はい」にしてください。');
+   const data=await portalFetch('/api/admin/activity-history/import',{method:'POST',body:{rows,apply:false}});
+   candidate=rows;
+   output.textContent=`画像照合済み ${data.verified}件、未確認スキップ ${skipped}件、登録対象 ${data.unique_days}人日、エラー ${data.errors}件。`+
+    (data.problems||[]).slice(0,10).map(x=>`\n${x.row}行目：${x.reason}`).join('');
+   apply.disabled=Number(data.errors)!==0;
+  }catch(error){candidate=null;output.textContent='検証できません：'+(error.message||error);}
+  finally{preview.disabled=false;}
+ });
+ apply.addEventListener('click',async()=>{
+  if(!candidate)return;
+  if(!confirm('過去の行動量をポータルのD1データベースに保存します。名簿・数値の確認は済んでいますか？'))return;
+  apply.disabled=true;
+  try{
+   const data=await portalFetch('/api/admin/activity-history/import',{method:'POST',body:{rows:candidate,apply:true}});
+   output.textContent=`保存完了：${data.imported}人日。コンス・クライアントの支部員タスク状況を再読み込みすると反映されます。`;
+  }catch(error){output.textContent='保存できません：'+(error.message||error);}
+ });
+});
+</script>
 </body>
 </html>
