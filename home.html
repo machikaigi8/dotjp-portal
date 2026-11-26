@@ -7167,7 +7167,7 @@ line-height: 1.5 !important;
 <button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
 </nav>
 <div class="cons-v146-results-stage"><div class="cons-v146-results-title">実績一覧</div>
-<div class="cons-v146-results-table"><h2>プレキャリ</h2>
+<div class="cons-v146-results-table"><h2>プレキャリ <span id="consV146ResultsPeriod"></span></h2>
 <div class="cons-v151-precari-grid" role="table" aria-label="プレキャリ実績">
 <div class="cons-v151-cell cons-v151-colhead" role="columnheader">項目／完了件数</div>
 <div class="cons-v151-cell cons-v151-colhead" role="columnheader">獲得数</div>
@@ -17327,6 +17327,7 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
 .screen-cons-results .cons-v146-results-table{left:50px;width:700px}
 .screen-cons-results .cons-v146-intern{left:800px;width:350px}
 .screen-cons-results .cons-v146-results-stage h2{height:77px;box-sizing:border-box;margin:0;background:#ffa3dc;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font:400 40px/1.2 Inter,'Noto Sans JP',sans-serif}
+.screen-cons-results #consV146ResultsPeriod{font-size:17px;font-weight:500;line-height:1.25;margin-left:16px;white-space:nowrap}
 .screen-cons-results .cons-v151-precari-grid{display:grid;grid-template-columns:250fr 225fr 225fr;grid-template-rows:70px repeat(5,minmax(0,1fr));width:100%;height:calc(100% - 77px);margin:0;box-sizing:border-box;font:400 25px/1.25 Inter,'Noto Sans JP',sans-serif;color:#111}
 .screen-cons-results .cons-v151-cell{position:relative;min-width:0;min-height:0;box-sizing:border-box;border-bottom:2px solid #ffa3dc}
 .screen-cons-results .cons-v151-cell:nth-child(3n+1),.screen-cons-results .cons-v151-cell:nth-child(3n+2){border-right:2px dotted #ffa3dc}
@@ -17562,8 +17563,9 @@ async function v146LoadConsStaff(){const n=$('consV146StaffStatus');n.textConten
  v146ShowConsStaff();n.textContent=result.people?.length?'':'該当支部のメンバーが見つかりません。';
  }catch(e){n.textContent='取得できませんでした：'+(e.message||e)}
 }
-async function v146LoadConsResults(){const n=$('consV146ResultsStatus');n.textContent='';try{
+async function v146LoadConsResults(){const n=$('consV146ResultsStatus');n.textContent='';const periodNode=$('consV146ResultsPeriod');if(periodNode)periodNode.textContent='';try{
  const d=await portalFetch('/api/cons/results?region='+encodeURIComponent(portalRegion()));if(state.currentScreen!=='cons-results')return;
+ if(periodNode&&d.period_start&&d.period_end)periodNode.textContent=`集計：${d.period_start.replaceAll('-', '/')}〜${d.period_end.replaceAll('-', '/')}`;
  const set=(id,val,suffix='件')=>{const el=$(id);if(el)el.textContent=val===null||val===undefined?'—':(Number(val).toLocaleString('ja-JP')+suffix)};
  for(const [key,label] of [['call','Call'],['email','Email'],['review','Review'],['dm','Dm']]){
  set('consV146'+label+'Won',d.methods?.[key]?.won);set('consV146All'+({call:'Calls',email:'Emails',review:'Reviews',dm:'Dm'}[key]),d.methods?.[key]?.completed);
