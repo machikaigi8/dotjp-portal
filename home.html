@@ -17413,7 +17413,21 @@ function hrBoatUpdateMembershipState(){
 function hrBoatRender(){
  const r=hrBoatData.result;if(!r)return;
  const label=document.getElementById('hrBoatWeek');
- label.textContent='11/23からの累計ポイントで先頭との差を表示｜未提出は10件ごとに沈没';
+ const lineHealth=r.line_health||{};
+ const tips=[
+   '11/23からの累計ポイントで先頭との差を表示',
+   '未提出は10件ごとに沈没',
+   `LINE連携：${Number(lineHealth.linked_roster_count||0)}人（関東名簿${Number(lineHealth.roster_count||0)}人）`,
+   `LINE報告受信：${Number(lineHealth.received_report_days||0)}人日`,
+   `数値保存：${Number(lineHealth.line_saved_days||0)}人日`
+ ];
+ if(lineHealth.activity_group_configured===false)tips.push('⚠行動量報告グループ未設定');
+ if(Number(lineHealth.linked_reports_without_metrics||0)>0)tips.push(`⚠連携済みの未集計報告${lineHealth.linked_reports_without_metrics}人日`);
+ if(Number(lineHealth.unlinked_numeric_reports||0)>0)tips.push(`⚠未連携の数値報告${lineHealth.unlinked_numeric_reports}人日`);
+ else if(Number(lineHealth.unlinked_report_markers||0)>0)tips.push(`⚠未連携の報告記録${lineHealth.unlinked_report_markers}人日`);
+ label.textContent=tips.join('｜');
+ label.style.maxWidth='820px';
+ label.style.lineHeight='1.3';
  const water=document.getElementById('hrBoatLanes');water.replaceChildren();
  const ranking=document.getElementById('hrBoatRanking');ranking.replaceChildren();
  const teams=Array.isArray(r.teams)?r.teams:[];
@@ -17435,7 +17449,7 @@ function hrBoatRender(){
    row.appendChild(hrBoatNode('span','',String(i+1)));
    row.appendChild(hrBoatNode('strong','',team.name));
    row.appendChild(hrBoatNode('b','',`${team.points} pt`));
-   const detail=hrBoatNode('small','',`${team.members?.length||0}名｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}`);
+   const detail=hrBoatNode('small','',`${team.members?.length||0}名｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}｜LINE連携${Number(team.linked_members||0)}名・保存${Number(team.line_saved_days||0)}人日`);
    row.appendChild(detail);
    const names=(team.members||[]).map(member=>String(member.name||member.email||'').trim()).filter(Boolean);
    const membersLabel=hrBoatNode('div','hr-boat-members',names.length?'所属：'+names.join('・'):'所属：未登録');
