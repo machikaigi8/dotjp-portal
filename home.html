@@ -7215,7 +7215,7 @@ line-height: 1.5 !important;
           </nav>
           <div class="hr-boat-page">
             <header class="hr-boat-header">
-              <div><h1>毎日タスク状況｜累計船レース</h1><p id="hrBoatWeek">累計ポイントで先頭との差を表示します</p></div>
+              <div><h1>毎日タスク状況｜11/23からの累計船レース</h1><p id="hrBoatWeek">累計ポイントで先頭との差を表示します</p></div>
               <button type="button" id="hrBoatRefresh">最新の状況に更新</button>
             </header>
             <p id="hrBoatStatus" class="hr-boat-status" role="status">読み込み中…</p>
@@ -17413,7 +17413,7 @@ function hrBoatUpdateMembershipState(){
 function hrBoatRender(){
  const r=hrBoatData.result;if(!r)return;
  const label=document.getElementById('hrBoatWeek');
- label.textContent='累計ポイントで先頭との差を表示｜15時の前日分未提出者を累計し、10件ごとに沈没';
+ label.textContent='11/23からの累計ポイントで先頭との差を表示｜未提出は10件ごとに沈没';
  const water=document.getElementById('hrBoatLanes');water.replaceChildren();
  const ranking=document.getElementById('hrBoatRanking');ranking.replaceChildren();
  const teams=Array.isArray(r.teams)?r.teams:[];
@@ -17823,7 +17823,7 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
       const lanes=screen.querySelector('#hrBoatLanes');
       if(lanes)lanes.style.setProperty('--boat-row-count',String(Math.max(1,teams.length)));
       const week=screen.querySelector('#hrBoatWeek');
-      if(week)week.textContent='累計ポイントで先頭との差を表示｜沈没回数は累計、10件ごとに沈没';
+      if(week)week.textContent='11/23からの累計ポイントで先頭との差を表示｜沈没回数は累計、10件ごとに沈没';
       const vessels=screen.querySelectorAll('.hr-boat-lane');
       const ranks=screen.querySelectorAll('.hr-boat-rank');
       const leaderPoints=Math.max(0,...teams.map(t=>Number(t.points||0)));
@@ -17874,7 +17874,7 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
       await originalLoad(...args);
       if(typeof hrBoatData!=='undefined'&&hrBoatData.result&&!hrBoatData.pending){
         const status=document.getElementById('hrBoatStatus');
-        if(status&&!hrBoatData.result.stale&&status.textContent==='累計ポイント・船の位置を更新しました。')status.textContent='累計ポイントを反映｜15時の前日分未提出者を累計し、10件ごとに沈没';
+        if(status&&!hrBoatData.result.stale&&status.textContent==='累計ポイント・船の位置を更新しました。')status.textContent='11/23からの累計ポイントを反映｜未提出は10件ごとに沈没';
       }
     };
   }
