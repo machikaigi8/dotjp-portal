@@ -16943,7 +16943,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     <label>ファイル<input id="deptMaterialFile" type="file"></label>
     <div id="deptMaterialExistingFile" class="v155-existing-file" hidden><span id="deptMaterialExistingFileName"></span><label><input id="deptMaterialRemoveFile" type="checkbox">既存のファイルを削除</label></div>
     <label>テキスト<textarea id="deptMaterialText" rows="4" maxlength="10000" placeholder="資料の内容を入力"></textarea></label>
-    <p class="v146-material-note">タイトルは必須です。URL・ファイル・テキストは任意ですが、少なくとも1つ入力してください。複数の登録もできます。ファイルは形式を問わず1MBまで登録できます。</p>
+    <p class="v146-material-note">タイトルは必須です。URL・ファイル・テキストは任意ですが、少なくとも1つ入力してください。複数の登録もできます。ファイルは形式を問わず1ファイル10MBまで登録できます。</p>
     <div class="dept-material-dialog-actions"><button type="button" id="deptMaterialCancel">キャンセル</button><button type="submit" id="deptMaterialSave">保存</button></div>
   </form>
 </dialog>
@@ -17511,7 +17511,7 @@ deptMaterialCard=function(item){
 };
 function v146B64ToBlob(data,mime){const bin=atob(data);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime});}
 async function v146OpenMaterial(item){
- try{const q=new URLSearchParams({material_id:String(item.id)});const data=await portalFetch('/api/department-materials?'+q.toString());
+ try{const q=new URLSearchParams({material_id:String(item.id)});const data=await portalFetch('/api/department-materials?'+q.toString(),{timeoutMs:90000});
  const hasUrl=Boolean(data.url),hasText=Boolean(data.text),hasFile=Boolean(data.file_data);
  if(!hasUrl&&!hasText&&!hasFile)throw Error('資料の内容が見つかりません。');
  if(hasFile&&!hasUrl&&!hasText){v155DownloadMaterial(data);return;}
@@ -17549,14 +17549,14 @@ deptMaterialSubmit=async function(event){
  if(!title||title.length>45)return alert('タイトルは1〜45文字で入力してください。');
  if(!url&&!text&&!file&&!keepFile)return alert('URL・ファイル・テキストのいずれか1つ以上を入力してください。');
  if(url&&!deptMaterialValidHref(url))return alert('https://から始まるURLを入力してください。');
- if(file&&file.size>1024*1024)return alert('ファイルは1MB以下にしてください。');
+ if(file&&(file.size===0||file.size>10*1024*1024))return alert('ファイルは1ファイル10MB以下（空ファイル不可）にしてください。');
  if(!departmentMaterialState.canEdit)return;
  const btn=$('deptMaterialSave');btn.disabled=true;
  try{
  const department=deptMaterialCurrentDepartment(),region=deptMaterialRegion();
  const body={action:departmentMaterialState.editing?'update':'create',id:departmentMaterialState.editing||undefined,department,region,title,url,text,remove_file:$('deptMaterialRemoveFile').checked};
  if(file){body.file_name=file.name.slice(0,120);body.file_mime=file.type||'application/octet-stream';body.file_data=await v146ReadFile(file);}
- await portalFetch('/api/department-materials',{method:'POST',body});
+ await portalFetch('/api/department-materials',{method:'POST',body,timeoutMs:file?90000:16000});
  $('deptMaterialDialog').close();await deptMaterialLoad(department);showToast('資料を保存しました');
  }catch(error){alert(error.message||'資料を保存できませんでした。');}finally{btn.disabled=false;}
 };
