@@ -6854,6 +6854,33 @@ line-height: 1.5 !important;
 .screen-department-materials.is-mark-figma #departmentMaterialsStatus{position:absolute;bottom:-18px;left:0;max-width:650px}
 .screen-department-materials.is-mark-figma #markMaterialNav{display:grid}
 </style>
+
+<style>
+.screen-marketing .mark-posts-shell{background:#fff;display:flex;flex-direction:column}
+.screen-marketing .mark-posts-top{flex:0 0 54px;border-bottom:1px solid #e3e4e8;padding:0 7px;gap:15px}
+.screen-marketing .mark-posts-top strong{color:#a94f11;font-size:26px}
+.screen-marketing .mark-posts-top>button:first-child{font-size:17px;color:#204885;white-space:nowrap}
+.screen-marketing .mark-posts-shell .marketing-content{height:auto;flex:1;min-height:0;overflow:auto;padding:0 3px 0 0;background:#fff}
+.screen-marketing .mark-posts-shell .marketing-toolbar{padding:9px 10px;margin:0;border-bottom:1px solid #e5e5e5}
+.screen-marketing .mark-posts-shell .marketing-toolbar input{max-width:none;width:100%;height:39px;border-radius:4px;font-size:17px}
+.screen-marketing .mark-posts-shell .marketing-filters{display:none!important}
+.screen-marketing .mark-posts-shell .marketing-list{display:flex;flex-direction:column;gap:0;align-items:stretch;width:100%}
+.screen-marketing .mark-posts-shell .marketing-item{width:100%;display:flex;align-items:stretch;gap:16px;min-height:117px;box-sizing:border-box;padding:12px 14px;border:0;border-bottom:1px solid #e7e7e7;border-radius:0;background:#fff;color:#080808;text-align:left;cursor:pointer;overflow:hidden}
+.screen-marketing .mark-posts-shell .marketing-item:nth-child(even){background:#f4f4f4}
+.screen-marketing .mark-posts-shell .marketing-item:hover,.screen-marketing .mark-posts-shell .marketing-item:focus-visible{background:#eaf0ff;outline:none}
+.screen-marketing .mark-posts-shell .marketing-board-thumb{width:105px;min-width:105px;height:93px;border-radius:5px;background:#8590aa;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;overflow:hidden;box-sizing:border-box;flex-shrink:0}
+.screen-marketing .mark-posts-shell .marketing-board-thumb img{width:100%;height:100%;object-fit:cover;border:0;border-radius:0;margin:0}
+.screen-marketing .mark-posts-shell .marketing-board-thumb-title{font-size:18px;font-weight:700;color:#fff;white-space:nowrap}
+.screen-marketing .mark-posts-shell .marketing-board-thumb-mark{font-size:21px;letter-spacing:3px;opacity:.85;white-space:nowrap}
+.screen-marketing .mark-posts-shell .marketing-text{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between;gap:9px}
+.screen-marketing .mark-posts-shell .marketing-board-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#070707;font-size:22px;font-weight:500;line-height:1.5;overflow-wrap:anywhere;text-align:left}
+.screen-marketing .mark-posts-shell .marketing-item .marketing-meta{display:block;align-self:flex-end;margin:0;text-align:right;color:#655f5b;font-size:14px;line-height:1.4;white-space:normal}
+.screen-marketing .mark-posts-shell .marketing-empty{padding:40px 15px;font-size:18px}
+.screen-marketing .mark-posts-shell #markListView{min-height:100%}
+.screen-marketing .mark-posts-shell #markLoadMore{margin:10px auto 15px}
+.screen-marketing .mark-posts-shell #markDetailView,.screen-marketing .mark-posts-shell #markEditorView{padding:12px 14px 24px}
+.screen-marketing .mark-posts-shell .marketing-readmore{font-size:18px}
+</style>
 </head>
 <body>
   <div id="loading" class="loading-screen">認証情報を確認しています…</div>
@@ -7136,7 +7163,7 @@ line-height: 1.5 !important;
       <div id="markArchiveList"></div>
     </div>
   </div>
-  <button type="button" class="v146-back mark-main-back" data-back-route="home" data-common-back>←戻る</button>
+  <button type="button" class="v146-back mark-main-back" id="markMainBack">←戻る</button>
   <div class="marketing-modal" id="markImageModal" hidden><button type="button" id="markCloseImage">閉じる ×</button><img id="markLargeImage" alt="投稿画像の拡大表示"></div>
 </section>
         <!-- HR weekly team river race: originally authored, no external game assets -->
@@ -16616,7 +16643,8 @@ function marketingView(view){
   marketingEl('markListView').hidden=view!=='list';
   marketingEl('markDetailView').hidden=view!=='detail';
   marketingEl('markEditorView').hidden=view!=='editor';
-  marketingEl('markNewPost').hidden=view==='editor';
+  marketingEl('markNewPost').hidden=view!=='list';
+  marketingEl('markBoardReturn').textContent=view==='list'?'← 掲示板トップへ戻る':'← 投稿一覧へ戻る';
   marketingEl('markStatus').textContent='';
   document.querySelector('.screen-marketing .marketing-content')?.scrollTo({top:0});
 }
@@ -16634,16 +16662,30 @@ async function marketingGetImage(id,img){
   }catch{if(img.isConnected)img.alt='画像の読み込みに失敗しました';}
 }
 function marketingDisplayList(){
-  const root=marketingEl('markList');root.innerHTML='';
-  if(!marketingState.posts.length){root.innerHTML='<p class="marketing-empty">まだ投稿がありません。事例や広告画像を最初に共有してみよう！</p>';return;}
+  const root=marketingEl('markList');root.replaceChildren();
+  if(!marketingState.posts.length){
+    const empty=document.createElement('p');empty.className='marketing-empty';
+    empty.textContent='この掲示板にはまだ投稿がありません。「＋ 投稿する」から最初の投稿を追加できます。';
+    root.append(empty);return;
+  }
+  const boardNames={question:'質問掲示板',resource:'投稿／サイト共有掲示板',case:'成功体験共有掲示板'};
   for(const post of marketingState.posts){
     const btn=document.createElement('button');btn.type='button';btn.className='marketing-item';
-    btn.innerHTML=`<div class="marketing-text"><span class="marketing-chip">${escapeHtml(marketingTypes[post.type]||'投稿')}${post.status==='resolved'?'・解決済み':''}</span>
-      <h3>${escapeHtml(post.title)}</h3><p>${escapeHtml(post.body)}</p>
-      <div class="marketing-meta">${escapeHtml(post.author_name)} ・ ${marketingDate(post.created_at)} ・ コメント${Number(post.comment_count||0)}件 ・ 添付${Number(post.asset_count||0)}件</div></div>`;
-    if(post.cover_asset_id){const img=document.createElement('img');img.alt='投稿画像のサムネイル';img.loading='lazy';btn.appendChild(img);}
-    btn.addEventListener('click',()=>void marketingOpen(post.id));root.appendChild(btn);
-    const cover=btn.querySelector('img');if(cover)void marketingGetImage(post.cover_asset_id,cover);
+    const thumb=document.createElement('span');thumb.className='marketing-board-thumb';thumb.setAttribute('aria-hidden','true');
+    if(post.cover_asset_id){
+      const img=document.createElement('img');img.alt='';img.loading='lazy';thumb.append(img);
+    }else{
+      thumb.innerHTML='<span class="marketing-board-thumb-title">マーケ</span><span class="marketing-board-thumb-mark">▥ ▥ ▥</span>';
+    }
+    const content=document.createElement('span');content.className='marketing-text';
+    const title=document.createElement('span');title.className='marketing-board-title';title.textContent=post.title;
+    const meta=document.createElement('span');meta.className='marketing-meta';
+    const category=boardNames[post.type]||marketingTypes[post.type]||'マーケー示板';
+    meta.textContent=`${category} · ${post.author_name||'投稿者'} · ${marketingDate(post.created_at)} · コメント${Number(post.comment_count||0)}件${post.status==='resolved'?' · 解決済み':''}`;
+    content.append(title,meta);btn.append(thumb,content);
+    btn.setAttribute('aria-label',`${category}：${post.title}、詳細を開く`);
+    btn.addEventListener('click',()=>void marketingOpen(post.id));root.append(btn);
+    const cover=thumb.querySelector('img');if(cover)void marketingGetImage(post.cover_asset_id,cover);
   }
 }
 async function marketingLoad(reset=true){
@@ -16939,6 +16981,22 @@ async function marketingFigmaArchive(){
     if(!list.children.length)list.textContent='登録されたURLはありません。分析情報源設定から追加してください。';
   }catch(error){list.textContent=error.message||'取得できませんでした';}
 }
+function marketingFigmaBack(){
+  if(markFigState.screen==='posts'){
+    if(!marketingEl('markListView').hidden){marketingFigmaScreen('board');return;}
+    marketingState.detailId=null;
+    marketingView('list');
+    void marketingLoad(true);
+    return;
+  }
+  if(markFigState.screen==='board'||markFigState.screen==='info'||markFigState.screen==='sources'){
+    marketingFigmaScreen('knowledge');return;
+  }
+  if(markFigState.screen==='knowledge'){
+    marketingFigmaScreen('home');return;
+  }
+  showScreen('home');
+}
 function marketingFigmaOpenBoard(type){
   marketingState.type=type;marketingState.search='';markFigEl('markSearch').value='';
   markFigEl('markFilters').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.markFilter===type));
@@ -16990,7 +17048,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   markFigEl('markSourcesNew').addEventListener('click',()=>marketingFigmaOpenSourceEditor());
   markFigEl('markSourceCancel').addEventListener('click',()=>{markFigEl('markSourceEditor').hidden=true;});
   markFigEl('markSourceForm').addEventListener('submit',e=>void marketingFigmaSaveSource(e));
-  markFigEl('markBoardReturn').addEventListener('click',()=>marketingFigmaScreen('board'));
+  markFigEl('markBoardReturn').addEventListener('click',marketingFigmaBack);
+  markFigEl('markMainBack').addEventListener('click',marketingFigmaBack);
   markFigEl('markBoardLanding').querySelectorAll('[data-mark-board]').forEach(b=>b.addEventListener('click',()=>marketingFigmaOpenBoard(b.dataset.markBoard)));
   markFigEl('markChatForm').addEventListener('submit',e=>void marketingFigmaChat(e));
   markFigEl('markChatPrompt').addEventListener('keydown',event=>{
