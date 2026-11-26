@@ -6761,6 +6761,9 @@ line-height: 1.5 !important;
 .screen-marketing .mark-chat-messages{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px;font-size:18px;line-height:1.45}
 .screen-marketing .mark-chat-message{white-space:pre-wrap;overflow-wrap:anywhere;background:#fff;padding:9px 12px;border-radius:6px;max-width:95%;align-self:flex-start}
 .screen-marketing .mark-chat-message.is-user{align-self:flex-end;background:#d6d8ff}
+.screen-marketing .mark-chat-references{align-self:flex-start;max-width:95%;display:flex;flex-direction:column;gap:4px;font:14px/1.4 Inter,'Noto Sans JP',sans-serif;background:#f7f8ff;padding:9px 11px;border-left:3px solid #7577ff;overflow-wrap:anywhere}
+.screen-marketing .mark-chat-references a{color:#255aba;text-decoration:underline}
+
 .screen-marketing .mark-chat-form{display:flex;gap:8px;margin:7px 0 4px;align-items:stretch}
 .screen-marketing .mark-chat-form textarea{min-width:0;flex:1;resize:vertical;max-height:90px;min-height:44px;font-size:17px;border:1px solid #aaa;padding:6px 8px}
 .screen-marketing .mark-chat-form button,.screen-marketing #markMemoSave{font:500 18px Inter,'Noto Sans JP',sans-serif;border:0;background:#7479ff;color:#fff;padding:6px 14px;cursor:pointer}
@@ -7012,7 +7015,7 @@ line-height: 1.5 !important;
           <textarea id="markChatPrompt" rows="2" maxlength="1500" placeholder="マーケティングについて質問する"></textarea>
           <button type="submit" id="markChatSend">送信</button>
         </form>
-        <p id="markChatStatus" class="mark-chat-hint">AIの利用にはCloudflare Workers AIの連携が必要です。URL本文は自動取得しません。</p>
+        <p id="markChatStatus" class="mark-chat-hint">「分析情報源設定」に登録した同じ地域のWebページをAIが参照します。非公開ページやPDFなどは本文を取得できない場合があります。</p>
       </div>
       <div class="mark-info-right">
         <div class="mark-region-grid" id="markRegionButtons" aria-label="地域を選択">
@@ -16882,8 +16885,27 @@ async function marketingFigmaChat(e){
   markFigState.chatBusy=true;markFigEl('markChatSend').disabled=true;markFigEl('markChatPrompt').value='';
   const list=markFigEl('markChatMessages');const entry=document.createElement('div');entry.className='mark-chat-message is-user';entry.textContent=prompt;list.append(entry);list.scrollTop=list.scrollHeight;
   const reply=document.createElement('div');reply.className='mark-chat-message';reply.textContent='回答を作成しています…';list.append(reply);
-  try{const result=await portalFetch('/api/marketing/ai',{method:'POST',body:{prompt,region:markFigState.region,url:marketingFigmaValidUrl(markFigEl('markViewingUrl').value)}});reply.textContent=result.reply||'回答を取得できませんでした';markFigEl('markChatStatus').textContent='AIは選択したURLの本文を取得していません。回答は内容を確認して利用してください。';}
-  catch(error){reply.textContent='AIを利用できません：'+(error.message||'設定を確認してください');}
+  try{
+    const result=await portalFetch('/api/marketing/ai',{
+      method:'POST',timeoutMs:60000,
+      body:{prompt,region:markFigState.region,url:marketingFigmaValidUrl(markFigEl('markViewingUrl').value)}
+    });
+    reply.textContent=result.reply||'回答を取得できませんでした';
+    const refs=Array.isArray(result.references)?result.references:[];
+    if(refs.length){
+      const box=document.createElement('div');box.className='mark-chat-references';
+      const header=document.createElement('strong');header.textContent='参照した分析情報源';box.append(header);
+      for(const item of refs){
+        const link=document.createElement('a');link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';
+        link.textContent=`[${item.number}] ${item.title}`;box.append(link);
+      }
+      list.append(box);
+    }
+    const count=Number(result.registered_count)||0,unreadable=Array.isArray(result.unreadable)?result.unreadable:[];
+    const note=refs.length?`登録${count}件中、${refs.length}件の本文を参照しました。`:
+      `この地域の登録情報源${count}件から本文を取得できませんでした。回答に登録資料の裏付けはありません。`;
+    markFigEl('markChatStatus').textContent=note+(unreadable.length?` 読めなかったURL：${unreadable.map(x=>x.title).join('、').slice(0,170)}。`:'');
+  }catch(error){reply.textContent='AIを利用できません：'+(error.message||'設定を確認してください');}
   finally{list.scrollTop=list.scrollHeight;markFigState.chatBusy=false;markFigEl('markChatSend').disabled=false;}
 }
 document.addEventListener('DOMContentLoaded',()=>{
