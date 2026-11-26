@@ -17617,7 +17617,7 @@ function consStudentFilter(){
  const text=consStudentSafe(consStudentVal('consStudentSearch').value).normalize('NFKC').toLowerCase();
  consStudentState.filtered=consStudentState.students.filter(p=>!text||[p.name,p.kana].some(v=>consStudentSafe(v).normalize('NFKC').toLowerCase().includes(text)));
  consStudentState.index=0;
- consStudentVal('consStudentStatus').textContent=consStudentState.students.length===0?(consStudentState.scope==='region'?'連携先の学生情報が見つかりません。':'担当の学生が見つかりません。'):consStudentState.filtered.length===0?'検索条件に一致する学生がいません。':consStudentState.scope==='region'?'所属地域の学生情報を表示しています。':'';
+ consStudentVal('consStudentStatus').textContent=consStudentState.students.length===0?'未対応の担当学生が見つかりません。':consStudentState.filtered.length===0?'検索条件に一致する学生がいません。':'';
  consStudentSelect();
 }
 async function consStudentLoad(){
@@ -17646,7 +17646,18 @@ async function consStudentSave(){
   const data=await portalFetch('/api/cons/students/save',{method:'POST',body,timeoutMs:25000});
   const next=Array.isArray(data.values)?data.values:values;
   p.outcome=next[0];p.reason=next[1];p.memo=next[2];p.expected=next.slice();
-  status.textContent='保存しました。';consStudentSetControls();
+  // Any M/N/O entry means the row is no longer an unprocessed, visible student.
+  if(next.some(value=>consStudentSafe(value)!=='')){
+   const previousIndex=consStudentState.index;
+   consStudentState.students=consStudentState.students.filter(student=>student.row!==p.row);
+   const search=consStudentSafe(consStudentVal('consStudentSearch').value).normalize('NFKC').toLowerCase();
+   consStudentState.filtered=consStudentState.students.filter(student=>!search||[student.name,student.kana].some(value=>consStudentSafe(value).normalize('NFKC').toLowerCase().includes(search)));
+   consStudentState.index=Math.min(previousIndex,Math.max(0,consStudentState.filtered.length-1));
+   consStudentSelect();
+   status.textContent='保存しました。登録済みの学生は一覧から除外しました。';
+  }else{
+   status.textContent='保存しました。';consStudentSetControls();
+  }
  }catch(error){status.textContent='保存できませんでした：'+String(error.message||error);}
  finally{consStudentState.saving=false;consStudentSetControls();}
 }
