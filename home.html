@@ -6745,8 +6745,6 @@ line-height: 1.5 !important;
 <style>
 #activityHistoryPreview{display:block;box-sizing:border-box;width:100%;min-height:210px;max-height:240px;resize:vertical;overflow:auto;white-space:pre;line-height:1.4;font-size:14px;font-family:inherit;padding:12px;border:1px solid #bec7d9;border-radius:8px;background:#f8faff;color:#18243e;user-select:text}
 #activityHistoryCopy{margin-top:10px;font-size:16px;padding:8px 15px;cursor:pointer}
-.screen-client-staff-status .staff-status-metric span,.screen-client-staff-status .staff-status-metric strong{font-size:25px}
-.screen-client-staff-status [data-staff-period='total'] .staff-status-metric span,.screen-client-staff-status [data-staff-period='total'] .staff-status-metric strong{font-size:24px}
 </style>
 </head>
 <body>
@@ -10849,10 +10847,10 @@ function renderClientStaffStatus() {
   document.getElementById('staffStatusPersonLabel').textContent=member?member.name:'スタッフを選択してください';
   const metrics=member?.periods||{};
   const labelsByPeriod={
-    day:[['list','リストアップ'],['call','架電'],['mail','メール送信'],['won','獲得']],
-    week:[['list','リストアップ'],['call','架電'],['mail','メール送信'],['won','獲得']],
-    month:[['list','リストアップ'],['call','架電'],['mail','メール送信'],['won','獲得']],
-    total:[['pending','未完了'],['list','リストアップ'],['call','架電'],['mail','メール送信'],['won','獲得']]
+    day:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']],
+    week:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']],
+    month:[['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']],
+    total:[['pending','未完了'],['completed','完了'],['mail','内メール'],['form','内フォーム'],['call','内架電']]
   };
   for (const [period,id] of [['day','staffStatusDayMetrics'],['week','staffStatusWeekMetrics'],
        ['month','staffStatusMonthMetrics'],['total','staffStatusTotalMetrics']]) {
@@ -10864,7 +10862,7 @@ function renderClientStaffStatus() {
   }
   const statusNote=document.getElementById('staffStatusNote');
   statusNote.textContent=(data.warning?data.warning+'　':'')+
-    '企業向けの件数はLINE報告・タスク時間記録と企業シートの記録を重複排除して集計しています。履歴がない項目は0件です。未完了は現在の企業シートを参照します。';
+    '日・週・月はスプシのM/N/O列の増分履歴です。累計の未完了は現在の担当企業のうち対応対象で未チェックの件数です。今日の数値は速報値。初回導入以前の履歴は推定しません。';
   statusNote.classList.toggle('is-warning',Boolean(data.warning));
   const selectedMonth=document.getElementById('staffStatusMonth').value;
   const selectedDay=document.getElementById('staffStatusDay').value;
