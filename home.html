@@ -4048,6 +4048,11 @@ a:active {
 .screen-hp-edit .portal-sheets-url-row .portal-sheet-save{background:#7577ff;border-color:#7577ff;color:#fff;padding:8px 18px}
 .screen-hp-edit .portal-sheets-open{display:inline-flex;align-items:center;padding:8px 12px;border:1px solid #c9cbe2;border-radius:5px;color:#2857a4;text-decoration:none;font-size:15px;white-space:nowrap}
 .screen-hp-edit .portal-sheets-open[aria-disabled="true"]{opacity:.45;pointer-events:none}
+.screen-hp-edit .portal-sheets-share-overview{display:flex;align-items:center;flex-wrap:wrap;gap:8px 11px;min-height:26px;color:#263250;font-size:15px}
+.screen-hp-edit .portal-sheets-share-overview[hidden]{display:none!important}
+.screen-hp-edit .portal-sheets-share-overview code{font:15px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:#24437a;overflow-wrap:anywhere;min-width:0}
+.screen-hp-edit .portal-sheets-app .portal-sheets-share-copy{font-size:13px;padding:4px 11px}
+.screen-hp-edit .portal-sheets-share-label{font-weight:650;white-space:nowrap}
 
 .screen-hp-request .hp-request-panel {position:absolute;left:120px;top:162px;width:1200px;height:700px;background:white;border:3px solid #000;padding:42px 58px;box-sizing:border-box;display:flex;flex-direction:column;gap:22px;}
 .screen-hp-request .hp-request-panel h2 {margin:0;font-size:46px;font-weight:500;}
@@ -7829,11 +7834,16 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
                 <button type="button" data-sheet-region="kanto" class="is-active">関東</button>
                 <button type="button" data-sheet-region="miyagi">宮城</button>
               </nav>
-              <p class="portal-sheets-intro">地域を選び、各スプレッドシートのURLを入力して保存してください。</p>
+              <div class="portal-sheets-share-overview" id="portalSheetShareOverview" hidden>
+                <span class="portal-sheets-share-label">ポータル用共有先：</span>
+                <code id="portalSheetShareEmail"></code>
+                <button type="button" class="portal-sheets-share-copy" id="portalSheetShareCopy">コピー</button>
+              </div>
+              <p class="portal-sheets-intro" id="portalSheetIntro">地域を選び、各スプレッドシートのURLを入力して保存してください。</p>
               <div class="portal-sheets-status" id="portalSheetStatus" role="status">連携設定を読み込んでいます…</div>
               <div class="portal-sheets-list" id="portalSheetList"></div>
               
-              <p class="portal-sheets-note" id="portalSheetNote">URLは連携設定として保存されます。Google Sheetsの共有権限は変更されません。既存業務の実データ参照先は、各機能の設定が別途必要です。</p>
+              <p class="portal-sheets-note" id="portalSheetNote">メールアドレスは全地域共通のポータル用サービスアカウントです。Google Sheetsの「共有」に追加してください（閲覧は閲覧者／入力・保存は編集者）。URL登録だけでは共有権限は変わりません。</p>
             </div>
           </section>
           <button type="button" class="figma-hp-back" data-common-back="">←戻る</button>
@@ -12291,13 +12301,21 @@ async function loadRoster(includeDisabled = false) {
 
 // Figmaの「関東・関西名簿」3列と、「要望」空枠を切り替える。
 const portalSheetRegionNames={kumamoto:'熊本',hiroshima:'広島',kansai:'関西',kanto:'関東',miyagi:'宮城'};
-const portalSheetState={region:'kanto',entries:[],busy:false};
+const portalSheetState={region:'kanto',entries:[],busy:false,serviceAccountEmail:''};
 const portalSheetReturn={pending:false,status:'',detail:''};
 function portalSheetStatus(message){const el=document.getElementById('portalSheetStatus');if(el)el.textContent=String(message||'');}
 function portalSheetRender(){
  const container=document.getElementById('portalSheetList');if(!container)return;
  container.replaceChildren();
  document.querySelectorAll('[data-sheet-region]').forEach(btn=>btn.classList.toggle('is-active',btn.dataset.sheetRegion===portalSheetState.region));
+ const hasRegistered=portalSheetState.entries.some(item=>item.region===portalSheetState.region&&Boolean(item.spreadsheet_id));
+ const overview=document.getElementById('portalSheetShareOverview'),intro=document.getElementById('portalSheetIntro');
+ if(overview)overview.hidden=!hasRegistered;
+ if(intro)intro.hidden=hasRegistered;
+ const shareEmail=document.getElementById('portalSheetShareEmail');
+ if(shareEmail)shareEmail.textContent=portalSheetState.serviceAccountEmail||'サービスアカウント未設定（Cloudflareの環境変数を確認）';
+ const shareCopy=document.getElementById('portalSheetShareCopy');
+ if(shareCopy)shareCopy.disabled=!portalSheetState.serviceAccountEmail;
  const keys=['client','calendar','cons','expenses'];
  const list=keys.map(key=>portalSheetState.entries.find(item=>item.region===portalSheetState.region&&item.key===key)).filter(Boolean);
  if(!list.length){const p=document.createElement('p');p.textContent='連携先を読み込めませんでした。更新してください。';container.append(p);return;}
@@ -12326,7 +12344,7 @@ function portalSheetRender(){
    portalSheetStatus('「'+item.label+'」のURLを保存しています…');
    try{
     await portalFetch('/api/admin/sheets/url',{method:'POST',body:{region:item.region,key:item.key,url}});
-    await portalSheetLoad();portalSheetStatus('「'+item.label+'」のURLを保存しました。');
+    await portalSheetLoad();portalSheetStatus('「'+item.label+'」のURLを保存しました。画面上の共有先メールアドレスをGoogle Sheetsの「共有」に追加してください。');
    }catch(error){portalSheetStatus('保存に失敗しました：'+String(error.message||error));}
    finally{portalSheetState.busy=false;portalSheetRender();}
   });
@@ -12336,7 +12354,7 @@ function portalSheetRender(){
 async function portalSheetLoad(){
  const container=document.getElementById('portalSheetList');if(!container)return;
  portalSheetStatus('連携設定を読み込んでいます…');
- try{const data=await portalFetch('/api/admin/sheets');portalSheetState.entries=Array.isArray(data.sheets)?data.sheets:[];
+ try{const data=await portalFetch('/api/admin/sheets');portalSheetState.entries=Array.isArray(data.sheets)?data.sheets:[];portalSheetState.serviceAccountEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.service_account||'').trim())?String(data.service_account).trim():'';
   portalSheetStatus('対象地域：'+portalSheetRegionNames[portalSheetState.region]+'　／　各項目のURLを編集できます');
   portalSheetRender();
   if(portalSheetReturn.status){
@@ -12371,6 +12389,7 @@ function portalSheetInstall(){
   if(portalSheetState.busy)return;portalSheetState.region=btn.dataset.sheetRegion;portalSheetRender();portalSheetStatus('対象地域：'+portalSheetRegionNames[portalSheetState.region]);
  }));
  document.getElementById('portalSheetRefresh')?.addEventListener('click',()=>void portalSheetLoad());
+ document.getElementById('portalSheetShareCopy')?.addEventListener('click',()=>void copyClientFieldText(portalSheetState.serviceAccountEmail,'共有先メールアドレス'));
  const params=new URL(location.href).searchParams;
  if(params.has('sheets')){
   if(params.get('sheet_region')&&portalSheetRegionNames[params.get('sheet_region')])portalSheetState.region=params.get('sheet_region');
