@@ -7634,6 +7634,13 @@ line-height: 1.5 !important;
                 <div class="line-row"><button type="button" id="lineActivityGroupSave">行動量報告グループを保存</button></div>
                 <div id="lineActivityGroupStatus" class="line-link-status" role="status"></div>
                 <p>本番配信にはCloudflareで <code>LINE_ACTIVITY_AUTO_REPORT_ENABLED=true</code> が必要です。毎日15:00 JSTに判定します。</p>
+                <section class="line-activity-sync-box" aria-label="LINE行動量の連携診断">
+                  <h3>LINE行動量 → ポータル連携診断</h3>
+                  <p>受信・数値読取・本人連携・D1保存を別々に表示します。未連携者は本人確認後に連携してください。過去に受信していない投稿の数値は復元できません。</p>
+                  <div class="line-row"><button type="button" id="lineActivityHealthRefresh" class="secondary">受信と保存を診断</button><button type="button" id="lineActivityHealthReconcile" class="secondary">保存済みLINE報告を再集計</button></div>
+                  <pre id="lineActivityHealthResults" class="line-link-status" style="white-space:pre-wrap;max-height:340px;overflow:auto" role="status">未診断</pre>
+                </section>
+
                 <h3>行動量報告の提出状況（代表・デベロッパーのみ）</h3>
                 <p>対象日ごとに本人のLINE提出状況を確認・修正できます。日付と数値項目から判定し、一部省略や表記揺れを許容します。手動設定は自動判定より優先されます。既に送信された代理投稿は取り消されません。</p>
                 <div class="line-row"><label for="activitySubmissionDate">報告対象日</label><input type="date" id="activitySubmissionDate"><button type="button" id="activitySubmissionRefresh" class="secondary">提出状況を更新</button></div>
@@ -9291,6 +9298,8 @@ function wireActions() {
   document.getElementById('lineLinkRefresh').addEventListener('click', () => void refreshLineSettings());
   document.getElementById('lineGroupSave').addEventListener('click', () => void saveLineGroup());
   document.getElementById('lineActivityGroupSave').addEventListener('click', () => void saveActivityGroup());
+  document.getElementById('lineActivityHealthRefresh').addEventListener('click', () => void refreshLineActivityHealth());
+  document.getElementById('lineActivityHealthReconcile').addEventListener('click', () => void refreshLineActivityHealth(true));
   document.getElementById('activitySubmissionRefresh').addEventListener('click',()=>void refreshActivitySubmissions());
   document.getElementById('activitySubmissionDate').addEventListener('change',()=>void refreshActivitySubmissions());
   document.getElementById('activityMailConnect').addEventListener('click', () => void activityMailAuthorizeSender());
@@ -12354,6 +12363,26 @@ async function saveActivityGroup(){
   await portalFetch('/api/line/activity-group/select',{method:'POST',body:{group_id:id,confirmed:true}});
   await refreshLineSettings();showToast('行動量報告グループを保存しました。');
  }catch(e){showToast('保存できません：'+e.message);}finally{btn.disabled=false;}
+}
+async function refreshLineActivityHealth(reconcile=false){
+ const target=document.getElementById('lineActivityHealthResults');
+ const scan=document.getElementById('lineActivityHealthRefresh'),save=document.getElementById('lineActivityHealthReconcile');
+ if(!target||!scan||!save)return;
+ if(reconcile&&!window.confirm('保存済みのLINE数値を、本人確認済みの名簿に再紐付けします。未連携の人や本文未保存の過去報告は復元できません。続行しますか？'))return;
+ scan.disabled=true;save.disabled=true;target.textContent=reconcile?'再集計しています…':'保存状況を照合しています…';
+ try{
+  const d=await portalFetch(reconcile?'/api/line/activity-metrics/reconcile':'/api/line/activity-metrics/diagnostics',reconcile?{method:'POST',body:{confirmed:true}}:{});
+  const notes=[`対象：${d.from}〜${d.to}`,
+    `グループ：${d.activity_group_configured?'設定済み':'未設定'}／Webhook最終受信：${d.group_last_event_at||'記録なし'}`,
+    `LINE連携：${d.linked_accounts}人／報告認識：${d.received_reports}人日／数値抽出：${d.parsed_numeric_reports}人日`,
+    `D1に保存済み：${d.saved_person_days}人日／未連携の数値報告：${d.unlinked_numeric_reports}人日／連携済み数値未保存：${d.linked_without_metrics}人日`];
+  if(reconcile)notes.push(`再紐付け：${d.reconciled_people}人の保存済み数値を照合／更新${d.reconciled_days}人日`);
+  if(d.problems?.length)notes.push(...d.problems.map(s=>'⚠ '+s));
+  notes.push('—— 支部員別の保存状況 ——');
+  for(const p of d.people||[])notes.push(`${p.region||'地域なし'}・${p.name||p.email}：${p.linked?'連携済':'未連携'}／保存${p.stored_days}日${p.last_day?'／最終'+p.last_day:''}`);
+  target.textContent=notes.join('\n');
+ }catch(e){target.textContent='診断できません：'+(e.message||e);}
+ finally{scan.disabled=false;save.disabled=false;}
 }
 async function activityMailRefreshStatus(){
  const el=document.getElementById('activityMailStatus');
