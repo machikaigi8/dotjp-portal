@@ -6989,14 +6989,14 @@ line-height: 1.5 !important;
         <!-- Figma 64:637: クライアント -->
         <!-- Figma 2026-11-05: コンス / white placeholder -->
         <section class="screen screen-department-cons screen-cons-v146" data-screen="department-cons" aria-label="コンス">
-<div class="user-name" data-user-name>＜名前＞</div><nav class="cons-v146-nav" aria-label="コンス内メニュー">
+<div class="user-name" data-user-name>＜名前＞</div><nav class="cons-v146-nav portal-dept-menu" aria-label="コンス内メニュー">
 <button type="button" data-route="cons-call">架電をする</button>
-<button type="button" data-route="cons-staff-status">タスク状況</button>
+<button type="button" data-route="cons-staff-status">支部員タスク状況</button>
 <button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
 </nav><button type="button" class="v146-back" data-back-route="home" data-common-back>←戻る</button></section>
 <section class="screen screen-marketing" data-screen="department-mark" aria-label="マーケティング">
   <div class="user-name" data-user-name>＜名前＞</div>
-  <nav class="mark-figma-primary" aria-label="マーケティングメニュー">
+  <nav class="mark-figma-primary portal-dept-menu" aria-label="マーケティングメニュー">
     <button type="button" id="markNavKnowledge">ナレッジ共有</button>
     <button type="button" data-route="department-materials" data-material-department="mark">資料一覧</button>
   </nav>
@@ -7191,7 +7191,7 @@ line-height: 1.5 !important;
         <!-- Figma 2026-11-05: 人事局 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-hr" aria-label="人事局">
           <div class="user-name" data-user-name>＜名前＞</div>
-          <nav class="hr-figma-tabs" aria-label="人事局のメニュー">
+          <nav class="hr-figma-tabs portal-dept-menu" aria-label="人事局のメニュー">
             <button type="button" class="hr-figma-tab" id="hrMtgSettingsOpen">MTG設定</button>
             <button type="button" class="hr-figma-tab" data-route="hr-daily-tasks">毎日タスク状況</button>
             <button type="button" class="hr-figma-tab" data-route="department-materials" data-material-department="hr">資料一覧</button>
@@ -7264,13 +7264,13 @@ line-height: 1.5 !important;
         <!-- Figma 2026-11-05: プログラム / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-pg" aria-label="プログラム">
           <div class="user-name" data-user-name>＜名前＞</div>
-          <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="pg">資料一覧</button>
+          <nav class="portal-dept-menu" aria-label="部署内メニュー"><button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="pg">資料一覧</button></nav>
           <div class="department-placeholder-panel" aria-label="プログラム：準備中"></div>
         </section>
         <!-- Figma 2026-11-05: 事務局 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-office" aria-label="事務局">
           <div class="user-name" data-user-name>＜名前＞</div>
-          <button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="office">資料一覧</button>
+          <nav class="portal-dept-menu" aria-label="部署内メニュー"><button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="office">資料一覧</button></nav>
           <div class="department-placeholder-panel" aria-label="事務局の経費記入チェック">
             <div class="office-expense-top"><h2>経費記入ミス・確認待ち</h2><select id="officeExpenseFilter" aria-label="チェック対象の絞り込み"><option value="open">未解決・未確認</option><option value="error">自動チェックで指摘</option><option value="pending">目視確認待ち</option><option value="all">すべて</option></select><button id="officeExpenseRefresh" type="button">スプシを再確認</button></div>
             <div class="office-expense-summary" id="officeExpenseSummary"><span>チェック待機中</span></div>
@@ -7364,7 +7364,7 @@ line-height: 1.5 !important;
 <p class="cons-v146-results-note" id="consV146ResultsStatus" role="status"></p><button type="button" class="v146-back" data-back-route="department-materials" data-common-back>←戻る</button><button class="cons-v146-add-doc" id="consV146AddDocument" type="button">＋資料を増やす</button></section>
 
 <section class="screen screen-client screen-client-v146" data-screen="client">
-<div class="user-name" data-user-name>＜名前＞</div><nav class="client-v146-nav" aria-label="クライアント内メニュー">
+<div class="user-name" data-user-name>＜名前＞</div><nav class="client-v146-nav portal-dept-menu" aria-label="クライアント内メニュー">
 <button type="button" data-route="client-contact">お問い合わせフォーム</button>
 <button type="button" data-route="client-won">獲得企業一覧</button>
 <button type="button" data-route="client-deals">商談予定企業</button>
@@ -7381,7 +7381,7 @@ line-height: 1.5 !important;
 <button type="button" data-route="cons-staff-status">タスク状況</button>
 <button type="button" data-route="department-materials" data-material-department="cons">資料一覧</button>
 </nav><button type="button" class="cons-v146-results-go" data-route="cons-results">実績一覧</button></div>
-          <nav class="mark-material-nav" id="markMaterialNav" hidden aria-label="マーケティングメニュー">
+          <nav class="mark-material-nav portal-dept-menu" id="markMaterialNav" hidden aria-label="マーケティングメニュー">
             <button type="button" data-route="department-mark">ナレッジ共有</button>
             <button type="button" data-route="department-materials" data-material-department="mark">資料一覧</button>
           </nav>
@@ -17854,6 +17854,85 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
 .screen-cons-call #consStudentSave:disabled{opacity:.46;cursor:default}
 
 
+
+:is(.screen-department-cons,.screen-client[data-screen="client"],.screen-marketing,.screen-department-placeholder[data-screen="department-hr"],.screen-department-placeholder[data-screen="department-pg"],.screen-department-placeholder[data-screen="department-office"]) > .portal-dept-menu,
+.screen-department-materials.is-mark-figma > .portal-dept-menu {
+  position:absolute;
+  left:120px;
+  top:110px;
+  right:auto;
+  width:1200px;
+  height:auto;
+  margin:0;
+  padding:0;
+  display:grid;
+  grid-template-columns:repeat(3,360px);
+  grid-auto-flow:row;
+  column-gap:60px;
+  row-gap:51px;
+  align-content:start;
+  z-index:60;
+}
+:is(.screen-department-cons,.screen-client[data-screen="client"],.screen-marketing,.screen-department-placeholder[data-screen="department-hr"],.screen-department-placeholder[data-screen="department-pg"],.screen-department-placeholder[data-screen="department-office"],.screen-department-materials.is-mark-figma) > .portal-dept-menu > button,
+.screen-marketing .mark-figma-secondary > button {
+  box-sizing:border-box;
+  position:static;
+  top:auto;
+  right:auto;
+  left:auto;
+  width:360px;
+  min-width:0;
+  max-width:360px;
+  height:60px;
+  min-height:60px;
+  margin:0;
+  padding:0 6px;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:#d4d5ff;
+  color:#090909;
+  font-size:35px;
+  font-weight:500;
+  line-height:60px;
+  text-align:center;
+  white-space:nowrap;
+  cursor:pointer;
+}
+:is(.screen-department-cons,.screen-client[data-screen="client"],.screen-marketing,.screen-department-placeholder[data-screen="department-hr"],.screen-department-placeholder[data-screen="department-pg"],.screen-department-placeholder[data-screen="department-office"],.screen-department-materials.is-mark-figma) > .portal-dept-menu > button:hover,
+.screen-marketing .mark-figma-secondary > button:hover {background:#c5c7f8;}
+:is(.screen-department-cons,.screen-client[data-screen="client"],.screen-marketing,.screen-department-placeholder[data-screen="department-hr"],.screen-department-placeholder[data-screen="department-pg"],.screen-department-placeholder[data-screen="department-office"],.screen-department-materials.is-mark-figma) > .portal-dept-menu > button:focus-visible,
+.screen-marketing .mark-figma-secondary > button:focus-visible {outline:3px solid #4056b1;outline-offset:3px;}
+.screen-department-placeholder:is([data-screen="department-pg"],[data-screen="department-office"]) > .department-placeholder-panel {
+  top:208px;
+  height:654px;
+}
+
+.screen-marketing .mark-figma-secondary {
+  left:50px;
+  top:32px;
+  width:1200px;
+  display:grid;
+  grid-template-columns:repeat(3,360px);
+  grid-auto-flow:row;
+  column-gap:60px;
+  row-gap:51px;
+}
+.screen-marketing .mark-figma-primary > button,
+.screen-marketing .mark-figma-secondary > button,
+.screen-department-materials.is-mark-figma .mark-material-nav > button {
+  font-family:Inter,'Noto Sans JP','Yu Gothic',sans-serif!important;
+  background:#d4d5ff;
+  color:#090909;
+  font-size:35px;
+  font-weight:500;
+  line-height:60px;
+  box-shadow:none;
+}
+.screen-marketing .mark-figma-primary > button.is-current,
+.screen-marketing .mark-figma-secondary > button.is-current {
+  box-shadow:none;
+}
 </style>
 
 
