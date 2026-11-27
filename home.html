@@ -6978,6 +6978,9 @@ line-height: 1.5 !important;
       <div class="portal-initial-region-choices" role="group" aria-label="所属支部">
         <button type="button" data-portal-initial-region="kanto">関東</button>
         <button type="button" data-portal-initial-region="kansai">関西</button>
+        <button type="button" data-portal-initial-region="miyagi">宮城</button>
+        <button type="button" data-portal-initial-region="hiroshima">広島</button>
+        <button type="button" data-portal-initial-region="kumamoto">熊本</button>
       </div>
       <p id="portalInitialRegionStatus" role="status" aria-live="polite"></p>
       <p class="portal-initial-region-note">すでに名簿で所属が決まっている場合はその設定を優先します。変更は代表・デベロッパーが名簿から行えます。</p>
@@ -8899,6 +8902,7 @@ const state = {
   officeExpenses: {rows:[],canReview:false,loadingSeq:0},
   clientStaffStatus: { members: [], email: "", day: "", week: "", month: "", requestSeq: 0, warning: "" },
   preferredRegion: null,
+  branchName: '',
   personalWorkSessions: null,
   hpRequests: [],
   remoteTasks: [],
@@ -9553,7 +9557,10 @@ function wireActions() {
   });
 
   document.querySelectorAll("[data-home-branch]:not([data-region])").forEach(element => {
-    element.addEventListener("click", () => showToast(`${element.textContent.trim()}支部の切り替えは、所属名簿・DB側の対応後に利用できます。現在のデータは変更していません。`));
+    element.addEventListener("click", () => {
+      if(element.dataset.homeBranch===state.preferredRegion){showToast(`${element.textContent.trim()}支部のポータルを表示しています。`);return;}
+      showToast('他支部の業務データは閲覧できません。所属支部は名簿から管理者が変更できます。');
+    });
   });
   document.querySelectorAll("[data-region]").forEach((element) => {
     element.addEventListener("click", () => {
@@ -11282,12 +11289,15 @@ function renderClientStaffStatus() {
     ? `${Number(selectedMonth.slice(5))}月▼` : '月▼';
 }
 
+function portalBranchVisibleName(){return ['宮城','広島','熊本'].includes(state.branchName)?state.branchName:(state.region==='kansai'?'関西':'関東');}
+
 function updateRegion() {
   document.querySelectorAll("[data-region]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.region === state.region);
   });
   const current=document.getElementById('homeRegionCurrent');
-  if(current)current.textContent=state.region==='kansai'?'関西':'東京';
+  if(current)current.textContent=state.region==='kansai'?'関西':(state.branchName&&['宮城','広島','熊本'].includes(state.branchName)?state.branchName:'東京');
+  document.querySelectorAll('[data-home-branch]').forEach(btn=>btn.classList.toggle('is-active',btn.dataset.homeBranch===state.preferredRegion));
 }
 
 // POST v41: 複数個人・関東全員・関西全員。過去のAIカードも誤配信しない。
@@ -12776,7 +12786,7 @@ async function chooseInitialPortalRegion() {
         const saved = await portalFetch('/api/me/initial-region', {
           method:'POST', body:{region}
         });
-        if (saved.region !== 'kanto' && saved.region !== 'kansai') {
+        if (!['kanto','kansai','miyagi','hiroshima','kumamoto'].includes(saved.region)) {
           throw new Error('支部の登録結果を確認できませんでした。');
         }
         const finalRegion = saved.region;
@@ -12826,6 +12836,22 @@ async function loadPortalProfile() {
       sessionStorage.setItem(regionSessionOwnerKey, email);
     }
     state.preferredRegion = data.preferred_region || null;
+    state.branchName = data.branch_name || ({miyagi:'宮城',hiroshima:'広島',kumamoto:'熊本',kanto:'関東',kansai:'関西'}[state.preferredRegion]||'');
+    // Never show Tokyo-only external sheets or application form to new branches.
+    const homeLinks=document.querySelectorAll('.links-grid a.green-menu');
+    if(['miyagi','hiroshima','kumamoto'].includes(state.preferredRegion)){
+      homeLinks.forEach((link,i)=>{
+        const configured=i===0?data.branch_links?.client:i===1?data.branch_links?.expenses:'';
+        if(configured&&/^https:\/\/docs\.google\.com\/spreadsheets\/d\//.test(configured)){
+          link.href=configured;link.removeAttribute('aria-disabled');link.title='';
+          link.style.opacity='1';link.style.cursor='pointer';
+        }else{
+          link.removeAttribute('href');link.setAttribute('aria-disabled','true');
+          link.title='所属支部の連携先がまだ登録されていません';
+          link.style.opacity='0.5';link.style.cursor='not-allowed';
+        }
+      });
+    }
     if (!state.preferredRegion && !state.supportMode) return 'choose_region';
     if (state.preferredRegion === 'kansai' && !state.supportMode) return 'redirect_kansai';
     state.region = state.supportMode && state.preferredRegion === 'kansai' ? 'kansai' : 'kanto';
@@ -13121,7 +13147,8 @@ async function saveFigmaRosterRow() {
     if (String(email).toLowerCase() === userIdentity()) {
       if(saved.member?.name)applyPortalIdentity({email: saved.member.email,name:saved.member.name,name_source:"roster"});
       await refreshPortalIdentity(true);
-      state.preferredRegion = group_name === '関西' ? 'kansai' : group_name === '未振り分け' ? null : 'kanto';
+      state.preferredRegion = ({関東:'kanto',東京:'kanto',関西:'kansai',宮城:'miyagi',広島:'hiroshima',熊本:'kumamoto'})[group_name]||null;
+      state.branchName=group_name;
     }
     showToast('名簿を更新しました');
   } catch (error) {
@@ -15574,7 +15601,7 @@ async function createMeeting(event){
   try{
     const result=await portalFetch('/api/meetings',{method:'POST',body});
     document.getElementById('mtgNewTimetable').value='';
-    showToast((result.region==='kansai'?'関西':'関東')+'に'+Number(result.count||1)+'件のMTGを登録しました');
+    showToast(portalBranchVisibleName()+'に'+Number(result.count||1)+'件のMTGを登録しました');
     if(state.region===result.region)state.meetings=[];
     setMtgManagerTab('edit');
   }catch(error){showToast(error.message||'MTGを登録できませんでした');}
@@ -15584,7 +15611,7 @@ async function loadMeetings(preserveScroll=false){
   const region=state.region;
   const current=++state.meetingLoadingId;
   const root=document.getElementById('mtgMeetingList');
-  document.getElementById('mtgRegionLabel').textContent=region==='kansai'?'関西':'関東';
+  document.getElementById('mtgRegionLabel').textContent=portalBranchVisibleName();
   const savedScroll=preserveScroll?root.scrollTop:0;
   if(!preserveScroll)root.innerHTML='<div class="mtg-empty">MTGを読み込んでいます…</div>';
   try{
@@ -15807,7 +15834,7 @@ async function loadMeetingCandidatePolls(){
 }
 function renderMeetingCandidatePolls(){
   const list=document.getElementById('candidatePollList');
-  document.getElementById('candidateRegionLabel').textContent=state.region==='kansai'?'関西':'関東';
+  document.getElementById('candidateRegionLabel').textContent=portalBranchVisibleName();
   if(!list)return;
   if(!state.meetingCandidatePolls.length){list.innerHTML='<p class="candidate-guide">候補日調整はまだありません。</p>';return;}
   list.innerHTML=state.meetingCandidatePolls.map(poll=>{
@@ -16115,7 +16142,7 @@ async function saveClientResults(){
   finally{button.disabled=false;}
 }
 
-function clientBusinessRegionLabel(){return state.region==='kansai'?'関西':'関東';}
+function clientBusinessRegionLabel(){return portalBranchVisibleName();}
 async function loadClientBusiness(type){
   const seq=++state.clientBusiness.loadingSeq;
   const region=state.region;
@@ -17676,7 +17703,7 @@ function deptMaterialRender(){
   if(add)add.hidden=!departmentMaterialState.canEdit;
   if(!isClient){
     deptMaterialEl('departmentMaterialsTitle').textContent=DEPT_MATERIAL_LABELS[departmentMaterialState.department]+'｜資料一覧';
-    deptMaterialEl('departmentMaterialsRegion').textContent=deptMaterialRegion()==='kansai'?'関西':'関東';
+    deptMaterialEl('departmentMaterialsRegion').textContent=portalBranchVisibleName();
   }
 }
 async function deptMaterialLoad(department){
@@ -17707,7 +17734,7 @@ function deptMaterialOpenDialog(item=null){
 async function deptMaterialDelete(item){
   if(!departmentMaterialState.canEdit||!confirm('「'+item.title+'」を資料一覧から削除しますか？'))return;
   try{
-    await portalFetch('/api/department-materials',{method:'POST',body:{action:'delete',id:item.id}});
+    await portalFetch('/api/department-materials',{method:'POST',body:{action:'delete',id:item.id,department:deptMaterialCurrentDepartment()}});
     await deptMaterialLoad(deptMaterialCurrentDepartment());showToast('資料ボタンを削除しました');
   }catch(error){deptMaterialStatus(error.message||'削除できませんでした',true);}
 }
@@ -17719,7 +17746,7 @@ async function deptMaterialSubmit(event){
   if(!title||title.length>45){alert('ボタン名を1〜45文字で入力してください。');return;}
   if(!deptMaterialValidHref(url)){alert('https://から始まるURLを入力してください。');return;}
   const department=deptMaterialCurrentDepartment(),region=deptMaterialRegion();
-  const body=departmentMaterialState.editing?{action:'update',id:departmentMaterialState.editing,title,url}:{action:'create',department,region,title,url};
+  const body=departmentMaterialState.editing?{action:'update',id:departmentMaterialState.editing,department,region,title,url}:{action:'create',department,region,title,url};
   button.disabled=true;
   try{
     await portalFetch('/api/department-materials',{method:'POST',body});
@@ -18718,7 +18745,7 @@ deptMaterialCard=function(item){
 };
 function v146B64ToBlob(data,mime){const bin=atob(data);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime});}
 async function v146OpenMaterial(item){
- try{const q=new URLSearchParams({material_id:String(item.id)});const data=await portalFetch('/api/department-materials?'+q.toString(),{timeoutMs:90000});
+ try{const q=new URLSearchParams({material_id:String(item.id),department:deptMaterialCurrentDepartment()});const data=await portalFetch('/api/department-materials?'+q.toString(),{timeoutMs:90000});
  const hasUrl=Boolean(data.url),hasText=Boolean(data.text),hasFile=Boolean(data.file_data);
  if(!hasUrl&&!hasText&&!hasFile)throw Error('資料の内容が見つかりません。');
  if(hasFile&&!hasUrl&&!hasText){v155DownloadMaterial(data,item.title);return;}
