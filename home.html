@@ -4870,7 +4870,7 @@ button.summary-task-row[data-open-request-task] .summary-task-title::after {
   font: 400 40px/60px Inter, 'Noto Sans JP', sans-serif !important;
   z-index: 18 !important;
 }
-/* RP可能時間の登録だけ、Figma上部の空白領域に置いてカレンダーには重ねない。 */
+/* RP希望日時の登録だけ、Figma上部の空白領域に置いてカレンダーには重ねない。 */
 .screen-schedule-candidates .rp-availability-toolbar {
   position: absolute !important; left: 880px !important;
   right: auto !important; top: 46px !important;
@@ -8485,8 +8485,8 @@ line-height: 1.5 !important;
             <button type="button" id="rpAvailabilityOpen">＋ RP希望時間を登録</button>
           </div>
           <div class="rp-availability-dialog" id="rpAvailabilityDialog" hidden>
-            <h2 id="rpAvailabilityDialogTitle">ロープレ可能時間の登録</h2>
-            <p>全員が希望日時を登録できます。代表がRP担当者に指定した人は、登録した同じ時間を受講・担当の両方に利用できます。確定は代表が行います。</p>
+            <h2 id="rpAvailabilityDialogTitle">RP希望日時の登録</h2>
+            <p>ロープレを希望する日時を登録してください。登録した時点では確定しません。代表が希望日時と担当者を照合し、双方の予定を確定します。</p>
             <form id="rpAvailabilityForm">
               <label>開始日<input type="date" id="rpAvailabilityDate" required></label>
               <label>開始<input type="time" id="rpAvailabilityStart" required value="18:00" step="900"></label>
@@ -8495,7 +8495,7 @@ line-height: 1.5 !important;
               <button type="submit" id="rpAvailabilitySubmit">登録</button>
               <button type="button" id="rpAvailabilityCancelEdit" hidden>編集をやめる</button>
             </form>
-            <p id="rpAvailabilityEditNote" class="rp-availability-edit-note" hidden>未確定の自分のRP可能時間を編集しています。</p>
+            <p id="rpAvailabilityEditNote" class="rp-availability-edit-note" hidden>未確定の自分のRP希望日時を編集しています。</p>
             <strong>登録済みの希望時間（編集・削除）</strong>
             <div class="rp-availability-mine" id="rpAvailabilityMine">取得中…</div>
             <button type="button" class="rp-availability-close" id="rpAvailabilityClose">閉じる</button>
@@ -8557,7 +8557,7 @@ line-height: 1.5 !important;
             <p class="representative-info">確定した候補日は、必要なTTなどを整えたうえで「人事局」のMTG登録から確定MTGとして登録してください。自動登録は行いません。</p>
             </section>
             <section id="repRpPanel" hidden>
-              <div class="rp-panel-head"><div><h2>RPの自動マッチング</h2><p>支部員が「RP可能時間」で登録した希望時間から、代表が指定した担当者との重なりを探します。</p></div></div>
+              <div class="rp-panel-head"><div><h2>RPの自動マッチング</h2><p>支部員のRP希望日時を、代表が指定した担当者の希望日時と照合します。</p></div></div>
               <div class="rp-controls">
                 <label>実施時間<select id="rpDuration"><option value="30">30分</option><option value="60" selected>60分</option><option value="90">90分</option></select></label>
                 <label>候補期間<select id="rpDays"><option value="7">今後7日</option><option value="14" selected>今後14日</option><option value="28">今後28日</option></select></label>
@@ -8565,7 +8565,7 @@ line-height: 1.5 !important;
               </div>
               <div class="rp-people-head"><strong>RP担当者を選択（複数可）</strong><button type="button" id="rpSelectAllTrainers">すべて選択</button></div>
               <div id="rpTrainerChoices" class="rp-trainers">読み込み中…</div>
-              <p class="rp-hint">通常の架電・リストアップ予定は「空き時間」とみなしません。全員が予定登録で「RP可能時間」を登録します。代表に担当者として指定された人は同じ時間を受講・担当の両方に利用できます。候補は自動提示のみで、確定は代表が行います。</p>
+              <p class="rp-hint">通常の架電・リストアップ予定は「空き時間」とみなしません。希望する日時は「RP希望日時」として登録します。担当者になる人も希望日時を登録し、代表が担当者・希望者の双方の希望を照合します。候補は自動提示のみで、確定は代表が行います。</p>
               <div class="rp-results-grid">
                 <div><h3>マッチング候補</h3><div id="rpMatchSuggestions" class="rp-match-list">担当者を選択して候補を検索</div></div>
                 <div><h3>確定済みRP</h3><div id="rpConfirmedAssignments" class="rp-match-list">読み込み中…</div></div>
@@ -8617,7 +8617,7 @@ line-height: 1.5 !important;
             <div id="scheduleTaskChoiceGrid" class="schedule-task-choice-grid" role="group" aria-label="登録するタスクを選択"></div>
 
             <input id="planOtherText" class="sp-other-input" type="text" maxlength="120" placeholder="その他" aria-label="その他のタスク名を入力" autocomplete="off">
-            <button id="planRpAvailabilityButton" class="sp-rp-button" type="button" aria-pressed="false">RP可能時間</button>
+            <button id="planRpAvailabilityButton" class="sp-rp-button" type="button" aria-pressed="false">RP希望日時</button>
 
             <button id="schedulePlanRegisterButton" class="schedule-register-button" type="button">登録</button>
           </div>
@@ -13370,7 +13370,7 @@ const scheduleTaskChoices = [
   "メール送信",
   "その他"
 ];
-// 代表画面が指定した担当者は、同じRP可能時間を受講者・担当者の両方に利用できる。
+// 代表画面が指定した担当者は、同じRP希望日時を受講者・担当者の両方に利用できる。
 let schedulePlanRpMode = false;
 
 async function refreshCalendarSchedule() {
@@ -13937,7 +13937,7 @@ function renderSchedulePlanScreen() {
   const manualDateRow = document.getElementById("manualPlanDateRow");
   manualDateRow.hidden = !manual;
   if (manual) document.getElementById("manualPlanDate").value = tokyoDateFromIso(slot.start);
-  document.getElementById("planRpAvailabilityButton").hidden = manual;
+  document.getElementById("planRpAvailabilityButton").hidden = false;
   const begin = new Date(slot.start);
   // 選択済みの空き時間に収まるように、初期終了時刻は60分後または空き時間の末尾。
   const finish = new Date(Math.min(new Date(slot.end).getTime(), begin.getTime() + 60 * 60000));
@@ -13974,7 +13974,7 @@ function renderScheduleTaskChoices() {
 }
 
 // Figmaの登録画面では外部カレンダー選択欄は表示しない。
-// 通常予定のポータル／スプレッドシート同期と、RP可能時間のD1保存を分離する。
+// 通常予定のポータル／スプレッドシート同期と、RP希望日時のD1保存を分離する。
 function renderSchedulePlanCalendarTargets() {}
 
 async function registerSchedulePlan() {
@@ -14001,7 +14001,7 @@ async function registerSchedulePlan() {
         method: "POST",
         body: { starts_at: range.startsAt.toISOString(), ends_at: range.endsAt.toISOString() }
       });
-      showToast("RP可能時間を登録しました");
+      showToast("RP希望日時を登録しました");
       rpWeekAnchorDate = range.date;
       state.calendar.selectedSlot = null;
       state.calendar.selectedTaskTitle = "";
@@ -14032,7 +14032,7 @@ async function registerSchedulePlan() {
     state.calendar.selectedTaskTitle = "";
     showScreen("schedule-review");
   } catch (error) {
-    showToast(error.message || (rpMode ? "RP可能時間を登録できませんでした" : "タスク予定を登録できませんでした"));
+    showToast(error.message || (rpMode ? "RP希望日時を登録できませんでした" : "タスク予定を登録できませんでした"));
   } finally {
     if (submitButton) submitButton.disabled = false;
   }
@@ -15847,7 +15847,7 @@ async function rpFindCandidates(){
   const el=document.getElementById('rpMatchSuggestions');el.textContent='候補を照合しています…';
   const p=new URLSearchParams({region:state.region,days:document.getElementById('rpDays').value,duration:document.getElementById('rpDuration').value,trainers:trainers.join(',')});
   try{const d=await portalFetch('/api/rp/matches?'+p.toString());rpMatches=d.matches||[];
-    el.innerHTML=rpMatches.length?rpMatches.map((m,i)=>`<div class="rp-match-row"><strong>${escapeHtml(m.trainee_name)} × ${escapeHtml(m.trainer_name)}</strong><small>${rpLocal(m.starts_at)} ～ ${rpLocal(m.ends_at)} ／ ${m.duration}分</small><button type="button" data-rp-assign="${i}">この組合せを確定</button></div>`).join(''):'指定期間に一致する空き時間がありません。RP受講希望／RP担当可能の登録状況を確認してください。';
+    el.innerHTML=rpMatches.length?rpMatches.map((m,i)=>`<div class="rp-match-row"><strong>${escapeHtml(m.trainee_name)} × ${escapeHtml(m.trainer_name)}</strong><small>${rpLocal(m.starts_at)} ～ ${rpLocal(m.ends_at)} ／ ${m.duration}分</small><button type="button" data-rp-assign="${i}">この組合せを確定</button></div>`).join(''):'指定期間に一致する空き時間がありません。RP希望日時と担当者設定を確認してください。';
   }catch(e){el.textContent=e.message||'検索に失敗しました';}
 }
 async function rpAssign(index){const m=rpMatches[index];if(!m)return;
@@ -16208,24 +16208,34 @@ function rpWeekDrawEvents(range){
   const msg=document.getElementById('rpWeekMessage');
   if(!root||!msg)return;
   const items=[];
-  // Pending entries are original RP-containing plans; suppress only fully used intervals.
-  for(const p of rpWeekCandidatePlans){
-    const fullyAssigned=rpWeekAssignments.some(a=>
-      (String(a.trainee_email).toLowerCase()===String(p.user_email).toLowerCase()||
-       String(a.trainer_email).toLowerCase()===String(p.user_email).toLowerCase()) &&
-      Date.parse(a.starts_at)<=Date.parse(p.starts_at)&&Date.parse(a.ends_at)>=Date.parse(p.ends_at));
-    if(fullyAssigned)continue;
+  // Only the exact confirmed interval disappears; retain free time before and after it.
+  // The server also excludes booked intervals so matching and this visual calendar agree.
+  function remainingIntervals(p){
+    const email=String(p.user_email||'').trim().toLowerCase();
+    let ranges=[[Date.parse(p.starts_at),Date.parse(p.ends_at)]];
+    for(const a of rpWeekAssignments){
+      if(email!==String(a.trainee_email||'').toLowerCase() && email!==String(a.trainer_email||'').toLowerCase())continue;
+      const start=Date.parse(a.starts_at),end=Date.parse(a.ends_at);
+      ranges=ranges.flatMap(([s,e])=>end<=s||start>=e?[[s,e]]:
+        [[s,Math.min(start,e)],[Math.max(end,s),e]].filter(([x,y])=>y>x));
+    }
+    return ranges.filter(([start,end])=>end>start).map(([start,end])=>({
+      ...p,starts_at:new Date(start).toISOString(),ends_at:new Date(end).toISOString()
+    }));
+  }
+  for(const original of rpWeekCandidatePlans)for(const p of remainingIntervals(original)){
     items.push({starts_at:p.starts_at,ends_at:p.ends_at,user_email:p.user_email,
-      label:p.user_name||p.user_email, text:p.role==='trainer'?'RP対応可能':'ロープレ希望',
+      label:p.user_name||p.user_email, text:'ロープレ希望',
       status:'pending',manual_plan_id:Number(p.manual_plan_id||0),source_plan_id:Number(p.id||0),
       availability_id:Number(p.availability_id||0),plan_owner_email:p.plan_owner_email||p.user_email,
       title:p.title||'',memo:p.memo||'',
-      tooltip:`未確定｜${p.user_name||''}｜${p.role==='trainer'?'RP対応可能':'ロープレ希望日時'}`});
+      tooltip:`未確定・希望｜${p.user_name||''}｜RP希望日時`});
   }
   for(const a of rpWeekAssignments){
     items.push({starts_at:a.starts_at,ends_at:a.ends_at,
       user_email:a.trainee_email,label:a.trainee_name||a.trainee_email,
       text:'RP確定',trainer:a.trainer_name||a.trainer_email,status:'confirmed',
+      assignment_id:Number(a.id||0),trainer_email:a.trainer_email,trainee_email:a.trainee_email,
       tooltip:`確定済み｜受講：${a.trainee_name||a.trainee_email}｜担当：${a.trainer_name||a.trainer_email}`});
   }
   const byDay=new Map();
@@ -16247,10 +16257,19 @@ function rpWeekDrawEvents(range){
     const height=Math.max(18,(end-start)/60*56);
     const cls=p.status==='confirmed'?'rp-event-confirmed':'rp-event-pending';
     const mine=p.status==='pending' && String(p.plan_owner_email||'').trim().toLowerCase()===String(state.user?.email||'').trim().toLowerCase();
-    const editAttrs=mine?(p.availability_id?` data-rp-edit-source="availability" data-rp-edit-id="${p.availability_id}"`:
-      p.source_plan_id?` data-rp-edit-source="plan" data-rp-edit-id="${p.source_plan_id}"`:''):'';
-    const editA11y=editAttrs?' role="button" tabindex="0"':'';
-    return `<div class="schedule-review-event ${cls}${editAttrs?' is-own-rp':''}"${editAttrs}${editA11y} style="left:${left}px;top:${top}px;width:${width}px;height:${height}px" title="${escapeHtml(p.tooltip)}${editAttrs?'｜クリックで自分のRP時間を編集':''}" aria-label="${escapeHtml(p.tooltip)}${editAttrs?'（編集可能）':''}"><div><span class="schedule-review-event-name">${escapeHtml(p.label)}</span><span class="schedule-review-event-title">${escapeHtml(p.text)}</span>${p.trainer?`<span class="rp-week-assigned-name">担当：${escapeHtml(p.trainer)}</span>`:''}</div></div>`;
+    const isLegacyLocked=Boolean(p.source_plan_id)&&rpWeekAssignments.some(a=>
+      (String(a.trainee_email||'').toLowerCase()===String(p.user_email||'').toLowerCase()||
+       String(a.trainer_email||'').toLowerCase()===String(p.user_email||'').toLowerCase())&&
+      Date.parse(a.starts_at)<Date.parse(p.rp_source_ends_at||p.ends_at)&&
+      Date.parse(a.ends_at)>Date.parse(p.rp_source_starts_at||p.starts_at));
+    const editAttrs=(mine&&!isLegacyLocked)?(p.availability_id?` data-rp-edit-source="availability" data-rp-edit-id="${p.availability_id}"`:
+      p.source_plan_id?` data-rp-edit-source="plan" data-rp-edit-id="${p.source_plan_id}"`:'')+' data-rp-edit-start="'+escapeHtml(p.starts_at)+'" data-rp-edit-end="'+escapeHtml(p.ends_at)+'"':'';
+    const me=String(state.user?.email||'').trim().toLowerCase();
+    const myConfirmed=p.status==='confirmed'&&Number(p.assignment_id)>0&&
+      (String(p.trainer_email||'').toLowerCase()===me||String(p.trainee_email||'').toLowerCase()===me);
+    const calendarAttrs=myConfirmed?` data-rp-confirm-calendar="${p.assignment_id}"`:'';
+    const editA11y=(editAttrs||calendarAttrs)?' role="button" tabindex="0"':'';
+    return `<div class="schedule-review-event ${cls}${editAttrs?' is-own-rp':''}${myConfirmed?' is-own-rp':''}"${editAttrs}${calendarAttrs}${editA11y} style="left:${left}px;top:${top}px;width:${width}px;height:${height}px" title="${escapeHtml(p.tooltip)}${editAttrs?'｜クリックで自分のRP時間を編集':''}${myConfirmed?'｜クリックで外部カレンダーに登録（任意）':''}" aria-label="${escapeHtml(p.tooltip)}${editAttrs?'（編集可能）':''}${myConfirmed?'（カレンダー登録可能）':''}"><div><span class="schedule-review-event-name">${escapeHtml(p.label)}</span><span class="schedule-review-event-title">${escapeHtml(p.text)}</span>${p.trainer?`<span class="rp-week-assigned-name">担当：${escapeHtml(p.trainer)}</span>`:''}</div></div>`;
   }).join('');
   msg.textContent=placed.length?'':'この週のRP候補・確定済みRPはありません。';
 }
@@ -16301,7 +16320,7 @@ async function rpV50LoadMatches(){
     status.textContent=`自動候補 ${rpV50SuggestedMatches.length}件。承認ボタンを押したものだけ確定します。`;
     candidates.innerHTML=rpV50SuggestedMatches.length?rpV50SuggestedMatches.map((x,index)=>
       `<div class="rp-v50-match-row"><div><strong>${escapeHtml(x.trainee_name)} → ${escapeHtml(x.trainer_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(x.starts_at))} ～ ${escapeHtml(rpV48NormalizeTime(x.ends_at))} ／ ${Number(x.duration)}分</small></div><button type="button" data-rp-manual-approve="${index}">承認して確定</button></div>`).join(''):
-      '<p>該当する候補はありません。受講希望・担当可能の日時と役割を確認してください。</p>';
+      '<p>該当する候補はありません。希望日時と代表による担当者設定を確認してください。</p>';
     const confirmedRows=(a.assignments||[]).filter(x=>Number(x.program_id)===id);
     confirmed.innerHTML=confirmedRows.length?confirmedRows.map(x=>
       `<div class="rp-v50-match-row"><div><strong class="rp-v50-match-approved">${escapeHtml(x.trainee_name)} → ${escapeHtml(x.trainer_name)}</strong><small>${escapeHtml(rpV48NormalizeTime(x.starts_at))}</small></div><button type="button" class="rp-v50-match-reopen" data-rp-match-reopen="${Number(x.id)}">確定解除・再調整</button></div>`).join(''):'<p>このRPはまだ確定されていません。</p>';
@@ -16316,8 +16335,9 @@ async function rpV50Approve(index,btn){
       region:state.region,program_id:rpV50EditingProgramId,
       trainee:match.trainee_email,trainer:match.trainer_email,
       starts_at:match.starts_at,ends_at:match.ends_at}});
-    showToast('代表の承認によりRPを確定しました');
+    showToast('代表の承認によりRPを確定しました。双方のポータルに通知します。');
     await rpV50LoadMatches();
+    if(typeof rpWeekLoad==='function'&&state.currentScreen==='schedule-candidates')await rpWeekLoad();
   }catch(e){showToast(e.message||'確定できませんでした。候補を更新してください');btn.disabled=false;}
 }
 document.addEventListener('DOMContentLoaded',()=>{
@@ -16335,8 +16355,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     const btn=e.target.closest('[data-rp-match-reopen]');if(!btn)return;
     if(!confirm('このRPの確定を解除して、候補の再照合を行いますか？'))return;
     btn.disabled=true;
-    try{await portalFetch('/api/rp/assignments/delete',{method:'POST',body:{id:Number(btn.dataset.rpMatchReopen)}});
-      showToast('確定を解除しました。候補を再照合します');await rpV50LoadMatches();}
+    try{const result=await portalFetch('/api/rp/assignments/delete',{method:'POST',body:{id:Number(btn.dataset.rpMatchReopen)}});
+      showToast((result.externalWarnings||[]).length?'確定は解除しました。外部カレンダーに削除できない予定があります。本人に確認してください。':'確定を解除しました。候補を再照合します');await rpV50LoadMatches();}
     catch(error){showToast(error.message||'解除できませんでした');btn.disabled=false;}
   });
 });
@@ -16358,7 +16378,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   function timestamp(date,time){return new Date(date+'T'+time+':00+09:00').toISOString();}
   function resetEditor(){
     currentEditing=null;
-    $('rpAvailabilityDialogTitle').textContent='ロープレ可能時間の登録';
+    $('rpAvailabilityDialogTitle').textContent='RP希望日時の登録';
     $('rpAvailabilitySubmit').textContent='登録';
     $('rpAvailabilityCancelEdit').hidden=true;
     $('rpAvailabilityEditNote').hidden=true;
@@ -16367,23 +16387,26 @@ document.addEventListener('DOMContentLoaded',()=>{
     $('rpAvailabilityEndDate').value=today();
     $('rpAvailabilityEnd').value='19:00';
   }
-  function ownSource(source,id){
+  function ownSource(source,id,segmentStart='',segmentEnd=''){
     const n=Number(id);
     if(!Number.isSafeInteger(n)||n<=0)return null;
-    if(source==='availability')return latestSlots.find(p=>Number(p.id)===n&&isMine(p))||null;
-    if(source==='plan')return rpWeekCandidatePlans.find(p=>Number(p.id)===n&&!p.availability_id&&isMine(p))||null;
-    return null;
+    const matches=source==='availability'?latestSlots:
+      source==='plan'?rpWeekCandidatePlans.filter(p=>!p.availability_id):[];
+    return matches.find(p=>Number(p.id)===n&&isMine(p)&&
+      (!segmentStart||p.starts_at===segmentStart)&&(!segmentEnd||p.ends_at===segmentEnd))||null;
   }
   function isAssigned(p){
-    const user=email(),a=Date.parse(p.starts_at),b=Date.parse(p.ends_at);
+    const user=email(),isLegacy=Boolean(p.id&&!p.availability_id&&p.source!=='availability');
+    const a=Date.parse(isLegacy?(p.rp_source_starts_at||p.starts_at):p.starts_at);
+    const b=Date.parse(isLegacy?(p.rp_source_ends_at||p.ends_at):p.ends_at);
     return rpWeekAssignments.some(x=>(String(x.trainee_email||'').toLowerCase()===user||String(x.trainer_email||'').toLowerCase()===user)&&Date.parse(x.starts_at)<b&&Date.parse(x.ends_at)>a);
   }
-  function openEditor(source,id){
-    const p=ownSource(source,id);
-    if(!p)return showToast('自分のRP可能時間のみ編集できます');
+  function openEditor(source,id,segmentStart='',segmentEnd=''){
+    const p=ownSource(source,id,segmentStart,segmentEnd);
+    if(!p)return showToast('自分のRP希望日時のみ編集できます');
     if(isAssigned(p))return showToast('確定済みのRP時間は編集できません。代表へご相談ください');
-    currentEditing={source,id:Number(id)};
-    $('rpAvailabilityDialogTitle').textContent='自分のRP可能時間を編集';
+    currentEditing={source,id:Number(id),segmentStart:p.starts_at,segmentEnd:p.ends_at};
+    $('rpAvailabilityDialogTitle').textContent='自分のRP希望日時を編集';
     $('rpAvailabilitySubmit').textContent='変更を保存';
     $('rpAvailabilityCancelEdit').hidden=false;
     $('rpAvailabilityEditNote').hidden=false;
@@ -16401,7 +16424,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       ...rpWeekCandidatePlans.filter(p=>p.id&&!p.availability_id&&isMine(p)).map(p=>({...p,source:'plan'}))
     ].sort((a,b)=>String(a.starts_at).localeCompare(String(b.starts_at)));
     root.textContent='';
-    if(!own.length){root.textContent='この週に登録済みのRP可能時間はありません。';return;}
+    if(!own.length){root.textContent='この週に登録済みのRP希望日時はありません。';return;}
     for(const p of own){
       const locked=isAssigned(p);
       const item=document.createElement('div');item.className='rp-availability-mine-row';
@@ -16409,8 +16432,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       item.appendChild(span);
       if(!locked){
         const actions=document.createElement('span');actions.className='rp-availability-mine-actions';
-        const edit=document.createElement('button');edit.type='button';edit.textContent='編集';edit.dataset.rpAvailabilityEdit=String(p.id);edit.dataset.rpSource=p.source;
-        const del=document.createElement('button');del.type='button';del.textContent='削除';del.dataset.rpAvailabilityDelete=String(p.id);del.dataset.rpSource=p.source;
+        const edit=document.createElement('button');edit.type='button';edit.textContent='編集';edit.dataset.rpAvailabilityEdit=String(p.id);edit.dataset.rpSource=p.source;edit.dataset.rpSegmentStart=p.starts_at;edit.dataset.rpSegmentEnd=p.ends_at;
+        const del=document.createElement('button');del.type='button';del.textContent='削除';del.dataset.rpAvailabilityDelete=String(p.id);del.dataset.rpSource=p.source;del.dataset.rpSegmentStart=p.starts_at;del.dataset.rpSegmentEnd=p.ends_at;
         actions.append(edit,del);item.appendChild(actions);
       }
       root.appendChild(item);
@@ -16425,14 +16448,14 @@ document.addEventListener('DOMContentLoaded',()=>{
     renderOwnList();
     return latestSlots;
   }
-  async function deleteOwn(source,id,button){
-    const p=ownSource(source,id);
-    if(!p)return showToast('自分のRP可能時間のみ削除できます');
+  async function deleteOwn(source,id,button,segmentStart='',segmentEnd=''){
+    const p=ownSource(source,id,segmentStart,segmentEnd);
+    if(!p)return showToast('自分のRP希望日時のみ削除できます');
     if(isAssigned(p))return showToast('確定済みRPは削除できません。代表へご相談ください');
     if(!window.confirm(`${jp(p.starts_at)} ～ ${jp(p.ends_at)} のRP希望時間を削除しますか？`))return;
     button.disabled=true;
     try{
-      if(source==='availability')await portalFetch('/api/rp/availability/delete',{method:'POST',body:{id:Number(id)}});
+      if(source==='availability')await portalFetch('/api/rp/availability/delete',{method:'POST',body:{id:Number(id),segment_starts_at:p.starts_at,segment_ends_at:p.ends_at}});
       else await portalFetch('/api/calendar/plans/delete',{method:'POST',body:{planId:Number(id),rpEdit:true}});
       if(currentEditing?.source===source&&currentEditing.id===Number(id))resetEditor();
       showToast('自分のRP希望時間を削除しました');await rpWeekLoad();
@@ -16453,19 +16476,19 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
     dialog.addEventListener('click',e=>{
       const edit=e.target.closest('[data-rp-availability-edit]');
-      if(edit){openEditor(edit.dataset.rpSource,edit.dataset.rpAvailabilityEdit);return;}
+      if(edit){openEditor(edit.dataset.rpSource,edit.dataset.rpAvailabilityEdit,edit.dataset.rpSegmentStart,edit.dataset.rpSegmentEnd);return;}
       const del=e.target.closest('[data-rp-availability-delete]');
-      if(del)void deleteOwn(del.dataset.rpSource,del.dataset.rpAvailabilityDelete,del);
+      if(del)void deleteOwn(del.dataset.rpSource,del.dataset.rpAvailabilityDelete,del,del.dataset.rpSegmentStart,del.dataset.rpSegmentEnd);
     });
     $('rpWeekEvents')?.addEventListener('click',e=>{
       const card=e.target.closest('[data-rp-edit-id]');
-      if(card)openEditor(card.dataset.rpEditSource,card.dataset.rpEditId);
+      if(card)openEditor(card.dataset.rpEditSource,card.dataset.rpEditId,card.dataset.rpEditStart,card.dataset.rpEditEnd);
     });
     $('rpWeekEvents')?.addEventListener('keydown',e=>{
       if(e.key!=='Enter'&&e.key!==' ')return;
       const card=e.target.closest('[data-rp-edit-id]');
       if(!card)return;
-      e.preventDefault();openEditor(card.dataset.rpEditSource,card.dataset.rpEditId);
+      e.preventDefault();openEditor(card.dataset.rpEditSource,card.dataset.rpEditId,card.dataset.rpEditStart,card.dataset.rpEditEnd);
     });
     $('rpAvailabilityForm')?.addEventListener('submit',async e=>{
       e.preventDefault();const button=$('rpAvailabilitySubmit');
@@ -16485,7 +16508,8 @@ document.addEventListener('DOMContentLoaded',()=>{
           await portalFetch('/api/rp/availability',{method:'POST',body:{starts_at:start,ends_at:end}});
         }else if(editing.source==='availability'){
           if(!ownSource(editing.source,editing.id))throw Error('自分のRP時間のみ変更できます');
-          await portalFetch('/api/rp/availability/update',{method:'POST',body:{id:editing.id,starts_at:start,ends_at:end}});
+          await portalFetch('/api/rp/availability/update',{method:'POST',body:{id:editing.id,starts_at:start,ends_at:end,
+            segment_starts_at:editing.segmentStart,segment_ends_at:editing.segmentEnd}});
         }else{
           const p=ownSource('plan',editing.id);if(!p)throw Error('自分のRP時間のみ変更できます');
           const result=await portalFetch('/api/calendar/plans/update',{method:'POST',body:{planId:editing.id,title:p.title,
@@ -16493,12 +16517,12 @@ document.addEventListener('DOMContentLoaded',()=>{
           if(result.sheetSync?.ok===false)syncWarning='D1の日時は変更しましたが、スプレッドシート同期に失敗しました。';
           else if((result.externalResults||[]).some(x=>!x.ok))syncWarning='RP時間は変更しましたが、一部の外部カレンダー連携に反映できませんでした。';
         }
-        showToast(syncWarning||(editing?'自分のRP可能時間を変更しました':'RP可能時間を登録しました'));
+        showToast(syncWarning||(editing?'自分のRP希望日時を変更しました':'RP希望日時を登録しました'));
         resetEditor();
         // Switch to the date of the updated availability, same behavior as task time editing.
         rpWeekAnchorDate=date;
         await rpWeekLoad();
-      }catch(err){showToast(err.message||'RP可能時間を保存できませんでした')}
+      }catch(err){showToast(err.message||'RP希望日時を保存できませんでした')}
       finally{button.disabled=false;}
     });
   }
@@ -18994,6 +19018,187 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
  },true);
  syncMaterialView();
+})();
+</script>
+
+<style>
+.rp-confirm-notice[hidden]{display:none!important}
+.rp-confirm-notice{position:fixed;inset:0;z-index:120000;display:flex;align-items:center;justify-content:center;background:rgba(10,19,51,.55);padding:20px;font-family:Inter,'Noto Sans JP',sans-serif}
+.rp-confirm-notice-panel{width:min(560px,calc(100vw - 40px));max-height:85vh;overflow:auto;background:#fff;border:3px solid #1f62c1;border-radius:16px;padding:28px 30px;box-sizing:border-box;box-shadow:0 16px 45px rgba(0,0,0,.25);color:#172f5d}
+.rp-confirm-notice-panel h2{font-size:27px;margin:0 0 14px;color:#164a97}
+.rp-confirm-notice-panel p{font-size:17px;line-height:1.6;overflow-wrap:anywhere;margin:9px 0}
+.rp-confirm-notice-detail{background:#eef4ff;border:1px solid #c6d7f5;padding:15px;border-radius:10px;margin:17px 0}
+.rp-confirm-notice-detail p{font-size:17px;margin:5px 0}
+.rp-confirm-notice-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:20px}
+.rp-confirm-notice-actions button{border:1px solid #225ec4;border-radius:8px;font-size:16px;padding:10px 17px;cursor:pointer;background:#fff;color:#2058ad}
+.rp-confirm-notice-actions button.primary{background:#225ec4;color:#fff}
+.rp-confirm-notice-actions button:disabled{opacity:.6;cursor:wait}
+.rp-confirm-notice-calendar{display:grid;grid-template-columns:1fr;gap:9px;background:#f7f9ff;border:1px solid #d0daf0;border-radius:9px;padding:12px;margin:13px 0}
+.rp-confirm-notice-calendar[hidden]{display:none!important}
+.rp-confirm-notice-calendar label{font-size:15px;font-weight:600}
+.rp-confirm-notice-calendar select{width:100%;min-height:42px;padding:8px;font-size:15px;color:#162c52;border:1px solid #9eb5dc;background:#fff;border-radius:5px}
+.rp-confirm-notice-calendar button{border:0;border-radius:7px;background:#275dbe;color:#fff;font-size:15px;padding:10px;cursor:pointer}
+.rp-confirm-notice-calendar button:disabled{opacity:.5;cursor:wait}
+.rp-confirm-notice-calendar p{font-size:14px;margin:0}
+</style>
+<div class="rp-confirm-notice" id="rpConfirmedNotice" hidden role="dialog" aria-modal="true" aria-labelledby="rpConfirmedNoticeTitle">
+  <div class="rp-confirm-notice-panel">
+    <h2 id="rpConfirmedNoticeTitle">ロープレの予定が確定しました！</h2>
+    <p>代表がRPの希望者・担当者をマッチングし、予定を確定しました。</p>
+    <div class="rp-confirm-notice-detail">
+      <p><strong id="rpNoticeProgram"></strong></p>
+      <p id="rpNoticeWhen"></p>
+      <p id="rpNoticePartner"></p>
+      <p id="rpNoticeRole"></p>
+    </div>
+    <p>希望者と担当者、それぞれのポータルに通知しています。</p>
+    <div class="rp-confirm-notice-calendar" id="rpNoticeCalendarSection" hidden>
+      <label for="rpNoticeCalendarSelect">予定を登録する外部カレンダー（任意）</label>
+      <select id="rpNoticeCalendarSelect" aria-label="登録先カレンダー"></select>
+      <button id="rpNoticeCalendarAdd" type="button">選択したカレンダーにRP予定を追加</button>
+      <p id="rpNoticeCalendarStatus" role="status"></p>
+    </div>
+    <div class="rp-confirm-notice-actions">
+      <button id="rpNoticeCalendarToggle" type="button">外部カレンダーに登録（任意）</button>
+      <button id="rpNoticeRead" class="primary" type="button">確認しました</button>
+      <button id="rpNoticeOpen" type="button">RP時間確認へ</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const overlay=$('rpConfirmedNotice');
+  if(!overlay)return;
+  let inflight=false,queue=[],current=null,saving=false,lastEmail='';
+  const formatTime=iso=>new Intl.DateTimeFormat('ja-JP',{
+    timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit',
+    hour:'2-digit',minute:'2-digit',hour12:false
+  }).format(new Date(iso));
+  function showNext(){
+    if(saving)return;
+    current=queue.shift()||null;
+    if(!current){overlay.hidden=true;return;}
+    const me=String(state.user?.email||'').trim().toLowerCase();
+    const trainer=String(current.trainer_email||'').trim().toLowerCase()===me;
+    $('rpNoticeProgram').textContent=String(current.program_title||'ロープレ');
+    $('rpNoticeWhen').textContent='日時：'+formatTime(current.starts_at)+' ～ '+formatTime(current.ends_at);
+    $('rpNoticePartner').textContent=(trainer?'希望者：':'担当者：')+String(trainer?current.trainee_name:current.trainer_name);
+    $('rpNoticeRole').textContent='あなたの役割：'+(trainer?'担当者':'希望者');
+    $('rpNoticeCalendarSection').hidden=true;
+    $('rpNoticeCalendarSelect').replaceChildren();
+    $('rpNoticeCalendarStatus').textContent='';
+    $('rpNoticeCalendarToggle').disabled=false;
+    overlay.hidden=false;
+    $('rpNoticeRead').focus();
+  }
+  async function check(){
+    if(inflight||current||saving||!overlay.hidden||document.hidden||!sessionStorage.getItem('dotjp_access_token'))return;
+    if(!state?.user?.email||state.supportMode)return;
+    const email=String(state.user.email).trim().toLowerCase();
+    inflight=true;
+    try{
+      const res=await portalFetch('/api/rp/notifications');
+      if(state.supportMode||String(state.user?.email||'').trim().toLowerCase()!==email)return;
+      queue=Array.isArray(res.notifications)?res.notifications:[];
+      lastEmail=email;
+      if(queue.length)showNext();
+    }catch(e){console.warn('RP通知の取得に失敗しました',e)}
+    finally{inflight=false}
+  }
+  const providerName={google:'Googleカレンダー',apple:'Appleカレンダー',microsoft:'Outlookカレンダー'};
+  async function loadCalendarChoices(){
+    if(!current)return;
+    const currentId=Number(current.id);
+    const section=$('rpNoticeCalendarSection'),select=$('rpNoticeCalendarSelect'),status=$('rpNoticeCalendarStatus');
+    section.hidden=false;select.replaceChildren();
+    status.textContent='連携済みカレンダーを確認しています…';
+    $('rpNoticeCalendarAdd').disabled=true;
+    try{
+      const res=await portalFetch('/api/rp/calendar-options?id='+encodeURIComponent(currentId));
+      if(!current||Number(current.id)!==currentId)return;
+      const connections=Array.isArray(res.connections)?res.connections:[];
+      if(!connections.length){
+        status.textContent='連携先がありません。「スケジュール登録」でGoogle・Apple・Outlookを連携してから登録できます。';
+        return;
+      }
+      for(const c of connections){
+        const option=document.createElement('option');
+        option.value=String(c.id);
+        option.textContent=(providerName[c.provider]||c.provider)+'｜'+String(c.account_email||'')+(c.added?'（登録済み）':c.pending?'（処理中）':'');
+        option.disabled=Boolean(c.added||c.pending);
+        select.appendChild(option);
+      }
+      const first=Array.from(select.options).find(o=>!o.disabled);
+      if(first){select.value=first.value;$('rpNoticeCalendarAdd').disabled=false;status.textContent='選んだ本人のカレンダーにだけ予定を登録します。';}
+      else status.textContent='このRPは連携済みカレンダーに登録済みです。';
+    }catch(error){status.textContent='カレンダーを取得できません：'+(error.message||error)}
+  }
+  async function addCalendarEvent(){
+    if(!current)return;
+    const id=Number(current.id),connectionId=Number($('rpNoticeCalendarSelect').value);
+    if(!Number.isSafeInteger(connectionId)||connectionId<=0)return;
+    const button=$('rpNoticeCalendarAdd'),status=$('rpNoticeCalendarStatus');
+    button.disabled=true;status.textContent='カレンダーにRP予定を登録しています…';
+    try{
+      const result=await portalFetch('/api/rp/calendar-add',{method:'POST',body:{id,connection_id:connectionId}});
+      status.textContent=result.already_added?'すでに予定が登録されています。':'カレンダーにRP予定を登録しました。';
+      // Keep the notice open until the user independently acknowledges it.
+      if(current&&Number(current.id)===id)await loadCalendarChoices();
+    }catch(error){status.textContent=error.message||'登録に失敗しました';button.disabled=false;}
+  }
+  $('rpNoticeCalendarToggle').addEventListener('click',()=>{
+    const section=$('rpNoticeCalendarSection');
+    if(!section.hidden){section.hidden=true;return;}
+    void loadCalendarChoices();
+  });
+  $('rpNoticeCalendarAdd').addEventListener('click',()=>void addCalendarEvent());
+  window.dotjpOpenConfirmedRpCalendar=async function(id){
+    if(saving||current)return;
+    const n=Number(id);
+    if(!Number.isSafeInteger(n)||n<=0)return;
+    try{
+      const data=await portalFetch('/api/rp/calendar-options?id='+encodeURIComponent(n));
+      if(!data.appointment||current)return;
+      queue=[data.appointment];
+      showNext();
+      await loadCalendarChoices();
+    }catch(error){showToast(error.message||'RPの詳細を取得できませんでした')}
+  };
+  const eventHost=$('rpWeekEvents');
+  eventHost?.addEventListener('click',event=>{
+    const card=event.target.closest('[data-rp-confirm-calendar]');
+    if(card)void window.dotjpOpenConfirmedRpCalendar(card.dataset.rpConfirmCalendar);
+  });
+  eventHost?.addEventListener('keydown',event=>{
+    if(event.key!=='Enter'&&event.key!==' ')return;
+    const card=event.target.closest('[data-rp-confirm-calendar]');
+    if(card){event.preventDefault();void window.dotjpOpenConfirmedRpCalendar(card.dataset.rpConfirmCalendar);}
+  });
+  async function acknowledge(openCalendar){
+    if(saving||!current)return;
+    saving=true;const btns=[$('rpNoticeRead'),$('rpNoticeOpen')];
+    btns.forEach(b=>b.disabled=true);
+    try{
+      await portalFetch('/api/rp/notifications/read',{method:'POST',body:{id:Number(current.id)}});
+      saving=false;btns.forEach(b=>b.disabled=false);
+      if(openCalendar){overlay.hidden=true;queue=[];current=null;showScreen('schedule-candidates');}
+      else showNext();
+    }catch(e){saving=false;btns.forEach(b=>b.disabled=false);showToast(e.message||'通知の確認に失敗しました')}
+  }
+  $('rpNoticeRead').addEventListener('click',()=>void acknowledge(false));
+  $('rpNoticeOpen').addEventListener('click',()=>void acknowledge(true));
+  const originalShow=showScreen;
+  showScreen=function(name,...args){
+    const result=originalShow(name,...args);
+    if(name==='home'||name==='schedule-candidates')queueMicrotask(()=>void check());
+    return result;
+  };
+  document.addEventListener('DOMContentLoaded',()=>{
+    window.setTimeout(()=>void check(),1000);
+    window.setInterval(()=>{if(document.visibilityState==='visible')void check()},60000);
+  });
 })();
 </script>
 </body>
