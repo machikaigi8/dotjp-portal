@@ -6966,6 +6966,10 @@ line-height: 1.5 !important;
 .screen-hp-edit .portal-support-form input[type="search"]{letter-spacing:normal}
 .screen-hp-edit .portal-support-form .portal-support-filter-status{font-size:15px;color:#526077;min-height:20px}
 .screen-hp-edit .portal-support-form button:disabled{opacity:.55;cursor:not-allowed}
+#homeRegionCurrent.is-read-only{background:#646b89!important;font-size:43px!important}
+#homeRegionCurrent.is-read-only::after{content:'閲覧専用';position:absolute;top:62px;left:0;width:100%;font:700 19px/25px 'Noto Sans JP',sans-serif;text-align:center;color:#646b89}
+#portalInitialRegionSetup .portal-initial-region-choices{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media(max-width:520px){#portalInitialRegionSetup .portal-initial-region-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -8092,7 +8096,10 @@ line-height: 1.5 !important;
               <p>「地域全員」と「個人」を組み合わせて選べます。重複する人には1件だけ依頼します。</p>
               <div class="post-audience-regions" role="group" aria-label="地域全員">
                 <label><input type="checkbox" data-post-region="kanto"> 関東全員</label>
+                <label><input type="checkbox" data-post-region="miyagi"> 宮城全員</label>
                 <label><input type="checkbox" data-post-region="kansai"> 関西全員</label>
+                <label><input type="checkbox" data-post-region="hiroshima"> 広島全員</label>
+                <label><input type="checkbox" data-post-region="kumamoto"> 熊本全員</label>
               </div>
               <div class="post-audience-people-heading"><strong>個人（複数選択可）</strong><span id="postAudienceCount"></span></div>
               <input type="search" id="postAudienceSearch" placeholder="名前・メールアドレスで検索" aria-label="個人を検索">
@@ -9556,41 +9563,38 @@ function wireActions() {
     });
   });
 
-  document.querySelectorAll("[data-home-branch]:not([data-region])").forEach(element => {
-    element.addEventListener("click", () => {
-      if(element.dataset.homeBranch===state.preferredRegion){showToast(`${element.textContent.trim()}支部のポータルを表示しています。`);return;}
-      showToast('他支部の業務データは閲覧できません。所属支部は名簿から管理者が変更できます。');
-    });
-  });
-  document.querySelectorAll("[data-region]").forEach((element) => {
-    element.addEventListener("click", () => {
-      if (element.dataset.region === 'kansai') {
+  document.querySelectorAll('[data-home-branch]').forEach(element => {
+    element.addEventListener('click', () => {
+      const target=element.dataset.homeBranch;
+      if(target==='kansai'){
         window.location.assign(KANSAI_EXTERNAL_APP_URL);
         return;
       }
-      state.region = 'kanto';
-      sessionStorage.setItem("dotjp_region", state.region);
+      if(!['kanto','miyagi','hiroshima','kumamoto'].includes(target)||target===state.region)return;
+      state.region=target;
+      sessionStorage.setItem('dotjp_region',target);
       updateRegion();
-      state.remoteTasks = [];
-      state.remoteTasksError = '';
-      state.calendar.reviewPlans = [];
-      state.personalWorkSessions = null;
+      state.remoteTasks=[];
+      state.remoteTasksError='';
+      state.calendar.reviewPlans=[];
+      state.personalWorkSessions=null;
+      state.clientBusiness={won:[],deals:[],region:'',loadingSeq:0,editing:null};
       refreshTaskUi();
-      void refreshRemoteTasks().then(refreshTaskUi);
+      void refreshRemoteTasks().then(refreshTaskUi).catch(error=>showToast(error.message));
       void loadPersonalWorkSessions();
-      if (state.currentScreen === 'schedule-review') void loadScheduleReview();
-      if (state.currentScreen === 'schedule-candidates') void rpWeekLoad();
-      if (state.currentScreen === 'representative-dashboard') void rpConfigLoad();
-      if (state.currentScreen === 'meeting-attendance') void loadMeetings();
-      if (state.currentScreen === 'department-hr') setupMeetingManager();
-      if (state.currentScreen === 'client-staff-status') void loadClientStaffStatus();
-      if (['department-materials','client-materials'].includes(state.currentScreen)) void deptMaterialLoad(deptMaterialCurrentDepartment());
-      if (state.currentScreen === 'client-won') void loadClientBusiness('won');
-      if (state.currentScreen === 'client-deals') void loadClientBusiness('deals');
-      if (state.currentScreen === 'hp-edit' && state.isDeveloper &&
-          document.querySelector('[data-hp-tab="requests"]')?.classList.contains('is-active')) {
-        void loadHpRequests();
-      }
+      if(state.currentScreen==='schedule-review')void loadScheduleReview();
+      if(state.currentScreen==='schedule-candidates')void rpWeekLoad();
+      if(state.currentScreen==='representative-dashboard')void rpConfigLoad();
+      if(state.currentScreen==='meeting-attendance')void loadMeetings();
+      if(state.currentScreen==='department-hr')setupMeetingManager();
+      if(state.currentScreen==='client-staff-status')void loadClientStaffStatus();
+      if(['department-materials','client-materials'].includes(state.currentScreen))void deptMaterialLoad(deptMaterialCurrentDepartment());
+      if(state.currentScreen==='client-won')void loadClientBusiness('won');
+      if(state.currentScreen==='client-deals')void loadClientBusiness('deals');
+      if(state.currentScreen==='hp-edit'&&state.isDeveloper&&
+         document.querySelector('[data-hp-tab="requests"]')?.classList.contains('is-active'))void loadHpRequests();
+      void loadHomeBranchLinks(target);
+      if(target!==state.preferredRegion)showToast('他支部を閲覧中です。編集・登録・送信はできません。');
     });
   });
 
@@ -11289,22 +11293,62 @@ function renderClientStaffStatus() {
     ? `${Number(selectedMonth.slice(5))}月▼` : '月▼';
 }
 
-function portalBranchVisibleName(){return ['宮城','広島','熊本'].includes(state.branchName)?state.branchName:(state.region==='kansai'?'関西':'関東');}
-
+const portalBranchLabels={kanto:'東京',miyagi:'宮城',kansai:'関西',hiroshima:'広島',kumamoto:'熊本'};
+function portalBranchVisibleName(){return portalBranchLabels[state.region]||'東京';}
+const portalHomeOriginalLinks=[];
+async function loadHomeBranchLinks(region,initialLinks=null){
+ const links=[...document.querySelectorAll('.screen-home .links-grid a.green-menu')];
+ if(!portalHomeOriginalLinks.length)links.forEach(link=>portalHomeOriginalLinks.push({href:link.getAttribute('href'),title:link.title}));
+ let source=initialLinks;
+ if(region!=='kanto'&&source===null){
+  try{const data=await portalFetch('/api/me');if(state.region!==region)return;source=data.branch_links||{};}
+  catch(error){if(state.region===region)showToast(error.message||'支部のリンクを取得できませんでした');source={};}
+ }
+ if(state.region!==region)return;
+ links.forEach((link,index)=>{
+  const original=portalHomeOriginalLinks[index]||{};
+  const configured=index===0?source?.client:index===1?source?.expenses:'';
+  const href=region==='kanto'?original.href:configured;
+  if(href&&((region==='kanto')||/^https:\/\/docs\.google\.com\/spreadsheets\/d\//.test(href))){
+   link.href=href;link.removeAttribute('aria-disabled');link.title=region==='kanto'?(original.title||''):'';
+   link.style.opacity='1';link.style.cursor='pointer';
+  }else{
+   link.removeAttribute('href');link.setAttribute('aria-disabled','true');
+   link.title='この支部の連携先はまだ登録されていません';
+   link.style.opacity='.5';link.style.cursor='not-allowed';
+  }
+ });
+}
 function updateRegion() {
-  document.querySelectorAll("[data-region]").forEach((button) => {
-    button.classList.toggle("is-active", button.dataset.region === state.region);
-  });
   const current=document.getElementById('homeRegionCurrent');
-  if(current)current.textContent=state.region==='kansai'?'関西':(state.branchName&&['宮城','広島','熊本'].includes(state.branchName)?state.branchName:'東京');
-  document.querySelectorAll('[data-home-branch]').forEach(btn=>btn.classList.toggle('is-active',btn.dataset.homeBranch===state.preferredRegion));
+  const readOnly=Boolean(state.preferredRegion&&state.region!==state.preferredRegion);
+  if(current){
+    current.textContent=portalBranchVisibleName();
+    current.title=readOnly?'他支部閲覧中（編集不可）':'所属支部';
+    current.classList.toggle('is-read-only',readOnly);
+  }
+  const destinations=['kanto','miyagi','kansai','hiroshima','kumamoto'].filter(r=>r!==state.region);
+  document.querySelectorAll('[data-home-branch]').forEach((button,index)=>{
+    const region=destinations[index];
+    if(!region)return;
+    button.dataset.homeBranch=region;
+    button.dataset.region=region;
+    button.textContent=portalBranchLabels[region];
+    button.title=region==='kansai'?'関西の既存ポータルを開く':portalBranchLabels[region]+'支部を表示';
+    button.classList.toggle('is-active',region===state.preferredRegion);
+  });
+  document.querySelectorAll('[data-post-region]').forEach(button=>{
+    const editable=button.dataset.postRegion===state.preferredRegion&&!readOnly;
+    button.disabled=!editable;
+    if(!editable)button.checked=false;
+  });
 }
 
 // POST v41: 複数個人・関東全員・関西全員。過去のAIカードも誤配信しない。
 function normalizePostAudience(card={}) {
   const incomingRegions = Array.isArray(card.recipientRegions) ? card.recipientRegions : (Array.isArray(card.regions) ? card.regions : []);
   const incomingEmails = Array.isArray(card.recipientEmails) ? card.recipientEmails : (Array.isArray(card.emails) ? card.emails : []);
-  const regions = [...new Set(incomingRegions.filter(x => x === 'kanto' || x === 'kansai'))];
+  const regions = [...new Set(incomingRegions.filter(x => ['kanto','miyagi','kansai','hiroshima','kumamoto'].includes(x)))];
   const emails = [...new Set(incomingEmails
     .map(x => String(x || '').trim().toLowerCase()).filter(x => x.endsWith('@dot-jp.or.jp')))];
   // 明示的に空の配列が設定されていれば未選択のまま扱う。勝手に関東全員を選択しない。
@@ -11324,7 +11368,7 @@ function normalizePostAudience(card={}) {
 }
 function postAudienceSummary(audience) {
   const data=normalizePostAudience(audience);
-  const labels=data.regions.map(region=>region==='kansai'?'関西全員':'関東全員');
+  const labels=data.regions.map(region=>(({kanto:'関東',miyagi:'宮城',kansai:'関西',hiroshima:'広島',kumamoto:'熊本'})[region]||'所属支部')+'全員');
   for(const email of data.emails){
     const hit=state.roster.find(x=>String(x.email||'').toLowerCase()===email);
     labels.push(hit?.name || email);
@@ -11342,8 +11386,11 @@ function postAudiencePayload(card=null) {
   return {destination:postAudienceSummary(data),recipientRegions:[...data.regions],recipientEmails:[...data.emails]};
 }
 function openPostAudience() {
-  state.postAudienceStaging={regions:[...state.postAudience.regions],emails:[...state.postAudience.emails]};
-  document.querySelectorAll('[data-post-region]').forEach(el=>el.checked=state.postAudienceStaging.regions.includes(el.dataset.postRegion));
+  state.postAudienceStaging={regions:state.postAudience.regions.filter(r=>r===state.preferredRegion),emails:state.postAudience.emails.filter(email=>{
+    const person=state.roster.find(r=>String(r.email||'').toLowerCase()===email);
+    return person&&({関東:'kanto',東京:'kanto',関西:'kansai',宮城:'miyagi',広島:'hiroshima',熊本:'kumamoto'})[String(person.group_name||'').replace(/支部$/,'')]===state.preferredRegion;
+  })};
+  document.querySelectorAll('[data-post-region]').forEach(el=>el.checked=!el.disabled&&state.postAudienceStaging.regions.includes(el.dataset.postRegion));
   document.getElementById('postAudienceSearch').value='';
   renderPostAudiencePeople();
   document.getElementById('postAudienceOverlay').hidden=false;
@@ -11363,7 +11410,9 @@ function renderPostAudiencePeople() {
     .filter(x=>!search || (x.name+' '+x.email).toLowerCase().includes(search));
   container.innerHTML=people.length ? people.map(person=>{
     const email=String(person.email).toLowerCase();
-    return `<label class="post-audience-person"><input type="checkbox" data-post-email="${escapeHtml(email)}" ${state.postAudienceStaging.emails.includes(email)?'checked':''}><span><strong>${escapeHtml(person.name)}</strong><small>${escapeHtml(person.group_name||'未振り分け')} / ${escapeHtml(email)}</small></span></label>`;
+    const personRegion=({関東:'kanto',東京:'kanto',関西:'kansai',宮城:'miyagi',広島:'hiroshima',熊本:'kumamoto'})[String(person.group_name||'').replace(/支部$/,'')];
+    const enabled=state.region===state.preferredRegion&&personRegion===state.preferredRegion;
+    return `<label class="post-audience-person"><input type="checkbox" data-post-email="${escapeHtml(email)}" ${enabled?'':'disabled'} ${enabled&&state.postAudienceStaging.emails.includes(email)?'checked':''}><span><strong>${escapeHtml(person.name)}</strong><small>${escapeHtml(person.group_name||'未振り分け')} / ${escapeHtml(email)}${enabled?'':'（閲覧専用）'}</small></span></label>`;
   }).join('') : '<p class="post-audience-empty">該当する人がいません。名簿を確認してください。</p>';
   renderPostAudienceCount();
 }
@@ -12350,7 +12399,13 @@ async function portalFetch(path, options = {}) {
   const method=options.method||'GET';
   const isGet=method==='GET';
   const supportToken=portalSupportToken();
-  const key=isGet?`${token}|${supportToken}|${path}`:null;
+  const region=['kanto','miyagi','kansai','hiroshima','kumamoto'].includes(state.region)?state.region:'kanto';
+  const sharedMarketing=path.startsWith('/api/marketing/') ||
+    (path.startsWith('/api/department-materials')&&deptMaterialCurrentDepartment()==='mark');
+  if(!isGet&&!sharedMarketing&&path!=='/api/me/initial-region'&&
+     state.preferredRegion&&region!==state.preferredRegion)
+    throw new Error('他支部の情報は閲覧専用です。所属支部に戻してください。');
+  const key=isGet?`${token}|${supportToken}|${region}|${path}`:null;
   if(key&&portalPendingGets.has(key))return portalPendingGets.get(key);
   const operation=(async()=>{
     const attempts=isGet?2:1;
@@ -12362,7 +12417,7 @@ async function portalFetch(path, options = {}) {
       try{
         response=await fetch(`${PORTAL_API_WORKER}${path}`,{
           method,cache:'no-store',signal:controller.signal,
-          headers:{Authorization:`Bearer ${token}`,...(supportToken?{'X-Portal-Support-Session':supportToken}:{}),...(options.body?{'Content-Type':'application/json'}:{})},
+          headers:{Authorization:`Bearer ${token}`,'X-Portal-Region':region,...(supportToken?{'X-Portal-Support-Session':supportToken}:{}),...(options.body?{'Content-Type':'application/json'}:{})},
           ...(options.body?{body:JSON.stringify(options.body)}:{})
         });
         data=await response.json().catch(()=>({}));
@@ -12829,34 +12884,21 @@ async function loadPortalProfile() {
     // 同じログイン中に手動で変えた地域は維持し、新規ログイン時は名簿を優先。
     const email = userIdentity();
     const regionSessionOwnerKey = 'dotjp_region_preference_applied_for';
-    if (sessionStorage.getItem(regionSessionOwnerKey) !== email) {
-      const preferred = data.preferred_region;
-      state.region = 'kanto';
-      sessionStorage.setItem('dotjp_region', state.region);
-      sessionStorage.setItem(regionSessionOwnerKey, email);
-    }
     state.preferredRegion = data.preferred_region || null;
     state.branchName = data.branch_name || ({miyagi:'宮城',hiroshima:'広島',kumamoto:'熊本',kanto:'関東',kansai:'関西'}[state.preferredRegion]||'');
-    // Never show Tokyo-only external sheets or application form to new branches.
-    const homeLinks=document.querySelectorAll('.links-grid a.green-menu');
-    if(['miyagi','hiroshima','kumamoto'].includes(state.preferredRegion)){
-      homeLinks.forEach((link,i)=>{
-        const configured=i===0?data.branch_links?.client:i===1?data.branch_links?.expenses:'';
-        if(configured&&/^https:\/\/docs\.google\.com\/spreadsheets\/d\//.test(configured)){
-          link.href=configured;link.removeAttribute('aria-disabled');link.title='';
-          link.style.opacity='1';link.style.cursor='pointer';
-        }else{
-          link.removeAttribute('href');link.setAttribute('aria-disabled','true');
-          link.title='所属支部の連携先がまだ登録されていません';
-          link.style.opacity='0.5';link.style.cursor='not-allowed';
-        }
-      });
-    }
     if (!state.preferredRegion && !state.supportMode) return 'choose_region';
     if (state.preferredRegion === 'kansai' && !state.supportMode) return 'redirect_kansai';
-    state.region = state.supportMode && state.preferredRegion === 'kansai' ? 'kansai' : 'kanto';
-    sessionStorage.setItem('dotjp_region',state.region);
+    const savedRegion=sessionStorage.getItem('dotjp_region');
+    if(sessionStorage.getItem(regionSessionOwnerKey)!==email||
+       !['kanto','miyagi','hiroshima','kumamoto'].includes(savedRegion)){
+      state.region=state.preferredRegion==='kansai'?'kanto':state.preferredRegion;
+      sessionStorage.setItem('dotjp_region',state.region);
+      sessionStorage.setItem(regionSessionOwnerKey,email);
+    }else state.region=savedRegion;
     updateRegion();
+    if(typeof portalSheetState!=='undefined'&&state.preferredRegion in portalSheetRegionNames)
+      portalSheetState.region=state.preferredRegion;
+    void loadHomeBranchLinks(state.region,state.region===state.preferredRegion?data.branch_links:null);
 
     const button = document.getElementById("hpEditButton");
 
@@ -12933,8 +12975,9 @@ function portalSheetRender(){
   const input=document.createElement('input');input.type='url';input.id=id;input.className='portal-sheets-url-input';
   input.placeholder='https://docs.google.com/spreadsheets/d/.../edit';input.maxLength=2000;input.spellcheck=false;
   input.value=item.spreadsheet_url|| (item.spreadsheet_id?'https://docs.google.com/spreadsheets/d/'+item.spreadsheet_id+'/edit':'');
-  input.disabled=portalSheetState.busy;
-  const save=document.createElement('button');save.type='submit';save.className='portal-sheet-save';save.textContent='保存';save.disabled=portalSheetState.busy;
+  const foreign=portalSheetState.region!==state.preferredRegion;
+  input.disabled=portalSheetState.busy||foreign;
+  const save=document.createElement('button');save.type='submit';save.className='portal-sheet-save';save.textContent=foreign?'閲覧専用':'保存';save.disabled=portalSheetState.busy||foreign;
   const open=document.createElement('a');open.textContent='開く';open.className='portal-sheets-open';
   const validUrl=/^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9_-]{15,120}(?:\/|[?#]|$)/.test(input.value);
   if(validUrl){open.href=input.value;open.target='_blank';open.rel='noopener noreferrer';}
@@ -12942,7 +12985,7 @@ function portalSheetRender(){
   const actions=document.createElement('div');actions.className='portal-sheets-actions';actions.append(save,open);
   form.append(label,input,actions);
   form.addEventListener('submit',async event=>{
-   event.preventDefault();if(portalSheetState.busy)return;
+   event.preventDefault();if(portalSheetState.busy||portalSheetState.region!==state.preferredRegion)return;
    const url=input.value.trim();
    if(url&&!/^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9_-]{15,120}(?:\/|[?#]|$)/.test(url)){
     portalSheetStatus('GoogleスプレッドシートのURLを入力してください。');input.focus();return;
@@ -13057,7 +13100,7 @@ function renderFigmaRoster() {
           Number(item.is_representative) === 1 ? '代表' : '',
           Number(item.is_developer) === 1 ? '開発' : ''
         ].filter(Boolean).join('・'))}</span>
-        <button type="button" class="figma-hp-roster-change" data-figma-roster-change="${Number(item.id)}" aria-label="${escapeHtml(item.name)}の名簿を変更">[変更]</button>
+        <button type="button" class="figma-hp-roster-change" data-figma-roster-change="${Number(item.id)}" ${group!=='未振り分け'&&({宮城:'miyagi',関東:'kanto',関西:'kansai',広島:'hiroshima',熊本:'kumamoto'})[group]!==state.preferredRegion?'disabled title="他支部は閲覧専用"':''} aria-label="${escapeHtml(item.name)}の名簿を変更">[変更]</button>
       </div>`).join('');
   }
   document.querySelectorAll('[data-figma-roster-change]').forEach(button => {
@@ -15516,7 +15559,7 @@ function setupMeetingManager(){
   const dateInput=document.getElementById('mtgNewDate');
   if(!dateInput.value)dateInput.value=localDateIso(new Date());
   document.getElementById('mtgManagerRegionInfo').textContent=
-    '登録先：'+(state.preferredRegion==='kansai'?'関西':'関東')+'（名簿の所属地域）';
+    '登録先：'+(({kanto:'関東',miyagi:'宮城',kansai:'関西',hiroshima:'広島',kumamoto:'熊本'})[state.preferredRegion]||'未設定')+'（名簿の所属地域）';
   updateMeetingModeField();
   updateMeetingAudienceField();
   updateMeetingRepeatField();
@@ -17670,7 +17713,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 const DEPT_MATERIAL_LABELS={cons:'コンス',mark:'マーケティング',hr:'人事局',pg:'プログラム',client:'クライアント',office:'事務局',rep:'代表'};
 const departmentMaterialState={department:location.hash==='#department-materials' ? (['cons','mark','hr','pg','office','rep'].includes(sessionStorage.getItem('dotjp_material_department')) ? sessionStorage.getItem('dotjp_material_department') : 'pg') : 'cons',scope:'',items:[],canEdit:false,seq:0,editing:0};
 function deptMaterialEl(id){return document.getElementById(id)}
-function deptMaterialRegion(){return state.region==='kansai'?'kansai':'kanto'}
+function deptMaterialRegion(){return deptMaterialCurrentDepartment()==='mark'?'kanto':state.region}
 function deptMaterialCurrentDepartment(){return state.currentScreen==='client-materials'?'client':departmentMaterialState.department}
 function deptMaterialValidHref(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:'';}catch{return '';}}
 function deptMaterialStatus(message,error=false){
@@ -17703,13 +17746,13 @@ function deptMaterialRender(){
   if(add)add.hidden=!departmentMaterialState.canEdit;
   if(!isClient){
     deptMaterialEl('departmentMaterialsTitle').textContent=DEPT_MATERIAL_LABELS[departmentMaterialState.department]+'｜資料一覧';
-    deptMaterialEl('departmentMaterialsRegion').textContent=portalBranchVisibleName();
+    deptMaterialEl('departmentMaterialsRegion').textContent=departmentMaterialState.department==='mark'?'全支部共通':portalBranchVisibleName();
   }
 }
 async function deptMaterialLoad(department){
   if(!Object.hasOwn(DEPT_MATERIAL_LABELS,department))return;
-  const requestSeq=++departmentMaterialState.seq, region=deptMaterialRegion();
   departmentMaterialState.department=department;
+  const requestSeq=++departmentMaterialState.seq, region=deptMaterialRegion();
   departmentMaterialState.canEdit=false;
   departmentMaterialState.items=[];
   deptMaterialRender();deptMaterialStatus('資料一覧を読み込んでいます…');
