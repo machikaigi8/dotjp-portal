@@ -7346,7 +7346,7 @@ line-height: 1.5 !important;
                 </section>
               </aside>
             </div>
-            <footer class="hr-boat-legend">コンス：架電 +1 / メール +0.5 / DM +0.5 / 口コミ +2 / 獲得 +10　｜　クライアント：架電 +1 / お問い合わせメール +0.5　｜　その他 0pt</footer>
+            <footer class="hr-boat-legend">コンス：架電 +1 / メール +0.2 / DM +0.5 / 口コミ +2 / 獲得 +10　｜　クライアント：架電 +1 / お問い合わせメール +0.2　｜　その他 0pt（合計を四捨五入して表示）</footer>
           </div>
 
           <div id="hrBoatScoreOverlay" class="hr-boat-score-overlay" role="presentation" hidden>
@@ -7357,7 +7357,7 @@ line-height: 1.5 !important;
               </header>
               <p id="hrBoatScoreSummary" class="hr-boat-score-summary"></p>
               <div id="hrBoatScoreMembers" class="hr-boat-score-members"></div>
-              <p class="hr-boat-score-hint">名前を押すと、得点の種類と日別の内訳が見られます。複数チーム所属者の得点は各チームに加算します。</p>
+              <p class="hr-boat-score-hint">名前を押すと、端数を含む得点の種類と日別の内訳が見られます。各人の表示点数は四捨五入のため、その整数を足した値とチーム合計が異なる場合があります。複数チーム所属者の得点は各チームに加算します。</p>
             </section>
           </div>
           <button type="button" class="common-back-button" data-common-back>←戻る</button>
@@ -18016,10 +18016,13 @@ function hrBoatUpdateMembershipState(){
 }
 
 const HR_BOAT_METRIC_LABELS=[
-  ['cons_call','コンス架電',1],['cons_email','コンスメール',0.5],
+  ['cons_call','コンス架電',1],['cons_email','コンスメール',0.2],
   ['cons_dm','コンスDM',0.5],['cons_review','口コミ',2],['cons_won','コンス獲得',10],
-  ['client_call','企業架電',1],['client_mail','企業メール',0.5]
+  ['client_call','企業架電',1],['client_mail','企業メール',0.2]
 ];
+function hrBoatRoundScore(value){
+  return Math.round(Math.max(0,Number(value)||0)+1e-8);
+}
 function hrBoatCloseScores(){
   const overlay=document.getElementById('hrBoatScoreOverlay');
   if(!overlay)return;
@@ -18048,7 +18051,7 @@ function hrBoatOpenScores(teamId){
     item.dataset.email=String(person.email||'');if(wasOpen&&opened.has(item.dataset.email))item.open=true;
     const summary=document.createElement('summary');summary.className='hr-boat-score-person-title';
     summary.append(hrBoatNode('span','',String(person.name||'名前未設定')),
-      hrBoatNode('strong','',`${score.toLocaleString('ja-JP')} pt`));
+      hrBoatNode('strong','',`${hrBoatRoundScore(score).toLocaleString('ja-JP')} pt`));
     item.append(summary);
     const metrics=person.metrics||{};
     const metricsLine=document.createElement('div');metricsLine.className='hr-boat-score-metrics';
@@ -18064,16 +18067,17 @@ function hrBoatOpenScores(teamId){
     for(const day of days){
       const parts=HR_BOAT_METRIC_LABELS.filter(([key])=>Number(day.metrics?.[key]||0)>0)
         .map(([key,label,weight])=>`${label} ${Number(day.metrics[key])}件(${Number(day.metrics[key])*weight}点)`);
-      item.append(hrBoatNode('p','hr-boat-score-day',`${String(day.day).slice(5).replace('-','/')}：${Number(day.points||0).toLocaleString('ja-JP')}点｜${parts.join('、')}`));
+      item.append(hrBoatNode('p','hr-boat-score-day',`${String(day.day).slice(5).replace('-','/')}：${hrBoatRoundScore(day.points).toLocaleString('ja-JP')}点（四捨五入前 ${Number(day.points||0).toLocaleString('ja-JP')}点）｜${parts.join('、')}`));
     }
     container.append(item);
   }
   if(!people.length)container.append(hrBoatNode('p','hr-boat-score-empty','船員が登録されていません。'));
   const total=Math.max(0,Number(team.points||0));
   const summaryLine=document.getElementById('hrBoatScoreSummary');
-  summaryLine.textContent=`チーム合計 ${total.toLocaleString('ja-JP')}点 ＝ 船員合計 ${memberSum.toLocaleString('ja-JP')}点（${people.length}名）`;
-  summaryLine.classList.toggle('is-mismatch',total!==memberSum);
-  if(total!==memberSum)summaryLine.textContent+='｜⚠ 内訳が一致していません。再集計が必要です。';
+  summaryLine.textContent=`チーム合計 ${hrBoatRoundScore(total).toLocaleString('ja-JP')}点 ＝ 船員合計 ${hrBoatRoundScore(memberSum).toLocaleString('ja-JP')}点（${people.length}名・合計後に四捨五入）`;
+  const mismatch=Math.abs(total-memberSum)>1e-7;
+  summaryLine.classList.toggle('is-mismatch',mismatch);
+  if(mismatch)summaryLine.textContent+='｜⚠ 内訳が一致していません。再集計が必要です。';
   overlay.dataset.teamId=String(teamId);overlay.hidden=false;
   container.scrollTop=scrollTop;
   if(!wasOpen)document.getElementById('hrBoatScoreClose')?.focus();
@@ -18111,7 +18115,7 @@ function hrBoatRender(){
    boat.style.setProperty('--boat-progress',progress);
    boat.style.setProperty('--boat-accent',['#5375b2','#cb7c32','#8660ac','#397b78','#b55a65'][i%5]);
    boat.innerHTML=hrBoatSvg;
-   boat.setAttribute('title',`${team.name} ${team.points}pt｜クリックで船員別スコアを見る`);
+   boat.setAttribute('title',`${team.name} ${hrBoatRoundScore(team.points)}pt｜クリックで船員別スコアを見る`);
    boat.setAttribute('role','button');boat.setAttribute('tabindex','0');
    boat.setAttribute('aria-label',`${team.name}の船員別スコアを開く`);
    boat.addEventListener('click',()=>hrBoatOpenScores(team.id));
@@ -18123,8 +18127,8 @@ function hrBoatRender(){
    const row=hrBoatNode('div','hr-boat-rank'+(team.sunk?' is-sunk':''));
    row.appendChild(hrBoatNode('span','',String(i+1)));
    row.appendChild(hrBoatNode('strong','',team.name));
-   row.appendChild(hrBoatNode('b','',`${team.points} pt`));
-   const detail=hrBoatNode('small','',`${team.members?.length||0}名｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}｜LINE連携${Number(team.linked_members||0)}名・保存${Number(team.line_saved_days||0)}人日`);
+   row.appendChild(hrBoatNode('b','',`${hrBoatRoundScore(team.points).toLocaleString('ja-JP')} pt`));
+   const detail=hrBoatNode('small','',`${team.members?.length||0}名｜${leaderGap===0?'現在トップ':`先頭差 ${hrBoatRoundScore(leaderGap)}pt`}｜LINE連携${Number(team.linked_members||0)}名・保存${Number(team.line_saved_days||0)}人日`);
    row.appendChild(detail);
    const names=(team.members||[]).map(member=>String(member.name||member.email||'').trim()).filter(Boolean);
    const membersLabel=hrBoatNode('div','hr-boat-members',names.length?'所属：'+names.join('・'):'所属：未登録');
@@ -18540,7 +18544,7 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
           vessel.classList.remove('is-sunk');
           vessel.style.setProperty('--boat-progress',leaderPoints>0?Math.min(100,100*teamPoints/leaderPoints):0);
           vessel.style.setProperty('--boat-sink',String(initial));
-          vessel.setAttribute('title',`${team.name}：${team.points}pt｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}｜未提出${team.sink_count||0}/10件｜沈没${team.sink_cycles||0}回`);
+          vessel.setAttribute('title',`${team.name}：${hrBoatRoundScore(team.points)}pt｜${leaderGap===0?'現在トップ':`先頭差 ${hrBoatRoundScore(leaderGap)}pt`}｜未提出${team.sink_count||0}/10件｜沈没${team.sink_cycles||0}回`);
           if(oldTotal!==undefined&&newTotal>oldTotal&&newTotal-oldTotal<=20){
             const steps=[];
             for(let n=oldTotal+1;n<=newTotal;n++){
@@ -18557,13 +18561,13 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
         priorStages.set(team.id,target);
         priorTotals.set(team.id,newTotal);
         const counter=document.createElement('span');counter.className='hr-boat-sink-counter';
-        counter.textContent=team.sunk?`🌊 完全沈没｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}`:`${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}｜沈没 ${Number(team.sink_count||0)}/10`; 
+        counter.textContent=team.sunk?`🌊 完全沈没｜${leaderGap===0?'現在トップ':`先頭差 ${hrBoatRoundScore(leaderGap)}pt`}`:`${leaderGap===0?'現在トップ':`先頭差 ${hrBoatRoundScore(leaderGap)}pt`}｜沈没 ${Number(team.sink_count||0)}/10`; 
         lane.append(counter);
         rank?.classList.remove('is-sunk');
         if(rank){
           const first=rank.querySelector('span');if(first)first.textContent=String(i+1);
           const detail=rank.querySelector('small');
-          if(detail)detail.textContent=`${team.members?.length||0}名｜${leaderGap===0?'現在トップ':`先頭差 ${leaderGap}pt`}｜沈没累計 ${team.sink_cycles||0}回`; 
+          if(detail)detail.textContent=`${team.members?.length||0}名｜${leaderGap===0?'現在トップ':`先頭差 ${hrBoatRoundScore(leaderGap)}pt`}｜沈没累計 ${team.sink_cycles||0}回`; 
         }
       });
     };
