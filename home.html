@@ -15331,7 +15331,7 @@ async function loadManagedMeetings(){
   const root=document.getElementById('mtgManageList');
   root.innerHTML='<div class="mtg-empty">登録済みMTGを読み込んでいます…</div>';
   try{
-    // mine=1 はサーバー側でも作成者メールアドレスで絞る。
+    // mine=1 は一般スタッフの作成分と、同じ支部の人事局が編集可能なMTGを返す。
     const data=await portalFetch('/api/meetings?mine=1');
     if(seq!==state.mtgManageLoadSequence)return;
     state.mtgManagedMeetings=(Array.isArray(data.meetings)?data.meetings:[]).slice().sort(meetingNearFirst);
@@ -15344,7 +15344,7 @@ async function loadManagedMeetings(){
 function renderManagedMeetings(){
   const root=document.getElementById('mtgManageList');
   if(!state.mtgManagedMeetings.length){
-    root.innerHTML='<div class="mtg-empty">まだ登録したMTGはありません。</div>';
+    root.innerHTML='<div class="mtg-empty">編集できるMTGがありません。</div>';
     return;
   }
   root.innerHTML=state.mtgManagedMeetings.map(m=>{
@@ -15354,13 +15354,13 @@ function renderManagedMeetings(){
       <div class="mtg-manage-info"><strong>${escapeHtml(meetingFormatDate(m.date))} ${escapeHtml(m.start_time&&m.end_time?m.start_time+'〜'+m.end_time:'時間未設定')}　${escapeHtml(m.title)}</strong>
       <div>${escapeHtml(place)}</div>
       <small>${Number(m.series_count)>1?'繰り返しMTGのうち、この回だけ編集可能':'単独のMTG'} ・ ${m.audience==='custom'?'対象者指定':'全員対象'}</small></div>
-      <button type="button" data-mtg-open-edit="${id}">この回を編集</button>
+      ${m.can_edit ? `<button type="button" data-mtg-open-edit="${id}">この回を編集</button>` : ""}
     </div>`;
   }).join('');
 }
 function openMtgEdit(id){
   const m=state.mtgManagedMeetings.find(row=>Number(row.id)===id);
-  if(!m||!m.can_delete)return;
+  if(!m||!m.can_edit)return;
   document.getElementById('mtgEditId').value=String(id);
   document.getElementById('mtgEditHeading').textContent=meetingFormatDate(m.date)+' のMTGを編集';
   document.getElementById('mtgEditDate').value=m.date||'';
