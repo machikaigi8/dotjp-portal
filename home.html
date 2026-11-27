@@ -6937,8 +6937,27 @@ line-height: 1.5 !important;
 .screen-marketing #markBoardReturn,.screen-marketing #markDetailBack,.screen-marketing #markEditorBack{display:none!important}
 </style>
 
+<style>
+#portalSupportBanner[hidden]{display:none!important}
+#portalSupportBanner{position:fixed;z-index:10000020;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:14px;max-width:calc(100vw - 24px);box-sizing:border-box;padding:9px 15px;background:#fff0bb;color:#53350a;border:2px solid #be7a08;border-radius:9px;box-shadow:0 8px 25px #0003;font:600 16px/1.4 'Noto Sans JP',sans-serif}
+#portalSupportBanner strong{font-size:17px;overflow-wrap:anywhere}
+#portalSupportBanner button{background:#995708;color:#fff;border:0;border-radius:6px;cursor:pointer;font:700 16px/1.4 'Noto Sans JP',sans-serif;padding:8px 14px;white-space:nowrap}
+.screen-hp-edit .figma-hp-topline:has(#portalSupportOpenButton:not([hidden])){gap:32px;width:1194px}
+.screen-hp-edit .figma-hp-topline:has(#portalSupportOpenButton:not([hidden])) .figma-hp-tab{font-size:33px}
+.screen-hp-edit .figma-hp-support-open{color:#794a12;font-weight:600}
+.screen-hp-edit .figma-hp-support-open:hover,.screen-hp-edit .figma-hp-support-open:focus-visible{color:#a66000;text-decoration:underline}
+.screen-hp-edit .portal-support-form{width:min(610px,calc(100% - 90px));box-sizing:border-box}
+.screen-hp-edit .portal-support-form p{margin:0;line-height:1.55;font-size:18px;color:#34435a}
+.screen-hp-edit .portal-support-form .portal-support-note{font-size:15px;color:#526077}
+.screen-hp-edit .portal-support-form .portal-support-status{font-size:16px;color:#9e3535;min-height:22px}
+.screen-hp-edit .portal-support-form input{letter-spacing:.2em}
+.screen-hp-edit .portal-support-form input[type="search"]{letter-spacing:normal}
+.screen-hp-edit .portal-support-form .portal-support-filter-status{font-size:15px;color:#526077;min-height:20px}
+.screen-hp-edit .portal-support-form button:disabled{opacity:.55;cursor:not-allowed}
+</style>
 </head>
 <body>
+  <aside id="portalSupportBanner" role="status" aria-live="polite" hidden><strong id="portalSupportIdentity"></strong><span>代理ログイン中（最大60分）</span><button type="button" id="portalSupportEndButton">自分に戻る</button></aside>
   <div id="loading" class="loading-screen">認証情報を確認しています…</div>
   <section id="portalInitialRegionSetup" role="dialog" aria-modal="true" aria-labelledby="portalInitialRegionTitle" hidden>
     <div class="portal-initial-region-card">
@@ -8098,6 +8117,7 @@ line-height: 1.5 !important;
             <button type="button" class="figma-hp-tab is-active" data-hp-tab="roster">関東・関西名簿</button>
             <button type="button" class="figma-hp-tab" data-hp-tab="requests">要望</button>
             <button type="button" class="figma-hp-tab" data-hp-tab="sheets">スプレッドシート連携</button>
+            <button type="button" class="figma-hp-tab figma-hp-support-open" id="portalSupportOpenButton" hidden>代理ログイン</button>
           </div>
           <section class="figma-hp-main" data-hp-view="roster">
             <div class="figma-hp-column" data-roster-column="関東">
@@ -8180,6 +8200,31 @@ line-height: 1.5 !important;
                 <button type="button" data-figma-roster-save>保存</button>
               </div>
             </div>
+          </div>
+          <div class="figma-hp-modal" id="portalSupportDialog" hidden>
+            <form id="portalSupportForm" class="figma-hp-modal-dialog portal-support-form" role="dialog" aria-modal="true" aria-labelledby="portalSupportDialogTitle" autocomplete="off">
+              <h2 id="portalSupportDialogTitle">代理ログイン</h2>
+              <p>切り替える支部員を選び、デベロッパー本人の2段階認証コードを入力してください。</p>
+              <label for="portalSupportBranch">所属支部で絞り込む
+                <select id="portalSupportBranch"><option value="">すべての支部</option></select>
+              </label>
+              <label for="portalSupportQuery">名前・支部名・メールを検索
+                <input id="portalSupportQuery" type="search" inputmode="search" autocomplete="off" placeholder="例：東京、佐藤、メールアドレス">
+              </label>
+              <label for="portalSupportMember">代理ログイン先の支部員
+                <select id="portalSupportMember" required><option value="">支部員を選択</option></select>
+              </label>
+              <p id="portalSupportFilterStatus" class="portal-support-filter-status" aria-live="polite"></p>
+              <label for="portalSupportOtp">2段階認証コード（開発者本人の6桁）
+                <input id="portalSupportOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="6桁のコード" required>
+              </label>
+              <p class="portal-support-note">開始時に認証コードを検証します。代理操作は最大60分、操作履歴は保存されます。代理先も2段階認証設定済みである必要があります。</p>
+              <p class="portal-support-status" id="portalSupportDialogStatus" role="status" aria-live="polite"></p>
+              <div class="figma-hp-modal-actions">
+                <button type="button" id="portalSupportCancelButton">キャンセル</button>
+                <button type="submit" id="portalSupportSubmitButton">認証して入る</button>
+              </div>
+            </form>
           </div>
           <!-- 既存API/名簿編集関数との互換性維持用。通常画面には表示しない。 -->
             <section class="roster-editor" hidden style="display:none">
@@ -8789,6 +8834,8 @@ try {
 }catch(error){console.warn('LINE link token preparation failed',error);}
 const state = {
   user: null,
+  realUser: null,
+  supportMode: false,
   isDeveloper: false,
   isRepresentative: false,
   canEditRoster: false,
@@ -8938,11 +8985,20 @@ async function init() {
   installYesterdayActivityActions();
   installActivityHistoryActions();
   installCommonBackButtons();
+  document.getElementById('portalSupportEndButton')?.addEventListener('click',()=>void stopPortalSupport());
+  document.getElementById('portalSupportOpenButton')?.addEventListener('click',()=>void openPortalSupportDialog());
+  document.getElementById('portalSupportCancelButton')?.addEventListener('click',closePortalSupportDialog);
+  document.getElementById('portalSupportForm')?.addEventListener('submit',event=>void startPortalSupport(event));
+  document.getElementById('portalSupportBranch')?.addEventListener('change',renderPortalSupportMemberOptions);
+  document.getElementById('portalSupportQuery')?.addEventListener('input',renderPortalSupportMemberOptions);
+  document.getElementById('portalSupportDialog')?.addEventListener('click',event=>{if(event.target.id==='portalSupportDialog')closePortalSupportDialog();});
+  document.getElementById('portalSupportDialog')?.addEventListener('keydown',event=>{if(event.key==='Escape')closePortalSupportDialog();});
 
   // Google-only login: the signed token arrives in the fragment, never in the query string.
   const incomingHash = new URLSearchParams(location.hash.slice(1));
   const incomingToken = incomingHash.get('login_token');
   if (incomingToken) {
+    sessionStorage.removeItem('dotjp_support_token');
     sessionStorage.setItem('dotjp_access_token', incomingToken);
     history.replaceState(null, '', location.pathname + location.search + '#home');
   }
@@ -8959,6 +9015,7 @@ async function init() {
     const data = await response.json();
     if (!response.ok || !data.ok) throw new Error("unauthorized");
 
+    state.realUser = {...data.user};
     state.user = {...data.user, name: data.user?.email || ""};
     fillUserInfo();
     ensureLoginStartedAt();
@@ -10703,6 +10760,7 @@ function logoutAfterReport() {
   leaveScreenViewer();
 
   sessionStorage.removeItem("dotjp_access_token");
+  sessionStorage.removeItem("dotjp_support_token");
   sessionStorage.removeItem("dotjp_region_preference_applied_for");
   sessionStorage.removeItem("dotjp_2fa_ticket");
   sessionStorage.removeItem("dotjp_2fa_ticket_v1");
@@ -12099,13 +12157,138 @@ function sleep(ms) {
 
 
 
+let portalSupportCandidates = [];
+function portalSupportNormalize(value){
+  return String(value??'').normalize('NFKC').toLocaleLowerCase('ja');
+}
+function renderPortalSupportMemberOptions(){
+  const branch=document.getElementById('portalSupportBranch');
+  const query=document.getElementById('portalSupportQuery');
+  const select=document.getElementById('portalSupportMember');
+  const info=document.getElementById('portalSupportFilterStatus');
+  if(!branch||!query||!select)return;
+  const previous=select.value;
+  const branchValue=String(branch.value||'');
+  const tokens=portalSupportNormalize(query.value).trim().split(/\s+/u).filter(Boolean);
+  const matches=portalSupportCandidates.filter(member=>{
+    const group=String(member.group_name||'未振り分け');
+    if(branchValue&&group!==branchValue)return false;
+    const searchable=portalSupportNormalize(`${group} ${member.name||''} ${member.email||''}`);
+    return tokens.every(token=>searchable.includes(token));
+  });
+  select.replaceChildren(new Option('支部員を選択',''));
+  for(const member of matches){
+    const option=new Option(`${String(member.group_name||'未振り分け')} ／ ${String(member.name||member.email)}（${String(member.email)}）`,String(member.id));
+    select.add(option);
+  }
+  select.disabled=matches.length===0;
+  if(previous&&matches.some(m=>String(m.id)===previous))select.value=previous;
+  if(info)info.textContent=matches.length?`${matches.length}人が候補に表示されています。`:'該当する支部員がいません。支部や検索語を変更してください。';
+}
+function portalSupportToken(){return String(sessionStorage.getItem('dotjp_support_token')||'');}
+function renderPortalSupportBanner(profile){
+  const active=Boolean(profile?.support_mode);
+  state.supportMode=active;
+  const banner=document.getElementById('portalSupportBanner');
+  const detail=document.getElementById('portalSupportIdentity');
+  if(!banner||!detail)return;
+  banner.hidden=!active;
+  detail.textContent=active?`${profile.user.name||profile.user.email}（${profile.user.email}）`:'';
+}
+function closePortalSupportDialog(){
+  const overlay=document.getElementById('portalSupportDialog');
+  if(overlay)overlay.hidden=true;
+  const form=document.getElementById('portalSupportForm');
+  if(form)form.reset();
+  portalSupportCandidates=[];
+  const info=document.getElementById('portalSupportFilterStatus');
+  if(info)info.textContent='';
+  const status=document.getElementById('portalSupportDialogStatus');
+  if(status)status.textContent='';
+}
+async function openPortalSupportDialog(){
+  if(!state.isDeveloper||state.supportMode){showToast('代理ログインはデベロッパー本人だけが開始できます。');return;}
+  const overlay=document.getElementById('portalSupportDialog');
+  const select=document.getElementById('portalSupportMember');
+  const branch=document.getElementById('portalSupportBranch');
+  const query=document.getElementById('portalSupportQuery');
+  const code=document.getElementById('portalSupportOtp');
+  const status=document.getElementById('portalSupportDialogStatus');
+  const filterStatus=document.getElementById('portalSupportFilterStatus');
+  if(!overlay||!select||!branch||!query||!code)return;
+  overlay.hidden=false;
+  portalSupportCandidates=[];
+  branch.replaceChildren(new Option('すべての支部',''));
+  query.value='';
+  select.replaceChildren(new Option('支部員を選択',''));
+  select.disabled=true;
+  code.value='';
+  if(filterStatus)filterStatus.textContent='';
+  status.textContent='名簿を読み込んでいます…';
+  try{
+    const response=await portalFetch('/api/roster?all=1');
+    const members=Array.isArray(response.roster)?response.roster:[];
+    if(overlay.hidden)return;
+    const eligible=members.filter(item=>Number(item.enabled)===1 &&
+      Number(item.is_developer)!==1 && Number(item.is_bootstrap_developer)!==1 &&
+      String(item.email||'').trim().toLowerCase()!==String(state.realUser?.email||'').trim().toLowerCase() &&
+      /@dot-jp\.or\.jp$/i.test(String(item.email||'')));
+    eligible.sort((a,b)=>String(a.group_name||'').localeCompare(String(b.group_name||''),'ja')||String(a.name||'').localeCompare(String(b.name||''),'ja'));
+    portalSupportCandidates=eligible;
+    const branches=[...new Set(eligible.map(item=>String(item.group_name||'未振り分け')))];
+    for(const group of branches)branch.add(new Option(group,group));
+    renderPortalSupportMemberOptions();
+    status.textContent=eligible.length?'':'選択できるアカウントがありません。';
+    branch.focus();
+  }catch(error){status.textContent=error.message||'名簿の読み込みに失敗しました。';}
+}
+async function startPortalSupport(event){
+  if(event)event.preventDefault();
+  if(!state.isDeveloper||state.supportMode)return;
+  const select=document.getElementById('portalSupportMember');
+  const code=document.getElementById('portalSupportOtp');
+  const status=document.getElementById('portalSupportDialogStatus');
+  const submit=document.getElementById('portalSupportSubmitButton');
+  const id=Number(select?.value);
+  const otp=String(code?.value||'').trim();
+  if(!Number.isSafeInteger(id)||id<1){status.textContent='支部員を選択してください。';select?.focus();return;}
+  if(!/^\d{6}$/.test(otp)){status.textContent='デベロッパー本人の6桁の2段階認証コードを入力してください。';code?.focus();return;}
+  if(!window.confirm('選択した支部員のアカウントへ代理ログインします。変更操作は監査ログに記録され、外部送信や認証設定変更は制限されます。続行しますか？'))return;
+  submit.disabled=true;
+  status.textContent='2段階認証を確認しています…';
+  try{
+    const result=await portalFetch('/api/developer/support/start',{method:'POST',body:{roster_id:id,confirmed:true,otp_code:otp}});
+    if(!/^[a-f0-9]{64}$/.test(String(result.support_token||'')))throw new Error('代理ログイン情報を取得できませんでした。');
+    code.value='';
+    sessionStorage.setItem('dotjp_support_token',result.support_token);
+    history.replaceState(null,'',location.pathname+'#home');
+    location.reload();
+  }catch(error){status.textContent=error.message||'代理ログインを開始できませんでした。';code.value='';code.focus();}
+  finally{submit.disabled=false;}
+}
+async function stopPortalSupport(){
+  const token=portalSupportToken();
+  if(!token)return;
+  const button=document.getElementById('portalSupportEndButton');
+  if(button)button.disabled=true;
+  try{
+    await portalFetch('/api/developer/support/stop',{method:'POST',body:{support_token:token}});
+  }catch(e){console.warn('Support session end failed',e);}
+  finally{
+    sessionStorage.removeItem('dotjp_support_token');
+    history.replaceState(null,'',location.pathname+'#home');
+    location.reload();
+  }
+}
+
 const portalPendingGets=new Map();
 async function portalFetch(path, options = {}) {
   const token=sessionStorage.getItem('dotjp_access_token');
   if(!token)throw new Error('ログイン情報がありません。');
   const method=options.method||'GET';
   const isGet=method==='GET';
-  const key=isGet?`${token}|${path}`:null;
+  const supportToken=portalSupportToken();
+  const key=isGet?`${token}|${supportToken}|${path}`:null;
   if(key&&portalPendingGets.has(key))return portalPendingGets.get(key);
   const operation=(async()=>{
     const attempts=isGet?2:1;
@@ -12117,7 +12300,7 @@ async function portalFetch(path, options = {}) {
       try{
         response=await fetch(`${PORTAL_API_WORKER}${path}`,{
           method,cache:'no-store',signal:controller.signal,
-          headers:{Authorization:`Bearer ${token}`,...(options.body?{'Content-Type':'application/json'}:{})},
+          headers:{Authorization:`Bearer ${token}`,...(supportToken?{'X-Portal-Support-Session':supportToken}:{}),...(options.body?{'Content-Type':'application/json'}:{})},
           ...(options.body?{body:JSON.stringify(options.body)}:{})
         });
         data=await response.json().catch(()=>({}));
@@ -12132,6 +12315,12 @@ async function portalFetch(path, options = {}) {
         location.replace('./');
       }
       if(!response.ok||!data.ok){
+        if(supportToken && response.status===403 && /代理ログイン.*(期限切れ|終了|無効|利用権限|認証状態|利用できなく)/.test(String(data.error||''))){
+          sessionStorage.removeItem('dotjp_support_token');
+          location.replace(location.pathname+'#home');
+          location.reload();
+          throw new Error('代理ログインが終了しました。自分の画面に戻ります。');
+        }
         if(isGet&&attempt+1<attempts&&[429,502,503,504].includes(response.status)){
           await sleep(450*(attempt+1));continue;
         }
@@ -12559,7 +12748,13 @@ async function chooseInitialPortalRegion() {
 async function loadPortalProfile() {
   try {
     const data = await portalFetch("/api/me");
-    applyPortalIdentity(data.user);
+    if(data.support_mode){
+      state.user={...data.user};
+      fillUserInfo();
+    }else{
+      applyPortalIdentity(data.user);
+    }
+    renderPortalSupportBanner(data);
     state.isDeveloper = Boolean(data.developer);
     state.isRepresentative = Boolean(data.representative);
     state.canEditRoster = Boolean(data.can_edit_roster || state.isDeveloper);
@@ -12579,10 +12774,10 @@ async function loadPortalProfile() {
       sessionStorage.setItem(regionSessionOwnerKey, email);
     }
     state.preferredRegion = data.preferred_region || null;
-    if (!state.preferredRegion) return 'choose_region';
-    if (state.preferredRegion === 'kansai') return 'redirect_kansai';
-    state.region = 'kanto';
-    sessionStorage.setItem('dotjp_region','kanto');
+    if (!state.preferredRegion && !state.supportMode) return 'choose_region';
+    if (state.preferredRegion === 'kansai' && !state.supportMode) return 'redirect_kansai';
+    state.region = state.supportMode && state.preferredRegion === 'kansai' ? 'kansai' : 'kanto';
+    sessionStorage.setItem('dotjp_region',state.region);
     updateRegion();
 
     const button = document.getElementById("hpEditButton");
@@ -12594,6 +12789,8 @@ async function loadPortalProfile() {
     console.warn("Portal API profile unavailable", error);
     state.isDeveloper = false;
     state.isRepresentative = false;
+    state.supportMode = false;
+    document.getElementById('portalSupportBanner').hidden=true;
     state.canEditRoster = false;
     state.canManageMeetings = false;
     document.getElementById("representativeDashboardEntry").hidden = true;
@@ -12744,6 +12941,8 @@ function switchFigmaHpTab(tab) {
     if(el.dataset.hpTab==='sheets')el.hidden=!canManage;
     el.classList.toggle('is-active',el.dataset.hpTab===active);
   });
+  const portalSupportOpen=document.getElementById('portalSupportOpenButton');
+  if(portalSupportOpen)portalSupportOpen.hidden=!state.isDeveloper||state.supportMode;
   document.querySelectorAll('[data-hp-view]').forEach(el => {
     el.hidden=el.dataset.hpView!==active;
   });
@@ -12777,11 +12976,13 @@ function renderFigmaRoster() {
           Number(item.is_developer) === 1 ? '開発' : ''
         ].filter(Boolean).join('・'))}</span>
         <button type="button" class="figma-hp-roster-change" data-figma-roster-change="${Number(item.id)}">[変更]</button>
+
       </div>`).join('');
   }
   document.querySelectorAll('[data-figma-roster-change]').forEach(button => {
     button.addEventListener('click', () => editFigmaRosterRow(Number(button.dataset.figmaRosterChange)));
   });
+
 }
 
 function editFigmaRosterRow(id) {
@@ -16862,7 +17063,7 @@ async function marketingGetImage(id,img){
     let src=marketingState.mediaUrls.get(id);
     if(!src){
       const token=sessionStorage.getItem('dotjp_access_token');
-      const response=await fetch(`${PORTAL_API_WORKER}/api/marketing/assets/${encodeURIComponent(id)}`,{headers:{Authorization:`Bearer ${token}`},cache:'no-store'});
+      const response=await fetch(`${PORTAL_API_WORKER}/api/marketing/assets/${encodeURIComponent(id)}`,{headers:{Authorization:`Bearer ${token}`,...(portalSupportToken()?{'X-Portal-Support-Session':portalSupportToken()}: {})},cache:'no-store'});
       if(!response.ok)throw new Error('画像を取得できませんでした');
       src=URL.createObjectURL(await response.blob());marketingState.mediaUrls.set(id,src);
     }
@@ -16956,7 +17157,7 @@ async function marketingOpen(id){
 async function marketingDownload(asset){
   try{
     const token=sessionStorage.getItem('dotjp_access_token');
-    const response=await fetch(`${PORTAL_API_WORKER}/api/marketing/assets/${encodeURIComponent(asset.id)}`,{headers:{Authorization:`Bearer ${token}`},cache:'no-store'});
+    const response=await fetch(`${PORTAL_API_WORKER}/api/marketing/assets/${encodeURIComponent(asset.id)}`,{headers:{Authorization:`Bearer ${token}`,...(portalSupportToken()?{'X-Portal-Support-Session':portalSupportToken()}: {})},cache:'no-store'});
     if(!response.ok)throw new Error('ファイルを取得できませんでした。');
     const url=URL.createObjectURL(await response.blob());const a=document.createElement('a');
     a.href=url;a.download=asset.file_name||'attachment';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
@@ -16971,7 +17172,7 @@ function marketingValidateFiles(files){
 async function marketingUploadFile(postId,file){
   const form=new FormData();form.append('file',file,file.name);
   const token=sessionStorage.getItem('dotjp_access_token');
-  const response=await fetch(`${PORTAL_API_WORKER}/api/marketing/posts/${Number(postId)}/assets`,{method:'POST',cache:'no-store',headers:{Authorization:`Bearer ${token}`},body:form});
+  const response=await fetch(`${PORTAL_API_WORKER}/api/marketing/posts/${Number(postId)}/assets`,{method:'POST',cache:'no-store',headers:{Authorization:`Bearer ${token}`,...(portalSupportToken()?{'X-Portal-Support-Session':portalSupportToken()}: {})},body:form});
   const result=await response.json().catch(()=>({}));
   if(!response.ok||!result.ok)throw Error(result.error||'ファイルの送信に失敗しました。');
   return result.asset;
