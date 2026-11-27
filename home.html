@@ -19260,6 +19260,11 @@ window.addEventListener('DOMContentLoaded',()=>{
 .v195-mission-people{position:absolute;left:50px;top:45px;display:grid;grid-template-columns:repeat(2,150px);gap:30px 25px;align-content:start;max-height:577px;overflow-y:auto;width:325px;scrollbar-width:thin}
 .v195-mission-people button{height:60px;border:0;border-radius:0;background:#2fb000;color:#fff;font:500 35px/1.1 Inter,'Noto Sans JP',sans-serif;white-space:nowrap;cursor:pointer;overflow:hidden;text-overflow:ellipsis}
 .v195-mission-people button.is-selected{background:#215e00}.v195-mission-people button:focus-visible{outline:3px solid #123c92;outline-offset:3px}
+.v195-mission-people button.is-pending{background:#e4e9f2;color:#27334b;position:relative;font-size:21px;padding:2px 4px 18px;line-height:1.1}
+.v195-mission-people button.is-pending::after{content:'未実施';position:absolute;bottom:2px;left:0;right:0;text-align:center;color:#8a4f1b;font-size:14px;font-weight:600}
+.v195-mission-people button.is-pending.is-selected{background:#cddbf3;outline:2px solid #6383b8;outline-offset:-2px}
+.v195-score-details .v196-mission-pending{display:flex;height:100%;align-items:center;justify-content:center;text-align:center;font-size:36px;font-weight:600;color:#546078;background:#f0f2f6}
+
 .v195-mission-main{position:absolute;left:420px;top:16px;width:830px;height:640px;box-sizing:border-box}
 .v195-score-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;min-height:140px}
 .v195-metric{display:grid;grid-template-rows:62px 70px;gap:0;text-align:center;min-width:0}
@@ -19280,23 +19285,37 @@ window.addEventListener('DOMContentLoaded',()=>{
 const portalMissionState={members:[],selected:'',seq:0};
 async function portalMissionLoad(name=''){
  const people=document.getElementById('v195MissionPeople'),summary=document.getElementById('v195MissionSummary'),detail=document.getElementById('v195MissionDetails'),status=document.getElementById('v195MissionStatus');
- if(!people||!detail||state.currentScreen!=='representative-mission')return;
+ if(!people||!summary||!detail||state.currentScreen!=='representative-mission')return;
  const seq=++portalMissionState.seq;status.textContent='最新のミッションシートを読み込んでいます…';
+ const cards=summary.querySelectorAll('.v195-metric span');
+ function displayPending(){
+  cards.forEach((el,i)=>{el.textContent=i===0?'未実施':'—';el.style.backgroundColor='#f0f2f6';el.style.color='#49546a';el.style.fontSize=i===0?'31px':'';});
+  detail.replaceChildren();const msg=document.createElement('div');msg.className='v196-mission-pending';msg.textContent='未実施';detail.append(msg);
+ }
  try{
   const data=await portalFetch('/api/representative/mission'+(name?'?member='+encodeURIComponent(name):''));
   if(seq!==portalMissionState.seq||state.currentScreen!=='representative-mission')return;
   portalMissionState.members=Array.isArray(data.members)?data.members:[];
-  const names=portalMissionState.members.map(x=>x.name);const target=(name&&names.includes(name)?name:portalMissionState.selected&&names.includes(portalMissionState.selected)?portalMissionState.selected:names[0])||'';
+  const names=portalMissionState.members.map(x=>x.name);
+  const target=(name&&names.includes(name)?name:portalMissionState.selected&&names.includes(portalMissionState.selected)?portalMissionState.selected:names[0])||'';
   portalMissionState.selected=target;
   people.replaceChildren();
-  for(const item of portalMissionState.members){const b=document.createElement('button');b.type='button';b.textContent=item.name;b.title=item.name;b.classList.toggle('is-selected',item.name===target);b.addEventListener('click',()=>void portalMissionLoad(item.name));people.append(b)}
+  for(const item of portalMissionState.members){
+   const b=document.createElement('button');b.type='button';b.textContent=item.display_name||item.name;
+   b.title=item.name+(item.has_sheet?'':'（未実施）');b.classList.toggle('is-selected',item.name===target);
+   b.classList.toggle('is-pending',!item.has_sheet);
+   b.addEventListener('click',()=>void portalMissionLoad(item.name));people.append(b);
+  }
   if(!name&&target){void portalMissionLoad(target);return;}
-  if(!target){status.textContent='実名の支部員シートがありません。HP編集のスプシ連携をご確認ください。';detail.textContent='';return;}
-  if(!data.selected){detail.textContent='取得中…';return;}
-  const selected=data.selected,metrics=selected.metrics||{};
+  if(!target){displayPending();status.textContent='表示できる支部員が名簿に登録されていません。';return;}
+  if(!data.selected){displayPending();return;}
+  const selected=data.selected;
+  if(selected.status==='pending'){
+   displayPending();status.textContent='表示中：'+selected.name+' ／ 未実施。個人シートの作成・評価入力後、更新時に自動反映されます。';return;
+  }
+  const metrics=selected.metrics||{};
   const m=[metrics.rank,metrics.average,metrics.role_average,metrics.common_average];
-  const cards=summary.querySelectorAll('.v195-metric span');
-  m.forEach((cell,i)=>{const el=cards[i];if(!el)return;el.textContent=cell?.text||'—';el.style.backgroundColor=cell?.background||'#edf0fa';el.style.color=cell?.foreground||'#152039';});
+  m.forEach((cell,i)=>{const el=cards[i];if(!el)return;el.textContent=cell?.text||'—';el.style.backgroundColor=cell?.background||'#edf0fa';el.style.color=cell?.foreground||'#152039';el.style.fontSize='';});
   detail.replaceChildren();const headers=Array.isArray(selected.headers)?selected.headers:[],rows=Array.isArray(selected.details)?selected.details:[];
   if(!rows.length){detail.textContent='スコア詳細はまだ登録されていません。';}
   else{
@@ -19312,6 +19331,8 @@ async function portalMissionLoad(name=''){
   status.textContent='表示中：'+selected.name+' ／ シートの最新版を取得しました。詳細はO列以降（見出しのある列）です。';
  }catch(e){if(seq!==portalMissionState.seq)return;status.textContent='取得できません：'+(e.message||e);detail.textContent='スプレッドシートへの共有権限や「HP編集 → スプレッドシート連携」の設定を確認してください。';}
 }
+// Refresh even while the representative keeps this screen open; latest tab names and scores are never cached.
+window.setInterval(()=>{if(state.currentScreen==='representative-mission'&&document.visibilityState==='visible')void portalMissionLoad(portalMissionState.selected)},5*60*1000);
 </script>
 
 </body>
