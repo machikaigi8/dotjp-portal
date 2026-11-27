@@ -3977,6 +3977,18 @@ a:active {
 .screen-hp-edit .figma-hp-column:last-child {border-right:0;}
 .screen-hp-edit .figma-hp-column-title {height:57px;min-height:57px;box-sizing:border-box;text-align:center;border-bottom:3px solid #000;font-size:39px;line-height:53px;color:#080808;}
 .screen-hp-edit .figma-hp-column-list {overflow:auto;padding:0 4px;flex:1;}
+/* 6支部をFigmaの3列×2行の枠線レイアウトで表示。各支部内だけ必要時にスクロール。 */
+.screen-hp-edit [data-hp-view="roster"] {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));}
+.screen-hp-edit .figma-hp-region-cell {min-width:0;min-height:0;display:flex;flex-direction:column;border-right:3px solid #000;border-bottom:3px solid #000;box-sizing:border-box;}
+.screen-hp-edit .figma-hp-region-cell:nth-child(3n) {border-right:0;}
+.screen-hp-edit .figma-hp-region-cell:nth-child(n+4) {border-bottom:0;}
+.screen-hp-edit .figma-hp-region-title {flex:none;height:57px;box-sizing:border-box;border-bottom:3px solid #000;text-align:center;font:400 39px/54px Arial,'Noto Sans JP',sans-serif;color:#000;}
+.screen-hp-edit .figma-hp-region-list {flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;padding:0 4px;scrollbar-width:thin;}
+.screen-hp-edit .figma-hp-region-list .figma-hp-roster-row {min-height:48px;font-size:25px;gap:5px;}
+.screen-hp-edit .figma-hp-region-list .figma-hp-roster-role {font-size:23px;}
+.screen-hp-edit .figma-hp-region-list .figma-hp-roster-change {font-size:20px;}
+.screen-hp-edit .figma-hp-topline {gap:64px;}
+.screen-hp-edit .figma-hp-topline:has(#portalSupportOpenButton:not([hidden])) {justify-content:flex-start;gap:64px;}
 .screen-hp-edit .figma-hp-roster-row {min-height:50px;display:flex;align-items:center;gap:7px;padding:0 5px;white-space:nowrap;font-size:28px;line-height:1.25;color:#080808;}
 .screen-hp-edit .figma-hp-roster-name {overflow:hidden;text-overflow:ellipsis;min-width:0;}
 .screen-hp-edit .figma-hp-roster-role {font-size:26px;flex:none;color:#262626;}
@@ -8116,23 +8128,35 @@ line-height: 1.5 !important;
           <div class="user-name" data-user-name>＜名前＞</div>
 
           <div class="figma-hp-topline">
-            <button type="button" class="figma-hp-tab is-active" data-hp-tab="roster">関東・関西名簿</button>
+            <button type="button" class="figma-hp-tab is-active" data-hp-tab="roster">名簿</button>
             <button type="button" class="figma-hp-tab" data-hp-tab="requests">要望</button>
             <button type="button" class="figma-hp-tab" data-hp-tab="sheets">スプレッドシート連携</button>
             <button type="button" class="figma-hp-tab figma-hp-support-open" id="portalSupportOpenButton" hidden>代理ログイン</button>
           </div>
-          <section class="figma-hp-main" data-hp-view="roster">
-            <div class="figma-hp-column" data-roster-column="関東">
-              <div class="figma-hp-column-title">関東</div>
-              <div class="figma-hp-column-list" id="figmaRosterKanto"></div>
+          <section class="figma-hp-main" data-hp-view="roster" aria-label="支部別名簿">
+            <div class="figma-hp-region-cell" data-roster-column="宮城">
+              <div class="figma-hp-region-title">宮城</div>
+              <div class="figma-hp-region-list" id="figmaRosterMiyagi"></div>
             </div>
-            <div class="figma-hp-column" data-roster-column="関西">
-              <div class="figma-hp-column-title">関西</div>
-              <div class="figma-hp-column-list" id="figmaRosterKansai"></div>
+            <div class="figma-hp-region-cell" data-roster-column="関東">
+              <div class="figma-hp-region-title">関東</div>
+              <div class="figma-hp-region-list" id="figmaRosterKanto"></div>
             </div>
-            <div class="figma-hp-column" data-roster-column="未振り分け">
-              <div class="figma-hp-column-title">未振り分け</div>
-              <div class="figma-hp-column-list" id="figmaRosterUnassigned"></div>
+            <div class="figma-hp-region-cell" data-roster-column="関西">
+              <div class="figma-hp-region-title">関西</div>
+              <div class="figma-hp-region-list" id="figmaRosterKansai"></div>
+            </div>
+            <div class="figma-hp-region-cell" data-roster-column="広島">
+              <div class="figma-hp-region-title">広島</div>
+              <div class="figma-hp-region-list" id="figmaRosterHiroshima"></div>
+            </div>
+            <div class="figma-hp-region-cell" data-roster-column="熊本">
+              <div class="figma-hp-region-title">熊本</div>
+              <div class="figma-hp-region-list" id="figmaRosterKumamoto"></div>
+            </div>
+            <div class="figma-hp-region-cell" data-roster-column="未振り分け">
+              <div class="figma-hp-region-title">未振り分け</div>
+              <div class="figma-hp-region-list" id="figmaRosterUnassigned"></div>
             </div>
           </section>
           <section class="figma-hp-main figma-hp-requests" data-hp-view="requests" hidden>
@@ -8174,8 +8198,11 @@ line-height: 1.5 !important;
               <label>メールアドレス<input type="email" id="figmaRosterEditEmail"></label>
               <label>振り分け
                 <select id="figmaRosterEditGroup">
+                  <option value="宮城">宮城</option>
                   <option value="関東">関東</option>
                   <option value="関西">関西</option>
+                  <option value="広島">広島</option>
+                  <option value="熊本">熊本</option>
                   <option value="未振り分け">未振り分け</option>
                 </select>
               </label>
@@ -12978,16 +13005,19 @@ function switchFigmaHpTab(tab) {
 
 function renderFigmaRoster() {
   const columns = {
+    '宮城': document.getElementById('figmaRosterMiyagi'),
     '関東': document.getElementById('figmaRosterKanto'),
     '関西': document.getElementById('figmaRosterKansai'),
+    '広島': document.getElementById('figmaRosterHiroshima'),
+    '熊本': document.getElementById('figmaRosterKumamoto'),
     '未振り分け': document.getElementById('figmaRosterUnassigned')
   };
-  for (const el of Object.values(columns)) if (el) el.innerHTML = '';
+  for (const el of Object.values(columns)) if (el) el.replaceChildren();
   const visible = (state.roster || []).filter(item => Number(item.enabled) !== 0);
-  const grouped = {'関東':[], '関西':[], '未振り分け':[]};
+  const grouped = Object.fromEntries(Object.keys(columns).map(group => [group, []]));
   visible.forEach(item => {
-    const group = ['関東','関西'].includes(String(item.group_name || ''))
-      ? String(item.group_name) : '未振り分け';
+    const saved = String(item.group_name || '').trim().replace(/支部$/, '');
+    const group = Object.prototype.hasOwnProperty.call(grouped,saved) ? saved : '未振り分け';
     grouped[group].push(item);
   });
   for (const [group,items] of Object.entries(grouped)) {
@@ -13001,14 +13031,12 @@ function renderFigmaRoster() {
           Number(item.is_representative) === 1 ? '代表' : '',
           Number(item.is_developer) === 1 ? '開発' : ''
         ].filter(Boolean).join('・'))}</span>
-        <button type="button" class="figma-hp-roster-change" data-figma-roster-change="${Number(item.id)}">[変更]</button>
-
+        <button type="button" class="figma-hp-roster-change" data-figma-roster-change="${Number(item.id)}" aria-label="${escapeHtml(item.name)}の名簿を変更">[変更]</button>
       </div>`).join('');
   }
   document.querySelectorAll('[data-figma-roster-change]').forEach(button => {
     button.addEventListener('click', () => editFigmaRosterRow(Number(button.dataset.figmaRosterChange)));
   });
-
 }
 
 function editFigmaRosterRow(id) {
@@ -13024,7 +13052,7 @@ function editFigmaRosterRow(id) {
   document.getElementById('figmaRosterEditDeveloper').disabled = Number(item.is_bootstrap_developer) === 1;
   document.getElementById('figmaRosterPrivilegeEditor').hidden = !state.isDeveloper;
   document.getElementById('figmaRosterEditGroup').value =
-    ['関東','関西'].includes(item.group_name) ? item.group_name : '未振り分け';
+    ['宮城','関東','関西','広島','熊本','未振り分け'].includes(String(item.group_name || '').trim().replace(/支部$/, '')) ? String(item.group_name || '').trim().replace(/支部$/, '') : '未振り分け';
   const role = String(item.role || '');
   const departments = ['Cons','mark','人事','PG','クラ','事務'];
   const chief = role.endsWith('統');
@@ -13093,7 +13121,7 @@ async function saveFigmaRosterRow() {
     if (String(email).toLowerCase() === userIdentity()) {
       if(saved.member?.name)applyPortalIdentity({email: saved.member.email,name:saved.member.name,name_source:"roster"});
       await refreshPortalIdentity(true);
-      state.preferredRegion = group_name === '関西' ? 'kansai' : group_name === '関東' ? 'kanto' : null;
+      state.preferredRegion = group_name === '関西' ? 'kansai' : group_name === '未振り分け' ? null : 'kanto';
     }
     showToast('名簿を更新しました');
   } catch (error) {
