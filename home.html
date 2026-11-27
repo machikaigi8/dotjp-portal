@@ -6734,6 +6734,15 @@ line-height: 1.5 !important;
 }
 .screen-schedule .work-hours-open-button {left:12px!important;padding:0 9px!important;font-size:17px!important}
 .screen-schedule .schedule-manual-entry-button:hover,.screen-schedule .schedule-manual-entry-button:focus-visible {background:#dbe6ff!important}
+.screen-schedule .schedule-bottom-refresh-button {
+  position:absolute!important;left:415px!important;bottom:10px!important;
+  height:42px!important;padding:0 18px!important;
+  border:1.5px solid #5271d3!important;border-radius:7px!important;
+  background:#eef3ff!important;color:#2648a6!important;
+  font:600 16px/39px Inter,'Noto Sans JP',sans-serif!important;
+  white-space:nowrap;cursor:pointer!important;
+}
+.screen-schedule .schedule-bottom-refresh-button:hover,.screen-schedule .schedule-bottom-refresh-button:focus-visible {background:#dbe6ff!important}
 .screen-schedule-plan .manual-plan-date-row {
   position:absolute;left:128px;top:109px;display:flex;align-items:center;gap:18px;
   font:500 24px/42px Inter,'Noto Sans JP',sans-serif;z-index:2;
@@ -8319,7 +8328,8 @@ line-height: 1.5 !important;
                 type="button"
                 data-route="schedule-hours"
               >稼働時間を登録する</button>
-              <button type="button" id="scheduleManualEntryButton" class="schedule-manual-entry-button">その他の時間でタスクを入力</button>
+              <button type="button" id="scheduleManualEntryButton" class="schedule-manual-entry-button">その他の時間を登録</button>
+              <button type="button" id="scheduleBottomRefreshButton" class="schedule-bottom-refresh-button">更新</button>
             </section>
           </div>
         </section>
@@ -9726,6 +9736,7 @@ function wireActions() {
     registerSchedulePlan
   );
   document.getElementById("scheduleManualEntryButton")?.addEventListener("click", openManualSchedulePlan);
+  document.getElementById("scheduleBottomRefreshButton")?.addEventListener("click", refreshCalendarSchedule);
   document.getElementById("manualPlanDate")?.addEventListener("change", event => updateManualPlanDate(event.target.value));
   // 開始・終了時刻を編集したときは、終了時刻を保持して所要時間を更新。
   ["planStartHour", "planStartMinute", "planEndHour", "planEndMinute"].forEach(id => {
@@ -13705,7 +13716,7 @@ function renderSchedulePlanScreen() {
     return;
   }
   const manual = Boolean(state.calendar.manualPlanMode && slot.manual);
-  document.getElementById("selectedAvailabilityLabel").textContent = manual ? "その他の時間でタスクを入力" : slot.label;
+  document.getElementById("selectedAvailabilityLabel").textContent = manual ? "その他の時間を登録" : slot.label;
   const manualDateRow = document.getElementById("manualPlanDateRow");
   manualDateRow.hidden = !manual;
   if (manual) document.getElementById("manualPlanDate").value = tokyoDateFromIso(slot.start);
