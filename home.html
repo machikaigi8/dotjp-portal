@@ -7394,7 +7394,7 @@ line-height: 1.5 !important;
         <!-- Figma 2026-11-05: 事務局 / white placeholder -->
         <section class="screen screen-department-placeholder" data-screen="department-office" aria-label="事務局">
           <div class="user-name" data-user-name>＜名前＞</div>
-          <nav class="portal-dept-menu" aria-label="部署内メニュー"><button type="button" class="dept-material-entry-button" data-route="department-materials" data-material-department="office">資料一覧</button></nav>
+          <nav class="portal-dept-menu v195-office-tabs" aria-label="事務局メニュー"><button type="button" data-route="department-office">経費記入ミス確認</button><button type="button" data-route="department-materials" data-material-department="office">資料一覧</button></nav>
           <div class="department-placeholder-panel" aria-label="事務局の経費記入チェック">
             <div class="office-expense-top"><h2>経費記入ミス・確認待ち</h2><select id="officeExpenseFilter" aria-label="チェック対象の絞り込み"><option value="open">未解決・未確認</option><option value="error">自動チェックで指摘</option><option value="pending">目視確認待ち</option><option value="all">すべて</option></select><button id="officeExpenseRefresh" type="button">スプシを再確認</button></div>
             <div class="office-expense-summary" id="officeExpenseSummary"><span>チェック待機中</span></div>
@@ -7517,6 +7517,8 @@ line-height: 1.5 !important;
           <nav class="v184-material-nav" id="v184PgMaterialNav" hidden aria-label="プログラムメニュー">
             <button type="button" data-route="department-materials" data-material-department="pg">資料一覧</button>
           </nav>
+          <nav class="v184-material-nav" id="v195OfficeMaterialNav" hidden aria-label="事務局メニュー"><button type="button" data-route="department-office">経費記入ミス確認</button><button type="button" data-route="department-materials" data-material-department="office">資料一覧</button></nav>
+          <nav class="v184-material-nav" id="v195RepMaterialNav" hidden aria-label="代表メニュー"><button type="button" data-route="representative-dashboard">RP管理</button><button type="button" data-route="representative-mission">ミッションシート</button><button type="button" data-route="department-materials" data-material-department="rep">資料一覧</button></nav>
           <button type="button" id="v184MaterialAdd" class="v184-material-add" hidden>＋資料を増やす</button>
           <div class="department-materials-stage">
             <header class="department-materials-heading">
@@ -8538,6 +8540,7 @@ line-height: 1.5 !important;
         <!-- 代表・デベロッパーが状況を把握する専用画面 -->
         <section class="screen screen-representative" data-screen="representative-dashboard">
           <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="v195-rep-nav" aria-label="代表メニュー"><button type="button" data-route="representative-dashboard">RP管理</button><button type="button" data-route="representative-mission">ミッションシート</button><button type="button" data-route="department-materials" data-material-department="rep">資料一覧</button></nav>
           <div class="representative-shell">
             <header class="representative-head"><div><h1>代表｜RP設定・マッチング</h1><p>RPの種類・担当者を登録し、登録済みRPの「編集」から希望日時を照合して承認します。</p></div>
               <button type="button" id="repRefresh">更新</button></header>
@@ -8594,6 +8597,20 @@ line-height: 1.5 !important;
             </section>
           </div>
           <button type="button" class="candidate-page-back" data-common-back>←戻る</button>
+        </section>
+
+        <section class="screen v195-mission-screen" data-screen="representative-mission" aria-label="ミッションシート">
+          <div class="user-name" data-user-name>＜名前＞</div>
+          <nav class="v195-rep-nav" aria-label="代表メニュー"><button type="button" data-route="representative-dashboard">RP管理</button><button type="button" data-route="representative-mission">ミッションシート</button><button type="button" data-route="department-materials" data-material-department="rep">資料一覧</button></nav>
+          <div class="v195-mission-white">
+            <div id="v195MissionPeople" class="v195-mission-people" aria-label="支部員の選択"></div>
+            <div class="v195-mission-main">
+              <div class="v195-score-summary" id="v195MissionSummary"><div class="v195-metric"><strong>総合ランク</strong><span>—</span></div><div class="v195-metric"><strong>平均点</strong><span>—</span></div><div class="v195-metric"><strong>役職ミッション平均</strong><span>—</span></div><div class="v195-metric"><strong>全員共通平均</strong><span>—</span></div></div>
+              <div class="v195-score-details" id="v195MissionDetails"><p>左側から支部員を選択してください。</p></div>
+              <div id="v195MissionStatus" class="v195-mission-status" role="status" aria-live="polite"></div>
+            </div>
+          </div>
+          <button type="button" class="v195-screen-back" data-back-route="representative-dashboard" data-common-back>←戻る</button>
         </section>
 
         <section class="screen screen-schedule-plan" data-screen="schedule-plan">
@@ -8916,6 +8933,7 @@ const screenNames = new Set([
   "schedule-review",
   "schedule-candidates",
   "representative-dashboard",
+  "representative-mission",
   "schedule-hours",
   "client",
   "client-contact",
@@ -9886,6 +9904,11 @@ function showScreen(name, updateHash = true, recordHistory = true) {
     name = "home";
   }
 
+  if (name === "representative-mission" && !(state.isDeveloper || state.isRepresentative)) {
+    showToast("ミッションシートは代表・デベロッパーのみ閲覧できます");
+    name = "home";
+  }
+
   if (name === "client-line" && !(state.isDeveloper || state.isRepresentative)) {
     showToast("LINE通知の編集は代表・デベロッパーのみ可能です");
     name = "client";
@@ -9958,6 +9981,7 @@ if (name === "post-confirm") {
   }
   if (name === "schedule-candidates") void rpWeekLoad();
   if (name === "representative-dashboard") void rpConfigLoad();
+  if (name === "representative-mission") void portalMissionLoad();
 
   if (name === "schedule-plan") {
     renderSchedulePlanScreen();
@@ -10019,7 +10043,7 @@ function goBackScreen(event) {
   // 戻るは原則トップ画面。個別指定のみ data-back-route で例外を許可。
   const explicitlySpecified = event?.currentTarget?.dataset?.backRoute || '';
   const current = state.currentScreen;
-  const target = current === 'department-materials' ? (departmentMaterialState.department === 'pg' ? 'home' : 'department-'+departmentMaterialState.department) : current === 'client' ? 'home' : current?.startsWith('client-') ? 'client' :
+  const target = current === 'department-materials' ? (departmentMaterialState.department === 'pg' ? 'home' : departmentMaterialState.department === 'rep' ? 'representative-dashboard' : 'department-'+departmentMaterialState.department) : current === 'client' ? 'home' : current?.startsWith('client-') ? 'client' :
     explicitlySpecified && screenNames.has(explicitlySpecified) ? explicitlySpecified : 'home';
   state.screenHistory.length = 0;
   showScreen(target, true, false);
@@ -12846,7 +12870,7 @@ function portalSheetRender(){
  if(shareEmail)shareEmail.textContent=portalSheetState.serviceAccountEmail||'サービスアカウント未設定（Cloudflareの環境変数を確認）';
  const shareCopy=document.getElementById('portalSheetShareCopy');
  if(shareCopy)shareCopy.disabled=!portalSheetState.serviceAccountEmail;
- const keys=['client','calendar','cons','expenses'];
+ const keys=['client','calendar','cons','expenses','mission'];
  const list=keys.map(key=>portalSheetState.entries.find(item=>item.region===portalSheetState.region&&item.key===key)).filter(Boolean);
  if(!list.length){const p=document.createElement('p');p.textContent='連携先を読み込めませんでした。更新してください。';container.append(p);return;}
  for(const item of list){
@@ -17588,8 +17612,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   marketingFigmaRenderRegions();
   markFigEl('markSourcesRegion').value=markFigState.region;
 });
-const DEPT_MATERIAL_LABELS={cons:'コンス',mark:'マーケティング',hr:'人事局',pg:'プログラム',client:'クライアント',office:'事務局'};
-const departmentMaterialState={department:location.hash==='#department-materials' ? (['cons','mark','hr','pg','office'].includes(sessionStorage.getItem('dotjp_material_department')) ? sessionStorage.getItem('dotjp_material_department') : 'pg') : 'cons',scope:'',items:[],canEdit:false,seq:0,editing:0};
+const DEPT_MATERIAL_LABELS={cons:'コンス',mark:'マーケティング',hr:'人事局',pg:'プログラム',client:'クライアント',office:'事務局',rep:'代表'};
+const departmentMaterialState={department:location.hash==='#department-materials' ? (['cons','mark','hr','pg','office','rep'].includes(sessionStorage.getItem('dotjp_material_department')) ? sessionStorage.getItem('dotjp_material_department') : 'pg') : 'cons',scope:'',items:[],canEdit:false,seq:0,editing:0};
 function deptMaterialEl(id){return document.getElementById(id)}
 function deptMaterialRegion(){return state.region==='kansai'?'kansai':'kanto'}
 function deptMaterialCurrentDepartment(){return state.currentScreen==='client-materials'?'client':departmentMaterialState.department}
@@ -18983,15 +19007,21 @@ window.addEventListener('DOMContentLoaded',()=>{
  const add=document.getElementById('v184MaterialAdd');
  const navHr=document.getElementById('v184HrMaterialNav');
  const navPg=document.getElementById('v184PgMaterialNav');
+ const navOffice=document.getElementById('v195OfficeMaterialNav');
+ const navRep=document.getElementById('v195RepMaterialNav');
  if(!screen||!dialog||!add)return;
  function syncMaterialView(){
   const isActive=state.currentScreen==='department-materials';
   const hr=isActive&&departmentMaterialState.department==='hr';
   const pg=isActive&&departmentMaterialState.department==='pg';
+  const office=isActive&&departmentMaterialState.department==='office';
+  const rep=isActive&&departmentMaterialState.department==='rep';
   screen.classList.toggle('is-hr-figma',hr);
   screen.classList.toggle('is-pg-figma',pg);
-  navHr.hidden=!hr;navPg.hidden=!pg;
-  add.hidden=!(hr||pg)||!departmentMaterialState.canEdit;
+  screen.classList.toggle('is-office-figma',office);
+  screen.classList.toggle('is-rep-figma',rep);
+  navHr.hidden=!hr;navPg.hidden=!pg;navOffice.hidden=!office;navRep.hidden=!rep;
+  add.hidden=!(hr||pg||office||rep)||!departmentMaterialState.canEdit;
   add.disabled=dialog.open;
  }
  const oldShow=showScreen;
@@ -19000,7 +19030,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  deptMaterialRender=function(...args){const r=oldRender(...args);syncMaterialView();return r;};
  const oldOpen=deptMaterialOpenDialog;
  deptMaterialOpenDialog=function(item=null){
-  const inline=state.currentScreen==='department-materials'&&['hr','pg'].includes(departmentMaterialState.department);
+  const inline=state.currentScreen==='department-materials'&&['hr','pg','office','rep'].includes(departmentMaterialState.department);
   if(dialog.open)dialog.close();
   if(inline)screen.appendChild(dialog);else document.body.appendChild(dialog);
   oldOpen(item);
@@ -19013,7 +19043,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  // When the on-page material form is visible, the back button closes it before leaving the department.
  screen.addEventListener('click',event=>{
   const back=event.target.closest('[data-common-back]');
-  if(back&&dialog.open&&['hr','pg'].includes(departmentMaterialState.department)){
+  if(back&&dialog.open&&['hr','pg','office','rep'].includes(departmentMaterialState.department)){
    event.preventDefault();event.stopImmediatePropagation();dialog.close();syncMaterialView();
   }
  },true);
@@ -19201,5 +19231,88 @@ window.addEventListener('DOMContentLoaded',()=>{
   });
 })();
 </script>
+<style>
+.v195-rep-nav{position:absolute;top:110px;left:120px;width:1200px;display:grid;grid-template-columns:repeat(3,360px);gap:60px;z-index:65}
+.v195-rep-nav button,.v195-office-tabs button{height:60px!important;width:360px!important;background:#d4d5ff!important;color:#000!important;border:0!important;border-radius:0!important;font:500 35px/1.15 Inter,'Noto Sans JP',sans-serif!important;cursor:pointer!important;padding:0!important;white-space:nowrap!important}
+.v195-rep-nav button:hover,.v195-office-tabs button:hover{background:#c5c7ff!important}
+.screen-representative .representative-shell{left:70px!important;top:208px!important;width:1300px!important;height:690px!important;max-height:690px!important;border:0!important;border-radius:0!important;overflow:auto!important;padding:22px 28px!important}
+.screen-representative .representative-head{margin-bottom:10px}
+.screen-department-office .department-placeholder-panel{top:208px!important;left:70px!important;width:1300px!important;height:690px!important;overflow:auto!important}
+.screen-department-office .v195-office-tabs{grid-template-columns:repeat(2,360px)!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma){background:#f2f2ff!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) .department-materials-stage{position:absolute!important;top:208px!important;left:70px!important;width:1300px!important;height:690px!important;background:transparent!important;border:0!important;padding:25px 50px!important;overflow:auto!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) .department-materials-heading{display:none!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #departmentMaterialsGrid{display:grid!important;grid-template-columns:repeat(3,360px)!important;gap:22px 60px!important;align-content:start!important;height:auto!important;min-height:0!important;max-width:1200px!important;overflow:visible!important;margin:0!important;padding:0!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #departmentMaterialsGrid .department-material-entry{width:360px!important;min-height:100px!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #departmentMaterialsGrid .department-material-link{min-width:360px!important;width:360px!important;height:100px!important;min-height:100px!important;background:#7577ff!important;color:#fff!important;border-radius:0!important;font:500 35px/1.2 Inter,'Noto Sans JP',sans-serif!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #departmentMaterialsGrid .department-material-empty{display:none!important}
+.screen-department-materials #v195OfficeMaterialNav{grid-template-columns:repeat(2,360px)!important}
+.screen-department-materials .v184-material-nav[hidden]{display:none!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma):has(#deptMaterialDialog[open]) .department-materials-stage{visibility:hidden}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #deptMaterialDialog[open]{position:absolute!important;left:140px!important;top:271px!important;width:1154px!important;max-width:1154px!important;height:574px!important;min-height:574px!important;max-height:574px!important;border:5px solid #010c41!important;border-radius:80px!important;box-shadow:none!important;margin:0!important;padding:24px 31px!important;z-index:110!important;background:#fff!important;transform:none!important;overflow:auto!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #deptMaterialDialog form{gap:12px!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #deptMaterialDialog label{display:grid!important;grid-template-columns:290px 1fr!important;font-size:28px!important;gap:16px!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #deptMaterialDialog label span{padding-left:25px!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #deptMaterialDialog .dept-material-dialog-actions{justify-content:flex-end!important}
+.screen-department-materials:is(.is-office-figma,.is-rep-figma) #deptMaterialDialog .dept-material-dialog-actions button{font-size:28px!important;border-radius:0!important}
+.v195-mission-screen{background:#f2f2ff!important;color:#000;font-family:Inter,'Noto Sans JP',sans-serif}
+.v195-mission-white{position:absolute;left:70px;top:208px;width:1300px;height:690px;background:#fff;box-sizing:border-box}
+.v195-mission-people{position:absolute;left:50px;top:45px;display:grid;grid-template-columns:repeat(2,150px);gap:30px 25px;align-content:start;max-height:577px;overflow-y:auto;width:325px;scrollbar-width:thin}
+.v195-mission-people button{height:60px;border:0;border-radius:0;background:#2fb000;color:#fff;font:500 35px/1.1 Inter,'Noto Sans JP',sans-serif;white-space:nowrap;cursor:pointer;overflow:hidden;text-overflow:ellipsis}
+.v195-mission-people button.is-selected{background:#215e00}.v195-mission-people button:focus-visible{outline:3px solid #123c92;outline-offset:3px}
+.v195-mission-main{position:absolute;left:420px;top:16px;width:830px;height:640px;box-sizing:border-box}
+.v195-score-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;min-height:140px}
+.v195-metric{display:grid;grid-template-rows:62px 70px;gap:0;text-align:center;min-width:0}
+.v195-metric strong{font-weight:500;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:26px;white-space:normal;line-height:1.25}
+.v195-metric span{display:flex;align-items:center;justify-content:center;font-size:42px;background:#edf0fa;font-weight:500;min-width:0;white-space:nowrap}
+.v195-score-details{position:absolute;left:0;top:180px;width:830px;height:452px;box-sizing:border-box;background:#dadada;overflow:auto;padding:15px;color:#161616}
+.v195-score-details p{font-size:25px;padding:20px}
+.v195-score-details .v195-detail-table{border-collapse:collapse;min-width:700px;width:max-content;max-width:none;background:#fff;font-size:17px}
+.v195-detail-table th{position:sticky;top:0;background:#1f3864;color:#fff;z-index:2;white-space:nowrap;border:1px solid #c8d2e4;padding:10px}
+.v195-detail-table th:first-child{left:0;z-index:3}
+.v195-detail-table td{padding:10px;border:1px solid #d5dce8;text-align:center;min-width:72px;max-width:220px;white-space:pre-wrap;vertical-align:middle}
+.v195-detail-table td:first-child{position:sticky;left:0;background:#fff;min-width:235px;max-width:235px;text-align:left;z-index:1}
+.v195-detail-table tr:nth-child(even) td:first-child{background:#f3f5fa}
+.v195-mission-status{position:absolute;top:642px;left:0;max-width:830px;font-size:15px;color:#4a5875}
+.v195-screen-back{position:absolute;left:70px;top:898px;width:140px;height:60px;background:#3080ff;color:#fff;border:0;border-radius:0;font:400 40px/1 Inter,'Noto Sans JP',sans-serif;cursor:pointer}
+</style>
+<script>
+const portalMissionState={members:[],selected:'',seq:0};
+async function portalMissionLoad(name=''){
+ const people=document.getElementById('v195MissionPeople'),summary=document.getElementById('v195MissionSummary'),detail=document.getElementById('v195MissionDetails'),status=document.getElementById('v195MissionStatus');
+ if(!people||!detail||state.currentScreen!=='representative-mission')return;
+ const seq=++portalMissionState.seq;status.textContent='最新のミッションシートを読み込んでいます…';
+ try{
+  const data=await portalFetch('/api/representative/mission'+(name?'?member='+encodeURIComponent(name):''));
+  if(seq!==portalMissionState.seq||state.currentScreen!=='representative-mission')return;
+  portalMissionState.members=Array.isArray(data.members)?data.members:[];
+  const names=portalMissionState.members.map(x=>x.name);const target=(name&&names.includes(name)?name:portalMissionState.selected&&names.includes(portalMissionState.selected)?portalMissionState.selected:names[0])||'';
+  portalMissionState.selected=target;
+  people.replaceChildren();
+  for(const item of portalMissionState.members){const b=document.createElement('button');b.type='button';b.textContent=item.name;b.title=item.name;b.classList.toggle('is-selected',item.name===target);b.addEventListener('click',()=>void portalMissionLoad(item.name));people.append(b)}
+  if(!name&&target){void portalMissionLoad(target);return;}
+  if(!target){status.textContent='実名の支部員シートがありません。HP編集のスプシ連携をご確認ください。';detail.textContent='';return;}
+  if(!data.selected){detail.textContent='取得中…';return;}
+  const selected=data.selected,metrics=selected.metrics||{};
+  const m=[metrics.rank,metrics.average,metrics.role_average,metrics.common_average];
+  const cards=summary.querySelectorAll('.v195-metric span');
+  m.forEach((cell,i)=>{const el=cards[i];if(!el)return;el.textContent=cell?.text||'—';el.style.backgroundColor=cell?.background||'#edf0fa';el.style.color=cell?.foreground||'#152039';});
+  detail.replaceChildren();const headers=Array.isArray(selected.headers)?selected.headers:[],rows=Array.isArray(selected.details)?selected.details:[];
+  if(!rows.length){detail.textContent='スコア詳細はまだ登録されていません。';}
+  else{
+   const table=document.createElement('table');table.className='v195-detail-table';
+   const thead=table.createTHead(),tr=thead.insertRow();const th=document.createElement('th');th.textContent='ミッション';tr.append(th);
+   for(const col of headers){const h=document.createElement('th');h.textContent=col.text||col.letter;h.title=col.letter+'列';tr.append(h)}
+   const tbody=table.createTBody();
+   for(const entry of rows){const row=tbody.insertRow();const nameCell=row.insertCell();nameCell.textContent=(entry.no?entry.no+'　':'')+(entry.mission||entry.section||'（項目）');nameCell.title=entry.section||'';
+    for(const cell of entry.values||[]){const td=row.insertCell();td.textContent=cell.text||'—';if(cell.background)td.style.backgroundColor=cell.background;if(cell.foreground)td.style.color=cell.foreground;}
+   }
+   detail.append(table);
+  }
+  status.textContent='表示中：'+selected.name+' ／ シートの最新版を取得しました。詳細はO列以降（見出しのある列）です。';
+ }catch(e){if(seq!==portalMissionState.seq)return;status.textContent='取得できません：'+(e.message||e);detail.textContent='スプレッドシートへの共有権限や「HP編集 → スプレッドシート連携」の設定を確認してください。';}
+}
+</script>
+
 </body>
 </html>
