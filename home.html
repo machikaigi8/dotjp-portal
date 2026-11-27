@@ -6971,6 +6971,25 @@ line-height: 1.5 !important;
 #portalInitialRegionSetup .portal-initial-region-choices{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 @media(max-width:520px){#portalInitialRegionSetup .portal-initial-region-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+<style>
+.screen-marketing .mark-other-region-notice{display:block;position:absolute;left:0;top:194px;width:530px;text-align:center;color:#25315e;font-size:26px;line-height:1.7;font-weight:600}
+.screen-marketing .mark-other-region-notice[hidden]{display:none!important}
+.screen-marketing.mark-other-region #markInfoPane{grid-template-columns:1fr;justify-content:center}
+.screen-marketing.mark-other-region #markInfoPane .mark-figma-chat,
+.screen-marketing.mark-other-region #markInfoPane .mark-url-label,
+.screen-marketing.mark-other-region #markViewingUrl,
+.screen-marketing.mark-other-region #markViewingMemo,
+.screen-marketing.mark-other-region #markInfoPane .mark-rating-title,
+.screen-marketing.mark-other-region #markInfoPane .mark-info-actions,
+.screen-marketing.mark-other-region #markInfoPane .mark-rating-row button[data-mark-rating]{display:none!important}
+.screen-marketing.mark-other-region #markInfoPane .mark-info-right{grid-column:1;justify-self:center;width:530px}
+.screen-marketing.mark-other-region #markInfoPane .mark-rating-row{top:332px;height:140px;width:530px;display:flex;justify-content:center;align-items:center}
+.screen-marketing.mark-other-region #markInfoPane .mark-archive-open{width:290px;height:112px}
+.screen-marketing .mark-archive-item.mark-archive-read-only{grid-template-columns:115px minmax(0,1fr) 125px}
+.screen-marketing .mark-archive-read-only .mark-archive-controls{display:flex;justify-content:center;align-items:center}
+.screen-marketing .mark-archive-read-only-label{font-size:18px;font-weight:700;color:#53608e}
+.screen-marketing .mark-source-tools strong{font-size:24px;color:#000060}
+</style>
 </head>
 <body>
   <aside id="portalSupportBanner" role="status" aria-live="polite" hidden><strong id="portalSupportIdentity"></strong><span>代理ログイン中（最大60分）</span><button type="button" id="portalSupportEndButton">自分に戻る</button></aside>
@@ -7165,6 +7184,7 @@ line-height: 1.5 !important;
           <button type="button" data-mark-region="hiroshima">広島</button>
           <button type="button" data-mark-region="kumamoto">熊本</button>
         </div>
+        <p class="mark-other-region-notice" id="markOtherRegionNotice" hidden>他支部の情報はURLアーカイブのみ閲覧できます。<br>リンク先を開いて確認できます。</p>
         <label class="mark-url-label" for="markViewingUrl">見ているURL</label>
         <input id="markViewingUrl" type="url" maxlength="1000" placeholder="https://" autocomplete="off">
         <textarea id="markViewingMemo" aria-label="メモを残す" maxlength="2500" rows="3" placeholder="メモを残す"></textarea>
@@ -7236,7 +7256,7 @@ line-height: 1.5 !important;
       </div>
     </div>
     <div class="mark-source-pane" id="markSourcesPane" hidden>
-      <div class="mark-source-tools"><label for="markSourcesRegion">地域</label><select id="markSourcesRegion"><option value="tokyo">東京</option><option value="miyagi">宮城</option><option value="hiroshima">広島</option><option value="kumamoto">熊本</option><option value="kansai">関西</option></select></div>
+      <div class="mark-source-tools"><span>所属地域</span><strong id="markSourcesRegionLabel">東京</strong><input id="markSourcesRegion" type="hidden" value="tokyo"></div>
       <div class="mark-source-table-scroll">
         <table class="mark-source-table" aria-label="分析情報源一覧">
           <colgroup><col class="mark-source-col-title"><col class="mark-source-col-url"><col class="mark-source-col-actions"></colgroup>
@@ -7247,7 +7267,7 @@ line-height: 1.5 !important;
       <div id="markSourcesStatus" class="mark-source-status" role="status"></div>
     </div>
     <section class="mark-archive-pane" id="markArchivePane" aria-label="保存したURLのアーカイブ" hidden>
-      <div class="mark-archive-heading"><h2>保存したURLのアーカイブ</h2><span id="markArchiveCount" role="status" aria-live="polite"></span></div>
+      <div class="mark-archive-heading"><h2 id="markArchiveHeading">保存したURLのアーカイブ</h2><span id="markArchiveCount" role="status" aria-live="polite"></span></div>
       <div id="markArchiveList" aria-live="polite"></div>
     </section>
   </div>
@@ -17366,6 +17386,8 @@ async function marketingAppendFiles(){
 function marketingStartEditor(){marketingView('editor');marketingEl('markPostForm').reset();marketingEl('markType').value=marketingState.type==='all'?'resource':marketingState.type;marketingEl('markFileNames').textContent='';if(!marketingState.uploadsEnabled)marketingStatus('画像投稿にはR2バケットの設定が必要です。テキストのみ投稿可能です。',true);}
 async function marketingInitScreen(){
   marketingView('list');
+  const openingRegion=state.region==='kanto'?'tokyo':state.region;
+  marketingFigmaRegion(Object.hasOwn(markFigRegions,openingRegion)?openingRegion:marketingFigmaOwnRegion());
   marketingFigmaScreen('home');
   try{const result=await portalFetch('/api/marketing/config');marketingState.uploadsEnabled=Boolean(result.uploads_enabled);}catch(e){marketingStatus(e.message,true);}
 }
@@ -17397,6 +17419,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 const marketingPreviousShowScreen=showScreen;
 showScreen=function(name,...args){
   const previous=state.currentScreen;
+  if(previous==='department-mark'&&name==='home')marketingRestoreOwnPortalRegion();
   const result=marketingPreviousShowScreen(name,...args);
   if(name==='department-mark'&&previous!==name)void marketingInitScreen();
   return result;
@@ -17406,6 +17429,27 @@ const markFigState={screen:'home',region:'tokyo',sourceEntries:[],selectedSource
 const markFigEl=id=>document.getElementById(id);
 const markFigRegions={tokyo:'東京',miyagi:'宮城',hiroshima:'広島',kumamoto:'熊本',kansai:'関西'};
 const markFigRegionOrder=['miyagi','tokyo','kansai','hiroshima','kumamoto'];
+function marketingFigmaOwnRegion(){
+  return state.preferredRegion==='kanto'?'tokyo':(Object.hasOwn(markFigRegions,state.preferredRegion)?state.preferredRegion:'tokyo');
+}
+function marketingFigmaIsForeign(){return markFigState.region!==marketingFigmaOwnRegion();}
+function marketingFigmaApplyAccess(){
+  const foreign=marketingFigmaIsForeign();
+  const screen=document.querySelector('.screen-marketing');
+  screen.classList.toggle('mark-other-region',foreign);
+  markFigEl('markOtherRegionNotice').hidden=!foreign;
+  markFigEl('markChatPrompt').disabled=foreign;
+  markFigEl('markChatSend').disabled=foreign;
+  markFigEl('markViewingUrl').disabled=foreign;
+  markFigEl('markViewingMemo').disabled=foreign;
+  markFigEl('markArchiveOpen').title=foreign?'この支部のURLアーカイブを閲覧':'保存したURLのアーカイブを表示';
+}
+function marketingRestoreOwnPortalRegion(){
+  const own=state.preferredRegion;
+  if(!own||state.region===own)return;
+  const switchButton=Array.from(document.querySelectorAll('[data-home-branch]')).find(button=>button.dataset.homeBranch===own);
+  if(switchButton&&own!=='kansai')switchButton.click();
+}
 function marketingFigmaRenderRegions(){
   const grid=markFigEl('markRegionButtons');
   if(!grid)return;
@@ -17425,32 +17469,35 @@ function marketingFigmaScreen(view){
   markFigEl('markKnowledgeStage').hidden=view==='home';
   for(const [id,active] of [['markInfoPane',view==='info'],['markBoardLanding',view==='board'],['markPostsShell',view==='posts'],['markSourcesPane',view==='sources'],['markArchivePane',view==='archive']])markFigEl(id).hidden=!active;
   markFigEl('markSourcesNew').hidden=view!=='sources';
+  if(view==='sources')markFigEl('markSourcesRegion').value=marketingFigmaOwnRegion();
   markFigEl('markNavKnowledge').classList.toggle('is-current',view!=='home');
   for(const [id,on] of [['markTabInformation',view==='info'||view==='archive'],['markTabBoard',view==='board'||view==='posts'],['markTabSources',view==='sources']])markFigEl(id).classList.toggle('is-current',on);
   if(view==='sources')void marketingFigmaLoadSources();
   if(view==='info')marketingFigmaRenderRegions();
+  marketingFigmaApplyAccess();
 }
 function marketingFigmaRegion(region){
   if(!Object.hasOwn(markFigRegions,region))return;
   markFigState.feedbackRequest++;
   markFigState.feedbackSaving=false;
   markFigState.region=region;
-  markFigEl('markSourcesRegion').value=region;
+  markFigEl('markSourcesRegion').value=marketingFigmaOwnRegion();
   marketingFigmaRenderRegions();
   markFigEl('markViewingUrl').value='';markFigEl('markViewingMemo').value='';markFigState.feedback=null;markFigState.selectionUrl='';
   marketingFigmaRatings();markFigEl('markInfoStatus').textContent='';
+  marketingFigmaApplyAccess();
 }
 function marketingFigmaRatings(){
   markFigEl('markInfoPane').querySelectorAll('[data-mark-rating]').forEach(b=>{
     b.setAttribute('aria-pressed',String(markFigState.feedback===b.dataset.markRating));
-    b.disabled=markFigState.feedbackSaving;
+    b.disabled=markFigState.feedbackSaving||marketingFigmaIsForeign();
   });
 }
 function marketingFigmaValidUrl(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&u.hostname.length>0&&u.href.length<=1000?u.href:'';}catch{return '';}}
 async function marketingFigmaFeedbackLoad(){
   const url=marketingFigmaValidUrl(markFigEl('markViewingUrl').value);
   const region=markFigState.region;
-  if(markFigState.feedbackSaving)return;
+  if(marketingFigmaIsForeign()||markFigState.feedbackSaving)return;
   const token=++markFigState.feedbackRequest;
   if(!url){markFigState.feedback=null;markFigState.selectionUrl='';markFigEl('markViewingMemo').value='';marketingFigmaRatings();return;}
   if(markFigState.selectionUrl!==url){markFigState.feedback=null;markFigEl('markViewingMemo').value='';marketingFigmaRatings();}
@@ -17463,7 +17510,7 @@ async function marketingFigmaFeedbackLoad(){
   }catch(error){if(token===markFigState.feedbackRequest)markFigEl('markInfoStatus').textContent=error.message||'評価の取得に失敗しました';}
 }
 async function marketingFigmaFeedbackSave(previousRating=markFigState.feedback,isRating=false){
-  if(markFigState.feedbackSaving)return;
+  if(marketingFigmaIsForeign()||markFigState.feedbackSaving)return;
   const url=marketingFigmaValidUrl(markFigEl('markViewingUrl').value);
   if(!url){markFigEl('markInfoStatus').textContent='先に「見ているURL」にhttps://から始まるURLを入力してください';markFigEl('markViewingUrl').focus();return;}
   const region=markFigState.region,rating=markFigState.feedback||'',memo=markFigEl('markViewingMemo').value;
@@ -17484,7 +17531,7 @@ async function marketingFigmaFeedbackSave(previousRating=markFigState.feedback,i
   }
 }
 function marketingFigmaChooseRating(rating){
-  if(markFigState.feedbackSaving)return;
+  if(marketingFigmaIsForeign()||markFigState.feedbackSaving)return;
   if(!marketingFigmaValidUrl(markFigEl('markViewingUrl').value)){
     markFigEl('markInfoStatus').textContent='評価するURLを先に入力してください';markFigEl('markViewingUrl').focus();return;
   }
@@ -17494,7 +17541,9 @@ function marketingFigmaChooseRating(rating){
   void marketingFigmaFeedbackSave(previous,true);
 }
 async function marketingFigmaLoadSources(){
-  const region=markFigEl('markSourcesRegion').value||markFigState.region;
+  const region=marketingFigmaOwnRegion();
+  markFigEl('markSourcesRegion').value=region;
+  markFigEl('markSourcesRegionLabel').textContent=markFigRegions[region];
   markFigEl('markSourcesStatus').textContent='読み込み中…';
   try{
     const result=await portalFetch('/api/marketing/sources?region='+encodeURIComponent(region));
@@ -17510,7 +17559,7 @@ async function marketingFigmaLoadSources(){
       const actionCell=document.createElement('td');
       const actions=document.createElement('div');actions.className='mark-source-actions';
       const use=document.createElement('button');use.type='button';use.textContent='情報を得る';
-      use.addEventListener('click',()=>{marketingFigmaScreen('info');markFigEl('markViewingUrl').value=item.url;void marketingFigmaFeedbackLoad();});actions.append(use);
+      use.addEventListener('click',()=>{marketingFigmaRegion(marketingFigmaOwnRegion());marketingFigmaScreen('info');marketingFigmaSetCurrentUrl(item.url,marketingFigmaOwnRegion());});actions.append(use);
       if(item.can_edit){const edit=document.createElement('button');edit.type='button';edit.textContent='編集';edit.addEventListener('click',()=>marketingFigmaOpenSourceEditor(item));actions.append(edit);
         const del=document.createElement('button');del.type='button';del.textContent='削除';del.addEventListener('click',()=>void marketingFigmaDeleteSource(item));actions.append(del);}
       actionCell.append(actions);row.append(titleCell,urlCell,actionCell);root.append(row);
@@ -17536,13 +17585,13 @@ async function marketingFigmaSaveSource(e){
   btn.disabled=true;
   try{
     const action=markFigState.sourceEditorId?'update':'create';
-    await portalFetch('/api/marketing/sources',{method:'POST',body:{action,id:markFigState.sourceEditorId||undefined,region:markFigEl('markSourcesRegion').value,title,url}});
+    await portalFetch('/api/marketing/sources',{method:'POST',body:{action,id:markFigState.sourceEditorId||undefined,region:marketingFigmaOwnRegion(),title,url}});
     markFigEl('markSourceEditor').hidden=true;await marketingFigmaLoadSources();
   }catch(error){alert(error.message||'保存できませんでした');}finally{btn.disabled=false;}
 }
 function marketingFigmaSetCurrentUrl(value,region=markFigState.region){
   const url=marketingFigmaValidUrl(value);
-  if(!url)return false;
+  if(!url||region!==marketingFigmaOwnRegion())return false;
   if(region!==markFigState.region)marketingFigmaRegion(region);
   const field=markFigEl('markViewingUrl');field.value=url;
   markFigState.feedbackRequest++;markFigState.feedbackSaving=false;
@@ -17557,7 +17606,12 @@ function marketingFigmaSiteLink(rawUrl,label,region=markFigState.region,closeArc
   if(!url)return null;
   const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';
   link.className='mark-chat-site-link';link.textContent=label||url;
-  link.addEventListener('click',()=>{marketingFigmaSetCurrentUrl(url,region);if(closeArchive)marketingFigmaScreen('info');});
+  link.addEventListener('click',()=>{
+    if(region===marketingFigmaOwnRegion()){
+      marketingFigmaSetCurrentUrl(url,region);
+      if(closeArchive)marketingFigmaScreen('info');
+    }
+  });
   return link;
 }
 function marketingFigmaRenderAiAnswer(element,answer){
@@ -17579,55 +17633,66 @@ function marketingFigmaRenderAiAnswer(element,answer){
 async function marketingFigmaArchive(){
   const list=markFigEl('markArchiveList');
   const count=markFigEl('markArchiveCount');
+  const region=markFigState.region;
+  const foreign=marketingFigmaIsForeign();
   const token=++markFigState.archiveRequest;
   marketingFigmaScreen('archive');
   list.replaceChildren();
   const loading=document.createElement('p');loading.className='mark-archive-empty';loading.textContent='保存済みのURLを読み込み中…';list.append(loading);
   count.textContent='';
+  markFigEl('markArchiveHeading').textContent=(markFigRegions[region]||region)+'のURLアーカイブ'+(foreign?'（閲覧専用）':'');
   try{
-    const result=await portalFetch('/api/marketing/feedback/archive');
-    if(token!==markFigState.archiveRequest||markFigState.screen!=='archive')return;
+    const result=await portalFetch('/api/marketing/feedback/archive?region='+encodeURIComponent(region));
+    if(token!==markFigState.archiveRequest||markFigState.screen!=='archive'||markFigState.region!==region)return;
     list.replaceChildren();
     const entries=Array.isArray(result.items)?result.items:[];
     let countValid=0;
     for(const item of entries){
-      const url=marketingFigmaValidUrl(item.url),region=Object.hasOwn(markFigRegions,item.region)?item.region:'tokyo';
-      if(!url)continue;
+      const url=marketingFigmaValidUrl(item.url);
+      if(!url||item.region!==region)continue;
       countValid++;
       const box=document.createElement('article');box.className='mark-archive-item';
+      if(foreign)box.classList.add('mark-archive-read-only');
       const regionBox=document.createElement('div');regionBox.className='mark-archive-region';regionBox.textContent=markFigRegions[region]||region;
       const description=document.createElement('div');description.className='mark-archive-description';
       const host=document.createElement('strong');host.className='mark-archive-host';host.textContent=new URL(url).hostname;
-      const link=marketingFigmaSiteLink(url,url,region,true);if(link)link.className='mark-archive-link';
-      const memo=document.createElement('p');memo.className='mark-archive-memo';memo.textContent=item.memo||'（メモなし）';
-      const meta=document.createElement('div');meta.className='mark-archive-meta';meta.textContent='保存・更新：'+String(item.updated_at||'').slice(0,16).replace('T',' ');
-      description.append(host);if(link)description.append(link);description.append(memo,meta);
-      const controls=document.createElement('div');controls.className='mark-archive-controls';
-      const status=document.createElement('span');status.className='mark-archive-status';status.setAttribute('role','status');
-      const ratings=[['good','〇'],['neutral','△'],['bad','×']];
-      const buttons=[];
-      for(const [rating,label] of ratings){
-        const btn=document.createElement('button');btn.type='button';btn.dataset.archiveRating=rating;btn.textContent=label;btn.title=label+'に評価を変更';
-        btn.setAttribute('aria-label',label+'の評価に変更');btn.setAttribute('aria-pressed',String(item.rating===rating));
-        btn.addEventListener('click',async()=>{
-          if(buttons.some(b=>b.disabled))return;
-          buttons.forEach(b=>b.disabled=true);status.textContent='保存中…';
-          try{
-            await portalFetch('/api/marketing/feedback',{method:'POST',body:{region,url,rating,memo:item.memo||''}});
-            item.rating=rating;buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.archiveRating===rating)));
-            if(markFigState.region===region&&marketingFigmaValidUrl(markFigEl('markViewingUrl').value)===url){markFigState.feedback=rating;marketingFigmaRatings();}
-            status.textContent='評価を保存しました';
-          }catch(error){status.textContent=error.message||'保存に失敗しました';}
-          finally{buttons.forEach(b=>b.disabled=false);}
-        });controls.append(btn);buttons.push(btn);
+      const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=url;link.className='mark-archive-link';
+      if(!foreign)link.addEventListener('click',()=>{marketingFigmaSetCurrentUrl(url,region);marketingFigmaScreen('info');});
+      description.append(host,link);
+      if(!foreign){
+        const memo=document.createElement('p');memo.className='mark-archive-memo';memo.textContent=item.memo||'（メモなし）';description.append(memo);
       }
-      const view=document.createElement('button');view.type='button';view.className='mark-archive-view';view.textContent='表示・メモ編集';
-      view.addEventListener('click',()=>{marketingFigmaSetCurrentUrl(url,region);marketingFigmaScreen('info');});
-      controls.append(view,status);
+      const meta=document.createElement('div');meta.className='mark-archive-meta';meta.textContent='保存・更新：'+String(item.updated_at||'').slice(0,16).replace('T',' ');description.append(meta);
+      const controls=document.createElement('div');controls.className='mark-archive-controls';
+      if(foreign){
+        const status=document.createElement('span');status.className='mark-archive-read-only-label';status.textContent='閲覧のみ';controls.append(status);
+      }else{
+        const status=document.createElement('span');status.className='mark-archive-status';status.setAttribute('role','status');
+        const ratings=[['good','〇'],['neutral','△'],['bad','×']];
+        const buttons=[];
+        for(const [rating,label] of ratings){
+          const btn=document.createElement('button');btn.type='button';btn.dataset.archiveRating=rating;btn.textContent=label;btn.title=label+'に評価を変更';
+          btn.setAttribute('aria-label',label+'の評価に変更');btn.setAttribute('aria-pressed',String(item.rating===rating));
+          btn.addEventListener('click',async()=>{
+            if(buttons.some(b=>b.disabled))return;
+            buttons.forEach(b=>b.disabled=true);status.textContent='保存中…';
+            try{
+              await portalFetch('/api/marketing/feedback',{method:'POST',body:{region,url,rating,memo:item.memo||''}});
+              item.rating=rating;buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.archiveRating===rating)));
+              if(markFigState.region===region&&marketingFigmaValidUrl(markFigEl('markViewingUrl').value)===url){markFigState.feedback=rating;marketingFigmaRatings();}
+              status.textContent='評価を保存しました';
+            }catch(error){status.textContent=error.message||'保存に失敗しました';}
+            finally{buttons.forEach(b=>b.disabled=false);}
+          });controls.append(btn);buttons.push(btn);
+        }
+        const view=document.createElement('button');view.type='button';view.className='mark-archive-view';view.textContent='表示・メモ編集';
+        view.addEventListener('click',()=>{marketingFigmaSetCurrentUrl(url,region);marketingFigmaScreen('info');});
+        controls.append(view,status);
+      }
       box.append(regionBox,description,controls);list.append(box);
     }
     count.textContent=countValid+'件';
-    if(!countValid){const empty=document.createElement('p');empty.className='mark-archive-empty';empty.textContent='保存済みのURLはまだありません。「情報を得る」でURLを入力し、〇・△・×を押すとここに表示されます。';list.append(empty);}
+    if(!countValid){const empty=document.createElement('p');empty.className='mark-archive-empty';empty.textContent=foreign?'この支部の公開可能なURLアーカイブはまだありません。':'保存済みのURLはまだありません。「情報を得る」でURLを入力し、〇・△・×を押すとここに表示されます。';list.append(empty);}
   }catch(error){
     if(token!==markFigState.archiveRequest||markFigState.screen!=='archive')return;
     list.replaceChildren();const failure=document.createElement('p');failure.className='mark-archive-empty';failure.textContent=error.message||'取得できませんでした';list.append(failure);
@@ -17650,6 +17715,7 @@ function marketingFigmaBack(){
   if(markFigState.screen==='knowledge'){
     marketingFigmaScreen('home');return;
   }
+  marketingRestoreOwnPortalRegion();
   showScreen('home');
 }
 function marketingFigmaOpenBoard(type){
@@ -17659,7 +17725,7 @@ function marketingFigmaOpenBoard(type){
   marketingFigmaScreen('posts');marketingView('list');void marketingLoad(true);
 }
 async function marketingFigmaChat(e){
-  e.preventDefault();if(markFigState.chatBusy)return;
+  e.preventDefault();if(marketingFigmaIsForeign()||markFigState.chatBusy)return;
   const prompt=markFigEl('markChatPrompt').value.trim();if(!prompt)return;
   markFigState.chatBusy=true;markFigEl('markChatSend').disabled=true;markFigEl('markChatPrompt').value='';
   const list=markFigEl('markChatMessages');markFigEl('markChatEmpty').hidden=true;const entry=document.createElement('div');entry.className='mark-chat-message is-user';entry.textContent=prompt;list.append(entry);list.scrollTop=list.scrollHeight;
@@ -17696,7 +17762,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   markFigEl('markViewingUrl').addEventListener('blur',()=>void marketingFigmaFeedbackLoad());
   markFigEl('markInfoPane').querySelectorAll('[data-mark-rating]').forEach(b=>b.addEventListener('click',()=>marketingFigmaChooseRating(b.dataset.markRating)));
   markFigEl('markArchiveOpen').addEventListener('click',()=>void marketingFigmaArchive());
-  markFigEl('markSourcesRegion').addEventListener('change',()=>{markFigState.region=markFigEl('markSourcesRegion').value;void marketingFigmaLoadSources();});
   markFigEl('markSourcesNew').addEventListener('click',()=>marketingFigmaOpenSourceEditor());
   markFigEl('markSourceCancel').addEventListener('click',()=>{markFigEl('markSourceEditor').hidden=true;});
   markFigEl('markSourceForm').addEventListener('submit',e=>void marketingFigmaSaveSource(e));
@@ -17707,8 +17772,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   markFigEl('markChatPrompt').addEventListener('keydown',event=>{
     if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();markFigEl('markChatForm').requestSubmit();}
   });
-  marketingFigmaRenderRegions();
-  markFigEl('markSourcesRegion').value=markFigState.region;
+  marketingFigmaRegion(marketingFigmaOwnRegion());
+  markFigEl('markSourcesRegion').value=marketingFigmaOwnRegion();
 });
 const DEPT_MATERIAL_LABELS={cons:'コンス',mark:'マーケティング',hr:'人事局',pg:'プログラム',client:'クライアント',office:'事務局',rep:'代表'};
 const departmentMaterialState={department:location.hash==='#department-materials' ? (['cons','mark','hr','pg','office','rep'].includes(sessionStorage.getItem('dotjp_material_department')) ? sessionStorage.getItem('dotjp_material_department') : 'pg') : 'cons',scope:'',items:[],canEdit:false,seq:0,editing:0};
