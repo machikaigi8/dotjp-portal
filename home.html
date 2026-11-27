@@ -7019,7 +7019,7 @@ line-height: 1.5 !important;
               <button type="button" class="blue-menu" data-route="department-cons">コンス</button>
               <button type="button" class="blue-menu" data-route="department-mark">マーケティング</button>
               <button type="button" class="blue-menu" data-route="department-hr">人事局</button>
-              <button type="button" class="blue-menu" data-route="department-pg">プログラム</button>
+              <button type="button" class="blue-menu" data-route="department-materials" data-material-department="pg">プログラム</button>
               <button type="button" class="blue-menu" data-route="client">クライアント</button>
               <button type="button" class="blue-menu" data-route="department-office">事務局</button>
               <button type="button" class="blue-menu" data-route="meeting-attendance">MTG出欠登録</button>
@@ -9407,6 +9407,7 @@ function wireActions() {
 
       if (element.dataset.materialDepartment) {
         departmentMaterialState.department = element.dataset.materialDepartment;
+        sessionStorage.setItem('dotjp_material_department', element.dataset.materialDepartment);
       }
       showScreen(element.dataset.route);
     });
@@ -9936,7 +9937,7 @@ function goBackScreen(event) {
   // 戻るは原則トップ画面。個別指定のみ data-back-route で例外を許可。
   const explicitlySpecified = event?.currentTarget?.dataset?.backRoute || '';
   const current = state.currentScreen;
-  const target = current === 'department-materials' ? ('department-'+departmentMaterialState.department) : current === 'client' ? 'home' : current?.startsWith('client-') ? 'client' :
+  const target = current === 'department-materials' ? (departmentMaterialState.department === 'pg' ? 'home' : 'department-'+departmentMaterialState.department) : current === 'client' ? 'home' : current?.startsWith('client-') ? 'client' :
     explicitlySpecified && screenNames.has(explicitlySpecified) ? explicitlySpecified : 'home';
   state.screenHistory.length = 0;
   showScreen(target, true, false);
@@ -17222,7 +17223,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   markFigEl('markSourcesRegion').value=markFigState.region;
 });
 const DEPT_MATERIAL_LABELS={cons:'コンス',mark:'マーケティング',hr:'人事局',pg:'プログラム',client:'クライアント',office:'事務局'};
-const departmentMaterialState={department:'cons',scope:'',items:[],canEdit:false,seq:0,editing:0};
+const departmentMaterialState={department:location.hash==='#department-materials' ? (['cons','mark','hr','pg','office'].includes(sessionStorage.getItem('dotjp_material_department')) ? sessionStorage.getItem('dotjp_material_department') : 'pg') : 'cons',scope:'',items:[],canEdit:false,seq:0,editing:0};
 function deptMaterialEl(id){return document.getElementById(id)}
 function deptMaterialRegion(){return state.region==='kansai'?'kansai':'kanto'}
 function deptMaterialCurrentDepartment(){return state.currentScreen==='client-materials'?'client':departmentMaterialState.department}
