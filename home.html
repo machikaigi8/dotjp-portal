@@ -7293,7 +7293,7 @@ line-height: 1.5 !important;
           </nav>
           <div class="hr-boat-page">
             <header class="hr-boat-header">
-              <div><h1>毎日タスク状況｜11/23からの累計船レース</h1><p id="hrBoatWeek">累計ポイントで先頭との差を表示します</p></div>
+              <div><h1>毎日タスク状況｜11/22からの累計船レース</h1><p id="hrBoatWeek">累計ポイントで先頭との差を表示します</p></div>
               <button type="button" id="hrBoatRefresh">最新の状況に更新</button>
             </header>
             <p id="hrBoatStatus" class="hr-boat-status" role="status">読み込み中…</p>
@@ -7347,6 +7347,18 @@ line-height: 1.5 !important;
               </aside>
             </div>
             <footer class="hr-boat-legend">コンス：架電 +1 / メール +1 / 口コミ +2 / 獲得 +10　｜　クライアント：架電 +1 / お問い合わせメール +2　｜　その他 0pt</footer>
+          </div>
+
+          <div id="hrBoatScoreOverlay" class="hr-boat-score-overlay" role="presentation" hidden>
+            <section class="hr-boat-score-card" role="dialog" aria-modal="true" aria-labelledby="hrBoatScoreHeading">
+              <header class="hr-boat-score-header">
+                <div><h2 id="hrBoatScoreHeading">船員別スコア</h2><p id="hrBoatScorePeriod">集計期間：11/22〜</p></div>
+                <button type="button" id="hrBoatScoreClose" class="hr-boat-score-close" aria-label="船員別スコアを閉じる">× 閉じる</button>
+              </header>
+              <p id="hrBoatScoreSummary" class="hr-boat-score-summary"></p>
+              <div id="hrBoatScoreMembers" class="hr-boat-score-members"></div>
+              <p class="hr-boat-score-hint">名前を押すと、得点の種類と日別の内訳が見られます。複数チーム所属者の得点は各チームに加算します。</p>
+            </section>
           </div>
           <button type="button" class="common-back-button" data-common-back>←戻る</button>
         </section>
@@ -18002,12 +18014,77 @@ function hrBoatUpdateMembershipState(){
  const belongs=!!person?.team_ids?.includes(teamId);
  message.textContent=belongs?`${person.name}は「${team.name}」に所属しています。所属解除もできます。`:`${person?.name||email}を「${team.name}」に追加できます。ほかのチームからは外れません。`;
 }
+
+const HR_BOAT_METRIC_LABELS=[
+  ['cons_call','コンス架電',1],['cons_email','コンスメール',1],
+  ['cons_review','口コミ',2],['cons_won','コンス獲得',10],
+  ['client_call','企業架電',1],['client_mail','企業メール',2]
+];
+function hrBoatCloseScores(){
+  const overlay=document.getElementById('hrBoatScoreOverlay');
+  if(!overlay)return;
+  overlay.hidden=true;overlay.dataset.teamId='';
+  document.querySelector('[data-screen="hr-daily-tasks"] .hr-boat-vessel:focus-visible')?.focus();
+}
+function hrBoatOpenScores(teamId){
+  const overlay=document.getElementById('hrBoatScoreOverlay');
+  const result=hrBoatData.result;
+  if(!overlay||!result)return;
+  const team=(result.teams||[]).find(item=>Number(item.id)===Number(teamId));
+  if(!team)return;
+  const container=document.getElementById('hrBoatScoreMembers');
+  const opened=new Set([...container.querySelectorAll('details[open]')].map(el=>el.dataset.email));
+  const wasOpen=!overlay.hidden&&overlay.dataset.teamId===String(teamId);
+  const scrollTop=wasOpen?container.scrollTop:0;
+  const heading=document.getElementById('hrBoatScoreHeading');
+  heading.textContent=`${team.name}｜船員別スコア`;
+  document.getElementById('hrBoatScorePeriod').textContent=`集計期間：${String(result.score_start_day||'2026-11-22').replaceAll('-','/')}〜${String(result.score_end_day||result.today||'').replaceAll('-','/')}`;
+  container.replaceChildren();
+  const people=(Array.isArray(team.members)?team.members:[]).slice().sort((a,b)=>Number(b.points||0)-Number(a.points||0)||String(a.name||'').localeCompare(String(b.name||''),'ja'));
+  let memberSum=0;
+  for(const person of people){
+    const score=Math.max(0,Number(person.points||0));memberSum+=score;
+    const item=document.createElement('details');item.className='hr-boat-score-person';
+    item.dataset.email=String(person.email||'');if(wasOpen&&opened.has(item.dataset.email))item.open=true;
+    const summary=document.createElement('summary');summary.className='hr-boat-score-person-title';
+    summary.append(hrBoatNode('span','',String(person.name||'名前未設定')),
+      hrBoatNode('strong','',`${score.toLocaleString('ja-JP')} pt`));
+    item.append(summary);
+    const metrics=person.metrics||{};
+    const metricsLine=document.createElement('div');metricsLine.className='hr-boat-score-metrics';
+    for(const [key,label,weight] of HR_BOAT_METRIC_LABELS){
+      const count=Math.max(0,Number(metrics[key]||0));
+      const box=hrBoatNode('div','hr-boat-score-metric',`${label}：${count.toLocaleString('ja-JP')}件 × ${weight}点 ＝ ${(count*weight).toLocaleString('ja-JP')}点`);
+      metricsLine.append(box);
+    }
+    item.append(metricsLine);
+    const days=(Array.isArray(person.days)?person.days:[]).slice().sort((a,b)=>String(a.day).localeCompare(String(b.day)));
+    const dayHead=hrBoatNode('h3','hr-boat-score-day-title','日別の得点');item.append(dayHead);
+    if(!days.length)item.append(hrBoatNode('p','hr-boat-score-day','対象期間の得点実績はありません。'));
+    for(const day of days){
+      const parts=HR_BOAT_METRIC_LABELS.filter(([key])=>Number(day.metrics?.[key]||0)>0)
+        .map(([key,label,weight])=>`${label} ${Number(day.metrics[key])}件(${Number(day.metrics[key])*weight}点)`);
+      item.append(hrBoatNode('p','hr-boat-score-day',`${String(day.day).slice(5).replace('-','/')}：${Number(day.points||0).toLocaleString('ja-JP')}点｜${parts.join('、')}`));
+    }
+    container.append(item);
+  }
+  if(!people.length)container.append(hrBoatNode('p','hr-boat-score-empty','船員が登録されていません。'));
+  const total=Math.max(0,Number(team.points||0));
+  const summaryLine=document.getElementById('hrBoatScoreSummary');
+  summaryLine.textContent=`チーム合計 ${total.toLocaleString('ja-JP')}点 ＝ 船員合計 ${memberSum.toLocaleString('ja-JP')}点（${people.length}名）`;
+  summaryLine.classList.toggle('is-mismatch',total!==memberSum);
+  if(total!==memberSum)summaryLine.textContent+='｜⚠ 内訳が一致していません。再集計が必要です。';
+  overlay.dataset.teamId=String(teamId);overlay.hidden=false;
+  container.scrollTop=scrollTop;
+  if(!wasOpen)document.getElementById('hrBoatScoreClose')?.focus();
+}
+
 function hrBoatRender(){
  const r=hrBoatData.result;if(!r)return;
  const label=document.getElementById('hrBoatWeek');
  const lineHealth=r.line_health||{};
  const tips=[
-   '11/23からの累計ポイントで先頭との差を表示',
+   '11/22からの累計ポイントで先頭との差を表示',
    '未提出は10件ごとに沈没',
    `LINE連携：${Number(lineHealth.linked_roster_count||0)}人（関東名簿${Number(lineHealth.roster_count||0)}人）`,
    `LINE報告受信：${Number(lineHealth.received_report_days||0)}人日`,
@@ -18034,7 +18111,13 @@ function hrBoatRender(){
    boat.style.setProperty('--boat-progress',progress);
    boat.style.setProperty('--boat-accent',['#5375b2','#cb7c32','#8660ac','#397b78','#b55a65'][i%5]);
    boat.innerHTML=hrBoatSvg;
-   boat.setAttribute('title',`${team.name} ${team.points}pt｜先頭差 ${leaderGap}pt${team.sunk?'（沈没）':''}`);
+   boat.setAttribute('title',`${team.name} ${team.points}pt｜クリックで船員別スコアを見る`);
+   boat.setAttribute('role','button');boat.setAttribute('tabindex','0');
+   boat.setAttribute('aria-label',`${team.name}の船員別スコアを開く`);
+   boat.addEventListener('click',()=>hrBoatOpenScores(team.id));
+   boat.addEventListener('keydown',event=>{
+     if(event.key==='Enter'||event.key===' '){event.preventDefault();hrBoatOpenScores(team.id);}
+   });
    lane.appendChild(boat);lane.appendChild(hrBoatNode('span','hr-boat-name',team.name));
    water.appendChild(lane);
    const row=hrBoatNode('div','hr-boat-rank'+(team.sunk?' is-sunk':''));
@@ -18066,6 +18149,10 @@ async function hrBoatLoad(force=false){
  try{
    hrBoatData.result=await portalFetch(force?'/api/hr/boat-race?fresh=1':'/api/hr/boat-race');
    hrBoatRender();
+   const scoreOverlay=document.getElementById('hrBoatScoreOverlay');
+   if(scoreOverlay&&!scoreOverlay.hidden&&scoreOverlay.dataset.teamId){
+     hrBoatOpenScores(Number(scoreOverlay.dataset.teamId));
+   }
    status.textContent=hrBoatData.result.stale?(hrBoatData.result.background_refreshing?'前回保存した集計結果を表示中（新しい集計はバックグラウンドで更新しています）':'前回保存した集計結果を表示中です。更新ボタンから再取得できます。'):'累計ポイント・船の位置を更新しました。';
  }catch(e){status.textContent=(hrBoatData.result?'前回の情報を表示中｜':'船レースを取得できません：')+(e.message||e);}
  finally{hrBoatData.pending=false;}
@@ -18082,6 +18169,13 @@ async function hrBoatWrite(body){
 }
 document.addEventListener('DOMContentLoaded',()=>{
  document.getElementById('hrBoatRefresh')?.addEventListener('click',()=>void hrBoatLoad(true));
+ document.getElementById('hrBoatScoreClose')?.addEventListener('click',hrBoatCloseScores);
+ document.getElementById('hrBoatScoreOverlay')?.addEventListener('click',event=>{
+   if(event.target.id==='hrBoatScoreOverlay')hrBoatCloseScores();
+ });
+ document.addEventListener('keydown',event=>{
+   if(event.key==='Escape'&&!document.getElementById('hrBoatScoreOverlay')?.hidden)hrBoatCloseScores();
+ });
  const openMtgSettings = () => {
    const panel = document.querySelector('[data-screen="department-hr"] .mtg-staff-shell');
    if (!panel) return;
@@ -18429,7 +18523,7 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
       const lanes=screen.querySelector('#hrBoatLanes');
       if(lanes)lanes.style.setProperty('--boat-row-count',String(Math.max(1,teams.length)));
       const week=screen.querySelector('#hrBoatWeek');
-      if(week)week.textContent='11/23からの累計ポイントで先頭との差を表示｜沈没回数は累計、10件ごとに沈没';
+      if(week)week.textContent='11/22からの累計ポイントで先頭との差を表示｜沈没回数は累計、10件ごとに沈没';
       const vessels=screen.querySelectorAll('.hr-boat-lane');
       const ranks=screen.querySelectorAll('.hr-boat-rank');
       const leaderPoints=Math.max(0,...teams.map(t=>Number(t.points||0)));
@@ -18480,13 +18574,37 @@ transform:translateY(calc(var(--boat-sink,0) * 38px)) rotate(calc(var(--boat-sin
       await originalLoad(...args);
       if(typeof hrBoatData!=='undefined'&&hrBoatData.result&&!hrBoatData.pending){
         const status=document.getElementById('hrBoatStatus');
-        if(status&&!hrBoatData.result.stale&&status.textContent==='累計ポイント・船の位置を更新しました。')status.textContent='11/23からの累計ポイントを反映｜未提出は10件ごとに沈没';
+        if(status&&!hrBoatData.result.stale&&status.textContent==='累計ポイント・船の位置を更新しました。')status.textContent='11/22からの累計ポイントを反映｜未提出は10件ごとに沈没';
       }
     };
   }
   document.addEventListener('DOMContentLoaded',prepare);
 })();
 </script>
+<style>
+.screen-hr-boats .hr-boat-vessel{cursor:pointer !important;touch-action:manipulation}
+.screen-hr-boats .hr-boat-vessel:hover{filter:drop-shadow(0 0 8px #fff) drop-shadow(0 3px 6px #063b5a) !important}
+.screen-hr-boats .hr-boat-vessel:focus-visible{outline:3px solid white !important;outline-offset:1px;border-radius:6px}
+.screen-hr-boats .hr-boat-score-overlay{position:absolute !important;inset:0 !important;z-index:240 !important;background:rgba(11,28,55,.68);display:grid;place-items:center;padding:65px 100px;box-sizing:border-box}
+.screen-hr-boats .hr-boat-score-overlay[hidden]{display:none !important}
+.screen-hr-boats .hr-boat-score-card{width:min(860px,100%);max-height:100%;min-height:360px;display:flex;flex-direction:column;gap:12px;overflow:hidden;background:#fff;border:4px solid #9de7fb;border-radius:16px;padding:24px 30px 18px;box-shadow:0 20px 65px #06142e80;color:#102c54;font-family:Inter,'Noto Sans JP',sans-serif}
+.screen-hr-boats .hr-boat-score-header{display:flex;justify-content:space-between;gap:20px;align-items:center;border-bottom:2px solid #d5e5fa;padding-bottom:12px;flex:none}
+.screen-hr-boats .hr-boat-score-header h2{font-size:30px;line-height:1.3;margin:0;font-weight:750}
+.screen-hr-boats .hr-boat-score-header p{margin:4px 0 0;font-size:15px;color:#4f6784}
+.screen-hr-boats .hr-boat-score-close{flex:none;background:#2d6cda;color:#fff;border:0;border-radius:7px;padding:10px 18px;font-size:20px;cursor:pointer}
+.screen-hr-boats .hr-boat-score-summary{flex:none;margin:0;background:#eef7ff;padding:9px 12px;border-radius:7px;font-size:20px;font-weight:700}
+.screen-hr-boats .hr-boat-score-summary.is-mismatch{background:#fff0eb;color:#9e251e}
+.screen-hr-boats .hr-boat-score-members{min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;flex:1;padding-right:6px}
+.screen-hr-boats .hr-boat-score-person{border:2px solid #cbdaf0;border-radius:9px;background:#f9fbff;padding:0 14px}
+.screen-hr-boats .hr-boat-score-person-title{list-style-position:inside;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;font-size:22px;font-weight:700}
+.screen-hr-boats .hr-boat-score-person-title strong{font-size:23px;color:#174eaa}
+.screen-hr-boats .hr-boat-score-person[open] .hr-boat-score-person-title{border-bottom:1px solid #d7e5f3}
+.screen-hr-boats .hr-boat-score-metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;padding:12px 0;font-size:15px;line-height:1.45}
+.screen-hr-boats .hr-boat-score-metric{background:#fff;padding:6px 8px;border:1px solid #e3e9f2;border-radius:5px}
+.screen-hr-boats .hr-boat-score-day-title{font-size:17px;margin:7px 0}
+.screen-hr-boats .hr-boat-score-day{margin:3px 0;padding:5px 8px;background:#f2f7fd;border-radius:5px;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.screen-hr-boats .hr-boat-score-hint{font-size:13px;color:#526b85;line-height:1.5;margin:0;flex:none}
+</style>
 <dialog id="v146TextMaterialDialog" style="width:min(640px,calc(100vw - 32px));max-height:80vh;overflow:auto;padding:26px 30px;border:1px solid #b9bfe5;border-radius:14px;background:white;box-shadow:0 18px 70px #0004;color:#202555"><h2 style="font-size:24px;line-height:1.3;margin:0 0 18px">資料</h2><div id="v155MaterialViewLinks" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:13px"></div><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:43vh;overflow:auto;font:17px/1.6 'Noto Sans JP',sans-serif;background:#f8f8ff;border:1px solid #e4e6f7;padding:14px;border-radius:7px"></pre><button id="v146TextMaterialClose" type="button" style="padding:10px 25px;background:#3080ff;color:white;border:0;border-radius:6px;cursor:pointer;font-size:16px">閉じる</button></dialog>
 
 <style>
