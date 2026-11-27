@@ -7346,7 +7346,7 @@ line-height: 1.5 !important;
                 </section>
               </aside>
             </div>
-            <footer class="hr-boat-legend">コンス：架電 +1 / メール +1 / 口コミ +2 / 獲得 +10　｜　クライアント：架電 +1 / お問い合わせメール +2　｜　その他 0pt</footer>
+            <footer class="hr-boat-legend">コンス：架電 +1 / メール +0.5 / DM +0.5 / 口コミ +2 / 獲得 +10　｜　クライアント：架電 +1 / お問い合わせメール +0.5　｜　その他 0pt</footer>
           </div>
 
           <div id="hrBoatScoreOverlay" class="hr-boat-score-overlay" role="presentation" hidden>
@@ -18016,9 +18016,9 @@ function hrBoatUpdateMembershipState(){
 }
 
 const HR_BOAT_METRIC_LABELS=[
-  ['cons_call','コンス架電',1],['cons_email','コンスメール',1],
-  ['cons_review','口コミ',2],['cons_won','コンス獲得',10],
-  ['client_call','企業架電',1],['client_mail','企業メール',2]
+  ['cons_call','コンス架電',1],['cons_email','コンスメール',0.5],
+  ['cons_dm','コンスDM',0.5],['cons_review','口コミ',2],['cons_won','コンス獲得',10],
+  ['client_call','企業架電',1],['client_mail','企業メール',0.5]
 ];
 function hrBoatCloseScores(){
   const overlay=document.getElementById('hrBoatScoreOverlay');
