@@ -6939,9 +6939,9 @@ line-height: 1.5 !important;
 
 <style>
 #portalSupportBanner[hidden]{display:none!important}
-#portalSupportBanner{position:fixed;z-index:10000020;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:14px;max-width:calc(100vw - 24px);box-sizing:border-box;padding:9px 15px;background:#fff0bb;color:#53350a;border:2px solid #be7a08;border-radius:9px;box-shadow:0 8px 25px #0003;font:600 16px/1.4 'Noto Sans JP',sans-serif}
-#portalSupportBanner strong{font-size:17px;overflow-wrap:anywhere}
-#portalSupportBanner button{background:#995708;color:#fff;border:0;border-radius:6px;cursor:pointer;font:700 16px/1.4 'Noto Sans JP',sans-serif;padding:8px 14px;white-space:nowrap}
+#portalSupportBanner{position:fixed;z-index:10000020;top:6px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:9px;max-width:calc(100vw - 24px);box-sizing:border-box;padding:6px 12px;background:#fff0bb;color:#53350a;border:2px solid #be7a08;border-radius:9px;box-shadow:0 5px 16px #0002;font:600 14px/1.3 'Noto Sans JP',sans-serif}
+#portalSupportBanner strong{font-size:14px;overflow-wrap:anywhere;text-align:center}
+#portalSupportBanner button{background:#995708;color:#fff;border:0;border-radius:6px;cursor:pointer;font:700 14px/1.3 'Noto Sans JP',sans-serif;padding:6px 12px;white-space:nowrap}
 .screen-hp-edit .figma-hp-topline:has(#portalSupportOpenButton:not([hidden])){gap:32px;width:1194px}
 .screen-hp-edit .figma-hp-topline:has(#portalSupportOpenButton:not([hidden])) .figma-hp-tab{font-size:33px}
 .screen-hp-edit .figma-hp-support-open{color:#794a12;font-weight:600}
@@ -12194,6 +12194,7 @@ function renderPortalSupportBanner(profile){
   if(!banner||!detail)return;
   banner.hidden=!active;
   detail.textContent=active?`${profile.user.name||profile.user.email}（${profile.user.email}）`:'';
+  fitCanvas();
 }
 function closePortalSupportDialog(){
   const overlay=document.getElementById('portalSupportDialog');
@@ -12791,6 +12792,7 @@ async function loadPortalProfile() {
     state.isRepresentative = false;
     state.supportMode = false;
     document.getElementById('portalSupportBanner').hidden=true;
+    fitCanvas();
     state.canEditRoster = false;
     state.canManageMeetings = false;
     document.getElementById("representativeDashboardEntry").hidden = true;
@@ -15255,15 +15257,25 @@ function fitCanvas() {
   const viewport = window.visualViewport;
   const width = viewport?.width || window.innerWidth;
   const height = viewport?.height || window.innerHeight;
+  const banner = document.getElementById("portalSupportBanner");
+  const reservedHeight = banner && !banner.hidden
+    ? Math.ceil(banner.getBoundingClientRect().height) + 16
+    : 0;
+  const availableHeight = Math.max(100, height - reservedHeight);
   const compact = state.currentScreen === "client-send";
   const virtualWidth = compact ? 800 : 1440;
   const virtualHeight = compact ? 900 : 1024;
-  const scale = Math.min(width / virtualWidth, height / virtualHeight);
+  const scale = Math.min(width / virtualWidth, availableHeight / virtualHeight);
 
   const frame = document.getElementById("canvasFrame");
   const holder = document.getElementById("canvasHolder");
+  const app = document.getElementById("app");
   if (!frame || !holder) return;
 
+  if (app) {
+    app.style.boxSizing = "border-box";
+    app.style.paddingTop = reservedHeight ? `${reservedHeight}px` : "0px";
+  }
   frame.style.setProperty("width", `${virtualWidth}px`, "important");
   frame.style.setProperty("height", `${virtualHeight}px`, "important");
   frame.style.transform = `scale(${scale})`;
